@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625114ef92abc6f4d98f906588e93662, type: 3}
+  m_Name: IfTrue
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"FlowCanvas.Macros.Macro","nodes":[{"_position":{"x":201.0,"y":198.0},"$type":"FlowCanvas.Macros.MacroInputNode","$id":"0"},{"_position":{"x":418.0,"y":200.0},"$type":"FlowCanvas.Nodes.SwitchBool","$id":"1"},{"_position":{"x":683.0,"y":190.0},"$type":"FlowCanvas.Macros.MacroOutputNode","$id":"2"}],"connections":[{"_sourcePortName":"2aadc420-c095-4012-9c2a-8ece28f1d7e8","_targetPortName":"In","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"3435fb66-4a50-41a4-bd35-96caef9fd1d7","_targetPortName":"Condition","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"True","_targetPortName":"5f5444c6-f493-4ad9-9724-b7fe3669df6a","_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"FlowCanvas.BinderConnection"}],"canvasGroups":[{"name":"If
+    True","rect":{"xMin":141.0,"yMin":137.0,"xMax":903.0,"yMax":439.0}}],"localBlackboard":{"_variables":{}},"derivedData":{"inputDefinitions":[{"_ID":"2aadc420-c095-4012-9c2a-8ece28f1d7e8","_name":"In","_type":"FlowCanvas.Flow"},{"_ID":"3435fb66-4a50-41a4-bd35-96caef9fd1d7","_name":"Boolean","_type":"System.Boolean"}],"outputDefinitions":[{"_ID":"5f5444c6-f493-4ad9-9724-b7fe3669df6a","_name":"Out","_type":"FlowCanvas.Flow"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.26
+    _category: 
+    _comments: 
+    _translation: {x: 121, y: 62}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  inputDefinitions:
+  - _ID: 2aadc420-c095-4012-9c2a-8ece28f1d7e8
+    _name: In
+    _type: FlowCanvas.Flow
+  - _ID: 3435fb66-4a50-41a4-bd35-96caef9fd1d7
+    _name: Boolean
+    _type: System.Boolean
+  outputDefinitions:
+  - _ID: 5f5444c6-f493-4ad9-9724-b7fe3669df6a
+    _name: Out
+    _type: FlowCanvas.Flow
