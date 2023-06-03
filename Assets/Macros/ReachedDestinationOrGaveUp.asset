@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 625114ef92abc6f4d98f906588e93662, type: 3}
+  m_Name: ReachedDestinationOrGaveUp
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"FlowCanvas.Macros.Macro","nodes":[{"_position":{"x":280.0,"y":312.0},"$type":"FlowCanvas.Macros.MacroInputNode","$id":"0"},{"_method":{"_baseInfo":"UnityEngine.AI.NavMeshAgent|get_pathPending|System.Boolean","_paramsInfo":""},"_position":{"x":641.6141,"y":252.4436},"$type":"FlowCanvas.Nodes.ReflectedMethodNodeWrapper","$id":"1"},{"_position":{"x":980.2975,"y":383.7805},"$type":"FlowCanvas.Nodes.SwitchBool","$id":"2"},{"_position":{"x":1288.215,"y":407.0939},"$type":"FlowCanvas.Nodes.SwitchComparison","$id":"3"},{"_position":{"x":1700.822,"y":248.0141},"$type":"FlowCanvas.Nodes.SwitchBool","$id":"4"},{"_position":{"x":1963.802,"y":427.6107},"$type":"FlowCanvas.Nodes.ORMerge","$id":"5"},{"_position":{"x":2196.009,"y":392.0425},"$type":"FlowCanvas.Macros.MacroOutputNode","$id":"6"},{"_method":{"_baseInfo":"UnityEngine.AI.NavMeshAgent|get_remainingDistance|System.Single","_paramsInfo":""},"_position":{"x":576.0283,"y":640.8028},"$type":"FlowCanvas.Nodes.ReflectedMethodNodeWrapper","$id":"7"},{"_method":{"_baseInfo":"UnityEngine.AI.NavMeshAgent|get_stoppingDistance|System.Single","_paramsInfo":""},"_position":{"x":495.0672,"y":893.5711},"$type":"FlowCanvas.Nodes.ReflectedMethodNodeWrapper","$id":"8"},{"_method":{"_baseInfo":"UnityEngine.AI.NavMeshAgent|get_hasPath|System.Boolean","_paramsInfo":""},"_position":{"x":1178.57,"y":274.1763},"$type":"FlowCanvas.Nodes.ReflectedMethodNodeWrapper","$id":"9"},{"_method":{"_baseInfo":"UnityEngine.AI.NavMeshAgent|get_velocity|UnityEngine.Vector3","_paramsInfo":""},"_position":{"x":1099.449,"y":637.5817},"$type":"FlowCanvas.Nodes.ReflectedMethodNodeWrapper","$id":"10"},{"_method":{"_baseInfo":"UnityEngine.Vector3|SqrMagnitude|System.Single","_paramsInfo":"UnityEngine.Vector3"},"_position":{"x":1383.996,"y":644.7108},"$type":"FlowCanvas.Nodes.ReflectedMethodNodeWrapper","$id":"11"},{"_position":{"x":1681.579,"y":571.9293},"$type":"FlowCanvas.Nodes.SwitchComparison","$id":"12"},{"value":{},"_position":{"x":1430.358,"y":811.3913},"$type":"FlowCanvas.Nodes.GetVariable`1[[System.Single,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]","$id":"13"}],"connections":[{"_sourcePortName":"8f0701a6-0765-49f5-a490-173334d4ceda","_targetPortName":"NavMeshAgent","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection`1[[UnityEngine.AI.NavMeshAgent,
+    UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},{"_sourcePortName":"8f0701a6-0765-49f5-a490-173334d4ceda","_targetPortName":"NavMeshAgent","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"7"},"$type":"FlowCanvas.BinderConnection`1[[UnityEngine.AI.NavMeshAgent,
+    UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},{"_sourcePortName":"8f0701a6-0765-49f5-a490-173334d4ceda","_targetPortName":"NavMeshAgent","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"8"},"$type":"FlowCanvas.BinderConnection`1[[UnityEngine.AI.NavMeshAgent,
+    UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},{"_sourcePortName":"8f0701a6-0765-49f5-a490-173334d4ceda","_targetPortName":"NavMeshAgent","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"9"},"$type":"FlowCanvas.BinderConnection`1[[UnityEngine.AI.NavMeshAgent,
+    UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},{"_sourcePortName":"8f0701a6-0765-49f5-a490-173334d4ceda","_targetPortName":"NavMeshAgent","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"10"},"$type":"FlowCanvas.BinderConnection`1[[UnityEngine.AI.NavMeshAgent,
+    UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},{"_sourcePortName":"32ca52f5-56df-4970-97f6-47614ebec046","_targetPortName":"In","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"2"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"Value","_targetPortName":"Condition","_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"FlowCanvas.BinderConnection`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"False","_targetPortName":"In","_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"==","_targetPortName":"In","_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"<","_targetPortName":"In","_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"False","_targetPortName":"0","_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"Out","_targetPortName":"cee590c2-e86e-4563-9ef0-88a1ea5332f0","_sourceNode":{"$ref":"5"},"_targetNode":{"$ref":"6"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"Value","_targetPortName":"A","_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"3"},"$type":"FlowCanvas.BinderConnection`1[[System.IComparable,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"Value","_targetPortName":"B","_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"3"},"$type":"FlowCanvas.BinderConnection`1[[System.IComparable,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"Value","_targetPortName":"Condition","_sourceNode":{"$ref":"9"},"_targetNode":{"$ref":"4"},"$type":"FlowCanvas.BinderConnection`1[[System.Boolean,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"Value","_targetPortName":"vector","_sourceNode":{"$ref":"10"},"_targetNode":{"$ref":"11"},"$type":"FlowCanvas.BinderConnection`1[[UnityEngine.Vector3,
+    UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]"},{"_sourcePortName":"Value","_targetPortName":"A","_sourceNode":{"$ref":"11"},"_targetNode":{"$ref":"12"},"$type":"FlowCanvas.BinderConnection`1[[System.IComparable,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"==","_targetPortName":"1","_sourceNode":{"$ref":"12"},"_targetNode":{"$ref":"5"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"Value","_targetPortName":"B","_sourceNode":{"$ref":"13"},"_targetNode":{"$ref":"12"},"$type":"FlowCanvas.BinderConnection`1[[System.IComparable,
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"inputDefinitions":[{"_ID":"32ca52f5-56df-4970-97f6-47614ebec046","_name":"In","_type":"FlowCanvas.Flow"},{"_ID":"8f0701a6-0765-49f5-a490-173334d4ceda","_name":"NavMeshAgent
+    Input","_type":"UnityEngine.AI.NavMeshAgent"}],"outputDefinitions":[{"_ID":"cee590c2-e86e-4563-9ef0-88a1ea5332f0","_name":"Out","_type":"FlowCanvas.Flow"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.26
+    _category: 
+    _comments: 
+    _translation: {x: -360, y: -217}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  inputDefinitions:
+  - _ID: 32ca52f5-56df-4970-97f6-47614ebec046
+    _name: In
+    _type: FlowCanvas.Flow
+  - _ID: 8f0701a6-0765-49f5-a490-173334d4ceda
+    _name: NavMeshAgent Input
+    _type: UnityEngine.AI.NavMeshAgent
+  outputDefinitions:
+  - _ID: cee590c2-e86e-4563-9ef0-88a1ea5332f0
+    _name: Out
+    _type: FlowCanvas.Flow
