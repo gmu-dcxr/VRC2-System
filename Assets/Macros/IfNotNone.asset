@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: IfNotNone
   m_EditorClassIdentifier: 
   _serializedGraph: '{"type":"FlowCanvas.Macros.Macro","nodes":[{"_position":{"x":233.0,"y":366.0},"$type":"FlowCanvas.Macros.MacroInputNode","$id":"0"},{"_position":{"x":459.0,"y":369.0},"$type":"FlowCanvas.Nodes.SwitchBool","$id":"1"},{"_position":{"x":741.0,"y":359.0},"$type":"FlowCanvas.Macros.MacroOutputNode","$id":"2"}],"connections":[{"_sourcePortName":"0b669711-eae0-4a5a-bcca-39268cb39e09","_targetPortName":"In","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"b3cf2296-4558-4cd5-ac36-ba3ba272ca24","_targetPortName":"Condition","_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"FlowCanvas.BinderConnection`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"True","_targetPortName":"5b3f5b7d-05f4-4b07-8374-b5be965d029e","_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"FlowCanvas.BinderConnection"}],"canvasGroups":[{"name":"If
-    Object Is Not None","rect":{"xMin":140.0,"yMin":300.0,"xMax":914.0,"yMax":531.0}}],"localBlackboard":{"_variables":{}},"derivedData":{"inputDefinitions":[{"_ID":"0b669711-eae0-4a5a-bcca-39268cb39e09","_name":"In","_type":"FlowCanvas.Flow"},{"_ID":"b3cf2296-4558-4cd5-ac36-ba3ba272ca24","_name":"Object","_type":"UnityEngine.Object"}],"outputDefinitions":[{"_ID":"5b3f5b7d-05f4-4b07-8374-b5be965d029e","_name":"Out","_type":"FlowCanvas.Flow"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
+    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},{"_sourcePortName":"True","_targetPortName":"5b3f5b7d-05f4-4b07-8374-b5be965d029e","_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"FlowCanvas.BinderConnection"},{"_sourcePortName":"Then","_targetPortName":"a3b2f87e-49f3-4601-9974-f04fb97b92e3","_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"FlowCanvas.BinderConnection"}],"canvasGroups":[{"name":"If
+    Object Is Not None","rect":{"xMin":140.0,"yMin":300.0,"xMax":914.0,"yMax":531.0}}],"localBlackboard":{"_variables":{}},"derivedData":{"inputDefinitions":[{"_ID":"0b669711-eae0-4a5a-bcca-39268cb39e09","_name":"In","_type":"FlowCanvas.Flow"},{"_ID":"b3cf2296-4558-4cd5-ac36-ba3ba272ca24","_name":"Object","_type":"UnityEngine.Object"}],"outputDefinitions":[{"_ID":"5b3f5b7d-05f4-4b07-8374-b5be965d029e","_name":"Out","_type":"FlowCanvas.Flow"},{"_ID":"a3b2f87e-49f3-4601-9974-f04fb97b92e3","_name":"All","_type":"FlowCanvas.Flow"}],"$type":"FlowCanvas.Macros.Macro+DerivedSerializationData"}}'
   _objectReferences: []
   _graphSource:
     _version: 3.26
@@ -33,4 +33,7 @@ MonoBehaviour:
   outputDefinitions:
   - _ID: 5b3f5b7d-05f4-4b07-8374-b5be965d029e
     _name: Out
+    _type: FlowCanvas.Flow
+  - _ID: a3b2f87e-49f3-4601-9974-f04fb97b92e3
+    _name: All
     _type: FlowCanvas.Flow
