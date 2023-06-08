@@ -125,7 +125,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             if (networkPlayerObject.HasInputAuthority)
             {
                 // attach transform
-                AttachSourceTransforms(networkPlayerObject, src);
+                // AttachSourceTransforms(networkPlayerObject, src);
             }
         }
         else
