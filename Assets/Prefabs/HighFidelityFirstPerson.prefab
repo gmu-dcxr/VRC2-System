@@ -601,8 +601,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 3139896665134504640}
-  - {fileID: 2376178412441548090}
-  - {fileID: 5598483671636925894}
+  - {fileID: 9177878155024393184}
   SimulationBehaviours: []
 --- !u!114 &3139896665134504640
 MonoBehaviour:
@@ -618,7 +617,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   InterpolationSpace: 0
-  InterpolationTarget: {fileID: 0}
+  InterpolationTarget: {fileID: 8664934748552360217}
   InterpolateErrorCorrection: 1
   InterpolatedErrorCorrectionSettings:
     MinRate: 3.3
@@ -1628,7 +1627,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1865041617171919861}
-  - component: {fileID: 5598483671636925894}
+  - component: {fileID: 9177878155024393184}
   m_Layer: 10
   m_Name: Head
   m_TagString: Untagged
@@ -1655,7 +1654,7 @@ Transform:
   m_Father: {fileID: 8761102385846745102}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5598483671636925894
+--- !u!114 &9177878155024393184
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1669,7 +1668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   InterpolationSpace: 0
-  InterpolationTarget: {fileID: 0}
+  InterpolationTarget: {fileID: 1865041617171919861}
   InterpolateErrorCorrection: 1
   InterpolatedErrorCorrectionSettings:
     MinRate: 3.3
@@ -2784,7 +2783,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8664934748552360217}
-  - component: {fileID: 2376178412441548090}
   m_Layer: 10
   m_Name: Root
   m_TagString: Untagged
@@ -2808,34 +2806,6 @@ Transform:
   m_Father: {fileID: 3397304028116846484}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2376178412441548090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4396730396522694000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  InterpolationSpace: 0
-  InterpolationTarget: {fileID: 0}
-  InterpolateErrorCorrection: 1
-  InterpolatedErrorCorrectionSettings:
-    MinRate: 3.3
-    MaxRate: 10
-    PosBlendStart: 0.25
-    PosBlendEnd: 1
-    PosMinCorrection: 0.025
-    PosTeleportDistance: 2
-    RotBlendStart: 0.1
-    RotBlendEnd: 0.5
-    RotTeleportRadians: 1.5
-  UseLegacySharedModeInterpolation: 0
-  TargetInterpolationDelay: 0.03
 --- !u!1 &4493746964974486303
 GameObject:
   m_ObjectHideFlags: 0
