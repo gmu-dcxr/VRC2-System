@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4095217058727992274}
   - component: {fileID: 2051562979943042775}
   - component: {fileID: 3052965317609194006}
+  - component: {fileID: 1623437348178007310}
   m_Layer: 0
   m_Name: t1
   m_TagString: Untagged
@@ -56,6 +57,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 3052965317609194006}
+  - {fileID: 1623437348178007310}
   SimulationBehaviours: []
 --- !u!114 &3052965317609194006
 MonoBehaviour:
@@ -85,6 +87,24 @@ MonoBehaviour:
     RotTeleportRadians: 1.5
   UseLegacySharedModeInterpolation: 0
   TargetInterpolationDelay: 0.03
+--- !u!114 &1623437348178007310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380672577441722499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ecdae415e3086245a7589760a95a9ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  transform: {fileID: 4095217058727992274}
+  source: {fileID: 0}
+  enablePosition: 1
+  enableRotation: 1
+  enableScale: 1
 --- !u!1 &3145532980910740151
 GameObject:
   m_ObjectHideFlags: 0
@@ -96,6 +116,7 @@ GameObject:
   - component: {fileID: 2203834110795582583}
   - component: {fileID: 7132086412924518856}
   - component: {fileID: 4156761668716641675}
+  - component: {fileID: 6055814150006691863}
   m_Layer: 0
   m_Name: t2
   m_TagString: Untagged
@@ -141,6 +162,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 4156761668716641675}
+  - {fileID: 6055814150006691863}
   SimulationBehaviours: []
 --- !u!114 &4156761668716641675
 MonoBehaviour:
@@ -170,6 +192,24 @@ MonoBehaviour:
     RotTeleportRadians: 1.5
   UseLegacySharedModeInterpolation: 0
   TargetInterpolationDelay: 0.03
+--- !u!114 &6055814150006691863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3145532980910740151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ecdae415e3086245a7589760a95a9ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  transform: {fileID: 2203834110795582583}
+  source: {fileID: 0}
+  enablePosition: 1
+  enableRotation: 1
+  enableScale: 1
 --- !u!1 &7538697354687762430
 GameObject:
   m_ObjectHideFlags: 0
