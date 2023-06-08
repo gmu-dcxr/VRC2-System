@@ -21,6 +21,8 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     [Header("Prefab")] public NetworkPrefabRef _playerPrefab;
     public string prefabName;
 
+    public GameObject src;
+
     [Header("Setting")] public bool hideSelf = false;
 
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
@@ -45,6 +47,25 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             StartGame(GameMode.Client);
         }
     }
+    
+        private void AttachSourceTransforms(NetworkObject nwo, GameObject src)
+        {
+            var go = nwo.gameObject;
+            var childCount = go.transform.childCount;
+            for (var i = 0; i < childCount; i++)
+            {
+                var g = go.transform.GetChild(i).gameObject;
+                TransformAttachment ta;
+                if (g.TryGetComponent<TransformAttachment>(out ta))
+                {
+                    if (g.name == src.name)
+                    {
+                        ta.source = src;
+                        Debug.LogWarning($"[WARN]Attached transform for {g.name}");
+                    }
+                }
+            }
+        }
 
     // Update is called once per frame
     void Update()
@@ -103,7 +124,8 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             // p1 side
             if (networkPlayerObject.HasInputAuthority)
             {
-                
+                // attach transform
+                AttachSourceTransforms(networkPlayerObject, src);
             }
         }
         else
