@@ -4,15 +4,6 @@
         <name>Fusion.Runtime</name>
     </assembly>
     <members>
-        <member name="M:Fusion.Allocator.CanAllocSizeAssert_Temp(System.Int32)">
-            <summary>
-            Check size of bytes to be allocated
-            </summary>
-            <param name="size">Number of bytes to be allocated</param>
-            <returns>True if size is valid, false otherwise.</returns>
-            <exception cref="T:Fusion.AssertException">If size is less than 1</exception>
-            <exception cref="T:Fusion.AssertException">If size is bigger than <see cref="P:Fusion.Allocator.Config.BlockByteSize"/></exception>
-        </member>
         <member name="T:Fusion.PageSizes">
             <summary>
             Page Bit Shift Lookup Table
@@ -913,6 +904,11 @@
             </summary>
             <returns>True if the Join Confirmation was received, false otherwise</returns>
         </member>
+        <member name="M:Fusion.CloudServices.Service_UpdateSessionInfo">
+            <summary>
+            Update the <see cref="T:Fusion.SessionInfo"/> data based on the current LBC Information after the peer enters a Room
+            </summary>
+        </member>
         <member name="M:Fusion.CloudServices.Service_SendHostMigrationSnapshots">
             <summary>
             Host Snapshot Update Service
@@ -953,13 +949,12 @@
             Initilize the Log system from the Realtime SDK to use the Fusion Log System
             </summary>
         </member>
-        <member name="M:Fusion.CloudServices.UpdateSessionInfo(Fusion.SessionInfo,Fusion.Photon.Realtime.RoomInfo,System.String)">
+        <member name="M:Fusion.CloudServices.UpdateSessionInfo(Fusion.SessionInfo,Fusion.Photon.Realtime.RoomInfo)">
             <summary>
             Converts a <see cref="T:Fusion.Photon.Realtime.RoomInfo"/> to a <see cref="T:Fusion.SessionInfo"/>
             </summary>
             <param name="sessionInfo"><see cref="T:Fusion.SessionInfo"/> </param>
             <param name="roomInfo"><see cref="T:Fusion.Photon.Realtime.RoomInfo"/> ref</param>
-            <param name="region">Room Region</param>
             <returns><see cref="T:Fusion.SessionInfo"/> ref</returns>
         </member>
         <member name="T:Fusion.CloudServicesMetadata">
@@ -2381,12 +2376,6 @@
         <member name="M:Fusion.NetworkRigidbody.CopyFromBufferToEngine">
             <inheritdoc cref="M:Fusion.NetworkPositionRotation.CopyFromBufferToEngine"/>
         </member>
-        <member name="M:Fusion.NetworkRigidbody.Fusion#IAfterPhysicsSyncTransforms3D#AfterPhysicsSyncTransforms3D">
-            <summary>
-            Implements <see cref="T:Fusion.IAfterPhysicsSyncTransforms3D"/> and copies the rigidbody state from the buffer
-            to the engine if there is a pending copy of this state.
-            </summary>
-        </member>
         <member name="M:Fusion.NetworkRigidbody.CopyFromEngineToBuffer">
             <inheritdoc cref="M:Fusion.NetworkPositionRotation.CopyFromEngineToBuffer"/>
         </member>
@@ -2632,12 +2621,6 @@
         </member>
         <member name="M:Fusion.NetworkRigidbody2D.CopyFromBufferToEngine">
             <inheritdoc cref="M:Fusion.NetworkPositionRotation.CopyFromBufferToEngine"/>
-        </member>
-        <member name="M:Fusion.NetworkRigidbody2D.Fusion#IAfterPhysicsSyncTransforms2D#AfterPhysicsSyncTransforms2D">
-            <summary>
-            Implements <see cref="T:Fusion.IAfterPhysicsSyncTransforms2D"/> and copies the rigidbody state from the buffer
-            to the engine if there is a pending copy of this state.
-            </summary>
         </member>
         <member name="M:Fusion.NetworkRigidbody2D.CopyFromEngineToBuffer">
             <inheritdoc cref="M:Fusion.NetworkPositionRotation.CopyFromEngineToBuffer"/>
@@ -3285,32 +3268,6 @@
             If current interpolation target is considered invalid.
             </summary>
         </member>
-        <member name="F:Fusion.NetworkTransform.InterpolateErrorCorrection">
-            <summary>
-            If the computed prediction error should be smoothly corrected on
-            the <see cref="F:Fusion.NetworkTransform.InterpolationTarget">InterpolationTarget</see> according to
-            the <see cref="F:Fusion.NetworkTransform.InterpolatedErrorCorrectionSettings">InterpolatedErrorCorrectionSettings</see>.
-            </summary>
-        </member>
-        <member name="F:Fusion.NetworkTransform.InterpolatedErrorCorrectionSettings">
-            <summary>
-            A set of parameters to tune the interpolated correction of prediction
-            error to be applied on the <see cref="F:Fusion.NetworkTransform.InterpolationTarget">InterpolationTarget</see>.
-            </summary>
-        </member>
-        <member name="F:Fusion.NetworkTransform.UseLegacySharedModeInterpolation">
-            <summary>
-            If the legacy interpolation algorithm should be used in Shared Mode for this object.
-            </summary>
-        </member>
-        <member name="F:Fusion.NetworkTransform.TargetInterpolationDelay">
-            <summary>
-            In shared mode, how much behind (in seconds) the remote client's interpolated
-            view will try to stay from the latest snapshot available.
-            The smaller the value, the snappier the interpolation will be and the higher
-            the changes of extrapolations and eventual error corrections (interpolated). 
-            </summary>
-        </member>
         <member name="M:Fusion.NetworkTransform.Spawned">
             <summary>
             Overrides <see cref="M:Fusion.NetworkBehaviour.Spawned"/>.
@@ -3381,32 +3338,18 @@
             </summary>
             <param name="nt"></param>
         </member>
-        <member name="F:Fusion.NetworkTransform._legacyIntermittentInterp">
+        <member name="F:Fusion.NetworkTransform.InterpolateErrorCorrection">
             <summary>
-            Cached <see cref="T:Fusion.NetworkTransform.LegacyIntermittentStateInterp"/>.
-            <see cref="F:Fusion.NetworkTransform._currInterpImpl"/> will point to this object if/when it
-            is the interpolation implementation being used.
+            If the computed prediction error should be smoothly corrected on
+            the <see cref="F:Fusion.NetworkTransform.InterpolationTarget">InterpolationTarget</see> according to
+            the <see cref="F:Fusion.NetworkTransform.InterpolatedErrorCorrectionSettings">InterpolatedErrorCorrectionSettings</see>.
             </summary>
         </member>
-        <member name="T:Fusion.NetworkTransform.LegacyIntermittentStateInterp">
+        <member name="F:Fusion.NetworkTransform.InterpolatedErrorCorrectionSettings">
             <summary>
-            Implements interpolation logic between two snapshots that are not
-            consecutive and/or are not consumed with a steady frequency.
-            This is a legacy implementation, check the latest and recommended
-            intermittent interpolation logic on <see cref="T:Fusion.NetworkTransform.IntermittentStateInterp"/>/
+            A set of parameters to tune the interpolated correction of prediction
+            error to be applied on the <see cref="F:Fusion.NetworkTransform.InterpolationTarget">InterpolationTarget</see>.
             </summary>
-        </member>
-        <member name="F:Fusion.NetworkTransform.LegacyIntermittentStateInterp._nt">
-            <summary>
-            <see cref="T:Fusion.NetworkTransform"/> tracked by the implementation logic.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.LegacyIntermittentStateInterp.Reset(Fusion.NetworkTransform)">
-            <summary>
-            Reset must be called to set or reset the tracked <see cref="T:Fusion.NetworkTransform"/>
-            and/or to reset any cached state in the interpolation implementation, like when switching implementation.
-            </summary>
-            <param name="nt"></param>
         </member>
         <member name="F:Fusion.NetworkTransform._smoothErrorCorrectedInterp">
             <summary>
@@ -3437,11 +3380,8 @@
             this property to provide better default values, like the latest known angular velocity of the rigid body. 
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.AfterAllTicks(System.Boolean,System.Int32)">
-            <inheritdoc cref="M:Fusion.NetworkRigidbodyBase.AfterAllTicks(System.Boolean,System.Int32)"/>
-        </member>
-        <member name="M:Fusion.NetworkTransform.CopyBackingFieldsToState(System.Boolean)">
-            <inheritdoc cref="M:Fusion.NetworkRigidbodyBase.CopyBackingFieldsToState(System.Boolean)"/>
+        <member name="M:Fusion.NetworkTransform.CopyFromEngineToBuffer">
+            <inheritdoc cref="M:Fusion.NetworkPositionRotation.CopyFromEngineToBuffer"/>
         </member>
         <member name="M:Fusion.NetworkTransform.TeleportToPosition(UnityEngine.Vector3,System.Nullable{UnityEngine.Vector3},System.Boolean)">
             <summary>
@@ -3651,48 +3591,30 @@
             or backwards (Emulated From based on To state - interpolation).
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.ReadPositionChangedTick">
+        <member name="M:Fusion.NetworkTransform.ReadPositionRotationChanged">
             <summary>
-            Reads from this object's field holding the tick number when the written position value changed.
+            Reads from this object's field holding information about whether the position and/or
+            rotation values changed when written to the buffer.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.ReadPositionChangedTick(System.Int32*)">
+        <member name="M:Fusion.NetworkTransform.ReadPositionRotationChanged(System.Int32*)">
             <summary>
             Reads from the networked data pointer by <paramref name="ptr"/>
-            a field holding the tick number when the written position value changed.
+            a field holding information about whether the position and/or
+            rotation values changed when written to the buffer.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.ReadRotationChangedTick">
+        <member name="M:Fusion.NetworkTransform.ReadPositionRotationChangedTick">
             <summary>
-            Reads from this object's field holding the tick number when the written rotation value changed.
+            Reads from this object's field holding the tick number when
+            the written position and/or rotation values changed.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.ReadRotationChangedTick(System.Int32*)">
-            <summary>
-            Reads from the networked data pointer by <paramref name="ptr"/>
-            a field holding the tick number when the written rotation value changed.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.ReadPositionStoppedChangingTick">
-            <summary>
-            Reads from this object's field holding the tick number when the written position value stopped changing.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.ReadPositionStoppedChangingTick(System.Int32*)">
+        <member name="M:Fusion.NetworkTransform.ReadPositionRotationChangedTick(System.Int32*)">
             <summary>
             Reads from the networked data pointer by <paramref name="ptr"/>
-            a field holding the tick number when the written position value stopped changing.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.ReadRotationStoppedChangingTick">
-            <summary>
-            Reads from this object's field holding the tick number when the written rotation value stopped changing.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.ReadRotationStoppedChangingTick(System.Int32*)">
-            <summary>
-            Reads from the networked data pointer by <paramref name="ptr"/>
-            a field holding the tick number when the written rotation value stopped changing.
+            a field holding the tick number when the written position and/or
+            rotation values changed.
             </summary>
         </member>
         <member name="M:Fusion.NetworkTransform.WriteTeleportInterpolationVelocity(UnityEngine.Vector3)">
@@ -3787,48 +3709,30 @@
             (Emulated From based on To state - interpolation).
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.WritePositionChangedTick(System.Int32)">
+        <member name="M:Fusion.NetworkTransform.WritePositionRotationChanged(System.Boolean,System.Boolean)">
             <summary>
-            Writes to this object's field holding the tick number when the written position value changed.
+            Writes to this object's field holding information about whether the position and/or
+            rotation values changed when written to the buffer.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.WritePositionChangedTick(System.Int32,System.Int32*)">
+        <member name="M:Fusion.NetworkTransform.WritePositionRotationChanged(System.Int32*,System.Boolean,System.Boolean)">
             <summary>
             Writes to the networked data pointer by <paramref name="ptr"/>, on
-            a field holding the tick number when the written position value changed.
+            a field holding information about whether the position and/or
+            rotation values changed when written to the buffer.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.WriteRotationChangedTick(System.Int32)">
+        <member name="M:Fusion.NetworkTransform.WritePositionRotationChangedTick(System.Int32)">
             <summary>
-            Writes to this object's field holding the tick number when the written rotation value changed.
+            Writes to this object's field holding the tick number when
+            the written position and/or rotation values changed.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkTransform.WriteRotationChangedTick(System.Int32,System.Int32*)">
-            <summary>
-            Writes to the networked data pointer by <paramref name="ptr"/>, on
-            a field holding the tick number when the written rotation value changed.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.WritePositionStoppedChangingTick(System.Int32)">
-            <summary>
-            Writes to this object's field holding the tick number when the written position value stopped changing.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.WritePositionStoppedChangingTick(System.Int32,System.Int32*)">
+        <member name="M:Fusion.NetworkTransform.WritePositionRotationChangedTick(System.Int32,System.Int32*)">
             <summary>
             Writes to the networked data pointer by <paramref name="ptr"/>, on
-            a field holding the tick number when the written position value stopped changing.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.WriteRotationStoppedChangingTick(System.Int32)">
-            <summary>
-            Writes to this object's field holding the tick number when the written rotation value stopped changing.
-            </summary>
-        </member>
-        <member name="M:Fusion.NetworkTransform.WriteRotationStoppedChangingTick(System.Int32,System.Int32*)">
-            <summary>
-            Writes to the networked data pointer by <paramref name="ptr"/>, on
-            a field holding the tick number when the written rotation value stopped changing.
+            a field holding the tick number when the written position and/or
+            rotation values changed.
             </summary>
         </member>
         <member name="T:Fusion.NetworkCharacterController">
@@ -4512,46 +4416,6 @@
             </summary>
             <param name="bvh"></param>
         </member>
-        <member name="T:Fusion.LagCompensationUtils.ContactData">
-            <summary>
-            Details regarding a shape intersection.
-            It does not carry information about the intersection happening or not.
-            </summary>
-        </member>
-        <member name="F:Fusion.LagCompensationUtils.ContactData.Point">
-            <summary>
-            Contact point.
-            </summary>
-        </member>
-        <member name="F:Fusion.LagCompensationUtils.ContactData.Normal">
-            <summary>
-            Vector that described the plane of smallest penetration between the shapes.
-            </summary>
-        </member>
-        <member name="F:Fusion.LagCompensationUtils.ContactData.Penetration">
-            <summary>
-            Penetration along the normal plane.
-            </summary>
-        </member>
-        <member name="M:Fusion.LagCompensationUtils.LocalAABBSphereIntersection(UnityEngine.Vector3,UnityEngine.Vector3,System.Single)">
-            <summary>
-            Checks if a sphere in the local space of an AABB intersects with it.
-            </summary>
-            <param name="aabbExtents">The extents of the AABB in the positive direction of each axis.</param>
-            <param name="sphereCenter">The center of the sphere in the local space of the AABB.</param>
-            <param name="sphereRadius">The radius of the sphere.</param>
-            <returns>True if there is intersection. False otherwise.</returns>
-        </member>
-        <member name="M:Fusion.LagCompensationUtils.LocalAABBSphereContact(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,Fusion.LagCompensationUtils.ContactData@)">
-            <summary>
-            Checks if a sphere in the local space of an AABB intersects with it and outputs contact data (also in local space).
-            </summary>
-            <param name="aabbExtents">The extents of the AABB in the positive direction of each axis.</param>
-            <param name="sphereCenter">The center of the sphere in the local space of the AABB.</param>
-            <param name="sphereRadius">The radius of the sphere.</param>
-            <param name="contact"><see cref="T:Fusion.LagCompensationUtils.ContactData">Contact data</see> in the local space of the AABB. Default if there is no intersection.</param>
-            <returns>True if there is intersection. False otherwise.</returns>
-        </member>
         <member name="T:Fusion.Hitbox">
             <summary>
             Represents a single lag-compensated collider.
@@ -5016,7 +4880,7 @@
             <param name="player">Player who "owns" this overlap. Used by the server to find the exact hitbox snapshots to check against.</param>
             <param name="position">Will be filled with the hitbox position at the time of the tick</param>
             <param name="rotation">Will be filled with the hitbox rotation at the time of the tick</param>
-            <param name="subtickAccuracy">If the query should interpolate between ticks to reflect exactly what was seen on the client.</param>
+            <param name="subTickAccuracy">If the query should interpolate between ticks to reflect exactly what was seen on the client.</param>
         </member>
         <member name="M:Fusion.HitboxManager.FixedUpdateNetwork">
             <summary>
@@ -5604,16 +5468,6 @@
             Sets the array value at the supplied index.
             </summary>
         </member>
-        <member name="M:Fusion.NetworkArray`1.GetRef(System.Int32)">
-            <summary>
-            This method is exposed with an extension method to filter
-            types to unmanaged ones only. This is not exhaustive,
-            as wrapped types are likely to pass this.
-            </summary>
-            <param name="index"></param>
-            <returns></returns>
-            <exception cref="T:System.IndexOutOfRangeException"></exception>
-        </member>
         <member name="M:Fusion.NetworkArray`1.ToArray">
             <summary>
             Allocates a new array and copies values from this array. For a non-alloc alternative use <see cref="M:Fusion.NetworkArray`1.CopyTo(System.Collections.Generic.List{`0})"/>.
@@ -6190,17 +6044,7 @@
         </member>
         <member name="P:Fusion.NetworkObject.IsSceneObject">
             <summary>
-            Returns true if this network entity existed as part of a scene, rather than having been dynamically spawned.
-            </summary>
-        </member>
-        <member name="P:Fusion.NetworkObject.IsSpawnedPrefabRoot">
-            <summary>
-            Returns true if this network entity is a spawned prefab's root, rather than being a scene object or a nested prefab object.
-            </summary>
-        </member>
-        <member name="P:Fusion.NetworkObject.IsSpawnedPrefabNestedObject">
-            <summary>
-            Returns true if this network entity is a spawned prefab's nested object, rather than being a scene object or a root prefab object.
+            Returns if this network entity existed as part of a scene, rather than having been dynamically spawned.
             </summary>
         </member>
         <member name="P:Fusion.NetworkObject.IsValid">
@@ -8194,14 +8038,6 @@
             Default: true
             </summary>
         </member>
-        <member name="F:Fusion.StartGameArgs.MatchmakingMode">
-            <summary>
-            Session Join Matchmaking Mode when joining a Session.
-            For more information, check <see cref="T:Fusion.Photon.Realtime.MatchmakingMode"/>
-            
-            Default: <see cref="F:Fusion.Photon.Realtime.MatchmakingMode.FillRoom"/>
-            </summary>
-        </member>
         <member name="F:Fusion.StartGameArgs.CustomLobbyName">
             <summary>
             Session Custom Lobby to be published in
@@ -8423,6 +8259,21 @@
             </summary>
             <returns>Formatted <see cref="T:Fusion.SessionInfo"/></returns>
         </member>
+        <member name="F:Fusion.SessionInfo.SessionUpdateState.DONE">
+            <summary>
+            Session is ready to be used
+            </summary>
+        </member>
+        <member name="F:Fusion.SessionInfo.SessionUpdateState.WAIT_FOR_UPDATE">
+            <summary>
+            There is a pending refresh to be done
+            </summary>
+        </member>
+        <member name="F:Fusion.SessionInfo.SessionUpdateState.TRIGGER_UPDATE">
+            <summary>
+            Signal the Session data must be updated
+            </summary>
+        </member>
         <member name="T:Fusion.StartGameResult">
             <summary>
             Represents the result of starting the Fusion Simulation
@@ -8436,12 +8287,6 @@
         <member name="P:Fusion.StartGameResult.ShutdownReason">
             <summary>
             Start Game Shutdown Reason
-            </summary>
-        </member>
-        <member name="P:Fusion.StartGameResult.ErrorMessage">
-            <summary>
-            Custom Error Message filled with data about the Shutdown.
-            Usually used to store custom data when the StartGame fails.
             </summary>
         </member>
         <member name="M:Fusion.StartGameResult.ToString">
@@ -8921,13 +8766,6 @@
             </summary>
             <param name="dt">Delta Time used to forward the simulation</param>
             <returns>How many Ticks executed on this Update</returns>
-        </member>
-        <member name="M:Fusion.Simulation.SendMessageInternal(Fusion.SimulationMessage*,Fusion.Sockets.NetConnection*)">
-            <summary>
-            Enqueue a <see cref="T:Fusion.SimulationMessage"/> on the Out Message List for a specific <see cref="T:Fusion.Sockets.NetConnection"/>
-            </summary>
-            <param name="message">Message to enqueue</param>
-            <param name="netConnection">Target Connection</param>
         </member>
         <member name="M:Fusion.Simulation.Server.Disconnect(Fusion.Sockets.NetAddress)">
             <summary>
@@ -9412,24 +9250,6 @@
             <summary>
             
             </summary>
-        </member>
-        <member name="F:Fusion.SimulationMessage.Capacity">
-            <summary>
-            Capacity in Bits of this <see cref="T:Fusion.SimulationMessage"/>
-            </summary>
-        </member>
-        <member name="F:Fusion.SimulationMessage.Offset">
-            <summary>
-            Current offset in Bits
-            </summary>
-        </member>
-        <member name="M:Fusion.SimulationMessage.Allocate(Fusion.Simulation,System.Int32)">
-            <summary>
-            Allocate a new <see cref="T:Fusion.SimulationMessage"/>
-            </summary>
-            <param name="sim">Simulation to get the Memory from</param>
-            <param name="capacityInBytes">Size in bytes of the new <see cref="T:Fusion.SimulationMessage"/></param>
-            <returns></returns>
         </member>
         <member name="T:Fusion.SimulationModes">
             <summary>
