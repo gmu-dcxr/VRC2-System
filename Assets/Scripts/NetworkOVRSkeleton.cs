@@ -79,7 +79,7 @@ namespace VRC2
 
         protected override void Update()
         {
-            if (!_networkObject.HasInputAuthority)
+            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
             {
                 UpdateNetworkSkeleton();
             }
