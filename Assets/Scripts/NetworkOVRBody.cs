@@ -142,9 +142,12 @@ namespace VRC2
 
         private void Awake()
         {
-            _onPermissionGranted = OnPermissionGranted;
-
             _networkObject = gameObject.GetComponent<NetworkObject>();
+
+            if (!_networkObject.IsValid || (_networkObject.IsValid && _networkObject.HasInputAuthority))
+            {
+                _onPermissionGranted = OnPermissionGranted;
+            }
         }
 
         private void Start()
