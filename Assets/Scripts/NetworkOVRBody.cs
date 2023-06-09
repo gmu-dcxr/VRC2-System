@@ -143,8 +143,17 @@ namespace VRC2
             _onPermissionGranted = OnPermissionGranted;
         }
 
-        private void OnEnable()
+        private void Start()
         {
+            if (!Object.HasInputAuthority)
+            {
+                Debug.LogWarning("Reset Body Tracking");
+                if (!enabled) enabled = true;
+                if (!_hasData) _hasData = true;
+                if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
+                return;
+            }
+
             _trackingInstanceCount++;
             _dataChangedSinceLastQuery = false;
             _hasData = false;
@@ -211,14 +220,7 @@ namespace VRC2
 
         private void GetBodyState(OVRPlugin.Step step)
         {
-            if (!Object.HasInputAuthority)
-            {
-                Debug.LogWarning("Reset Body Tracking");
-                if (!enabled) enabled = true;
-                if (!_hasData) _hasData = true;
-                if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
-                return;
-            }
+            if (!Object.HasInputAuthority) return;
 
             if (OVRPlugin.GetBodyState(step, ref _bodyState))
             {
