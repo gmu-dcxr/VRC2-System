@@ -133,6 +133,8 @@ namespace VRC2
         // RPC decoded skeletonposedata
         private OVRSkeleton.SkeletonPoseData _RPCDecodedSkeletonPoseData;
 
+        private NetworkObject _networkObject;
+
         /// <summary>
         /// The raw <see cref="BodyState"/> data used to populate the <see cref="OVRSkeleton"/>.
         /// </summary>
@@ -141,19 +143,12 @@ namespace VRC2
         private void Awake()
         {
             _onPermissionGranted = OnPermissionGranted;
+
+            _networkObject = gameObject.GetComponent<NetworkObject>();
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            if (!Object.HasInputAuthority)
-            {
-                Debug.LogWarning("Reset Body Tracking");
-                if (!enabled) enabled = true;
-                if (!_hasData) _hasData = true;
-                if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
-                return;
-            }
-
             _trackingInstanceCount++;
             _dataChangedSinceLastQuery = false;
             _hasData = false;
@@ -220,7 +215,14 @@ namespace VRC2
 
         private void GetBodyState(OVRPlugin.Step step)
         {
-            if (!Object.HasInputAuthority) return;
+            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
+            {
+                Debug.LogWarning("Reset Body Tracking");
+                if (!enabled) enabled = true;
+                if (!_hasData) _hasData = true;
+                if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
+                return;
+            }
 
             if (OVRPlugin.GetBodyState(step, ref _bodyState))
             {
@@ -238,7 +240,7 @@ namespace VRC2
 
         OVRSkeleton.SkeletonPoseData OVRSkeleton.IOVRSkeletonDataProvider.GetSkeletonPoseData()
         {
-            if (Object.HasInputAuthority)
+            if (!_networkObject.IsValid || _networkObject.HasInputAuthority)
             {
                 if (!_hasData) return default;
 
@@ -279,22 +281,25 @@ namespace VRC2
                 SkeletonPoseData.SetRootPose(ref _networkRootPose,
                     _bodyState.JointLocations[(int)OVRPlugin.BoneId.Body_Root].Pose);
 
-                _networkSkeletonPoseData = new SkeletonPoseData()
+                if (_networkObject.IsValid && _networkObject.HasInputAuthority)
                 {
-                    IsDataValid = true,
-                    IsDataHighConfidence = _bodyState.Confidence > .5f,
-                    RootPose = _networkRootPose,
-                    RootScale = 1.0f,
-                    BoneRotations = _networkBoneRotations,
-                    BoneTranslations = _networkBoneTranslations,
-                    SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
-                };
+                    _networkSkeletonPoseData = new SkeletonPoseData()
+                    {
+                        IsDataValid = true,
+                        IsDataHighConfidence = _bodyState.Confidence > .5f,
+                        RootPose = _networkRootPose,
+                        RootScale = 1.0f,
+                        BoneRotations = _networkBoneRotations,
+                        BoneTranslations = _networkBoneTranslations,
+                        SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
+                    };
 
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    Serializer.Serialize(stream, _networkSkeletonPoseData);
-                    var bytes = stream.ToArray();
-                    RPC_SendSkeletonPoseData(bytes);
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        Serializer.Serialize(stream, _networkSkeletonPoseData);
+                        var bytes = stream.ToArray();
+                        RPC_SendSkeletonPoseData(bytes);
+                    }   
                 }
 
                 // render locally
