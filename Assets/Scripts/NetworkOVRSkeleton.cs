@@ -25,13 +25,13 @@ namespace VRC2
 
         private IOVRSkeletonDataProvider _dataProvider;
 
-        [SerializeField] private bool _updateRootPose = false;
+        [SerializeField, HideInInspector] private bool _updateRootPose = false;
 
-        [SerializeField] private bool _updateRootScale = false;
+        [SerializeField, HideInInspector] private bool _updateRootScale = false;
 
-        [SerializeField] private bool _enablePhysicsCapsules = false;
+        [SerializeField, HideInInspector] private bool _enablePhysicsCapsules = false;
 
-        [SerializeField] private bool _applyBoneTranslations = true;
+        [SerializeField, HideInInspector] private bool _applyBoneTranslations = true;
 
         private GameObject _bonesGO;
         private GameObject _bindPosesGO;
