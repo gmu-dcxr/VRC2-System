@@ -140,11 +140,15 @@ namespace VRC2
 
         private void Awake()
         {
+            if (!Object.HasInputAuthority) return;
+
             _onPermissionGranted = OnPermissionGranted;
         }
 
         private void OnEnable()
         {
+            if (!Object.HasInputAuthority) return;
+
             _trackingInstanceCount++;
             _dataChangedSinceLastQuery = false;
             _hasData = false;
@@ -196,6 +200,8 @@ namespace VRC2
 
         private void OnDisable()
         {
+            if (!Object.HasInputAuthority) return;
+
             if (--_trackingInstanceCount == 0)
             {
                 OVRPlugin.StopBodyTracking();
@@ -204,6 +210,8 @@ namespace VRC2
 
         private void OnDestroy()
         {
+            if (!Object.HasInputAuthority) return;
+
             OVRPermissionsRequester.PermissionGranted -= _onPermissionGranted;
         }
 
@@ -211,6 +219,13 @@ namespace VRC2
 
         private void GetBodyState(OVRPlugin.Step step)
         {
+            if (!Object.HasInputAuthority)
+            {
+                _hasData = true;
+                _dataChangedSinceLastQuery = true;
+                return;
+            }
+
             if (OVRPlugin.GetBodyState(step, ref _bodyState))
             {
                 _hasData = true;
