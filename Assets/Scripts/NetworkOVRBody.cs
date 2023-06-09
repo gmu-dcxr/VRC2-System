@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using ProtoBuf;
 using UnityEngine;
 
@@ -242,6 +243,16 @@ namespace VRC2
                 BoneTranslations = _networkBoneTranslations,
                 SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
             };
+            
+            // debug
+            
+            using (MemoryStream stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, _networkSkeletonPoseData);
+                var bytes = stream.ToArray();
+                
+                Debug.LogWarning($"Serialized size: {bytes.Length}");
+            }
 
             return new OVRSkeleton.SkeletonPoseData
             {
