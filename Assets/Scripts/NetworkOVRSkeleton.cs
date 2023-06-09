@@ -75,15 +75,18 @@ namespace VRC2
                     Debug.LogError("Failed to locate network object");
                 }
             }
+
+            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
+            {
+                // initialize first
+                base.Start();
+            }
         }
 
         protected override void Update()
         {
             if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
             {
-                // initialize first
-                base.Start();
-
                 UpdateNetworkSkeleton();
             }
             else
