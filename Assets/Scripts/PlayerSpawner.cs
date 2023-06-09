@@ -47,25 +47,25 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             StartGame(GameMode.Client);
         }
     }
-    
-        private void AttachSourceTransforms(NetworkObject nwo, GameObject src)
+
+    private void AttachSourceTransforms(NetworkObject nwo, GameObject src)
+    {
+        var go = nwo.gameObject;
+        var childCount = go.transform.childCount;
+        for (var i = 0; i < childCount; i++)
         {
-            var go = nwo.gameObject;
-            var childCount = go.transform.childCount;
-            for (var i = 0; i < childCount; i++)
+            var g = go.transform.GetChild(i).gameObject;
+            TransformAttachment ta;
+            if (g.TryGetComponent<TransformAttachment>(out ta))
             {
-                var g = go.transform.GetChild(i).gameObject;
-                TransformAttachment ta;
-                if (g.TryGetComponent<TransformAttachment>(out ta))
+                if (g.name == src.name)
                 {
-                    if (g.name == src.name)
-                    {
-                        ta.source = src;
-                        Debug.LogWarning($"[WARN]Attached transform for {g.name}");
-                    }
+                    ta.source = src;
+                    Debug.LogWarning($"[WARN]Attached transform for {g.name}");
                 }
             }
         }
+    }
 
     // Update is called once per frame
     void Update()
@@ -116,7 +116,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             isServer = true;
             // Create a unique position for the player
             // Vector3 spawnPosition =
-                // new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
+            // new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, player);
             // Keep track of the player avatars so we can remove it when they disconnect
             _spawnedCharacters.Add(player, networkPlayerObject);

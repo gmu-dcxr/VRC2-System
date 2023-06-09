@@ -50,15 +50,15 @@ namespace VRC2
     }
 
     /// <summary>
-    /// Extensions class for the editor methods of <see cref="NetworkOVRSkeleton"/>.
+    /// Extensions class for the editor methods of <see cref="OVRCustomSkeleton"/>.
     /// </summary>
     public static class NetworkOVRSkeletonEditorExtensions
     {
         /// <summary>
         /// This method tries to retarget the skeleton structure present in the current <see cref="GameObject"/> to the one supported by the body tracking system.
         /// </summary>
-        /// <param name="customSkeleton" cref="NetworkOVRSkeleton">The custom skeleton to run this method on</param>
-        /// <param name="type" cref="NetworkOVRSkeleton.RetargetingType">The skeleton structure to auto map from</param>
+        /// <param name="customSkeleton" cref="OVRCustomSkeleton">The custom skeleton to run this method on</param>
+        /// <param name="type" cref="OVRCustomSkeleton.RetargetingType">The skeleton structure to auto map from</param>
         public static void AutoMapBones(this NetworkOVRSkeleton customSkeleton, NetworkOVRSkeleton.RetargetingType type)
         {
             try
@@ -111,7 +111,7 @@ namespace VRC2
             }
         }
 
-        internal static bool ClearBonesMapping(this NetworkOVRSkeleton skeleton)
+        internal static bool ClearBonesMapping(this OVRCustomSkeleton skeleton)
         {
             var start = skeleton.GetCurrentStartBoneId();
             var end = skeleton.GetCurrentEndBoneId();
