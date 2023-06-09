@@ -149,6 +149,15 @@ namespace VRC2
 
         private void OnEnable()
         {
+            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
+            {
+                Debug.LogWarning("Override NetworkOVRBody OnEnable");
+                if (!enabled) enabled = true;
+                if (!_hasData) _hasData = true;
+                if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
+                return;
+            }
+            
             _trackingInstanceCount++;
             _dataChangedSinceLastQuery = false;
             _hasData = false;
@@ -217,7 +226,7 @@ namespace VRC2
         {
             if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
             {
-                Debug.LogWarning("Reset Body Tracking");
+                Debug.LogWarning("Override NetworkOVRBody GetBodyState");
                 if (!enabled) enabled = true;
                 if (!_hasData) _hasData = true;
                 if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
