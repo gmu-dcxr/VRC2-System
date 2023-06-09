@@ -75,10 +75,13 @@ namespace VRC2
                     Debug.LogError("Failed to locate network object");
                 }
             }
-
-            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
+        }
+        
+        protected override void Start()
+        {
+            if (_networkObject.IsValid && _networkObject.HasInputAuthority)
             {
-                // initialize first
+                // local end
                 base.Start();
             }
         }
@@ -87,10 +90,14 @@ namespace VRC2
         {
             if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
             {
+                // networked end
+                base.Start();
+                
                 UpdateNetworkSkeleton();
             }
             else
             {
+                // local end
                 base.UpdateSkeleton();
             }
         }
