@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using ProtoBuf;
 using UnityEngine;
+using Fusion;
 
 namespace VRC2
 {
-
     [ProtoContract]
     public struct Quatf
     {
@@ -58,7 +58,30 @@ namespace VRC2
             pose.Orientation.w = q.w;
         }
 
+        public static void RestoreRootPose(ref OVRPlugin.Posef pose, Posef src)
+        {
+            var p = src.Position;
+            var q = src.Orientation;
+
+            pose.Position.x = p.x;
+            pose.Position.y = p.y;
+            pose.Position.z = p.z;
+
+            pose.Orientation.x = q.x;
+            pose.Orientation.y = q.y;
+            pose.Orientation.z = q.z;
+            pose.Orientation.w = q.w;
+        }
+
         public static void SetBoneRotation(ref Quatf[] quatf, OVRPlugin.Quatf src, int idx)
+        {
+            quatf[idx].x = src.x;
+            quatf[idx].y = src.y;
+            quatf[idx].z = src.z;
+            quatf[idx].w = src.w;
+        }
+
+        public static void RestoreBoneRotation(ref OVRPlugin.Quatf[] quatf, Quatf src, int idx)
         {
             quatf[idx].x = src.x;
             quatf[idx].y = src.y;
@@ -72,9 +95,16 @@ namespace VRC2
             vector3f[idx].y = src.y;
             vector3f[idx].z = src.z;
         }
+
+        public static void RestoreBoneTranslation(ref OVRPlugin.Vector3f[] vector3f, Vector3f src, int idx)
+        {
+            vector3f[idx].x = src.x;
+            vector3f[idx].y = src.y;
+            vector3f[idx].z = src.z;
+        }
     }
 
-    public class NetworkOVRBody : MonoBehaviour,
+    public class NetworkOVRBody : NetworkBehaviour,
         OVRSkeleton.IOVRSkeletonDataProvider,
         OVRSkeletonRenderer.IOVRSkeletonRendererDataProvider
     {
@@ -99,6 +129,9 @@ namespace VRC2
         private Quatf[] _networkBoneRotations;
         private Vector3f[] _networkBoneTranslations;
         private Posef _networkRootPose;
+
+        // RPC decoded skeletonposedata
+        private OVRSkeleton.SkeletonPoseData _RPCDecodedSkeletonPoseData;
 
         /// <summary>
         /// The raw <see cref="BodyState"/> data used to populate the <see cref="OVRSkeleton"/>.
@@ -194,76 +227,81 @@ namespace VRC2
 
         OVRSkeleton.SkeletonPoseData OVRSkeleton.IOVRSkeletonDataProvider.GetSkeletonPoseData()
         {
-            if (!_hasData) return default;
-
-            if (_dataChangedSinceLastQuery)
+            if (Object.HasInputAuthority)
             {
-                // Make sure arrays have been allocated
-                Array.Resize(ref _boneRotations, _bodyState.JointLocations.Length);
-                Array.Resize(ref _boneTranslations, _bodyState.JointLocations.Length);
+                if (!_hasData) return default;
 
-                Array.Resize(ref _networkBoneRotations, _bodyState.JointLocations.Length);
-                Array.Resize(ref _networkBoneTranslations, _bodyState.JointLocations.Length);
-
-
-                // Copy joint poses into bone arrays
-                for (var i = 0; i < _bodyState.JointLocations.Length; i++)
+                if (_dataChangedSinceLastQuery)
                 {
-                    var jointLocation = _bodyState.JointLocations[i];
-                    if (jointLocation.OrientationValid)
-                    {
-                        var orientation = jointLocation.Pose.Orientation;
-                        _boneRotations[i] = orientation;
+                    // Make sure arrays have been allocated
+                    Array.Resize(ref _boneRotations, _bodyState.JointLocations.Length);
+                    Array.Resize(ref _boneTranslations, _bodyState.JointLocations.Length);
 
-                        SkeletonPoseData.SetBoneRotation(ref _networkBoneRotations, orientation, i);
+                    Array.Resize(ref _networkBoneRotations, _bodyState.JointLocations.Length);
+                    Array.Resize(ref _networkBoneTranslations, _bodyState.JointLocations.Length);
+
+
+                    // Copy joint poses into bone arrays
+                    for (var i = 0; i < _bodyState.JointLocations.Length; i++)
+                    {
+                        var jointLocation = _bodyState.JointLocations[i];
+                        if (jointLocation.OrientationValid)
+                        {
+                            var orientation = jointLocation.Pose.Orientation;
+                            _boneRotations[i] = orientation;
+
+                            SkeletonPoseData.SetBoneRotation(ref _networkBoneRotations, orientation, i);
+                        }
+
+                        if (jointLocation.PositionValid)
+                        {
+                            var position = jointLocation.Pose.Position;
+                            _boneTranslations[i] = position;
+
+                            SkeletonPoseData.SetBoneTranslation(ref _networkBoneTranslations, position, i);
+                        }
                     }
 
-                    if (jointLocation.PositionValid)
-                    {
-                        var position = jointLocation.Pose.Position;
-                        _boneTranslations[i] = position;
-
-                        SkeletonPoseData.SetBoneTranslation(ref _networkBoneTranslations, position, i);
-                    }
+                    _dataChangedSinceLastQuery = false;
                 }
 
-                _dataChangedSinceLastQuery = false;
+                SkeletonPoseData.SetRootPose(ref _networkRootPose,
+                    _bodyState.JointLocations[(int)OVRPlugin.BoneId.Body_Root].Pose);
+
+                _networkSkeletonPoseData = new SkeletonPoseData()
+                {
+                    IsDataValid = true,
+                    IsDataHighConfidence = _bodyState.Confidence > .5f,
+                    RootPose = _networkRootPose,
+                    RootScale = 1.0f,
+                    BoneRotations = _networkBoneRotations,
+                    BoneTranslations = _networkBoneTranslations,
+                    SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
+                };
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    Serializer.Serialize(stream, _networkSkeletonPoseData);
+                    var bytes = stream.ToArray();
+                    RPC_SendSkeletonPoseData(bytes);
+                }
+
+                // render locally
+                return new OVRSkeleton.SkeletonPoseData
+                {
+                    IsDataValid = true,
+                    IsDataHighConfidence = _bodyState.Confidence > .5f,
+                    RootPose = _bodyState.JointLocations[(int)OVRPlugin.BoneId.Body_Root].Pose,
+                    RootScale = 1.0f,
+                    BoneRotations = _boneRotations,
+                    BoneTranslations = _boneTranslations,
+                    SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
+                };
             }
-
-            SkeletonPoseData.SetRootPose(ref _networkRootPose,
-                _bodyState.JointLocations[(int)OVRPlugin.BoneId.Body_Root].Pose);
-
-            _networkSkeletonPoseData = new SkeletonPoseData()
+            else
             {
-                IsDataValid = true,
-                IsDataHighConfidence = _bodyState.Confidence > .5f,
-                RootPose = _networkRootPose,
-                RootScale = 1.0f,
-                BoneRotations = _networkBoneRotations,
-                BoneTranslations = _networkBoneTranslations,
-                SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
-            };
-            
-            // debug
-            
-            using (MemoryStream stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, _networkSkeletonPoseData);
-                var bytes = stream.ToArray();
-                
-                Debug.LogWarning($"Serialized size: {bytes.Length}");
+                return _RPCDecodedSkeletonPoseData;
             }
-
-            return new OVRSkeleton.SkeletonPoseData
-            {
-                IsDataValid = true,
-                IsDataHighConfidence = _bodyState.Confidence > .5f,
-                RootPose = _bodyState.JointLocations[(int)OVRPlugin.BoneId.Body_Root].Pose,
-                RootScale = 1.0f,
-                BoneRotations = _boneRotations,
-                BoneTranslations = _boneTranslations,
-                SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
-            };
         }
 
         OVRSkeletonRenderer.SkeletonRendererData
@@ -276,5 +314,66 @@ namespace VRC2
                 ShouldUseSystemGestureMaterial = false,
             }
             : default;
+
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+        public void RPC_SendSkeletonPoseData(byte[] bytes, RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+            {
+                message = $"Send data of length: {bytes.Length}";
+            }
+            else
+            {
+                message = $"Recv data of length: {bytes.Length}\n";
+                // decode
+                var data = DecodeSkeletonPoseData(bytes);
+                // covert
+                _RPCDecodedSkeletonPoseData = ConvertSkeletonPoseData(data);
+            }
+
+            Debug.LogWarning(message);
+        }
+
+        public SkeletonPoseData DecodeSkeletonPoseData(byte[] bytes)
+        {
+            using (MemoryStream stream = new MemoryStream(bytes))
+            {
+                var data = (SkeletonPoseData)Serializer.Deserialize<SkeletonPoseData>(stream);
+                return data;
+            }
+        }
+
+        public OVRSkeleton.SkeletonPoseData ConvertSkeletonPoseData(SkeletonPoseData data)
+        {
+            Array.Resize(ref _boneRotations, data.BoneRotations.Length);
+            Array.Resize(ref _boneTranslations, data.BoneRotations.Length);
+
+            // Copy joint poses into bone arrays
+            for (var i = 0; i < data.BoneRotations.Length; i++)
+            {
+                var rotation = data.BoneRotations[i];
+                SkeletonPoseData.RestoreBoneRotation(ref _boneRotations, rotation, i);
+
+                var position = data.BoneTranslations[i];
+                SkeletonPoseData.RestoreBoneTranslation(ref _boneTranslations, position, i);
+            }
+
+            var rootPose = new OVRPlugin.Posef();
+            SkeletonPoseData.RestoreRootPose(ref rootPose, data.RootPose);
+
+            return new OVRSkeleton.SkeletonPoseData
+            {
+                IsDataValid = data.IsDataValid,
+                IsDataHighConfidence = data.IsDataHighConfidence,
+                RootPose = rootPose,
+                RootScale = data.RootScale,
+                BoneRotations = _boneRotations,
+                BoneTranslations = _boneTranslations,
+                SkeletonChangedCount = data.SkeletonChangedCount,
+            };
+        }
     }
 }
