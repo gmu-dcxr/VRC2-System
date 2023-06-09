@@ -147,6 +147,11 @@ namespace VRC2
             _networkObject = gameObject.GetComponent<NetworkObject>();
         }
 
+        private void Start()
+        {
+            OnEnable();
+        }
+
         private void OnEnable()
         {
             if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
@@ -226,7 +231,6 @@ namespace VRC2
         {
             if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
             {
-                Debug.LogWarning("Override NetworkOVRBody GetBodyState");
                 if (!enabled) enabled = true;
                 if (!_hasData) _hasData = true;
                 if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
