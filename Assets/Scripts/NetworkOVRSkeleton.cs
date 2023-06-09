@@ -81,6 +81,9 @@ namespace VRC2
         {
             if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
             {
+                // initialize first
+                base.Start();
+
                 UpdateNetworkSkeleton();
             }
             else
