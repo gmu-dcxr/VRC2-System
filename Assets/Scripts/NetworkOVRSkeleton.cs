@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using Assert = UnityEngine.Assertions.Assert;
 
 namespace VRC2
 {
@@ -40,7 +41,7 @@ namespace VRC2
         protected List<OVRBone> _bones;
         private List<OVRBone> _bindPoses;
         private List<OVRBoneCapsule> _capsules;
-        
+
         public bool IsInitialized { get; private set; }
 
         public IList<OVRBone> Bones { get; protected set; }
@@ -77,6 +78,16 @@ namespace VRC2
         protected override void Awake()
         {
             base.Awake();
+
+
+            _bones = new List<OVRBone>();
+            Bones = _bones.AsReadOnly();
+
+            _bindPoses = new List<OVRBone>();
+            BindPoses = _bindPoses.AsReadOnly();
+
+            _capsules = new List<OVRBoneCapsule>();
+            Capsules = _capsules.AsReadOnly();
 
             // rewrite dataProvider
             _dataProvider = gameObject.GetComponent<IOVRSkeletonDataProvider>();
@@ -204,7 +215,62 @@ namespace VRC2
 
         protected override void InitializeBones()
         {
-            base.InitializeBones();
+            bool flipX = IsHandSkeleton(_skeletonType);
+
+            if (!_bonesGO)
+            {
+                _bonesGO = new GameObject("Bones");
+                _bonesGO.transform.SetParent(transform, false);
+                _bonesGO.transform.localPosition = Vector3.zero;
+                _bonesGO.transform.localRotation = Quaternion.identity;
+            }
+
+            if (_bones == null || _bones.Count != _skeleton.NumBones)
+            {
+                _bones = new List<OVRBone>(new OVRBone[_skeleton.NumBones]);
+                Bones = _bones.AsReadOnly();
+            }
+
+            // pre-populate bones list before attempting to apply bone hierarchy
+            for (int i = 0; i < _bones.Count; ++i)
+            {
+                OVRBone bone = _bones[i] ?? (_bones[i] = new OVRBone());
+                bone.Id = (OVRSkeleton.BoneId)_skeleton.Bones[i].Id;
+                bone.ParentBoneIndex = _skeleton.Bones[i].ParentBoneIndex;
+                Assert.IsTrue((int)bone.Id >= 0 && bone.Id <= BoneId.Max);
+
+                bone.Transform = GetBoneTransform(bone.Id);
+                if (bone.Transform == null)
+                {
+                    bone.Transform = new GameObject(BoneLabelFromBoneId(_skeletonType, bone.Id)).transform;
+                }
+
+                var pose = _skeleton.Bones[i].Pose;
+
+                if (_applyBoneTranslations)
+                {
+                    bone.Transform.localPosition = flipX
+                        ? pose.Position.FromFlippedXVector3f()
+                        : pose.Position.FromFlippedZVector3f();
+                }
+
+                bone.Transform.localRotation = flipX
+                    ? pose.Orientation.FromFlippedXQuatf()
+                    : pose.Orientation.FromFlippedZQuatf();
+            }
+
+            for (int i = 0; i < _bones.Count; ++i)
+            {
+                if (!IsValidBone((BoneId)_bones[i].ParentBoneIndex) ||
+                    IsBodySkeleton(_skeletonType)) // Body bones are always in tracking space
+                {
+                    _bones[i].Transform.SetParent(_bonesGO.transform, false);
+                }
+                else
+                {
+                    _bones[i].Transform.SetParent(_bones[_bones[i].ParentBoneIndex].Transform, false);
+                }
+            }
         }
 
         private void InitializeBindPose()
