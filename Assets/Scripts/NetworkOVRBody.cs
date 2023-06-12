@@ -104,6 +104,7 @@ namespace VRC2
         }
     }
 
+    [RequireComponent(typeof(NetworkObject))]
     public class NetworkOVRBody : NetworkBehaviour,
         OVRSkeleton.IOVRSkeletonDataProvider,
         OVRSkeletonRenderer.IOVRSkeletonRendererDataProvider
