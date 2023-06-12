@@ -15,6 +15,7 @@ using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VRC2;
 
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -132,12 +133,14 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
                 // attach transform
                 // AttachSourceTransforms(networkPlayerObject, src);
                 _localPlayer = player;
+                GlobalConstants.localPlayer = player;
             }
         }
         else
         {
             isServer = false;
             // p2 side
+            GlobalConstants.remotePlayer = player;
         }
 
         if (hideSelf)
@@ -153,6 +156,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             runner.Despawn(networkObject);
             _spawnedCharacters.Remove(player);
+            GlobalConstants.RemovePlayer(player);
         }
     }
 
@@ -246,6 +250,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (result.Ok)
         {
             // all good
+            GlobalConstants.networkRunner = _runner;
         }
         else
         {

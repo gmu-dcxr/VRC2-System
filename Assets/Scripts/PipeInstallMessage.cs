@@ -6,7 +6,7 @@ namespace VRC2
 {
     public class PipeInstallMessage
     {
-        public static string BaseMessage = "(empty message)";
+        public static string EmptyMessage = ""; // empty message
         public static string P1WrongInstructionP2 = "P1 gave wrong instructions to P2";
         public static string P2WrongInstructionAIDrone = "P2 gave wrong instructions to AI drone";
         public static string AIDroneWrongPipes = "AI drone carried wrong pipes";
