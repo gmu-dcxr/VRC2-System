@@ -21,6 +21,18 @@ namespace VRC2
         public System.Action OnButton1Clicked;
         public System.Action OnButton2Clicked;
 
+        public bool enabled
+        {
+            get
+            {
+                return gameObject.activeSelf;
+            }
+            set
+            {
+                gameObject.SetActive(value);
+            }
+        }
+
         public string title
         {
             get { return _title.text; }
