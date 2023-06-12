@@ -21,6 +21,8 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     [Header("Prefab")] public NetworkPrefabRef _playerPrefab;
     public string prefabName;
 
+    public NetworkPrefabRef _pipePrefab;
+
     public GameObject src;
 
     [Header("Setting")] public bool hideSelf = false;
@@ -30,6 +32,9 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private bool isServer = false;
 
     private NetworkRunner _runner;
+    
+    // local player
+    private PlayerRef _localPlayer;
 
     // Start is called before the first frame update
     void Start()
@@ -126,6 +131,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             {
                 // attach transform
                 // AttachSourceTransforms(networkPlayerObject, src);
+                _localPlayer = player;
             }
         }
         else
@@ -247,6 +253,11 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    void CreateNewPipe()
+    {
+        _runner.Spawn(_pipePrefab, new Vector3(0f, 1.5f, 2f), Quaternion.identity, _localPlayer);
+    }
+
     private void OnGUI()
     {
         if (_runner == null)
@@ -259,6 +270,13 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             if (GUI.Button(new Rect(100, 120, 100, 40), "Join"))
             {
                 StartGame(GameMode.Client);
+            }
+        }
+        else
+        {
+            if (GUI.Button(new Rect(0, 200, 100, 40), "Pipe"))
+            {
+                CreateNewPipe();
             }
         }
     }
