@@ -21,5 +21,10 @@ namespace VRC2
                 GlobalConstants.remotePlayer = PlayerRef.None;
             }
         }
+
+        public static bool IsNetworkReady()
+        {
+            return (GlobalConstants.networkRunner != null && !localPlayer.IsNone);
+        }
     }
 }
