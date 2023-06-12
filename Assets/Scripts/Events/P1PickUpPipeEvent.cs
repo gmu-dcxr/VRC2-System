@@ -24,6 +24,8 @@ namespace VRC2.Events
         {
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
+            if (runner == null || localPlayer == null)
+                return;
             runner.Spawn(prefab, new Vector3(0f, 1.5f, 2f), Quaternion.identity, localPlayer);
         }
     }
