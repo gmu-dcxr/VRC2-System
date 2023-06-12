@@ -4109,6 +4109,8 @@ MonoBehaviour:
   _content: {fileID: 1351902156}
   _OKButton: {fileID: 1802774918}
   _CancelButton: {fileID: 2066880157}
+  button1Events: {fileID: 1454509035}
+  button2Events: {fileID: 1191948313}
 --- !u!1 &263624383
 GameObject:
   m_ObjectHideFlags: 0
@@ -8602,6 +8604,8 @@ MonoBehaviour:
   _content: {fileID: 1351902156}
   _OKButton: {fileID: 1802774918}
   _CancelButton: {fileID: 2066880157}
+  button1Events: {fileID: 0}
+  button2Events: {fileID: 0}
 --- !u!114 &529174682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11157,17 +11161,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4658904325700070051, guid: 347797637f5237c40b239ea44fef63f1, type: 3}
   m_PrefabInstance: {fileID: 711162207}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &711162209 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7410389675181900697, guid: 347797637f5237c40b239ea44fef63f1, type: 3}
-  m_PrefabInstance: {fileID: 711162207}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 925ef87c5bafc37469a2f7ec825dee4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &714287178
 GameObject:
   m_ObjectHideFlags: 0
@@ -18436,21 +18429,9 @@ MonoBehaviour:
   _whenRelease:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1434592840}
-        m_TargetAssemblyTypeName: Oculus.Interaction.AudioTrigger, Oculus.Interaction.Samples
+      - m_Target: {fileID: 1892213081}
+        m_TargetAssemblyTypeName: Oculus.Interaction.AudioTrigger, Oculus.Interaction.OVR.Samples
         m_MethodName: PlayAudio
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 529174681}
-        m_TargetAssemblyTypeName: VRC2.ModalDialog, Assembly-CSharp
-        m_MethodName: Button2Clicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -21721,17 +21702,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4658904325700070051, guid: 347797637f5237c40b239ea44fef63f1, type: 3}
   m_PrefabInstance: {fileID: 1434592838}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1434592840 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7410389675181900697, guid: 347797637f5237c40b239ea44fef63f1, type: 3}
-  m_PrefabInstance: {fileID: 1434592838}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 925ef87c5bafc37469a2f7ec825dee4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1443538776
 GameObject:
   m_ObjectHideFlags: 0
@@ -22064,21 +22034,9 @@ MonoBehaviour:
   _whenRelease:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 711162209}
-        m_TargetAssemblyTypeName: Oculus.Interaction.AudioTrigger, Oculus.Interaction.Samples
+      - m_Target: {fileID: 1892213081}
+        m_TargetAssemblyTypeName: Oculus.Interaction.AudioTrigger, Oculus.Interaction.OVR.Samples
         m_MethodName: PlayAudio
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 529174681}
-        m_TargetAssemblyTypeName: VRC2.ModalDialog, Assembly-CSharp
-        m_MethodName: Button1Clicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -26327,6 +26285,7 @@ GameObject:
   - component: {fileID: 1762549633}
   - component: {fileID: 1762549632}
   - component: {fileID: 1762549634}
+  - component: {fileID: 1762549635}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -26389,6 +26348,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modalDialog: {fileID: 255358727}
+--- !u!114 &1762549635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762549631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b41746850a09d74eb777e6446d33c1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab:
+    RawGuidValue: 79a4263be119fa24fa7f653ff27f5174
 --- !u!1 &1764704224
 GameObject:
   m_ObjectHideFlags: 0

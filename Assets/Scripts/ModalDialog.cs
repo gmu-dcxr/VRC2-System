@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Oculus.Interaction;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace VRC2
@@ -17,20 +19,13 @@ namespace VRC2
         [SerializeField] private TextMeshPro _OKButton;
 
         [SerializeField] private TextMeshPro _CancelButton;
-        
-        public System.Action OnButton1Clicked;
-        public System.Action OnButton2Clicked;
 
-        public bool enabled
+        public PointableUnityEventWrapper button1Events;
+        public PointableUnityEventWrapper button2Events;
+
+        public void show(bool flag)
         {
-            get
-            {
-                return gameObject.activeSelf;
-            }
-            set
-            {
-                gameObject.SetActive(value);
-            }
+            gameObject.SetActive(flag);
         }
 
         public string title
@@ -57,23 +52,12 @@ namespace VRC2
             set { _CancelButton.text = value; }
         }
 
-        public void Button1Clicked()
+        public void UpdateDialog(string title, string content, string btn1, string btn2)
         {
-            Debug.Log("Button 1 clicked");
-            if (OnButton1Clicked != null)
-            {
-                OnButton1Clicked();
-            }
-        }
-
-        public void Button2Clicked()
-        {
-            Debug.Log("Button 2 clicked");
-            
-            if (OnButton2Clicked != null)
-            {
-                OnButton2Clicked();
-            }
+            this.title = title;
+            this.content = content;
+            this.button1 = btn1;
+            this.button2 = btn2;
         }
     }
 }

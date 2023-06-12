@@ -6,8 +6,9 @@ namespace VRC2
 {
     public class PipeInstallEvent
     {
-        public static string BaseEvent = "(empty event)";
+        public static string EmptyEvent = ""; // empty event
         public static string P1CheckStorage = "P1CheckStorage";
+        public static string P1PickUpPipe = "P1PickUpPipe";
         public static string P1DemandAIDroneToMovePipe = "P1DemandAIDroneToMovePipe";
         public static string P2GiveInstruction = "P2GiveInstruction";
         public static string P2CheckSizeAndColor = "P2CheckSizeAndColor";
