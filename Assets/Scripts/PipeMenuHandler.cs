@@ -18,10 +18,10 @@ namespace VRC2
         {
             // disable modal dialog first
             modalDialog.show(false);
-            
+
             // add event listener
-            modalDialog.button1Events.WhenRelease.AddListener(() => { DialogButton1Clicked();});
-            modalDialog.button2Events.WhenRelease.AddListener(() => { DialogButton2Clicked();});
+            modalDialog.button1Events.WhenRelease.AddListener(() => { DialogButton1Clicked(); });
+            modalDialog.button2Events.WhenRelease.AddListener(() => { DialogButton2Clicked(); });
         }
 
         public void show(bool flag)
