@@ -288,6 +288,7 @@ GameObject:
   - component: {fileID: 1169557084027520112}
   - component: {fileID: 7770673363465073526}
   - component: {fileID: 4513496965218862904}
+  - component: {fileID: 3329261715996475160}
   m_Layer: 0
   m_Name: InteractablePipe
   m_TagString: Untagged
@@ -434,6 +435,23 @@ MonoBehaviour:
     RotBlendStart: 0.1
     RotBlendEnd: 0.5
     RotTeleportRadians: 1.5
+--- !u!114 &3329261715996475160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2178541509140560553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba9709b89cfcc6244968669bc30461c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 5084662389300380809}
+  _magentaMaterial: {fileID: 2100000, guid: 6c1e97b112ac38d45aa3e45149a48203, type: 2}
+  _blueMaterial: {fileID: 2100000, guid: 918acdd59d5fc5a45b61e3aa0787bf8b, type: 2}
+  _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
+  _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
 --- !u!1 &2895381430955981229
 GameObject:
   m_ObjectHideFlags: 0

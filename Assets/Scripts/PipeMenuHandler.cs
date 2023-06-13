@@ -12,7 +12,7 @@ namespace VRC2
         private ModalDialog modalDialog;
 
         // current event 
-        private string _currentEvent = PipeInstallEvent.EmptyEvent;
+        private PipeInstallEvent _currentEvent = PipeInstallEvent.EmptyEvent;
 
         private void Start()
         {
@@ -49,13 +49,15 @@ namespace VRC2
             modalDialog.show(false);
         }
 
-        void EventHandler(string eventType)
+        void EventHandler(PipeInstallEvent eventType)
         {
-            if (eventType == PipeInstallEvent.P1PickUpPipe)
+            switch (eventType)
             {
-                // initialize pipe
-                var ev = gameObject.GetComponent<P1PickUpPipeEvent>();
-                ev.Execute();
+                case PipeInstallEvent.P1PickUpPipe:
+                    // initialize pipe
+                    var ev = gameObject.GetComponent<P1PickUpPipeEvent>();
+                    ev.Execute();
+                    break;
             }
         }
     }
