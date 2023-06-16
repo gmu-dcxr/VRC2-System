@@ -9,16 +9,17 @@ namespace VRC2
         EmptyEvent = 0, // empty event
         P1CheckStorage = 1,
         P1PickUpPipe = 2,
-        P1DemandAIDroneToMovePipe = 3,
-        P2GiveInstruction = 4,
-        P2CheckSizeAndColor = 5,
-        P2MeasureDistance = 6,
-        P2DemandRobotBendOrCut = 7,
-        P2CheckLengthAndAngle = 8,
-        P2CheckLevel = 9, // Horizontal and vertical level
-        P1Glue = 10,
-        P1Place = 11,
-        P1Adjust = 12,
-        P1Clamp = 13,
+        P2CheckPipe = 3,
+        P1DemandAIDroneToMovePipe = 4,
+        P2GiveInstruction = 5,
+        P2CheckSizeAndColor = 6,
+        P2MeasureDistance = 7,
+        P2DemandRobotBendOrCut = 8,
+        P2CheckLengthAndAngle = 9,
+        P2CheckLevel = 10, // Horizontal and vertical level
+        P1Glue = 11,
+        P1Place = 12,
+        P1Adjust = 13,
+        P1Clamp = 14,
     }
 }
