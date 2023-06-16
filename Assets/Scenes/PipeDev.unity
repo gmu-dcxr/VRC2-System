@@ -2796,7 +2796,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Poke
+  m_text: Check Pipe
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -6129,7 +6129,7 @@ GameObject:
   - component: {fileID: 403861124}
   - component: {fileID: 403861125}
   m_Layer: 0
-  m_Name: Poke
+  m_Name: Check Pipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6235,9 +6235,21 @@ MonoBehaviour:
   _whenRelease:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 928810846}
-        m_TargetAssemblyTypeName: Oculus.Interaction.AudioTrigger, Oculus.Interaction.Samples
-        m_MethodName: PlayAudio
+      - m_Target: {fileID: 1762549634}
+        m_TargetAssemblyTypeName: VRC2.PipeMenuHandler, Assembly-CSharp
+        m_MethodName: OnCheckPipe
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: PokeExamples
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 1762549634}
+        m_TargetAssemblyTypeName: VRC2.PipeMenuHandler, Assembly-CSharp
+        m_MethodName: OnCheckPipe
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6246,19 +6258,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1762549632}
-        m_TargetAssemblyTypeName: Oculus.Interaction.Samples.SceneLoader, Oculus.Interaction.Samples
-        m_MethodName: Load
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: PokeExamples
-          m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 1
   _whenHover:
     m_PersistentCalls:
       m_Calls: []
@@ -12222,7 +12222,7 @@ GameObject:
   - component: {fileID: 814466916}
   - component: {fileID: 814466917}
   m_Layer: 0
-  m_Name: Hand Grab
+  m_Name: Pick A Pipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26286,6 +26286,8 @@ GameObject:
   - component: {fileID: 1762549632}
   - component: {fileID: 1762549634}
   - component: {fileID: 1762549635}
+  - component: {fileID: 1762549636}
+  - component: {fileID: 1762549637}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -26362,6 +26364,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab:
     RawGuidValue: 79a4263be119fa24fa7f653ff27f5174
+--- !u!114 &1762549636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762549631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectInterest: 1
+  DefaultInterestGroups: []
+  DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 1
+  AoiPositionSource: {fileID: 0}
+  Flags: 2561
+  NetworkGuid:
+    RawGuidValue: 9c66b27712be4936bd20d632f6ae19e3
+  NestedObjects: []
+  NetworkedBehaviours: []
+  SimulationBehaviours: []
+--- !u!114 &1762549637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762549631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fea3071e062d10349a4ea6941dbdf9ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1764704224
 GameObject:
   m_ObjectHideFlags: 0
