@@ -11,7 +11,7 @@ namespace VRC2.Events
         P1PickUpPipe = 2,
         P2CheckSizeAndColor = 3,
         P1GetSizeAndColorResult = 31,
-        P1DemandAIDroneToMovePipe = 4,
+        P1DemandAIDrone = 4,
         P2GiveInstruction = 5,
         P2MeasureDistance = 7,
         P2CommandRobotBendOrCut = 8,
