@@ -10,16 +10,13 @@ namespace VRC2.Events
     public class P2CheckPipeEvent : BaseEvent
     {
 
-        private ModalDialog modalDialog;
-
         private bool checkPassed;
 
-        public void Initialize(ModalDialog dialog, bool checkResult)
+        public void Initialize(bool checkResult)
         {
-            modalDialog = dialog;
             checkPassed = checkResult;
         }
-        
+
         public override void Execute()
         {
             if (!GlobalConstants.IsNetworkReady())
@@ -27,9 +24,10 @@ namespace VRC2.Events
                 Debug.LogError("Runner or localPlayer is none");
                 return;
             }
+
             RPC_SendMessage(checkPassed);
         }
-        
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RPC_SendMessage(bool check, RpcInfo info = default)
         {
@@ -42,7 +40,7 @@ namespace VRC2.Events
                 message = $"Some other player said: {message}\n";
                 // show check result window
                 modalDialog.UpdateDialog("Check Result", $"Pipe color and size check result: {check}", "OK", "Cancel");
-                modalDialog.show(true);   
+                modalDialog.show(true);
             }
 
             Debug.LogWarning(message);

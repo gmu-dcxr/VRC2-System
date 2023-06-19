@@ -13,6 +13,8 @@ namespace VRC2.Menu
         Zero = 0,
         PickAPipe = 1,
         CheckPipe = 2,
+        MeasureDistance = 3,
+        CommandRobot = 4,
     }
 
     internal static class MenuString
@@ -20,6 +22,8 @@ namespace VRC2.Menu
         public static string empty = "";
         public static string PickAPipe = "Pick A Pipe";
         public static string CheckPipe = "Check Pipe";
+        public static string MeasureDistance = "Measure Distance";
+        public static string CommandRobot = "Command Robot";
     }
 
     public class MenuInitializer
@@ -29,7 +33,10 @@ namespace VRC2.Menu
         private IDictionary<string, MenuItem> nameMenuItems;
 
         private List<MenuItem> P1MenuItems = new List<MenuItem>() { MenuItem.PickAPipe };
-        private List<MenuItem> P2MenuItems = new List<MenuItem>() { MenuItem.CheckPipe };
+        private List<MenuItem> P2MenuItems = new List<MenuItem>() { MenuItem.CheckPipe, 
+            MenuItem.MeasureDistance,
+            MenuItem.CommandRobot
+        };
 
         public List<MenuItem> P1Menu
         {
@@ -41,6 +48,12 @@ namespace VRC2.Menu
             get { return P2MenuItems; }
         }
 
+        internal void AddPair(MenuItem item, string name)
+        {
+            menuItemNames.Add(item, name);
+            nameMenuItems.Add(name, item);
+        }
+
 
         public MenuInitializer()
         {
@@ -49,12 +62,13 @@ namespace VRC2.Menu
             // add menu items
 
             // pick a pipe
-            menuItemNames.Add(MenuItem.PickAPipe, MenuString.PickAPipe);
-            nameMenuItems.Add(MenuString.PickAPipe, MenuItem.PickAPipe);
-
+            AddPair(MenuItem.PickAPipe, MenuString.PickAPipe);
             // check pipe
-            menuItemNames.Add(MenuItem.CheckPipe, MenuString.CheckPipe);
-            nameMenuItems.Add(MenuString.CheckPipe, MenuItem.CheckPipe);
+            AddPair(MenuItem.CheckPipe, MenuString.CheckPipe);
+            // measure distance
+            AddPair(MenuItem.MeasureDistance, MenuString.MeasureDistance);
+            // command robot
+            AddPair(MenuItem.CommandRobot, MenuString.CommandRobot);
         }
 
         public MenuItem getMenuItemByString(string name)
@@ -114,7 +128,7 @@ namespace VRC2.Menu
             var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
 
             List<MenuItem> items = null;
-            
+
             if (IsP1)
             {
                 // P1 Menu
@@ -176,6 +190,12 @@ namespace VRC2.Menu
                         break;
                     case MenuItem.CheckPipe:
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckPipe);
+                        break;
+                    case MenuItem.MeasureDistance:
+                        puew.WhenRelease.AddListener(_menuHandler.OnMeasureDistance);
+                        break;
+                    case MenuItem.CommandRobot:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCommandRobot);
                         break;
                     default:
                         break;
