@@ -188,15 +188,15 @@ namespace VRC2
         public void DialogButton1Clicked()
         {
             Debug.Log("DialogButton1Clicked");
-            DialogButton1EventHandler();
             modalDialog.show(false);
+            DialogButton1EventHandler();
         }
 
         public void DialogButton2Clicked()
         {
             Debug.Log("DialogButton2Clicked");
-            DialogButton2EventHandler();
             modalDialog.show(false);
+            DialogButton2EventHandler();
         }
 
         void DialogButton1EventHandler()

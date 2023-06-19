@@ -70,12 +70,20 @@ namespace VRC2
             // hide button if text is null
             if (btn1 == null)
             {
-                this.button1Events.gameObject.SetActive(false);
+                this._OKButton.gameObject.transform.parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                this._OKButton.gameObject.transform.parent.gameObject.SetActive(true);
             }
 
             if (btn2 == null)
             {
-                this.button2Events.gameObject.SetActive(false);
+                this._CancelButton.gameObject.transform.parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                this._CancelButton.gameObject.transform.parent.gameObject.SetActive(true);
             }
 
             // update event
