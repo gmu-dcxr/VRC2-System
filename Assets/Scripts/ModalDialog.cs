@@ -10,7 +10,6 @@ using VRC2.Events;
 
 namespace VRC2
 {
-
     public class ModalDialog : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI _title;
