@@ -34,7 +34,7 @@ namespace VRC2.Events
             {
                 message = $"Some other player said: {message}\n";
                 // show check result window
-                modalDialog.UpdateDialog("Check Result", $"Pipe level check result: {check}", "OK", "Cancel",
+                modalDialog.UpdateDialog("Check Result", $"Pipe level check result: {check}", "OK", null,
                     PipeInstallEvent.P1GetLevelResult);
                 modalDialog.checkResult = check;
                 modalDialog.show(true);

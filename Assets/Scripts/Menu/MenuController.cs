@@ -160,6 +160,8 @@ namespace VRC2.Menu
                     if (blank_remaining)
                     {
                         tmp.text = "";
+                        // disable it
+                        tmp.transform.parent.parent.parent.gameObject.SetActive(false);
                     }
                     else
                     {
