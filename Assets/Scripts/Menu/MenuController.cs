@@ -72,12 +72,15 @@ namespace VRC2.Menu {
         }
     }
 
+    [RequireComponent(typeof(PipeMenuHandler))]
     public class MenuController : MonoBehaviour
     {
         [Header("Menu")] [SerializeField] private GameObject _menuRoot;
 
+        [Header("Settings")] [SerializeField] private bool leaveUnusedBlank;
         
         public bool IsP1 = true;
+
 
         private MenuInitializer _menuInitializer = null;
         // Start is called before the first frame update
@@ -85,7 +88,7 @@ namespace VRC2.Menu {
         {
             _menuInitializer = new MenuInitializer();
             // initialize menu
-            InitializeMenuText();
+            InitializeMenuText(leaveUnusedBlank);
         }
     
         // Update is called once per frame
@@ -96,10 +99,9 @@ namespace VRC2.Menu {
         
         # region Initialize Menu Text
 
-        void InitializeMenuText()
+        void InitializeMenuText(bool blank_remaining)
         {
             var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
-            var gameObjectCount = allTextGameObject.Count;
 
             List<MenuItem> items = null;
             if (IsP1)
@@ -112,14 +114,28 @@ namespace VRC2.Menu {
             }
 
             var count = 0;
-            foreach (var item in items)
+            
+            foreach (var go in allTextGameObject)
             {
-                var s = _menuInitializer.getStringByMenuItem(item);
-                if (count >= gameObjectCount) break;
-
-                allTextGameObject[count].GetComponent<TextMeshPro>().text = s;
+                var tmp = go.GetComponent<TextMeshPro>();
+                if (count >= items.Count)
+                {
+                    if (blank_remaining)
+                    {
+                        tmp.text = "";
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    var s = _menuInitializer.getStringByMenuItem(items[count]);
+                    tmp.text = s;   
+                }
+                count += 1;
             }
-
         }
         
         #endregion
