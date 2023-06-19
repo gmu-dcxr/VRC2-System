@@ -269,11 +269,13 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             if (GUI.Button(new Rect(250, 10, 100, 40), "Host"))
             {
+                GlobalConstants.Checker = false; // P1
                 StartGame(GameMode.Host);
             }
 
             if (GUI.Button(new Rect(350, 10, 100, 40), "Join"))
             {
+                GlobalConstants.Checker = true; // P2
                 StartGame(GameMode.Client);
             }
         }

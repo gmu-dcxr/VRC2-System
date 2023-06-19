@@ -120,7 +120,10 @@ namespace VRC2.Menu
 
         [Header("Settings")] [SerializeField] private bool leaveUnusedBlank;
 
-        public bool IsP1 = true;
+        public bool IsP1
+        {
+            get => GlobalConstants.Checkee;
+        }
 
 
         private MenuInitializer _menuInitializer = null;

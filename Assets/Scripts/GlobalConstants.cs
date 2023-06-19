@@ -30,10 +30,7 @@ namespace VRC2
         }
 
         // P2, participant 2, check size, color, water level, etc.
-        public static bool Checker
-        {
-            get { return true; }
-        }
+        public static bool Checker = false;
 
         // P1, participant 1, install pipe, move, rotate, etc
         public static bool Checkee
