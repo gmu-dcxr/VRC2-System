@@ -7,7 +7,7 @@ using Fusion;
 namespace VRC2.Events
 {
 
-    public class P2CheckPipeEvent : BaseEvent
+    public class P2CheckSizeAndColorEvent : BaseEvent
     {
 
         private bool checkPassed;
@@ -39,7 +39,9 @@ namespace VRC2.Events
             {
                 message = $"Some other player said: {message}\n";
                 // show check result window
-                modalDialog.UpdateDialog("Check Result", $"Pipe color and size check result: {check}", "OK", "Cancel");
+                modalDialog.UpdateDialog("Check Result", $"Pipe color and size check result: {check}", "OK", "Cancel",
+                    PipeInstallEvent.P1GetSizeAndColorResult);
+                modalDialog.checkResult = check;
                 modalDialog.show(true);
             }
 
