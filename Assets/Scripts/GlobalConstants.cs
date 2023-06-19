@@ -41,6 +41,16 @@ namespace VRC2
             get { return !Checker; }
         }
 
+        public static bool IsP1
+        {
+            get { return Checkee; }
+        }
+
+        public static bool IsP2
+        {
+            get { return Checker; }
+        }
+
         public static bool DialogFirstButton
         {
             get { return true; }

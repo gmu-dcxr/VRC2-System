@@ -981,7 +981,7 @@ GameObject:
   - component: {fileID: 69767451}
   - component: {fileID: 69767452}
   m_Layer: 0
-  m_Name: BodyPoses
+  m_Name: Menu 12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1335,7 +1335,7 @@ GameObject:
   - component: {fileID: 88943314}
   - component: {fileID: 88943315}
   m_Layer: 0
-  m_Name: Touch Grab
+  m_Name: Menu 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2031,7 +2031,7 @@ GameObject:
   - component: {fileID: 119499625}
   - component: {fileID: 119499626}
   m_Layer: 0
-  m_Name: Poses
+  m_Name: Menu 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2045,7 +2045,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 119499623}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.08, y: -0, z: 0}
+  m_LocalPosition: {x: 0.08, y: 0, z: 0}
   m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2235,7 +2235,7 @@ GameObject:
   - component: {fileID: 123265913}
   - component: {fileID: 123265914}
   m_Layer: 0
-  m_Name: Ray
+  m_Name: Menu 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2796,7 +2796,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Check Pipe
+  m_text: Menu 2
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -4284,7 +4284,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Ray
+  m_text: Menu 4
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -6129,7 +6129,7 @@ GameObject:
   - component: {fileID: 403861124}
   - component: {fileID: 403861125}
   m_Layer: 0
-  m_Name: Check Pipe
+  m_Name: Menu 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6143,7 +6143,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403861122}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.08, y: 0.12, z: -0}
+  m_LocalPosition: {x: 0.08, y: 0.12, z: 0}
   m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6235,9 +6235,9 @@ MonoBehaviour:
   _whenRelease:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1762549634}
-        m_TargetAssemblyTypeName: VRC2.PipeMenuHandler, Assembly-CSharp
-        m_MethodName: OnCheckPipe
+      - m_Target: {fileID: 928810846}
+        m_TargetAssemblyTypeName: Oculus.Interaction.AudioTrigger, Oculus.Interaction.OVR.Samples
+        m_MethodName: PlayAudio
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6246,19 +6246,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: PokeExamples
           m_BoolArgument: 0
-        m_CallState: 1
-      - m_Target: {fileID: 1762549634}
-        m_TargetAssemblyTypeName: VRC2.PipeMenuHandler, Assembly-CSharp
-        m_MethodName: OnCheckPipe
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 2
   _whenHover:
     m_PersistentCalls:
       m_Calls: []
@@ -9410,7 +9398,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Touch Grab
+  m_text: Menu 3
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -9536,7 +9524,7 @@ GameObject:
   - component: {fileID: 575681967}
   - component: {fileID: 575681968}
   m_Layer: 0
-  m_Name: Gestures
+  m_Name: Menu 8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11451,7 +11439,7 @@ GameObject:
   - component: {fileID: 746696504}
   - component: {fileID: 746696505}
   m_Layer: 0
-  m_Name: Snap
+  m_Name: Menu 11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12222,7 +12210,7 @@ GameObject:
   - component: {fileID: 814466916}
   - component: {fileID: 814466917}
   m_Layer: 0
-  m_Name: Pick A Pipe
+  m_Name: Menu 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12340,18 +12328,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1762549634}
-        m_TargetAssemblyTypeName: VRC2.PipeMenuHandler, Assembly-CSharp
-        m_MethodName: OnPickAPipe
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: HandGrabExamples
-          m_BoolArgument: 0
-        m_CallState: 1
   _whenHover:
     m_PersistentCalls:
       m_Calls: []
@@ -12471,7 +12447,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Pick A Pipe
+  m_text: Menu 1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -14698,7 +14674,7 @@ GameObject:
   - component: {fileID: 932499145}
   - component: {fileID: 932499146}
   m_Layer: 0
-  m_Name: Snap
+  m_Name: Menu 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -17124,7 +17100,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Distance Grab
+  m_text: Menu 5
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -17296,7 +17272,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Gestures
+  m_text: Menu 8
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -18703,7 +18679,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Snap
+  m_text: Menu 11
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -19841,7 +19817,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Transformers
+  m_text: Menu 9
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -20031,7 +20007,7 @@ GameObject:
   - component: {fileID: 1290491690}
   - component: {fileID: 1290491691}
   m_Layer: 0
-  m_Name: Distance Grab
+  m_Name: Menu 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22436,7 +22412,7 @@ GameObject:
   - component: {fileID: 1480686242}
   - component: {fileID: 1480686243}
   m_Layer: 0
-  m_Name: Transformer
+  m_Name: Menu 9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23869,7 +23845,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hand Grab Use
+  m_text: Menu 7
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -24186,7 +24162,7 @@ GameObject:
   - component: {fileID: 1606582871}
   - component: {fileID: 1606582872}
   m_Layer: 0
-  m_Name: Locomotion
+  m_Name: Menu 10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26288,6 +26264,7 @@ GameObject:
   - component: {fileID: 1762549635}
   - component: {fileID: 1762549636}
   - component: {fileID: 1762549637}
+  - component: {fileID: 1762549638}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -26321,16 +26298,16 @@ Transform:
   m_Children:
   - {fileID: 1951215414}
   - {fileID: 814466915}
-  - {fileID: 88943313}
-  - {fileID: 1290491689}
-  - {fileID: 932499144}
-  - {fileID: 1480686241}
-  - {fileID: 746696503}
   - {fileID: 403861123}
+  - {fileID: 88943313}
   - {fileID: 123265912}
+  - {fileID: 1290491689}
   - {fileID: 119499624}
+  - {fileID: 932499144}
   - {fileID: 575681966}
+  - {fileID: 1480686241}
   - {fileID: 1606582870}
+  - {fileID: 746696503}
   - {fileID: 69767450}
   - {fileID: 1948491712}
   - {fileID: 153821983}
@@ -26399,6 +26376,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fea3071e062d10349a4ea6941dbdf9ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1762549638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762549631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebda4579d20b1f34cb48575433d7ac01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _menuRoot: {fileID: 1762549631}
+  IsP1: 1
 --- !u!1 &1764704224
 GameObject:
   m_ObjectHideFlags: 0
@@ -27805,7 +27796,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Locomotion
+  m_text: Menu 10
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -28934,7 +28925,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Poses
+  m_text: Menu 6
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
@@ -30203,7 +30194,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Body Poses
+  m_text: Menu 12
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
   m_sharedMaterial: {fileID: -5839354330806206608, guid: b8f5aeb9c6de7614db2631011b869bc3, type: 2}
