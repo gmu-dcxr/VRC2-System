@@ -38,7 +38,7 @@ namespace VRC2
 
             Debug.Log("You clicked Pick A pipe");
             // set dialog window
-            modalDialog.UpdateDialog("Tip", "Pick up a pipe", "OK", "Cancel",
+            modalDialog.UpdateDialog("Tip", "Pick up a pipe", "OK", null,
                 PipeInstallEvent.P1PickUpPipe);
             modalDialog.show(true);
         }
@@ -63,7 +63,7 @@ namespace VRC2
             Debug.Log("You clicked measure distance");
             if (GlobalConstants.Checker)
             {
-                modalDialog.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", "No",
+                modalDialog.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
                     PipeInstallEvent.P2MeasureDistance);
                 modalDialog.show(true);
             }
@@ -75,7 +75,7 @@ namespace VRC2
             Debug.Log("You clicked command robot");
             if (GlobalConstants.Checker)
             {
-                modalDialog.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", "No",
+                modalDialog.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
                     PipeInstallEvent.P2CommandRobotBendOrCut);
                 modalDialog.show(true);
             }
@@ -115,7 +115,7 @@ namespace VRC2
             Debug.Log("P1 can glue the pipe");
             if (GlobalConstants.Checkee)
             {
-                modalDialog.UpdateDialog("Tip", "You may start gluing pipe.", "Yes", "No",
+                modalDialog.UpdateDialog("Tip", "You may start gluing pipe.", "Yes", null,
                     PipeInstallEvent.P1Glue);
                 modalDialog.show(true);
             }
@@ -127,7 +127,7 @@ namespace VRC2
             Debug.Log("P1 can place the pipe");
             if (GlobalConstants.Checkee)
             {
-                modalDialog.UpdateDialog("Tip", "You may start placing pipe.", "Yes", "No",
+                modalDialog.UpdateDialog("Tip", "You may start placing pipe.", "Yes", null,
                     PipeInstallEvent.P1Place);
                 modalDialog.show(true);
             }
@@ -139,7 +139,7 @@ namespace VRC2
             Debug.Log("P1 can adjust the pipe");
             if (GlobalConstants.Checkee)
             {
-                modalDialog.UpdateDialog("Tip", "You may start adjusting pipe.", "Yes", "No",
+                modalDialog.UpdateDialog("Tip", "You may start adjusting pipe.", "Yes", null,
                     PipeInstallEvent.P1Adjust);
                 modalDialog.show(true);
             }
@@ -151,7 +151,7 @@ namespace VRC2
             Debug.Log("P1 can clamp the pipe");
             if (GlobalConstants.Checkee)
             {
-                modalDialog.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", "No",
+                modalDialog.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", null,
                     PipeInstallEvent.P1Clamp);
                 modalDialog.show(true);
             }

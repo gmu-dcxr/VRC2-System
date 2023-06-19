@@ -26,10 +26,10 @@ namespace VRC2
 
         // store event
         public PipeInstallEvent currentEvent = PipeInstallEvent.EmptyEvent;
-        
+
         // store check result
         public bool checkResult = false;
-        
+
         public void show(bool flag)
         {
             gameObject.SetActive(flag);
@@ -59,12 +59,25 @@ namespace VRC2
             set { _CancelButton.text = value; }
         }
 
-        public void UpdateDialog(string title, string content, string btn1, string btn2, PipeInstallEvent ev=PipeInstallEvent.EmptyEvent)
+        public void UpdateDialog(string title, string content, string btn1, string btn2,
+            PipeInstallEvent ev = PipeInstallEvent.EmptyEvent)
         {
             this.title = title;
             this.content = content;
             this.button1 = btn1;
             this.button2 = btn2;
+
+            // hide button if text is null
+            if (btn1 == null)
+            {
+                this.button1Events.gameObject.SetActive(false);
+            }
+
+            if (btn2 == null)
+            {
+                this.button2Events.gameObject.SetActive(false);
+            }
+
             // update event
             if (ev != PipeInstallEvent.EmptyEvent)
             {
