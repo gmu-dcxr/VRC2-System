@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
+using Oculus.Interaction;
 using TMPro;
 using UnityEngine;
 
-namespace VRC2.Menu {
+namespace VRC2.Menu
+{
 
     public enum MenuItem
     {
@@ -38,8 +40,8 @@ namespace VRC2.Menu {
         {
             get { return P2MenuItems; }
         }
-        
-        
+
+
         public MenuInitializer()
         {
             menuItemNames = new Dictionary<MenuItem, string>();
@@ -78,43 +80,54 @@ namespace VRC2.Menu {
         [Header("Menu")] [SerializeField] private GameObject _menuRoot;
 
         [Header("Settings")] [SerializeField] private bool leaveUnusedBlank;
-        
+
         public bool IsP1 = true;
 
 
         private MenuInitializer _menuInitializer = null;
+
+        private PipeMenuHandler _menuHandler = null;
+
         // Start is called before the first frame update
         void Start()
         {
             _menuInitializer = new MenuInitializer();
+
+            _menuHandler = gameObject.GetComponent<PipeMenuHandler>();
             // initialize menu
             InitializeMenuText(leaveUnusedBlank);
+            // initialize action
+            InitializeMenuAction();
         }
-    
+
         // Update is called once per frame
         void Update()
         {
-            
-        }
-        
-        # region Initialize Menu Text
 
+        }
+
+        # region Initialize Menu
+
+        // blank_remaining: leave unused menus blank or not
         void InitializeMenuText(bool blank_remaining)
         {
             var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
 
             List<MenuItem> items = null;
+            
             if (IsP1)
             {
+                // P1 Menu
                 items = _menuInitializer.P1Menu;
             }
             else
             {
+                // P2 Menu
                 items = _menuInitializer.P2Meu;
             }
 
             var count = 0;
-            
+
             foreach (var go in allTextGameObject)
             {
                 var tmp = go.GetComponent<TextMeshPro>();
@@ -132,12 +145,44 @@ namespace VRC2.Menu {
                 else
                 {
                     var s = _menuInitializer.getStringByMenuItem(items[count]);
-                    tmp.text = s;   
+                    tmp.text = s;
                 }
+
                 count += 1;
             }
         }
-        
+
+        void InitializeMenuAction()
+        {
+            var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
+            foreach (var go in allTextGameObject)
+            {
+                var text = go.GetComponent<TextMeshPro>();
+
+                // get menu item
+                var item = _menuInitializer.getMenuItemByString(text.text);
+
+                if (item == MenuItem.Zero) break;
+
+                // in hierarchy, TMP - parent (ButtonVisual) - parent (Visuals) - parent (Menu x)
+                var menu = go.transform.parent.parent.parent.gameObject;
+
+                var puew = menu.GetComponent<PointableUnityEventWrapper>();
+
+                switch (item)
+                {
+                    case MenuItem.PickAPipe:
+                        puew.WhenRelease.AddListener(_menuHandler.OnPickAPipe);
+                        break;
+                    case MenuItem.CheckPipe:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckPipe);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         #endregion
     }
 }

@@ -14,6 +14,11 @@ namespace VRC2
         // current event 
         private PipeInstallEvent _currentEvent = PipeInstallEvent.EmptyEvent;
 
+        bool IsDialogShowing
+        {
+            get { return modalDialog.gameObject.activeSelf; }
+        }
+
         private void Start()
         {
             // disable modal dialog first
@@ -26,7 +31,9 @@ namespace VRC2
 
         public void OnPickAPipe()
         {
-            // hide self
+            // simulate modal window, ignore the event when the dialog is showing.
+            if (IsDialogShowing) return;
+            
             Debug.Log("You clicked Pick A pipe");
             // current event
             _currentEvent = PipeInstallEvent.P1PickUpPipe;
@@ -38,6 +45,8 @@ namespace VRC2
 
         public void OnCheckPipe()
         {
+            if (IsDialogShowing) return;
+            
             Debug.Log("You clicked Check Pipe");
 
             if (GlobalConstants.Checker)
