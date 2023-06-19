@@ -6,9 +6,9 @@ using VRC2.Events;
 
 namespace VRC2
 {
+    [RequireComponent(typeof(ModalDialogGetter))]
     public class PipeMenuHandler : MonoBehaviour
     {
-        [Header("Dialog Window")] [SerializeField]
         private ModalDialog modalDialog;
 
         // current event 
@@ -21,6 +21,9 @@ namespace VRC2
 
         private void Start()
         {
+            // initialize modal dialog
+            modalDialog = gameObject.GetComponent<ModalDialogGetter>().ModalDialog;
+            
             // disable modal dialog first
             modalDialog.show(false);
 
@@ -59,6 +62,30 @@ namespace VRC2
             }
         }
 
+        public void OnMeasureDistance()
+        {
+            if (IsDialogShowing) return;
+            Debug.Log("You clicked measure distance");
+            if (GlobalConstants.Checker)
+            {
+                _currentEvent = PipeInstallEvent.P2MeasureDistance;
+                modalDialog.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", "No");
+                modalDialog.show(true);
+            }
+        }
+
+        public void OnCommandRobot()
+        {
+            if (IsDialogShowing) return;
+            Debug.Log("You clicked command robot");
+            if (GlobalConstants.Checker)
+            {
+                _currentEvent = PipeInstallEvent.P2CommandRobotBendOrCut;
+                modalDialog.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", "No");
+                modalDialog.show(true);
+            }
+        }
+
         #endregion
 
         #region Dialog Buttons Event
@@ -90,8 +117,17 @@ namespace VRC2
                 case PipeInstallEvent.P2CheckPipe:
                     // use RPC to send check result
                     var ev2 = gameObject.GetComponent<P2CheckPipeEvent>();
-                    ev2.Initialize(modalDialog, GlobalConstants.DialogFirstButton);
+                    ev2.Initialize(GlobalConstants.DialogFirstButton);
                     ev2.Execute();
+                    break;
+                case PipeInstallEvent.P2MeasureDistance:
+                    // after p2 measured the distance, instruct the robot
+                    // stop first
+                    gameObject.GetComponent<P2MeasureDistanceEvent>().Stop();
+
+                    _currentEvent = PipeInstallEvent.P2CommandRobotBendOrCut;
+                    var ev3 = gameObject.GetComponent<P2CommandRobotEvent>();
+                    ev3.Execute();
                     break;
                 default:
                     modalDialog.show(false);
@@ -109,9 +145,14 @@ namespace VRC2
                 case PipeInstallEvent.P2CheckPipe:
                     // use RPC to send check result
                     var ev2 = gameObject.GetComponent<P2CheckPipeEvent>();
-                    ev2.Initialize(modalDialog, GlobalConstants.DialogSecondButton);
+                    ev2.Initialize(GlobalConstants.DialogSecondButton);
                     ev2.Execute();
                     break;
+                case PipeInstallEvent.P2MeasureDistance:
+                    // don't command robot
+                    gameObject.GetComponent<P2MeasureDistanceEvent>().Stop();
+                    break;
+
                 default:
                     modalDialog.show(false);
                     break;

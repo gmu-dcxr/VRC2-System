@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace VRC2
+namespace VRC2.Events
 {
     public enum PipeInstallEvent
     {
@@ -14,7 +14,7 @@ namespace VRC2
         P2GiveInstruction = 5,
         P2CheckSizeAndColor = 6,
         P2MeasureDistance = 7,
-        P2DemandRobotBendOrCut = 8,
+        P2CommandRobotBendOrCut = 8,
         P2CheckLengthAndAngle = 9,
         P2CheckLevel = 10, // Horizontal and vertical level
         P1Glue = 11,
