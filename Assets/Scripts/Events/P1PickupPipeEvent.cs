@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace VRC2.Events
 {
-    public class P1PickUpPipeEvent : BaseEvent
+    public class P1PickupPipeEvent : BaseEvent
     {
         public NetworkPrefabRef prefab;
 

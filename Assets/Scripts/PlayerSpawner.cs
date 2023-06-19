@@ -267,23 +267,23 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (_runner == null)
         {
-            if (GUI.Button(new Rect(0, 120, 100, 40), "Host"))
+            if (GUI.Button(new Rect(250, 10, 100, 40), "Host"))
             {
                 StartGame(GameMode.Host);
             }
 
-            if (GUI.Button(new Rect(100, 120, 100, 40), "Join"))
+            if (GUI.Button(new Rect(350, 10, 100, 40), "Join"))
             {
                 StartGame(GameMode.Client);
             }
         }
-        else
-        {
-            if (GUI.Button(new Rect(0, 200, 100, 40), "Pipe"))
-            {
-                CreateNewPipe();
-            }
-        }
+        // else
+        // {
+        //     if (GUI.Button(new Rect(0, 300, 100, 40), "Pipe"))
+        //     {
+        //         CreateNewPipe();
+        //     }
+        // }
     }
 }
 #endif

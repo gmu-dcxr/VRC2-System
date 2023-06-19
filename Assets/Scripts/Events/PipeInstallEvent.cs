@@ -7,11 +7,13 @@ namespace VRC2.Events
     public enum PipeInstallEvent
     {
         EmptyEvent = 0, // empty event
+        P2GiveP1Instruction = 1000,
+        P1GetInstruction = 1001,
         P1CheckStorage = 1,
         P1PickUpPipe = 2,
         P2CheckSizeAndColor = 3,
         P1GetSizeAndColorResult = 31,
-        P1DemandAIDrone = 4,
+        P1CommandAIDrone = 4,
         P2GiveInstruction = 5,
         P2MeasureDistance = 7,
         P2CommandRobotBendOrCut = 8,

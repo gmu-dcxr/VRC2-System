@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Remoting.Messaging;
@@ -7,22 +8,25 @@ using UnityEngine;
 
 namespace VRC2.Menu
 {
-
     public enum MenuItem
     {
         Zero = 0,
-        PickAPipe = 1,
-        CheckPipeSizeColor = 2,
-        MeasureDistance = 3,
-        CommandRobot = 4,
-        CheckPipeLengthAngle = 5,
-        CheckLevel = 6,
+        GiveInstruction = 1,
+        CheckStorage = 11,
+        PickupPipe = 2,
+        CheckPipeSizeColor = 3,
+        MeasureDistance = 4,
+        CommandRobot = 5,
+        CheckPipeLengthAngle = 6,
+        CheckLevel = 7,
     }
 
     internal static class MenuString
     {
         public static string empty = "";
-        public static string PickAPipe = "Pick A Pipe";
+        public static string GiveInstruction = "Give Instruction";
+        public static string CheckStorage = "Check Storage";
+        public static string PickupPipe = "Pickup Pipe";
         public static string CheckPipeSizeColor = "Size & Color";
         public static string MeasureDistance = "Measure Distance";
         public static string CommandRobot = "Command Robot";
@@ -32,12 +36,19 @@ namespace VRC2.Menu
 
     public class MenuInitializer
     {
-
         private IDictionary<MenuItem, string> menuItemNames;
         private IDictionary<string, MenuItem> nameMenuItems;
 
-        private List<MenuItem> P1MenuItems = new List<MenuItem>() { MenuItem.PickAPipe };
-        private List<MenuItem> P2MenuItems = new List<MenuItem>() { MenuItem.CheckPipeSizeColor, 
+        private List<MenuItem> P1MenuItems = new List<MenuItem>()
+        {
+            MenuItem.CheckStorage,
+            MenuItem.PickupPipe
+        };
+
+        private List<MenuItem> P2MenuItems = new List<MenuItem>()
+        {
+            MenuItem.GiveInstruction,
+            MenuItem.CheckPipeSizeColor,
             MenuItem.MeasureDistance,
             MenuItem.CommandRobot,
             MenuItem.CheckPipeLengthAngle,
@@ -67,8 +78,12 @@ namespace VRC2.Menu
             nameMenuItems = new Dictionary<string, MenuItem>();
             // add menu items
 
+            // check storage
+            AddPair(MenuItem.CheckStorage, MenuString.CheckStorage);
             // pick a pipe
-            AddPair(MenuItem.PickAPipe, MenuString.PickAPipe);
+            AddPair(MenuItem.PickupPipe, MenuString.PickupPipe);
+            // p2 give p1 instruction
+            AddPair(MenuItem.GiveInstruction, MenuString.GiveInstruction);
             // check pipe size and color
             AddPair(MenuItem.CheckPipeSizeColor, MenuString.CheckPipeSizeColor);
             // measure distance
@@ -127,7 +142,6 @@ namespace VRC2.Menu
         // Update is called once per frame
         void Update()
         {
-
         }
 
         # region Initialize Menu
@@ -161,7 +175,15 @@ namespace VRC2.Menu
                     {
                         tmp.text = "";
                         // disable it
-                        tmp.transform.parent.parent.parent.gameObject.SetActive(false);
+                        try
+                        {
+                            // some TextMeshPros are not menu.
+                            go.transform.parent.parent.gameObject.SetActive(false);
+                        }
+                        catch (Exception e)
+                        {
+                            ;
+                        }
                     }
                     else
                     {
@@ -197,8 +219,14 @@ namespace VRC2.Menu
 
                 switch (item)
                 {
-                    case MenuItem.PickAPipe:
-                        puew.WhenRelease.AddListener(_menuHandler.OnPickAPipe);
+                    case MenuItem.GiveInstruction:
+                        puew.WhenRelease.AddListener(_menuHandler.OnGiveInstruction);
+                        break;
+                    case MenuItem.CheckStorage:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckStorage);
+                        break;
+                    case MenuItem.PickupPipe:
+                        puew.WhenRelease.AddListener(_menuHandler.OnPickupPipe);
                         break;
                     case MenuItem.CheckPipeSizeColor:
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckPipeSizeColor);
