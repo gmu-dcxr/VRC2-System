@@ -24,16 +24,18 @@ namespace VRC2
             // disable modal dialog first
             modalDialog.show(false);
 
-            // add event listener
+            // add event listener for dialog window
             modalDialog.button1Events.WhenRelease.AddListener(() => { DialogButton1Clicked(); });
             modalDialog.button2Events.WhenRelease.AddListener(() => { DialogButton2Clicked(); });
         }
+
+        #region Menu Button Events
 
         public void OnPickAPipe()
         {
             // simulate modal window, ignore the event when the dialog is showing.
             if (IsDialogShowing) return;
-            
+
             Debug.Log("You clicked Pick A pipe");
             // current event
             _currentEvent = PipeInstallEvent.P1PickUpPipe;
@@ -46,7 +48,7 @@ namespace VRC2
         public void OnCheckPipe()
         {
             if (IsDialogShowing) return;
-            
+
             Debug.Log("You clicked Check Pipe");
 
             if (GlobalConstants.Checker)
@@ -56,6 +58,10 @@ namespace VRC2
                 modalDialog.show(true);
             }
         }
+
+        #endregion
+
+        #region Dialog Buttons Event
 
         public void DialogButton1Clicked()
         {
@@ -111,5 +117,7 @@ namespace VRC2
                     break;
             }
         }
+
+        #endregion
     }
 }
