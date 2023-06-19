@@ -12,18 +12,22 @@ namespace VRC2.Menu
     {
         Zero = 0,
         PickAPipe = 1,
-        CheckPipe = 2,
+        CheckPipeSizeColor = 2,
         MeasureDistance = 3,
         CommandRobot = 4,
+        CheckPipeLengthAngle = 5,
+        CheckLevel = 6,
     }
 
     internal static class MenuString
     {
         public static string empty = "";
         public static string PickAPipe = "Pick A Pipe";
-        public static string CheckPipe = "Check Pipe";
+        public static string CheckPipeSizeColor = "Size & Color";
         public static string MeasureDistance = "Measure Distance";
         public static string CommandRobot = "Command Robot";
+        public static string CheckPipeLengthAngle = "Length & Angle";
+        public static string CheckLevel = "Check Level";
     }
 
     public class MenuInitializer
@@ -33,9 +37,11 @@ namespace VRC2.Menu
         private IDictionary<string, MenuItem> nameMenuItems;
 
         private List<MenuItem> P1MenuItems = new List<MenuItem>() { MenuItem.PickAPipe };
-        private List<MenuItem> P2MenuItems = new List<MenuItem>() { MenuItem.CheckPipe, 
+        private List<MenuItem> P2MenuItems = new List<MenuItem>() { MenuItem.CheckPipeSizeColor, 
             MenuItem.MeasureDistance,
-            MenuItem.CommandRobot
+            MenuItem.CommandRobot,
+            MenuItem.CheckPipeLengthAngle,
+            MenuItem.CheckLevel
         };
 
         public List<MenuItem> P1Menu
@@ -63,12 +69,16 @@ namespace VRC2.Menu
 
             // pick a pipe
             AddPair(MenuItem.PickAPipe, MenuString.PickAPipe);
-            // check pipe
-            AddPair(MenuItem.CheckPipe, MenuString.CheckPipe);
+            // check pipe size and color
+            AddPair(MenuItem.CheckPipeSizeColor, MenuString.CheckPipeSizeColor);
             // measure distance
             AddPair(MenuItem.MeasureDistance, MenuString.MeasureDistance);
             // command robot
             AddPair(MenuItem.CommandRobot, MenuString.CommandRobot);
+            // check pipe length and angle
+            AddPair(MenuItem.CheckPipeLengthAngle, MenuString.CheckPipeLengthAngle);
+            // check level
+            AddPair(MenuItem.CheckLevel, MenuString.CheckLevel);
         }
 
         public MenuItem getMenuItemByString(string name)
@@ -188,14 +198,20 @@ namespace VRC2.Menu
                     case MenuItem.PickAPipe:
                         puew.WhenRelease.AddListener(_menuHandler.OnPickAPipe);
                         break;
-                    case MenuItem.CheckPipe:
-                        puew.WhenRelease.AddListener(_menuHandler.OnCheckPipe);
+                    case MenuItem.CheckPipeSizeColor:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckPipeSizeColor);
                         break;
                     case MenuItem.MeasureDistance:
                         puew.WhenRelease.AddListener(_menuHandler.OnMeasureDistance);
                         break;
                     case MenuItem.CommandRobot:
                         puew.WhenRelease.AddListener(_menuHandler.OnCommandRobot);
+                        break;
+                    case MenuItem.CheckPipeLengthAngle:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckLengthAngle);
+                        break;
+                    case MenuItem.CheckLevel:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckLevel);
                         break;
                     default:
                         break;

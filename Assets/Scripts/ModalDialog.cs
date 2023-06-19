@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using VRC2.Events;
 
 namespace VRC2
 {
@@ -23,6 +24,12 @@ namespace VRC2
         public PointableUnityEventWrapper button1Events;
         public PointableUnityEventWrapper button2Events;
 
+        // store event
+        public PipeInstallEvent currentEvent = PipeInstallEvent.EmptyEvent;
+        
+        // store check result
+        public bool checkResult = false;
+        
         public void show(bool flag)
         {
             gameObject.SetActive(flag);
@@ -52,12 +59,17 @@ namespace VRC2
             set { _CancelButton.text = value; }
         }
 
-        public void UpdateDialog(string title, string content, string btn1, string btn2)
+        public void UpdateDialog(string title, string content, string btn1, string btn2, PipeInstallEvent ev=PipeInstallEvent.EmptyEvent)
         {
             this.title = title;
             this.content = content;
             this.button1 = btn1;
             this.button2 = btn2;
+            // update event
+            if (ev != PipeInstallEvent.EmptyEvent)
+            {
+                this.currentEvent = ev;
+            }
         }
     }
 }
