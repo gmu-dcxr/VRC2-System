@@ -31,7 +31,30 @@ namespace VRC2
 
         #region Menu Button Events
 
-        public void OnPickAPipe()
+        public void OnGiveInstruction()
+        {
+            // p2 gives p1 instruction, size and color
+            // TODO: design such panel to allow P2 to select
+            if (IsDialogShowing) return;
+            Debug.Log("You clicked Give Instruction");
+
+            modalDialog.UpdateDialog("Tip", "Give Instruction to P1", "OK", null,
+                PipeInstallEvent.P2GiveInstruction);
+            modalDialog.show(true);
+        }
+
+        public void OnCheckStorage()
+        {
+            // p1 check storage
+            if (IsDialogShowing) return;
+            Debug.Log("You clicked Check Storage");
+
+            modalDialog.UpdateDialog("Check Storage", "Is the storage enough?", "Enough", "Lack",
+                PipeInstallEvent.P1CheckStorage);
+            modalDialog.show(true);
+        }
+
+        public void OnPickupPipe()
         {
             // simulate modal window, ignore the event when the dialog is showing.
             if (IsDialogShowing) return;
@@ -49,112 +72,113 @@ namespace VRC2
 
             Debug.Log("You clicked Check Pipe");
 
-            if (GlobalConstants.Checker)
-            {
-                modalDialog.UpdateDialog("Tip", "Are the color and size of the pipe correct?", "Yes", "No",
-                    PipeInstallEvent.P2CheckSizeAndColor);
-                modalDialog.show(true);
-            }
+            modalDialog.UpdateDialog("Tip", "Are the color and size of the pipe correct?", "Yes", "No",
+                PipeInstallEvent.P2CheckSizeAndColor);
+            modalDialog.show(true);
+
         }
 
         public void OnMeasureDistance()
         {
             if (IsDialogShowing) return;
             Debug.Log("You clicked measure distance");
-            if (GlobalConstants.Checker)
-            {
-                modalDialog.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
-                    PipeInstallEvent.P2MeasureDistance);
-                modalDialog.show(true);
-            }
+
+            modalDialog.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
+                PipeInstallEvent.P2MeasureDistance);
+            modalDialog.show(true);
+
         }
 
         public void OnCommandRobot()
         {
             if (IsDialogShowing) return;
             Debug.Log("You clicked command robot");
-            if (GlobalConstants.Checker)
-            {
-                modalDialog.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
-                    PipeInstallEvent.P2CommandRobotBendOrCut);
-                modalDialog.show(true);
-            }
+
+            modalDialog.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
+                PipeInstallEvent.P2CommandRobotBendOrCut);
+            modalDialog.show(true);
+
         }
 
         public void OnCheckLengthAngle()
         {
             if (IsDialogShowing) return;
             Debug.Log("You clicked check length and angle");
-            if (GlobalConstants.Checker)
-            {
-                modalDialog.UpdateDialog("Check Length and angle", "Are the length and the angle correct?", "Yes", "No",
-                    PipeInstallEvent.P2CheckLengthAndAngle);
-                modalDialog.show(true);
-            }
+
+            modalDialog.UpdateDialog("Check Length and angle", "Are the length and the angle correct?", "Yes", "No",
+                PipeInstallEvent.P2CheckLengthAndAngle);
+            modalDialog.show(true);
+
         }
 
         public void OnCheckLevel()
         {
             if (IsDialogShowing) return;
             Debug.Log("You clicked check level");
-            if (GlobalConstants.Checker)
-            {
-                modalDialog.UpdateDialog("Check Level", "Are the horizontal and vertical levels correct?", "Yes", "No",
-                    PipeInstallEvent.P2CheckLevel);
-                modalDialog.show(true);
-            }
+            modalDialog.UpdateDialog("Check Level", "Are the horizontal and vertical levels correct?", "Yes", "No",
+                PipeInstallEvent.P2CheckLevel);
+            modalDialog.show(true);
         }
 
         #endregion
 
         #region Participants' Actions
 
+        void P1MayStartPickup()
+        {
+            if (IsDialogShowing) return;
+            Debug.Log("P1 can pick up a pipe");
+            // set dialog window
+            modalDialog.UpdateDialog("Tip", "Pick up a pipe", "OK", null,
+                PipeInstallEvent.P1PickUpPipe);
+            modalDialog.show(true);
+        }
+
+        void P1CommandAIDrone()
+        {
+            if (IsDialogShowing) return;
+            Debug.Log("P1 may command AI drone.");
+            // set dialog window
+            modalDialog.UpdateDialog("Tip", "Command AI drone to deliver.", "OK", null,
+                PipeInstallEvent.P1CommandAIDrone);
+            modalDialog.show(true);
+        }
+
         void P1MayStartGlue()
         {
             if (IsDialogShowing) return;
             Debug.Log("P1 can glue the pipe");
-            if (GlobalConstants.Checkee)
-            {
-                modalDialog.UpdateDialog("Tip", "You may start gluing pipe.", "Yes", null,
-                    PipeInstallEvent.P1Glue);
-                modalDialog.show(true);
-            }
+            modalDialog.UpdateDialog("Tip", "You may start gluing pipe.", "Yes", null,
+                PipeInstallEvent.P1Glue);
+            modalDialog.show(true);
         }
 
         void P1MayStartPlace()
         {
             if (IsDialogShowing) return;
             Debug.Log("P1 can place the pipe");
-            if (GlobalConstants.Checkee)
-            {
-                modalDialog.UpdateDialog("Tip", "You may start placing pipe.", "Yes", null,
-                    PipeInstallEvent.P1Place);
-                modalDialog.show(true);
-            }
+            modalDialog.UpdateDialog("Tip", "You may start placing pipe.", "Yes", null,
+                PipeInstallEvent.P1Place);
+            modalDialog.show(true);
         }
 
         void P1MayStartAdjust()
         {
             if (IsDialogShowing) return;
             Debug.Log("P1 can adjust the pipe");
-            if (GlobalConstants.Checkee)
-            {
-                modalDialog.UpdateDialog("Tip", "You may start adjusting pipe.", "Yes", null,
-                    PipeInstallEvent.P1Adjust);
-                modalDialog.show(true);
-            }
+            modalDialog.UpdateDialog("Tip", "You may start adjusting pipe.", "Yes", null,
+                PipeInstallEvent.P1Adjust);
+            modalDialog.show(true);
         }
 
         void P1MayStartClamp()
         {
             if (IsDialogShowing) return;
             Debug.Log("P1 can clamp the pipe");
-            if (GlobalConstants.Checkee)
-            {
-                modalDialog.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", null,
-                    PipeInstallEvent.P1Clamp);
-                modalDialog.show(true);
-            }
+            modalDialog.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", null,
+                PipeInstallEvent.P1Clamp);
+            modalDialog.show(true);
+
         }
 
         #endregion
@@ -181,9 +205,23 @@ namespace VRC2
             var ev = modalDialog.currentEvent;
             switch (ev)
             {
+                case PipeInstallEvent.P1GetInstruction:
+                    // p1 to pick up a pipe
+                    break;
+
+                case PipeInstallEvent.P1CheckStorage:
+                    // enough
+                    P1MayStartPickup();
+                    break;
+
+                case PipeInstallEvent.P1CommandAIDrone:
+                    var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
+                    ev0.Execute();
+                    break;
+
                 case PipeInstallEvent.P1PickUpPipe:
                     // initialize pipe
-                    var ev1 = gameObject.GetComponent<P1PickUpPipeEvent>();
+                    var ev1 = gameObject.GetComponent<P1PickupPipeEvent>();
                     ev1.Execute();
                     break;
                 case PipeInstallEvent.P2CheckSizeAndColor:
@@ -258,6 +296,12 @@ namespace VRC2
             var ev = modalDialog.currentEvent;
             switch (ev)
             {
+                case PipeInstallEvent.P1CheckStorage:
+                    // lack
+                    // command AI drone to deliver pipes
+                    P1CommandAIDrone();
+                    break;
+
                 case PipeInstallEvent.P1PickUpPipe:
                     break;
                 case PipeInstallEvent.P2CheckSizeAndColor:

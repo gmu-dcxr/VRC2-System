@@ -26345,6 +26345,8 @@ GameObject:
   - component: {fileID: 1762549640}
   - component: {fileID: 1762549643}
   - component: {fileID: 1762549642}
+  - component: {fileID: 1762549645}
+  - component: {fileID: 1762549644}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -26469,7 +26471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _menuRoot: {fileID: 1762549631}
   leaveUnusedBlank: 1
-  IsP1: 0
+  IsP1: 1
 --- !u!114 &1762549639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26531,6 +26533,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b409e4b612a46bf8ab6213eb58805e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1762549644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762549631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 026fb03de1bf48058bd3dc28078dc98d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1762549645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762549631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ede7ad2fb4e44ca58b6c7bc3b95d3bdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: 1
+  color: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &1764704224
 GameObject:
   m_ObjectHideFlags: 0

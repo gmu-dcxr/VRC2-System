@@ -19,27 +19,43 @@ namespace VRC2.Menu
             {
                 if (Input.GetKeyUp(KeyCode.Keypad1))
                 {
-                    _handler.OnCheckPipeSizeColor();
+                    _handler.OnGiveInstruction();
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad2))
                 {
-                    _handler.OnMeasureDistance();
+                    _handler.OnCheckPipeSizeColor();
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad3))
                 {
-                    _handler.OnCommandRobot();
+                    _handler.OnMeasureDistance();
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad4))
                 {
-                    _handler.OnCheckLengthAngle();
+                    _handler.OnCommandRobot();
                 }
                 
                 if (Input.GetKeyUp(KeyCode.Keypad5))
                 {
+                    _handler.OnCheckLengthAngle();
+                }                
+                if (Input.GetKeyUp(KeyCode.Keypad6))
+                {
                     _handler.OnCheckLevel();
+                }
+            }
+            else
+            {
+                if (Input.GetKeyUp(KeyCode.Keypad1))
+                {
+                    _handler.OnCheckStorage();
+                }
+
+                if (Input.GetKeyUp(KeyCode.Keypad2))
+                {
+                    _handler.OnPickupPipe();
                 }
             }
         }
@@ -48,11 +64,17 @@ namespace VRC2.Menu
         {
             if (GlobalConstants.Checker)
             {
-                GUI.Label(new Rect(10, 10, 200, 30), "1 - Size & Color");
-                GUI.Label(new Rect(10, 60, 200, 30), "2 - Measure Distance");
-                GUI.Label(new Rect(10, 110, 200, 30), "3 - Command Robot");
-                GUI.Label(new Rect(10, 160, 200, 30), "4 - Length & Angle");
-                GUI.Label(new Rect(10, 210, 200, 30), "5 - Check Level");
+                GUI.Button(new Rect(10, 10, 200, 30), "1 - Give Instruction");
+                GUI.Button(new Rect(10, 60, 200, 30), "2 - Size & Color");
+                GUI.Button(new Rect(10, 110, 200, 30), "3 - Measure Distance");
+                GUI.Button(new Rect(10, 160, 200, 30), "4 - Command Robot");
+                GUI.Button(new Rect(10, 210, 200, 30), "5 - Length & Angle");
+                GUI.Button(new Rect(10, 260, 200, 30), "6 - Check Level");
+            }
+            else
+            {
+                GUI.Button(new Rect(10, 10, 200, 30), "1 - Check Storage");
+                GUI.Button(new Rect(10, 60, 200, 30), "2 - Pickup Pipe");
             }
         }
     }
