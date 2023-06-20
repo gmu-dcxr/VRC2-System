@@ -24,15 +24,10 @@ namespace VRC2
         public PointableUnityEventWrapper button2Events;
 
         // store event
-        public PipeInstallEvent currentEvent = PipeInstallEvent.EmptyEvent;
+        [HideInInspector]public PipeInstallEvent currentEvent = PipeInstallEvent.EmptyEvent;
 
         // store check result
-        public bool checkResult = false;
-
-        public void show(bool flag)
-        {
-            gameObject.SetActive(flag);
-        }
+        [HideInInspector]public bool checkResult = false;
 
         public string title
         {

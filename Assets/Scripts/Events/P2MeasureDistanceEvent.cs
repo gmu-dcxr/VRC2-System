@@ -36,7 +36,7 @@ namespace VRC2.Events
             // update dialog content
             if (!executing) return;
             var msg = $"The distance is {distance}.\nSend the instruction to robot?";
-            modalDialog.content = msg;
+            dialogManager.content = msg;
         }
     }
 }

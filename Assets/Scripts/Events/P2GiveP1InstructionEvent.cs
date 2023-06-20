@@ -31,9 +31,9 @@ namespace VRC2.Events
             {
                 message = $"Some other player said instruction: size {size} and color {color.ToString()}\n";
                 // show check result window
-                modalDialog.UpdateDialog("Instruction", $"Pipe size {size} and color {color}", "OK", null,
+                dialogManager.UpdateDialog("Instruction", $"Pipe size {size} and color {color}", "OK", null,
                     PipeInstallEvent.P1GetInstruction);
-                modalDialog.show(true);
+                dialogManager.Show(true);
             }
 
             Debug.LogWarning(message);
