@@ -26,7 +26,9 @@ namespace VRC2
 
         public static bool IsNetworkReady()
         {
-            return (GlobalConstants.networkRunner != null && !localPlayer.IsNone);
+            Debug.Log($"NetworkRunner is null: {networkRunner == null}");
+            Debug.Log($"localPlayer is null: {GlobalConstants.localPlayer.IsNone}");
+            return (GlobalConstants.networkRunner != null && !GlobalConstants.localPlayer.IsNone);
         }
 
         // P2, participant 2, check size, color, water level, etc.
