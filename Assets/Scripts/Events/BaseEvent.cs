@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 namespace VRC2.Events
 {
     [RequireComponent(typeof(ModalDialogManager))]
-    public class BaseEvent : MonoBehaviour
+    public class BaseEvent : NetworkBehaviour
     {
 
         private ModalDialogManager _dialogManager;
