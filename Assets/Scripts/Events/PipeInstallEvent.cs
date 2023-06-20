@@ -16,6 +16,7 @@ namespace VRC2.Events
         P1CommandAIDrone = 4,
         P2GiveInstruction = 5,
         P2MeasureDistance = 7,
+        P2MeasureDistanceResult = 71,
         P2CommandRobotBendOrCut = 8,
         P2CheckLengthAndAngle = 9,
         P1GetLengthAndAngleResult = 91,

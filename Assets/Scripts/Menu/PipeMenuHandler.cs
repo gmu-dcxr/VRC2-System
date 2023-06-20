@@ -16,7 +16,7 @@ namespace VRC2
 
         internal void ShowModalDialog(bool flag)
         {
-            dialogManager.Show(flag);
+            ShowModalDialog(flag);
         }
 
         private void Start()
@@ -37,6 +37,16 @@ namespace VRC2
         }
 
         #region Menu Button Events
+
+        /*
+         * P2 menu event flows:
+         *  1. OnGiveInstruction() - P2GiveInstruction - P1GetInstruction
+         *  2. OnCheckPipeSizeColor() - P2CheckSizeAndColor - P1GetSizeAndColorResult
+         *  3. OnMeasureDistance() - P2MeasureDistance - P2MeasureDistanceResult
+         *  4. OnCommandRobot() - P2CommandRobotBendOrCut - 
+         *  5. OnCheckLengthAngle() - P2CheckLengthAndAngle - P2CommandRobotBendOrCut(false)
+         *  6. OnCheckLevel() - P2CheckLevel - P1GetLevelResult
+         */
 
         public void OnGiveInstruction()
         {
@@ -76,7 +86,6 @@ namespace VRC2
             dialogManager.UpdateDialog("Tip", "Are the color and size of the pipe correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckSizeAndColor);
             ShowModalDialog(true);
-
         }
 
         public void OnMeasureDistance()
@@ -86,7 +95,6 @@ namespace VRC2
             dialogManager.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
                 PipeInstallEvent.P2MeasureDistance);
             ShowModalDialog(true);
-
         }
 
         public void OnCommandRobot()
@@ -96,7 +104,6 @@ namespace VRC2
             dialogManager.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
                 PipeInstallEvent.P2CommandRobotBendOrCut);
             ShowModalDialog(true);
-
         }
 
         public void OnCheckLengthAngle()
@@ -106,7 +113,6 @@ namespace VRC2
             dialogManager.UpdateDialog("Check Length and angle", "Are the length and the angle correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckLengthAndAngle);
             ShowModalDialog(true);
-
         }
 
         public void OnCheckLevel()
@@ -169,7 +175,6 @@ namespace VRC2
             dialogManager.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", null,
                 PipeInstallEvent.P1Clamp);
             ShowModalDialog(true);
-
         }
 
         #endregion
@@ -198,17 +203,17 @@ namespace VRC2
             {
                 case PipeInstallEvent.P2GiveInstruction:
                     // hide dialog
-                    dialogManager.Show(false);
-                    
+                    ShowModalDialog(false);
+
                     var e = gameObject.GetComponent<P2GiveP1InstructionEvent>();
                     e.Execute();
                     break;
-                
+
                 case PipeInstallEvent.P1GetInstruction:
                     // p1 to pick up a pipe
                     // hide dialog
-                    dialogManager.Show(false);
-                    
+                    ShowModalDialog(false);
+
                     break;
 
                 case PipeInstallEvent.P1CheckStorage:
@@ -218,7 +223,7 @@ namespace VRC2
 
                 case PipeInstallEvent.P1CommandAIDrone:
                     // hide dialog
-                    dialogManager.Show(false);
+                    ShowModalDialog(false);
 
                     var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
                     ev0.Execute();
@@ -227,7 +232,7 @@ namespace VRC2
                 case PipeInstallEvent.P1PickUpPipe:
                     // initialize pipe
                     // hide dialog
-                    dialogManager.Show(false);
+                    ShowModalDialog(false);
 
                     var ev1 = gameObject.GetComponent<P1PickupPipeEvent>();
                     ev1.Execute();
@@ -243,17 +248,30 @@ namespace VRC2
                     break;
 
                 case PipeInstallEvent.P2MeasureDistance:
+                    var ev21 = gameObject.GetComponent<P2MeasureDistanceEvent>();
+                    ev21.Execute();
+                    break;
+
+
+                case PipeInstallEvent.P2MeasureDistanceResult:
                     // after p2 measured the distance, instruct the robot
-                    // stop first
-                    gameObject.GetComponent<P2MeasureDistanceEvent>().Stop();
-                    // update event
-                    modalDialog.currentEvent = PipeInstallEvent.P2CommandRobotBendOrCut;
+                    ShowModalDialog(false);
 
                     var ev3 = gameObject.GetComponent<P2CommandRobotEvent>();
                     ev3.Execute();
                     break;
+
+                case PipeInstallEvent.P2CommandRobotBendOrCut:
+                    // command robot
+                    ShowModalDialog(false);
+
+                    var ev31 = gameObject.GetComponent<P2CommandRobotEvent>();
+                    ev31.Execute();
+                    break;
+
                 case PipeInstallEvent.P2CheckLengthAndAngle:
-                    // nothing to do on P1 side
+                    // pass: nothing to do on P1 side
+                    ShowModalDialog(false);
                     break;
 
                 case PipeInstallEvent.P1GetLengthAndAngleResult:
@@ -273,7 +291,7 @@ namespace VRC2
 
                 case PipeInstallEvent.P2CheckLevel:
                     // use RPC to send check result
-                    var ev4 = gameObject.GetComponent<P2CheckSizeAndColorEvent>();
+                    var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
                     ev4.Initialize(GlobalConstants.DialogFirstButton);
                     ev4.Execute();
                     break;
@@ -321,19 +339,20 @@ namespace VRC2
                 case PipeInstallEvent.P1GetSizeAndColorResult:
                     // size and color check failed, p1 need to redo pick up pipe event
                     // TODO: remove current picked pipe first
+                    ShowModalDialog(false);
                     break;
 
-                case PipeInstallEvent.P2MeasureDistance:
-                    // don't command robot
-                    gameObject.GetComponent<P2MeasureDistanceEvent>().Stop();
-                    break;
-                case PipeInstallEvent.P2CommandRobotBendOrCut:
-                    // don't command robot
+                case PipeInstallEvent.P2MeasureDistanceResult:
+                    // after p2 measured the distance
+                    ShowModalDialog(false);
                     break;
 
                 case PipeInstallEvent.P2CheckLengthAndAngle:
                     // length or angle is wrong, re-command robot
                     // update event
+
+                    ShowModalDialog(false);
+
                     modalDialog.currentEvent = PipeInstallEvent.P2CommandRobotBendOrCut;
 
                     var ev3 = gameObject.GetComponent<P2CommandRobotEvent>();
@@ -343,7 +362,7 @@ namespace VRC2
                 case PipeInstallEvent.P2CheckLevel:
                     // use RPC to send check result
                     var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
-                    ev4.Initialize(GlobalConstants.DialogFirstButton);
+                    ev4.Initialize(GlobalConstants.DialogSecondButton);
                     ev4.Execute();
                     break;
 
