@@ -20,7 +20,7 @@ public class RPCTest : NetworkBehaviour
         }
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_SendMessage(string message, RpcInfo info = default)
     {
         var _messages = "";

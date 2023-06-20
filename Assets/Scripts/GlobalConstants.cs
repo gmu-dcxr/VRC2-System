@@ -26,8 +26,6 @@ namespace VRC2
 
         public static bool IsNetworkReady()
         {
-            Debug.Log($"NetworkRunner is null: {networkRunner == null}");
-            Debug.Log($"localPlayer is null: {GlobalConstants.localPlayer.IsNone}");
             return (GlobalConstants.networkRunner != null && !GlobalConstants.localPlayer.IsNone);
         }
 
