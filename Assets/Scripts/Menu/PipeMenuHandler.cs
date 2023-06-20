@@ -197,12 +197,18 @@ namespace VRC2
             switch (ev)
             {
                 case PipeInstallEvent.P2GiveInstruction:
+                    // hide dialog
+                    dialogManager.Show(false);
+                    
                     var e = gameObject.GetComponent<P2GiveP1InstructionEvent>();
                     e.Execute();
                     break;
                 
                 case PipeInstallEvent.P1GetInstruction:
                     // p1 to pick up a pipe
+                    // hide dialog
+                    dialogManager.Show(false);
+                    
                     break;
 
                 case PipeInstallEvent.P1CheckStorage:

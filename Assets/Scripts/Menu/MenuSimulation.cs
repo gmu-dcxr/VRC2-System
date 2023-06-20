@@ -15,6 +15,9 @@ namespace VRC2.Menu
 
         private void Update()
         {
+            if(!GlobalConstants.GameStarted)
+                return;
+            
             if (GlobalConstants.Checker)
             {
                 if (Input.GetKeyUp(KeyCode.Keypad1))
@@ -62,6 +65,9 @@ namespace VRC2.Menu
 
         private void OnGUI()
         {
+            if(!GlobalConstants.GameStarted)
+                return;
+            
             if (GlobalConstants.Checker)
             {
                 GUI.Button(new Rect(10, 10, 200, 30), "1 - Give Instruction");
