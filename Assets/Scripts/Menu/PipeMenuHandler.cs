@@ -13,10 +13,6 @@ namespace VRC2
 
         private ModalDialogManager dialogManager;
 
-        bool IsDialogShowing
-        {
-            get { return dialogManager.IsShowing(); }
-        }
 
         internal void ShowModalDialog(bool flag)
         {
@@ -29,12 +25,15 @@ namespace VRC2
             dialogManager = gameObject.GetComponent<ModalDialogManager>();
             modalDialog = dialogManager.modalDialog;
 
-            // // disable modal dialog first
-            // ShowModalDialog(false);
+            // disable modal dialog first
+            ShowModalDialog(false);
 
             // add event listener for dialog window
             modalDialog.button1Events.WhenRelease.AddListener(() => { DialogButton1Clicked(); });
             modalDialog.button2Events.WhenRelease.AddListener(() => { DialogButton2Clicked(); });
+
+            var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
+            Debug.LogWarning($"ev0 == null: {ev0 == null}");
         }
 
         #region Menu Button Events
@@ -43,10 +42,9 @@ namespace VRC2
         {
             // p2 gives p1 instruction, size and color
             // TODO: design such panel to allow P2 to select
-            if (IsDialogShowing) return;
             Debug.Log("You clicked Give Instruction");
 
-            modalDialog.UpdateDialog("Tip", "Give Instruction to P1", "OK", null,
+            dialogManager.UpdateDialog("Tip", "Give Instruction to P1", "OK", null,
                 PipeInstallEvent.P2GiveInstruction);
             ShowModalDialog(true);
         }
@@ -54,10 +52,9 @@ namespace VRC2
         public void OnCheckStorage()
         {
             // p1 check storage
-            if (IsDialogShowing) return;
             Debug.Log("You clicked Check Storage");
 
-            modalDialog.UpdateDialog("Check Storage", "Is the storage enough?", "Enough", "Lack",
+            dialogManager.UpdateDialog("Check Storage", "Is the storage enough?", "Enough", "Lack",
                 PipeInstallEvent.P1CheckStorage);
             ShowModalDialog(true);
         }
@@ -65,22 +62,18 @@ namespace VRC2
         public void OnPickupPipe()
         {
             // simulate modal window, ignore the event when the dialog is showing.
-            if (IsDialogShowing) return;
-
             Debug.Log("You clicked Pick A pipe");
             // set dialog window
-            modalDialog.UpdateDialog("Tip", "Pick up a pipe", "OK", null,
+            dialogManager.UpdateDialog("Tip", "Pick up a pipe", "OK", null,
                 PipeInstallEvent.P1PickUpPipe);
             ShowModalDialog(true);
         }
 
         public void OnCheckPipeSizeColor()
         {
-            if (IsDialogShowing) return;
-
             Debug.Log("You clicked Check Pipe");
 
-            modalDialog.UpdateDialog("Tip", "Are the color and size of the pipe correct?", "Yes", "No",
+            dialogManager.UpdateDialog("Tip", "Are the color and size of the pipe correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckSizeAndColor);
             ShowModalDialog(true);
 
@@ -88,10 +81,9 @@ namespace VRC2
 
         public void OnMeasureDistance()
         {
-            if (IsDialogShowing) return;
             Debug.Log("You clicked measure distance");
 
-            modalDialog.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
+            dialogManager.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
                 PipeInstallEvent.P2MeasureDistance);
             ShowModalDialog(true);
 
@@ -99,10 +91,9 @@ namespace VRC2
 
         public void OnCommandRobot()
         {
-            if (IsDialogShowing) return;
             Debug.Log("You clicked command robot");
 
-            modalDialog.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
+            dialogManager.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
                 PipeInstallEvent.P2CommandRobotBendOrCut);
             ShowModalDialog(true);
 
@@ -110,10 +101,9 @@ namespace VRC2
 
         public void OnCheckLengthAngle()
         {
-            if (IsDialogShowing) return;
             Debug.Log("You clicked check length and angle");
 
-            modalDialog.UpdateDialog("Check Length and angle", "Are the length and the angle correct?", "Yes", "No",
+            dialogManager.UpdateDialog("Check Length and angle", "Are the length and the angle correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckLengthAndAngle);
             ShowModalDialog(true);
 
@@ -121,9 +111,8 @@ namespace VRC2
 
         public void OnCheckLevel()
         {
-            if (IsDialogShowing) return;
             Debug.Log("You clicked check level");
-            modalDialog.UpdateDialog("Check Level", "Are the horizontal and vertical levels correct?", "Yes", "No",
+            dialogManager.UpdateDialog("Check Level", "Are the horizontal and vertical levels correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckLevel);
             ShowModalDialog(true);
         }
@@ -134,56 +123,50 @@ namespace VRC2
 
         void P1MayStartPickup()
         {
-            if (IsDialogShowing) return;
             Debug.Log("P1 can pick up a pipe");
             // set dialog window
-            modalDialog.UpdateDialog("Tip", "Pick up a pipe", "OK", null,
+            dialogManager.UpdateDialog("Tip", "Pick up a pipe", "OK", null,
                 PipeInstallEvent.P1PickUpPipe);
             ShowModalDialog(true);
         }
 
         void P1CommandAIDrone()
         {
-            if (IsDialogShowing) return;
             Debug.Log("P1 may command AI drone.");
             // set dialog window
-            modalDialog.UpdateDialog("Tip", "Command AI drone to deliver.", "OK", null,
+            dialogManager.UpdateDialog("Tip", "Command AI drone to deliver.", "OK", null,
                 PipeInstallEvent.P1CommandAIDrone);
             ShowModalDialog(true);
         }
 
         void P1MayStartGlue()
         {
-            if (IsDialogShowing) return;
             Debug.Log("P1 can glue the pipe");
-            modalDialog.UpdateDialog("Tip", "You may start gluing pipe.", "Yes", null,
+            dialogManager.UpdateDialog("Tip", "You may start gluing pipe.", "Yes", null,
                 PipeInstallEvent.P1Glue);
             ShowModalDialog(true);
         }
 
         void P1MayStartPlace()
         {
-            if (IsDialogShowing) return;
             Debug.Log("P1 can place the pipe");
-            modalDialog.UpdateDialog("Tip", "You may start placing pipe.", "Yes", null,
+            dialogManager.UpdateDialog("Tip", "You may start placing pipe.", "Yes", null,
                 PipeInstallEvent.P1Place);
             ShowModalDialog(true);
         }
 
         void P1MayStartAdjust()
         {
-            if (IsDialogShowing) return;
             Debug.Log("P1 can adjust the pipe");
-            modalDialog.UpdateDialog("Tip", "You may start adjusting pipe.", "Yes", null,
+            dialogManager.UpdateDialog("Tip", "You may start adjusting pipe.", "Yes", null,
                 PipeInstallEvent.P1Adjust);
             ShowModalDialog(true);
         }
 
         void P1MayStartClamp()
         {
-            if (IsDialogShowing) return;
             Debug.Log("P1 can clamp the pipe");
-            modalDialog.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", null,
+            dialogManager.UpdateDialog("Tip", "You may start clamping pipe.", "Yes", null,
                 PipeInstallEvent.P1Clamp);
             ShowModalDialog(true);
 
@@ -196,14 +179,14 @@ namespace VRC2
         public void DialogButton1Clicked()
         {
             Debug.Log("DialogButton1Clicked");
-            ShowModalDialog(false);
+            // ShowModalDialog(false);
             DialogButton1EventHandler();
         }
 
         public void DialogButton2Clicked()
         {
             Debug.Log("DialogButton2Clicked");
-            ShowModalDialog(false);
+            // ShowModalDialog(false);
             DialogButton2EventHandler();
         }
 
@@ -223,12 +206,18 @@ namespace VRC2
                     break;
 
                 case PipeInstallEvent.P1CommandAIDrone:
+                    // hide dialog
+                    dialogManager.Show(false);
+
                     var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
                     ev0.Execute();
                     break;
 
                 case PipeInstallEvent.P1PickUpPipe:
                     // initialize pipe
+                    // hide dialog
+                    dialogManager.Show(false);
+
                     var ev1 = gameObject.GetComponent<P1PickupPipeEvent>();
                     ev1.Execute();
                     break;
