@@ -19,7 +19,6 @@ namespace VRC2.Events
         P2MeasureDistanceResult = 71,
         P2CommandRobotBendOrCut = 8,
         P2CheckLengthAndAngle = 9,
-        P1GetLengthAndAngleResult = 91,
         P2CheckLevel = 10, // Horizontal and vertical level
         P1GetLevelResult = 101,
         P1Glue = 11,

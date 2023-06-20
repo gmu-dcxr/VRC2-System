@@ -271,19 +271,9 @@ namespace VRC2
                     break;
 
                 case PipeInstallEvent.P2CheckLengthAndAngle:
-                    // pass: nothing to do on P1 side
+                    // pass: nothing to do on P2 side, P1 may start glue
                     ShowModalDialog(false);
-                    break;
-
-                case PipeInstallEvent.P1GetLengthAndAngleResult:
-                    // this is from RPC
-                    if (modalDialog.checkResult)
-                    {
-                        // pass
-                        // length and angle are right, let P1 glue it
-                        P1MayStartGlue();
-                    }
-
+                    Debug.Log("P1 may start glue it");
                     break;
 
                 case PipeInstallEvent.P1Glue:
@@ -291,6 +281,7 @@ namespace VRC2
                     break;
 
                 case PipeInstallEvent.P2CheckLevel:
+                    ShowModalDialog(false);
                     // use RPC to send check result
                     var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
                     ev4.Initialize(GlobalConstants.DialogFirstButton);
@@ -298,16 +289,19 @@ namespace VRC2
                     break;
 
                 case PipeInstallEvent.P1GetLevelResult:
+                    ShowModalDialog(false);
                     // p1 get check level
                     if (modalDialog.checkResult)
                     {
                         // pass
-                        P1MayStartClamp();
+                        // P1MayStartClamp();
+                        Debug.Log("P1 may start glue it");
                     }
                     else
                     {
                         // failed
-                        P1MayStartAdjust();
+                        // P1MayStartAdjust();
+                        Debug.Log("P1 may start glue it");
                     }
 
                     break;
@@ -354,9 +348,7 @@ namespace VRC2
                     // update event
 
                     ShowModalDialog(false);
-
-                    modalDialog.currentEvent = PipeInstallEvent.P2CommandRobotBendOrCut;
-
+                    
                     var ev3 = gameObject.GetComponent<P2CommandRobotEvent>();
                     ev3.Execute();
                     break;
