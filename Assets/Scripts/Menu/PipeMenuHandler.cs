@@ -196,6 +196,11 @@ namespace VRC2
             var ev = modalDialog.currentEvent;
             switch (ev)
             {
+                case PipeInstallEvent.P2GiveInstruction:
+                    var e = gameObject.GetComponent<P2GiveP1InstructionEvent>();
+                    e.Execute();
+                    break;
+                
                 case PipeInstallEvent.P1GetInstruction:
                     // p1 to pick up a pipe
                     break;
