@@ -16,7 +16,7 @@ namespace VRC2
 
         internal void ShowModalDialog(bool flag)
         {
-            ShowModalDialog(flag);
+            dialogManager.Show(flag);
         }
 
         private void Start()
