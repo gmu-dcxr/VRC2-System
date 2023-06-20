@@ -140,7 +140,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             isServer = false;
             // p2 side
-            GlobalConstants.remotePlayer = player;
+            GlobalConstants.localPlayer = player;
         }
 
         if (hideSelf)
