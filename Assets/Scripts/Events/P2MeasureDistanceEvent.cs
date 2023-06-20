@@ -11,9 +11,7 @@ namespace VRC2.Events
     public class P2MeasureDistanceEvent : BaseEvent
     {
 
-        private float distance;
-
-        private bool executing = false;
+        private float distance = 1.0f;
 
         public void Initialize()
         {
@@ -22,21 +20,10 @@ namespace VRC2.Events
 
         public override void Execute()
         {
-            executing = true;
-        }
-
-        public void Stop()
-        {
-            executing = false;
-            // TODO: add other cleaning event
-        }
-
-        private void Update()
-        {
-            // update dialog content
-            if (!executing) return;
-            var msg = $"The distance is {distance}.\nSend the instruction to robot?";
-            dialogManager.content = msg;
+            dialogManager.UpdateDialog("Instruction", $"The distance is {distance}.\nSend the instruction to robot?"
+                , "OK", "Cancel",
+                PipeInstallEvent.P2MeasureDistanceResult);
+            dialogManager.Show(true);
         }
     }
 }
