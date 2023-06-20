@@ -12,6 +12,8 @@ namespace VRC2
         public static PlayerRef localPlayer = PlayerRef.None;
         public static PlayerRef remotePlayer = PlayerRef.None;
 
+        public static bool GameStarted = false;
+
         public static void RemovePlayer(PlayerRef player)
         {
             if (player == localPlayer)

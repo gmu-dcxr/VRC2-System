@@ -120,15 +120,11 @@ namespace VRC2.Menu
 
         [Header("Settings")] [SerializeField] private bool leaveUnusedBlank;
 
-        public bool IsP1
-        {
-            get => GlobalConstants.Checkee;
-        }
-
-
         private MenuInitializer _menuInitializer = null;
 
         private PipeMenuHandler _menuHandler = null;
+
+        private bool _menuInitialized = false;
 
         // Start is called before the first frame update
         void Start()
@@ -136,15 +132,22 @@ namespace VRC2.Menu
             _menuInitializer = new MenuInitializer();
 
             _menuHandler = gameObject.GetComponent<PipeMenuHandler>();
-            // initialize menu
-            InitializeMenuText(leaveUnusedBlank);
-            // initialize action
-            InitializeMenuAction();
         }
 
         // Update is called once per frame
         void Update()
         {
+            if(_menuInitialized || !GlobalConstants.GameStarted)
+                return;
+            // initialize menu and actions after game started
+            if (!_menuInitialized)
+            {
+                // initialize menu
+                InitializeMenuText(leaveUnusedBlank);
+                // initialize action
+                InitializeMenuAction();
+                _menuInitialized = true;
+            }
         }
 
         # region Initialize Menu
@@ -156,7 +159,7 @@ namespace VRC2.Menu
 
             List<MenuItem> items = null;
 
-            if (IsP1)
+            if (GlobalConstants.Checkee)
             {
                 // P1 Menu
                 items = _menuInitializer.P1Menu;
