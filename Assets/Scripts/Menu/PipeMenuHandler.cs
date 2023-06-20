@@ -238,6 +238,7 @@ namespace VRC2
                     ev1.Execute();
                     break;
                 case PipeInstallEvent.P2CheckSizeAndColor:
+                    ShowModalDialog(false);
                     // use RPC to send check result
                     var ev2 = gameObject.GetComponent<P2CheckSizeAndColorEvent>();
                     ev2.Initialize(GlobalConstants.DialogFirstButton);
@@ -331,6 +332,7 @@ namespace VRC2
                 case PipeInstallEvent.P1PickUpPipe:
                     break;
                 case PipeInstallEvent.P2CheckSizeAndColor:
+                    ShowModalDialog(false);
                     // use RPC to send check result
                     var ev2 = gameObject.GetComponent<P2CheckSizeAndColorEvent>();
                     ev2.Initialize(GlobalConstants.DialogSecondButton);
