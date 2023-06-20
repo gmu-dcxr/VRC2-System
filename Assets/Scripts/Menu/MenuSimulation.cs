@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace VRC2.Menu
 {
-    [RequireComponent(typeof(PipeMenuHandler))]
     public class MenuSimulation : MonoBehaviour
     {
+        [SerializeField]
         private PipeMenuHandler _handler;
 
         private void Start()
