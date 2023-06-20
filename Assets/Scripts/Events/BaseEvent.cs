@@ -5,20 +5,20 @@ using UnityEngine;
 
 namespace VRC2.Events
 {
-    [RequireComponent(typeof(ModalDialogGetter))]
+    [RequireComponent(typeof(ModalDialogManager))]
     public class BaseEvent : MonoBehaviour
     {
 
-        private ModalDialog _modalDialog;
+        private ModalDialogManager _dialogManager;
 
-        public ModalDialog modalDialog
+        public ModalDialogManager dialogManager
         {
-            get { return _modalDialog; }
+            get { return _dialogManager; }
         }
-
-        public void Awake()
+        
+        public void Start()
         {
-            _modalDialog = gameObject.GetComponent<ModalDialogGetter>().ModalDialog;
+            _dialogManager = gameObject.GetComponent<ModalDialogManager>();
         }
         
         public virtual void Execute()
