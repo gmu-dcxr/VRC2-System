@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using VRC2.Events;
 
@@ -13,6 +14,7 @@ namespace VRC2
 
         private ModalDialogManager dialogManager;
 
+        private DirectMessage directMessage;
 
         internal void ShowModalDialog(bool flag)
         {
@@ -24,6 +26,9 @@ namespace VRC2
             // initialize modal dialog
             dialogManager = gameObject.GetComponent<ModalDialogManager>();
             modalDialog = dialogManager.modalDialog;
+
+            // initialize direct message
+            directMessage = gameObject.GetComponent<DirectMessage>();
 
             // disable modal dialog first
             ShowModalDialog(false);
@@ -126,6 +131,13 @@ namespace VRC2
         #endregion
 
         #region Participants' Actions
+
+        void SendDirectMessage(string title, string content)
+        {
+            directMessage.title = title;
+            directMessage.content = content;
+            directMessage.Execute();
+        }
 
         void P1MayStartPickup()
         {
@@ -273,7 +285,8 @@ namespace VRC2
                 case PipeInstallEvent.P2CheckLengthAndAngle:
                     // pass: nothing to do on P2 side, P1 may start glue
                     ShowModalDialog(false);
-                    Debug.Log("P1 may start glue it");
+                    // send message
+                    SendDirectMessage("From P2", "You may glue it.");
                     break;
 
                 case PipeInstallEvent.P1Glue:
@@ -294,19 +307,18 @@ namespace VRC2
                     if (modalDialog.checkResult)
                     {
                         // pass
-                        // P1MayStartClamp();
-                        Debug.Log("P1 may clamp it");
+                        SendDirectMessage("From P2", "You may clamp it.");
                     }
                     else
                     {
                         // failed
-                        // P1MayStartAdjust();
-                        Debug.Log("P1 may adjust it");
+                        SendDirectMessage("From P2", "You may adjust it.");
                     }
 
                     break;
 
                 default:
+                    ShowModalDialog(false);
                     break;
             }
         }
@@ -348,7 +360,7 @@ namespace VRC2
                     // update event
 
                     ShowModalDialog(false);
-                    
+
                     var ev3 = gameObject.GetComponent<P2CommandRobotEvent>();
                     ev3.Execute();
                     break;
@@ -362,6 +374,7 @@ namespace VRC2
                     break;
 
                 default:
+                    ShowModalDialog(false);
                     break;
             }
         }
