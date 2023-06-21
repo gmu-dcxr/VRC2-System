@@ -355,6 +355,7 @@ namespace VRC2
 
                 case PipeInstallEvent.P2CheckLevel:
                     // use RPC to send check result
+                    ShowModalDialog(false);
                     var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
                     ev4.Initialize(GlobalConstants.DialogSecondButton);
                     ev4.Execute();
