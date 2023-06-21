@@ -363,7 +363,7 @@ namespace VRC2
                 case PipeInstallEvent.P2CheckLevel:
                     // use RPC to send check result
                     ShowModalDialog(false);
-                    SendDirectMessage("From P2", "You may clamp it.");
+                    SendDirectMessage("From P2", "You may adjust it.");
                     break;
 
                 default:
