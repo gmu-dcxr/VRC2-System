@@ -295,25 +295,20 @@ namespace VRC2
 
                 case PipeInstallEvent.P2CheckLevel:
                     ShowModalDialog(false);
+                    
+                    // one way is to send message via RPC
                     // use RPC to send check result
-                    var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
-                    ev4.Initialize(GlobalConstants.DialogFirstButton);
-                    ev4.Execute();
+                    // var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
+                    // ev4.Initialize(GlobalConstants.DialogFirstButton);
+                    // ev4.Execute();
+                    
+                    // another way is to send direct message
+                    // pass
+                    SendDirectMessage("From P2", "You may clamp it.");
                     break;
 
                 case PipeInstallEvent.P1GetLevelResult:
-                    ShowModalDialog(false);
-                    // p1 get check level
-                    if (modalDialog.checkResult)
-                    {
-                        // pass
-                        SendDirectMessage("From P2", "You may clamp it.");
-                    }
-                    else
-                    {
-                        // failed
-                        SendDirectMessage("From P2", "You may adjust it.");
-                    }
+                    // Unused
 
                     break;
 
@@ -368,9 +363,7 @@ namespace VRC2
                 case PipeInstallEvent.P2CheckLevel:
                     // use RPC to send check result
                     ShowModalDialog(false);
-                    var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
-                    ev4.Initialize(GlobalConstants.DialogSecondButton);
-                    ev4.Execute();
+                    SendDirectMessage("From P2", "You may clamp it.");
                     break;
 
                 default:
