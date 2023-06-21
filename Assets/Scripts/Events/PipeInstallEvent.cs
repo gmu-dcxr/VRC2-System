@@ -25,5 +25,6 @@ namespace VRC2.Events
         P1Place = 12,
         P1Adjust = 13,
         P1Clamp = 14,
+        DirectMessage = 9999,
     }
 }
