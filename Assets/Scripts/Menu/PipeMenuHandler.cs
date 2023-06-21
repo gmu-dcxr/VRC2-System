@@ -44,6 +44,10 @@ namespace VRC2
         #region Menu Button Events
 
         /*
+         * P1 menu event flows:
+         *  1. OnCheckStorage() - P1CheckStorage - {<true>P1PickupPipeEvent, <false> P1CommandAIDrone
+         *  2. OnPickupPipe() - P1PickupPipeEvent
+         * 
          * P2 menu event flows:
          *  1. OnGiveInstruction() - P2GiveInstruction - P1GetInstruction
          *  2. OnCheckPipeSizeColor() - P2CheckSizeAndColor - P1GetSizeAndColorResult
