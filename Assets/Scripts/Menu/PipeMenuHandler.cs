@@ -295,13 +295,13 @@ namespace VRC2
                     {
                         // pass
                         // P1MayStartClamp();
-                        Debug.Log("P1 may start glue it");
+                        Debug.Log("P1 may clamp it");
                     }
                     else
                     {
                         // failed
                         // P1MayStartAdjust();
-                        Debug.Log("P1 may start glue it");
+                        Debug.Log("P1 may adjust it");
                     }
 
                     break;

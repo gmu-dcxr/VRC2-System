@@ -37,7 +37,7 @@ namespace VRC2.Events
                 message = $"You sent check result: {check}\n";
             else
             {
-                message = $"Some other player said: {message}\n";
+                message = $"Some other player said: {check}\n";
                 // show check result window
                 dialogManager.UpdateDialog("Check Result", $"Pipe color and size check result: {check}", "OK", null,
                     PipeInstallEvent.P1GetSizeAndColorResult);
