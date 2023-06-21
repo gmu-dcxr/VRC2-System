@@ -38,7 +38,7 @@ public class DirectMessage : BaseEvent
         {
             message = $"You received message [{t}]: {m}\n";
             // show check result window
-            dialogManager.UpdateDialog(title, content, "Yes", null, PipeInstallEvent.EmptyEvent);
+            dialogManager.UpdateDialog(t, m, "Yes", null, PipeInstallEvent.EmptyEvent);
             dialogManager.Show(true);
         }
 
