@@ -49,8 +49,8 @@ namespace VRC2
          *  2. OnCheckPipeSizeColor() - P2CheckSizeAndColor - P1GetSizeAndColorResult
          *  3. OnMeasureDistance() - P2MeasureDistance - P2MeasureDistanceResult
          *  4. OnCommandRobot() - P2CommandRobotBendOrCut - 
-         *  5. OnCheckLengthAngle() - P2CheckLengthAndAngle - P2CommandRobotBendOrCut(false)
-         *  6. OnCheckLevel() - P2CheckLevel - P1GetLevelResult
+         *  5. OnCheckLengthAngle() - P2CheckLengthAndAngle - {DirectMessage<true>(glue), P2CommandRobotBendOrCut<false>}
+         *  6. OnCheckLevel() - P2CheckLevel - {DirectMessage<true>(clamp), DirectMessage<false>(adjust)}
          */
 
         public void OnGiveInstruction()
