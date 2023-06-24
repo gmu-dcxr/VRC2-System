@@ -34,8 +34,6 @@ namespace VRC2.Events
             // update color and size
             pm.SetMaterial(pipeColor);
             pm.SetSize(pipeSize);
-
-            SetSpawnedPipeNotSpawnable(go);
         }
 
         #endregion
@@ -59,6 +57,9 @@ namespace VRC2.Events
             }
 
             SpawnPipeUsingTemplate();
+            
+            // update global constant
+            GlobalConstants.lastSpawned = spawnedPipe.Id;
 
             // send message
             RPC_SendMessage(spawnedPipe.Id, pipeColor, pipeSize);
@@ -72,18 +73,21 @@ namespace VRC2.Events
             var rot = t.rotation;
             // var scale = t.localScale;
             
+            var pm = template.GetComponent<PipeManipulation>();
+            var color = pm.pipeColor;
+            var size = pm.pipeSize;
+            
             // destroy
             GameObject.DestroyImmediate(GlobalConstants.pipeSpawnTemplate);
             GlobalConstants.pipeSpawnTemplate = null;
+            
+            // update static variables
+            pipeColor = color;
+            pipeSize = size;
 
             // make it a bit closer to the camera
             var offset = -Camera.main.transform.forward;
             pos += offset * 0.1f;
-
-            // update static variables
-            var pm = template.GetComponent<PipeManipulation>();
-            P1PickupPipeEvent.pipeColor = pm.pipeColor;
-            P1PickupPipeEvent.pipeSize = pm.pipeSize;
 
             // spawn object
             var runner = GlobalConstants.networkRunner;
@@ -98,10 +102,6 @@ namespace VRC2.Events
             // set no showing label
             var plc = go.GetComponent<PipeLabelController>();
             plc.showWhenHover = false;
-
-            // set it to not spawnable
-            var pg = go.GetComponent<PipeGrabbable>();
-            pg.isSpawnedPipe = true;
         }
 
         // update spawned pipe since it might be different from the prefab

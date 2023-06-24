@@ -2,6 +2,7 @@
 // Add hover event to show pipe color and size
 
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 using Oculus.Interaction;
@@ -26,8 +27,20 @@ namespace VRC2.Events
 
         [Header("Label Controller")] [SerializeField]
         private PipeLabelController _pipeLabelController;
-        
-        public bool isSpawnedPipe { get; set; }
+
+        private NetworkObject _networkObject = null;
+        private bool isSpawnedPipe
+        {
+            get
+            {
+                if (_networkObject == null)
+                {
+                    _networkObject= gameObject.GetComponent<NetworkObject>();   
+                }
+
+                return !_networkObject.IsSceneObject;
+            }
+        }
 
         public int MaxGrabPoints
         {
@@ -81,9 +94,6 @@ namespace VRC2.Events
             }
 
             this.EndStart(ref _started);
-            
-            // at the beginning, it's not spawned object
-            isSpawnedPipe = false;
         }
 
         #region Spawn Pipe for networking
@@ -109,15 +119,14 @@ namespace VRC2.Events
 
         private void NonSpawnedPipeProcessPointerEvent(PointerEvent evt)
         {
-            // non spawned can only support hover/unhover event
-            _pipeLabelController.showWhenHover = true;
             switch (evt.Type)
             {
                 case PointerEventType.Select:
-                    // spawn pipe
-                    SpawnPipe();
                     break;
                 case PointerEventType.Unselect:
+                    // spawn pipe only when the trigger was released.
+                    // not spawn under when Select because it may trigger many times.
+                    SpawnPipe();
                     break;
                 case PointerEventType.Cancel:
                     break;
@@ -137,9 +146,6 @@ namespace VRC2.Events
 
         private void SpawnedPipeProcessPointerEvent(PointerEvent evt)
         {
-            // spawned only don't show label
-            _pipeLabelController.showWhenHover = false;
-
             switch (evt.Type)
             {
                 case PointerEventType.Select:
@@ -180,6 +186,9 @@ namespace VRC2.Events
 
         public override void ProcessPointerEvent(PointerEvent evt)
         {
+            // don't show label when it's spawned pipe
+            _pipeLabelController.showWhenHover = !isSpawnedPipe;
+            
             if (isSpawnedPipe)
             {
                 SpawnedPipeProcessPointerEvent(evt);

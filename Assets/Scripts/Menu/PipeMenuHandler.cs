@@ -78,6 +78,16 @@ namespace VRC2
             ShowModalDialog(true);
         }
 
+        public void OnDeprecate()
+        {
+            if (!GlobalConstants.lastSpawned.IsValid) return;
+            
+            // p1 deprecate current pipe
+            dialogManager.UpdateDialog("Warning", "Deprecate this pipe?", "Yes", "No",
+                PipeInstallEvent.P1Deprecate);
+            ShowModalDialog(true);
+        }
+
         public void OnPickupPipe()
         {
             // simulate modal window, ignore the event when the dialog is showing.
@@ -193,6 +203,22 @@ namespace VRC2
             ShowModalDialog(true);
         }
 
+        void P1DeprecateAction()
+        {
+            if (!GlobalConstants.IsNetworkReady())
+            {
+                Debug.LogError("Runner or localPlayer is none");
+                return;
+            }
+
+            if (GlobalConstants.lastSpawned.IsValid)
+            {
+                var runner = GlobalConstants.networkRunner;
+                var obj = runner.FindObject(GlobalConstants.lastSpawned);
+                runner.Despawn(obj);   
+            }
+        }
+
         #endregion
 
         #region Dialog Buttons Event
@@ -237,6 +263,12 @@ namespace VRC2
                     P1MayStartPickup();
                     break;
 
+                case PipeInstallEvent.P1Deprecate:
+                    // yes
+                    ShowModalDialog(false);
+                    P1DeprecateAction();
+                    break;
+
                 case PipeInstallEvent.P1CommandAIDrone:
                     // hide dialog
                     ShowModalDialog(false);
@@ -251,11 +283,11 @@ namespace VRC2
                     ShowModalDialog(false);
 
                     var ev1 = gameObject.GetComponent<P1PickupPipeEvent>();
-                    
+
                     // update color and size
                     P1PickupPipeEvent.pipeColor = PipeMaterialColor.Blue;
                     P1PickupPipeEvent.pipeSize = 2;
-                    
+
                     ev1.Execute();
                     break;
                 case PipeInstallEvent.P2CheckSizeAndColor:
@@ -304,13 +336,13 @@ namespace VRC2
 
                 case PipeInstallEvent.P2CheckLevel:
                     ShowModalDialog(false);
-                    
+
                     // one way is to send message via RPC
                     // use RPC to send check result
                     // var ev4 = gameObject.GetComponent<P2CheckLevelEvent>();
                     // ev4.Initialize(GlobalConstants.DialogFirstButton);
                     // ev4.Execute();
-                    
+
                     // another way is to send direct message
                     // pass
                     SendDirectMessage("From P2", "You may clamp it.");
