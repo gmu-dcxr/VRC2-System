@@ -13,6 +13,7 @@ namespace VRC2.Menu
         Zero = 0,
         GiveInstruction = 1,
         CheckStorage = 11,
+        Deprecate = 12,
         PickupPipe = 2,
         CheckPipeSizeColor = 3,
         MeasureDistance = 4,
@@ -26,6 +27,7 @@ namespace VRC2.Menu
         public static string empty = "";
         public static string GiveInstruction = "Give Instruction";
         public static string CheckStorage = "Check Storage";
+        public static string Deprecate = "Deprecate";
         public static string PickupPipe = "Pickup Pipe";
         public static string CheckPipeSizeColor = "Size & Color";
         public static string MeasureDistance = "Measure Distance";
@@ -42,7 +44,8 @@ namespace VRC2.Menu
         private List<MenuItem> P1MenuItems = new List<MenuItem>()
         {
             MenuItem.CheckStorage,
-            MenuItem.PickupPipe
+            // MenuItem.PickupPipe, //disable pickup since the logic is changed
+            MenuItem.Deprecate,
         };
 
         private List<MenuItem> P2MenuItems = new List<MenuItem>()
@@ -82,6 +85,8 @@ namespace VRC2.Menu
             AddPair(MenuItem.CheckStorage, MenuString.CheckStorage);
             // pick a pipe
             AddPair(MenuItem.PickupPipe, MenuString.PickupPipe);
+            // deprecate current pipe
+            AddPair(MenuItem.Deprecate, MenuString.Deprecate);
             // p2 give p1 instruction
             AddPair(MenuItem.GiveInstruction, MenuString.GiveInstruction);
             // check pipe size and color
@@ -230,6 +235,9 @@ namespace VRC2.Menu
                         break;
                     case MenuItem.CheckStorage:
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckStorage);
+                        break;
+                    case MenuItem.Deprecate:
+                        puew.WhenRelease.AddListener(_menuHandler.OnDeprecate);
                         break;
                     case MenuItem.PickupPipe:
                         puew.WhenRelease.AddListener(_menuHandler.OnPickupPipe);

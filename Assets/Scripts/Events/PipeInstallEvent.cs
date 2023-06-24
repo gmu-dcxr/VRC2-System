@@ -11,6 +11,7 @@ namespace VRC2.Events
         P1GetInstruction = 1001,
         P1CheckStorage = 1,
         P1PickUpPipe = 2,
+        P1Deprecate = 21,
         P2CheckSizeAndColor = 3,
         P1GetSizeAndColorResult = 31,
         P1CommandAIDrone = 4,

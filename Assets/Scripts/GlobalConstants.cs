@@ -68,7 +68,9 @@ namespace VRC2
         public static GameObject pipeSpawnTemplate;
         // This is to call spawn event
         public static string menuObjectTag = "Menu";
-        
+        // This is to despawn object
+        public static NetworkId lastSpawned = new NetworkId();
+
         #endregion
     }
 }
