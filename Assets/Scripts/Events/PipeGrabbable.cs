@@ -24,6 +24,9 @@ namespace VRC2.Events
 
         [SerializeField] private int _maxGrabPoints = -1;
 
+        [Header("Label Controller")] [SerializeField]
+        private PipeLabelController _pipeLabelController;
+
         public int MaxGrabPoints
         {
             get { return _maxGrabPoints; }
@@ -83,6 +86,9 @@ namespace VRC2.Events
             switch (evt.Type)
             {
                 case PointerEventType.Select:
+                    // never show label after selection
+                    _pipeLabelController.neverShowAfterSelect = true;
+                    _pipeLabelController.Show(false);
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
@@ -93,11 +99,14 @@ namespace VRC2.Events
                     break;
                 // add hover event
                 case PointerEventType.Hover:
-                    Debug.Log("Hovering");
+                    // show label when hovering
+                    _pipeLabelController.Show(true);
                     break;
                 
+                // add unhover event
                 case PointerEventType.Unhover:
-                    Debug.Log("Unhovering");
+                    // hide label when unhovering
+                    _pipeLabelController.Show(false);
                     break;
             }
 
