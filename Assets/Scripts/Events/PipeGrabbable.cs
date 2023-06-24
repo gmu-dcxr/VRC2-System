@@ -27,6 +27,8 @@ namespace VRC2.Events
         [Header("Label Controller")] [SerializeField]
         private PipeLabelController _pipeLabelController;
 
+        [Header("Spawned")] [SerializeField] private bool isSpawnedPipe;
+
         public int MaxGrabPoints
         {
             get { return _maxGrabPoints; }
@@ -79,16 +81,36 @@ namespace VRC2.Events
             }
 
             this.EndStart(ref _started);
+            
+            // at the beginning, it's not spawned object
+            isSpawnedPipe = false;
         }
 
-        public override void ProcessPointerEvent(PointerEvent evt)
+        #region Spawn Pipe for networking
+
+        internal void PreparePipeSpawn()
         {
+            // update Global color and size
+            GlobalConstants.spawnTemplate = gameObject;
+        }
+
+        #endregion
+
+        #region Different Logic for nonspawned/spawned pipes
+
+        private void NonSpawnedPipeProcessPointerEvent(PointerEvent evt)
+        {
+            // non spawned can only support hover/unhover event
+            // non spawned can only support hover event
             switch (evt.Type)
             {
                 case PointerEventType.Select:
                     // never show label after selection
                     _pipeLabelController.neverShowAfterSelect = true;
                     _pipeLabelController.Show(false);
+                    // get pipe color and size for spawning
+                    PreparePipeSpawn();
+                    
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
@@ -123,6 +145,71 @@ namespace VRC2.Events
                 case PointerEventType.Move:
                     UpdateTransform();
                     break;
+            }
+        }
+
+        private void SpawnedPipeProcessPointerEvent(PointerEvent evt)
+        {
+            // non spawned can only support hover event
+            switch (evt.Type)
+            {
+                case PointerEventType.Select:
+                    // never show label after selection
+                    _pipeLabelController.neverShowAfterSelect = true;
+                    _pipeLabelController.Show(false);
+                    // get pipe color and size for spawning
+                    PreparePipeSpawn();
+                    
+                    EndTransform();
+                    break;
+                case PointerEventType.Unselect:
+                    EndTransform();
+                    break;
+                case PointerEventType.Cancel:
+                    EndTransform();
+                    break;
+                // add hover event
+                case PointerEventType.Hover:
+                    // show label when hovering
+                    _pipeLabelController.Show(true);
+                    break;
+                
+                // add unhover event
+                case PointerEventType.Unhover:
+                    // hide label when unhovering
+                    _pipeLabelController.Show(false);
+                    break;
+            }
+
+            base.ProcessPointerEvent(evt);
+
+            switch (evt.Type)
+            {
+                case PointerEventType.Select:
+                    BeginTransform();
+                    break;
+                case PointerEventType.Unselect:
+                    BeginTransform();
+                    break;
+                case PointerEventType.Move:
+                    UpdateTransform();
+                    break;
+            }
+        }
+
+        #endregion
+
+
+
+        public override void ProcessPointerEvent(PointerEvent evt)
+        {
+            if (isSpawnedPipe)
+            {
+                SpawnedPipeProcessPointerEvent(evt);
+            }
+            else
+            {
+                NonSpawnedPipeProcessPointerEvent(evt);
             }
         }
 

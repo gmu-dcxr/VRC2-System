@@ -21,12 +21,21 @@ public class PipeManipulation : MonoBehaviour
     // default material
     private Material _defaultMaterial;
 
+    // current color
+    [HideInInspector] public PipeMaterialColor pipeColor;
+    [HideInInspector] public float pipeSize;
+
     // Start is called before the first frame update
     void Start()
     {
         _defaultMaterial = _renderer.material;
-        
-        SetMaterial(PipeMaterialColor.Green);
+
+        pipeColor = PipeMaterialColor.Green;
+
+        pipeSize = 0.5f;
+
+        SetMaterial(pipeColor);
+        SetSize(pipeSize);
     }
 
     // Update is called once per frame
@@ -60,8 +69,14 @@ public class PipeManipulation : MonoBehaviour
         }
     }
 
-    public void RestoreMaterial()
+    void RestoreMaterial()
     {
         _renderer.material = _defaultMaterial;
+    }
+
+    public void SetSize(float size)
+    {
+        // TODO: size mapping
+        _renderer.gameObject.transform.localScale = new Vector3(pipeSize, pipeSize, pipeSize);
     }
 }
