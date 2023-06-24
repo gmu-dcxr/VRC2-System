@@ -251,6 +251,11 @@ namespace VRC2
                     ShowModalDialog(false);
 
                     var ev1 = gameObject.GetComponent<P1PickupPipeEvent>();
+                    
+                    // update color and size
+                    P1PickupPipeEvent.pipeColor = PipeMaterialColor.Blue;
+                    P1PickupPipeEvent.pipeSize = 2;
+                    
                     ev1.Execute();
                     break;
                 case PipeInstallEvent.P2CheckSizeAndColor:

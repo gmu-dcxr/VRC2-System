@@ -59,5 +59,12 @@ namespace VRC2
         {
             get { return !DialogFirstButton; }
         }
+
+        #region Current In-Use Pipe Color and size
+        
+        // this is to spawn networked pipe object
+        public static GameObject spawnTemplate;
+
+        #endregion
     }
 }
