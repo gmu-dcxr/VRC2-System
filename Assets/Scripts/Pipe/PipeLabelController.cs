@@ -7,21 +7,22 @@ public class PipeLabelController : MonoBehaviour
 {
     [SerializeField] private GameObject labelGameObject;
 
-    [SerializeField] private bool showWhenHover;
-
-    // when the pipe is grabbed, never show its label again
-    [HideInInspector]public bool neverShowAfterSelect;
-
+    public bool showWhenHover
+    {
+        set;
+        get;
+    }
+    
     private TextMeshPro _textMeshPro;
 
     private string label;
+    
     
     // Start is called before the first frame update
     void Start()
 
     {
-        neverShowAfterSelect = false;
-        
+
         _textMeshPro = labelGameObject.GetComponent<TextMeshPro>();
         label = GetLabel();
         
@@ -40,12 +41,6 @@ public class PipeLabelController : MonoBehaviour
 
     public void Show(bool flag)
     {
-        if (neverShowAfterSelect)
-        {
-            labelGameObject.SetActive(false);
-            return;
-        }
-        
         if (showWhenHover)
         {
             labelGameObject.SetActive(flag);   

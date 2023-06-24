@@ -101,23 +101,18 @@ namespace VRC2.Events
         private void NonSpawnedPipeProcessPointerEvent(PointerEvent evt)
         {
             // non spawned can only support hover/unhover event
-            // non spawned can only support hover event
+            _pipeLabelController.showWhenHover = true;
             switch (evt.Type)
             {
                 case PointerEventType.Select:
-                    // never show label after selection
-                    _pipeLabelController.neverShowAfterSelect = true;
                     _pipeLabelController.Show(false);
                     // get pipe color and size for spawning
                     PreparePipeSpawn();
                     
-                    EndTransform();
                     break;
                 case PointerEventType.Unselect:
-                    EndTransform();
                     break;
                 case PointerEventType.Cancel:
-                    EndTransform();
                     break;
                 // add hover event
                 case PointerEventType.Hover:
@@ -129,37 +124,18 @@ namespace VRC2.Events
                 case PointerEventType.Unhover:
                     // hide label when unhovering
                     _pipeLabelController.Show(false);
-                    break;
-            }
-
-            base.ProcessPointerEvent(evt);
-
-            switch (evt.Type)
-            {
-                case PointerEventType.Select:
-                    BeginTransform();
-                    break;
-                case PointerEventType.Unselect:
-                    BeginTransform();
-                    break;
-                case PointerEventType.Move:
-                    UpdateTransform();
                     break;
             }
         }
 
         private void SpawnedPipeProcessPointerEvent(PointerEvent evt)
         {
-            // non spawned can only support hover event
+            // spawned only don't show label
+            _pipeLabelController.showWhenHover = false;
+
             switch (evt.Type)
             {
                 case PointerEventType.Select:
-                    // never show label after selection
-                    _pipeLabelController.neverShowAfterSelect = true;
-                    _pipeLabelController.Show(false);
-                    // get pipe color and size for spawning
-                    PreparePipeSpawn();
-                    
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
@@ -168,16 +144,10 @@ namespace VRC2.Events
                 case PointerEventType.Cancel:
                     EndTransform();
                     break;
-                // add hover event
                 case PointerEventType.Hover:
-                    // show label when hovering
-                    _pipeLabelController.Show(true);
                     break;
-                
-                // add unhover event
+
                 case PointerEventType.Unhover:
-                    // hide label when unhovering
-                    _pipeLabelController.Show(false);
                     break;
             }
 
