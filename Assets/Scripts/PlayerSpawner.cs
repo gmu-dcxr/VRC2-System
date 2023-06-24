@@ -40,6 +40,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        GlobalConstants.pipePrefabRef = _pipePrefab;
     }
 
     private void OnRequestStartGame(string obj)

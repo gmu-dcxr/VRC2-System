@@ -114,7 +114,6 @@ namespace VRC2.Events
             switch (evt.Type)
             {
                 case PointerEventType.Select:
-                    _pipeLabelController.Show(false);
                     // spawn pipe
                     SpawnPipe();
                     break;

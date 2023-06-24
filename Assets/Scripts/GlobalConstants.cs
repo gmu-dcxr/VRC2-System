@@ -60,7 +60,9 @@ namespace VRC2
             get { return !DialogFirstButton; }
         }
 
-        #region Current In-Use Pipe Color and size
+        #region Current Selected Pipe
+
+        public static NetworkPrefabRef pipePrefabRef;
         
         // This is to spawn networked pipe object
         public static GameObject pipeSpawnTemplate;
