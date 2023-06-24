@@ -16,7 +16,7 @@ namespace VRC2.Events
         // refer: https://doc.photonengine.com/zh-cn/fusion/current/tutorials/host-mode-basics/5-property-changes
 
         [HideInInspector] public static PipeMaterialColor pipeColor;
-        [HideInInspector] public static int pipeSize;
+        [HideInInspector] public static float pipeSize;
         private static NetworkObject spawnedPipe;
 
         [Networked(OnChanged = nameof(OnPipeSpawned))]
@@ -32,12 +32,18 @@ namespace VRC2.Events
         {
             var go = spawnedPipe.gameObject;
             var pm = go.GetComponent<PipeManipulation>();
-
-            if (pm != null)
-            {
-                pm.SetMaterial(pipeColor);
-                pm.SetSize(pipeSize);
-            }
+            
+            // update color and size
+            pm.SetMaterial(pipeColor);
+            pm.SetSize(pipeSize);
+            
+            // set no showing label
+            var plc = go.GetComponent<PipeLabelController>();
+            plc.showWhenHover = false;
+            
+            // set it to not spawnable
+            var pg = go.GetComponent<PipeGrabbable>();
+            pg.isSpawnedPipe = true;
         }
 
         #endregion
@@ -59,18 +65,40 @@ namespace VRC2.Events
                 Debug.LogError("Runner or localPlayer is none");
                 return;
             }
-
-            var runner = GlobalConstants.networkRunner;
-            var localPlayer = GlobalConstants.localPlayer;
-            spawnedPipe = runner.Spawn(prefab, new Vector3(0f, 1.5f, 2f), Quaternion.identity, localPlayer);
-            spawned = !spawned;
+            
+            SpawnPipeUsingTemplate();
+            
             // send message
             RPC_SendMessage(spawnedPipe.Id, pipeColor, pipeSize);
         }
 
+        internal void SpawnPipeUsingTemplate()
+        {
+            var template = GlobalConstants.pipeSpawnTemplate;
+            var t = template.transform;
+            var pos = t.position;
+            var rot = t.rotation;
+            // var scale = t.localScale;
+            
+            // make it a bit closer to the camera
+            var offset = -Camera.main.transform.forward;
+            pos += offset * 0.1f;
+            
+            // update static variables
+            var pm = template.GetComponent<PipeManipulation>();
+            P1PickupPipeEvent.pipeColor = pm.pipeColor;
+            P1PickupPipeEvent.pipeSize = pm.pipeSize;
+            
+            // spawn object
+            var runner = GlobalConstants.networkRunner;
+            var localPlayer = GlobalConstants.localPlayer;
+            spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
+            spawned = !spawned;
+        }
+
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_SendMessage(NetworkId nid, PipeMaterialColor color, int size, RpcInfo info = default)
+        private void RPC_SendMessage(NetworkId nid, PipeMaterialColor color, float size, RpcInfo info = default)
         {
             var message = "";
 
