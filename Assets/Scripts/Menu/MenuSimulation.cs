@@ -10,7 +10,6 @@ namespace VRC2.Menu
 
         private void Start()
         {
-            _handler = gameObject.GetComponent<PipeMenuHandler>();
         }
 
         private void Update()
