@@ -62,9 +62,11 @@ namespace VRC2
 
         #region Current In-Use Pipe Color and size
         
-        // this is to spawn networked pipe object
-        public static GameObject spawnTemplate;
-
+        // This is to spawn networked pipe object
+        public static GameObject pipeSpawnTemplate;
+        // This is to call spawn event
+        public static string menuObjectTag = "Menu";
+        
         #endregion
     }
 }

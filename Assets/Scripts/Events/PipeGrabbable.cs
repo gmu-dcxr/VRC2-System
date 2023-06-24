@@ -26,8 +26,8 @@ namespace VRC2.Events
 
         [Header("Label Controller")] [SerializeField]
         private PipeLabelController _pipeLabelController;
-
-        [Header("Spawned")] [SerializeField] private bool isSpawnedPipe;
+        
+        public bool isSpawnedPipe { get; set; }
 
         public int MaxGrabPoints
         {
@@ -88,10 +88,19 @@ namespace VRC2.Events
 
         #region Spawn Pipe for networking
 
-        internal void PreparePipeSpawn()
+        // spawn pipe using the current selection
+        internal void SpawnPipe()
         {
             // update Global color and size
-            GlobalConstants.spawnTemplate = gameObject;
+            GlobalConstants.pipeSpawnTemplate = gameObject;
+
+            var menu = GameObject.FindWithTag(GlobalConstants.menuObjectTag);
+            if (menu != null)
+            {
+                // get event
+                var ev = menu.GetComponent<P1PickupPipeEvent>();
+                ev.Execute();
+            }
         }
 
         #endregion
@@ -106,9 +115,8 @@ namespace VRC2.Events
             {
                 case PointerEventType.Select:
                     _pipeLabelController.Show(false);
-                    // get pipe color and size for spawning
-                    PreparePipeSpawn();
-                    
+                    // spawn pipe
+                    SpawnPipe();
                     break;
                 case PointerEventType.Unselect:
                     break;
