@@ -8,6 +8,10 @@ public class WallCollisionDetector : MonoBehaviour
 {
     // pipe's axes are different from wall's 
     [Header("Pipe")] public float yRotationOffset = -90f;
+
+    // for better visualization, it can be updated accordingly.
+    public float distanceOffset = 0.18f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,7 +26,6 @@ public class WallCollisionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter");
         // get the game object
         var go = other.gameObject;
         if (go.CompareTag(GlobalConstants.pipeObjectTag))
@@ -33,12 +36,10 @@ public class WallCollisionDetector : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("OnTriggerExit");
     }
 
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("OnTriggerStay");
         var go = other.gameObject;
         if (go.CompareTag(GlobalConstants.pipeObjectTag))
         {
@@ -57,21 +58,23 @@ public class WallCollisionDetector : MonoBehaviour
         var t = ipipe.transform;
         var pos = t.position;
         var rot = t.rotation.eulerAngles;
-        
+
         // get the wall transform
         var wt = gameObject.transform;
         var wpos = wt.position;
         var wrot = wt.rotation.eulerAngles;
-        
-        // set pipe's x rotation to the wall's x
+
+        // set pipe's x rotation to the wall's x rotation
         rot.x = wrot.x;
         // set pipe's y rotation to the wall's y rotation
         rot.y = wrot.y + yRotationOffset;
         // update
         ipipe.transform.rotation = Quaternion.Euler(rot);
-        
-        // make 
-        
+
+        // update the pipe's distance to the wall
+        pos.x = wpos.x + distanceOffset;
+
+        ipipe.transform.position = pos;
     }
 
 
