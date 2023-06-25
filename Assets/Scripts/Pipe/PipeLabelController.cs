@@ -1,34 +1,25 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(PipeManipulation))]
 public class PipeLabelController : MonoBehaviour
 {
-    [SerializeField] private GameObject labelGameObject;
-
-    public bool showWhenHover
-    {
-        set;
-        get;
-    }
-    
+    [SerializeField] private GameObject label;
+    public bool showWhenHover { set; get; }
     private TextMeshPro _textMeshPro;
 
-    private string label;
-    
-    
+    private PipeManipulation _pipeManipulation;
+
+
     // Start is called before the first frame update
     void Start()
-
     {
-
-        _textMeshPro = labelGameObject.GetComponent<TextMeshPro>();
-        label = GetLabel();
-        
-        // update text
-        _textMeshPro.text = label;
-        
+        _textMeshPro = label.GetComponent<TextMeshPro>();
+        _pipeManipulation = gameObject.GetComponent<PipeManipulation>();
+        UpdateLabel();
         // hide at the beginning
         Show(false);
     }
@@ -36,31 +27,24 @@ public class PipeLabelController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     public void Show(bool flag)
     {
         if (showWhenHover)
         {
-            labelGameObject.SetActive(flag);   
+            label.SetActive(flag);
         }
         else
         {
-            labelGameObject.SetActive(false);
+            label.SetActive(false);
         }
     }
 
-    int GetSize()
+    void UpdateLabel()
     {
-        // TODO: customize size mapping
-        var x = labelGameObject.transform.localScale.x;
-        return (int)x;
-    }
-
-    string GetLabel()
-    {
-        var s = GetSize();
-        return $"Size: {s}";
+        var scale = _pipeManipulation.pipeSize;
+        // update text
+        _textMeshPro.text = $"Size: {scale}";
     }
 }
