@@ -134,15 +134,18 @@ namespace VRC2.Events
             var message = "";
 
             if (info.IsInvokeLocal)
+            {
                 message = $"P1PickupPipeEvent message ({nid}, {color}, {size})\n";
+                Debug.LogWarning(message);   
+            }
             else
             {
                 message = $"P1PickupPipeEvent received message ({nid}, {color}, {size})\n";
+                Debug.LogWarning(message);
+                
                 // update spawned object material
                 UpdateRemoteSpawnedPipe(nid, color, size);
             }
-
-            Debug.LogWarning(message);
         }
     }
 }
