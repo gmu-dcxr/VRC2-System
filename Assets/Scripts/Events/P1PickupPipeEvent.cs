@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Fusion;
@@ -22,8 +23,16 @@ namespace VRC2.Events
 
         static void OnPipeSpawned(Changed<P1PickupPipeEvent> changed)
         {
-            // update locally
-            UpdateLocalSpawnedPipe();
+            try
+            {
+                // update locally
+                UpdateLocalSpawnedPipe();
+            }
+            catch (Exception e)
+            {
+                // remote client also called this function
+                Debug.LogException(e);
+            }
         }
 
         static void UpdateLocalSpawnedPipe()
