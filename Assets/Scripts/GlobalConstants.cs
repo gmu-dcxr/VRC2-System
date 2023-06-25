@@ -72,5 +72,11 @@ namespace VRC2
         public static NetworkId lastSpawned = new NetworkId();
 
         #endregion
+
+        #region Pipe Collision with the Wall
+        // It's the tag of the pipe, not the InteractablePipe
+        public static string pipeObjectTag = "Pipe";
+
+        #endregion
     }
 }
