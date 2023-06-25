@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 public enum PipeMaterialColor
@@ -49,8 +50,14 @@ public class PipeManipulation : MonoBehaviour
     {
         _defaultMaterial = renderer.material;
 
-        SetMaterial(pipeColor);
-        SetSize(pipeSize);
+        // whether it's the cloned object
+        var no = gameObject.GetComponent<NetworkObject>();
+        if (no.IsSceneObject)
+        {
+            // not spawned object
+            SetMaterial(pipeColor);
+            SetSize(pipeSize);
+        }
     }
 
     // Update is called once per frame
