@@ -22,6 +22,20 @@ public class PipeManipulation : MonoBehaviour
 
     private Renderer _renderer;
 
+    [HideInInspector]
+    public Renderer renderer
+    {
+        get
+        {
+            if (_renderer == null)
+            {
+                _renderer = _pipe.GetComponent<Renderer>();
+            }
+
+            return _renderer;
+        }
+    }
+
     // default material
     private Material _defaultMaterial;
 
@@ -29,11 +43,11 @@ public class PipeManipulation : MonoBehaviour
     public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
     public float pipeSize = 0.5f;
 
+
     // Start is called before the first frame update
     void Start()
     {
-        _renderer = _pipe.GetComponent<Renderer>();
-        _defaultMaterial = _renderer.material;
+        _defaultMaterial = renderer.material;
 
         SetMaterial(pipeColor);
         SetSize(pipeSize);
@@ -65,13 +79,13 @@ public class PipeManipulation : MonoBehaviour
 
         if (material != null)
         {
-            _renderer.material = material;
+            renderer.material = material;
         }
     }
 
     void RestoreMaterial()
     {
-        _renderer.material = _defaultMaterial;
+        renderer.material = _defaultMaterial;
     }
 
     public void SetSize(float size)
