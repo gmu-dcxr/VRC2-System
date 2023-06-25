@@ -42,6 +42,19 @@ namespace VRC2.Events
             }
         }
 
+        private bool gameNotStart
+        {
+            get
+            {
+                if (_networkObject == null)
+                {
+                    _networkObject = gameObject.GetComponent<NetworkObject>();
+                }
+
+                return !_networkObject.IsValid;
+            }
+        }
+
         public int MaxGrabPoints
         {
             get { return _maxGrabPoints; }
@@ -189,7 +202,7 @@ namespace VRC2.Events
             // don't show label when it's spawned pipe
             _pipeLabelController.showWhenHover = !isSpawnedPipe;
             
-            if (isSpawnedPipe)
+            if (isSpawnedPipe || gameNotStart)
             {
                 SpawnedPipeProcessPointerEvent(evt);
             }
