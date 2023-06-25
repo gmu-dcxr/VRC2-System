@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,27 +14,26 @@ public enum PipeMaterialColor
 
 public class PipeManipulation : MonoBehaviour
 {
-    [SerializeField] private Renderer _renderer;
+    [SerializeField] private GameObject _pipe;
     [SerializeField] private Material _magentaMaterial;
     [SerializeField] private Material _blueMaterial;
     [SerializeField] private Material _yellowMaterial;
     [SerializeField] private Material _greenMaterial;
 
+    private Renderer _renderer;
+
     // default material
     private Material _defaultMaterial;
 
     // current color
-    [HideInInspector] public PipeMaterialColor pipeColor;
-    [HideInInspector] public float pipeSize;
+    public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
+    public float pipeSize = 0.5f;
 
     // Start is called before the first frame update
     void Start()
     {
+        _renderer = _pipe.GetComponent<Renderer>();
         _defaultMaterial = _renderer.material;
-
-        pipeColor = PipeMaterialColor.Green;
-
-        pipeSize = 0.5f;
 
         SetMaterial(pipeColor);
         SetSize(pipeSize);
@@ -41,7 +42,6 @@ public class PipeManipulation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 
     public void SetMaterial(PipeMaterialColor color)
@@ -77,6 +77,6 @@ public class PipeManipulation : MonoBehaviour
     public void SetSize(float size)
     {
         // TODO: size mapping
-        _renderer.gameObject.transform.localScale = new Vector3(pipeSize, pipeSize, pipeSize);
+        _pipe.transform.localScale = new Vector3(size, size, size);
     }
 }
