@@ -90,7 +90,10 @@ public class PipeManipulation : MonoBehaviour
 
     public void SetSize(float size)
     {
+        Debug.Log($"Set Size: {size}");
+        Debug.Log($"Set Size: {_pipe.transform.localScale}");
         // TODO: size mapping
         _pipe.transform.localScale = new Vector3(size, size, size);
+        Debug.Log($"Set Size: {_pipe.transform.localScale}");
     }
 }
