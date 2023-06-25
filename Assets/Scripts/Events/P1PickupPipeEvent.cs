@@ -120,7 +120,7 @@ namespace VRC2.Events
             var go = runner.FindObject(nid).gameObject;
 
             // update material and size
-            var pm = go.gameObject.GetComponent<PipeManipulation>();
+            var pm = go.GetComponent<PipeManipulation>();
             pm.SetMaterial(color);
             pm.SetSize(size);
 
