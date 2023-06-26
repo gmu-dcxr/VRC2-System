@@ -5,51 +5,55 @@ using UnityEngine;
 using VRC2;
 using VRC2.Events;
 
-public class ModalDialogManager : MonoBehaviour
+namespace VRC2
 {
-    [SerializeField] private GameObject _dialogGameObject;
 
-    private ModalDialog _modalDialog;
-
-    public ModalDialog modalDialog
+    public class ModalDialogManager : MonoBehaviour
     {
-        get
+        [SerializeField] private GameObject _dialogGameObject;
+
+        private ModalDialog _modalDialog;
+
+        public ModalDialog modalDialog
         {
-            if (_modalDialog == null)
+            get
             {
-                _modalDialog = _dialogGameObject.GetComponent<ModalDialog>();
+                if (_modalDialog == null)
+                {
+                    _modalDialog = _dialogGameObject.GetComponent<ModalDialog>();
+                }
+
+                return _modalDialog;
             }
-
-            return _modalDialog;
         }
-    }
 
-    public bool checkResult
-    {
-        get => _modalDialog.checkResult;
-        set => _modalDialog.checkResult = value;
-    }
+        public bool checkResult
+        {
+            get => _modalDialog.checkResult;
+            set => _modalDialog.checkResult = value;
+        }
 
-    public string content
-    {
-        get => _modalDialog.content;
-        set => _modalDialog.content = value;
-    }
+        public string content
+        {
+            get => _modalDialog.content;
+            set => _modalDialog.content = value;
+        }
 
 
-    public bool IsShowing()
-    {
-        return _dialogGameObject.activeSelf;
-    }
+        public bool IsShowing()
+        {
+            return _dialogGameObject.activeSelf;
+        }
 
-    public void Show(bool flag)
-    {
-        _dialogGameObject.SetActive(flag);
-    }
+        public void Show(bool flag)
+        {
+            _dialogGameObject.SetActive(flag);
+        }
 
-    public void UpdateDialog(string title, string content, string btn1, string btn2,
-        PipeInstallEvent ev = PipeInstallEvent.EmptyEvent)
-    {
-        _modalDialog.UpdateDialog(title, content, btn1, btn2, ev);
+        public void UpdateDialog(string title, string content, string btn1, string btn2,
+            PipeInstallEvent ev = PipeInstallEvent.EmptyEvent)
+        {
+            _modalDialog.UpdateDialog(title, content, btn1, btn2, ev);
+        }
     }
 }

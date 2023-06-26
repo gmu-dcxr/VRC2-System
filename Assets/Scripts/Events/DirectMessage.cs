@@ -4,44 +4,48 @@ using Fusion;
 using UnityEngine;
 using VRC2.Events;
 
-public class DirectMessage : BaseEvent
+namespace VRC2
 {
-    private string _title;
-    private string _content;
 
-    public string title
+    public class DirectMessage : BaseEvent
     {
-        get => _title;
-        set => _title = value;
-    }
+        private string _title;
+        private string _content;
 
-    public string content
-    {
-        get => _content;
-        set => _content = value;
-    }
-    
-
-    public override void Execute()
-    {
-        RPC_SendMessage(title, content);
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_SendMessage(string t, string m, RpcInfo info = default)
-    {
-        var message = "";
-
-        if (info.IsInvokeLocal)
-            message = $"You sent message [{t}]: {m}\n";
-        else
+        public string title
         {
-            message = $"You received message [{t}]: {m}\n";
-            // show check result window
-            dialogManager.UpdateDialog(t, m, "Yes", null, PipeInstallEvent.EmptyEvent);
-            dialogManager.Show(true);
+            get => _title;
+            set => _title = value;
         }
 
-        Debug.LogWarning(message);
+        public string content
+        {
+            get => _content;
+            set => _content = value;
+        }
+
+
+        public override void Execute()
+        {
+            RPC_SendMessage(title, content);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SendMessage(string t, string m, RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+                message = $"You sent message [{t}]: {m}\n";
+            else
+            {
+                message = $"You received message [{t}]: {m}\n";
+                // show check result window
+                dialogManager.UpdateDialog(t, m, "Yes", null, PipeInstallEvent.EmptyEvent);
+                dialogManager.Show(true);
+            }
+
+            Debug.LogWarning(message);
+        }
     }
 }

@@ -3,34 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 
-public class RPCTest : NetworkBehaviour
+namespace VRC2
 {
 
-    // Start is called before the first frame update
-    void Start()
+    public class RPCTest : NetworkBehaviour
     {
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Object.HasInputAuthority && Input.GetKeyDown(KeyCode.R))
+        // Start is called before the first frame update
+        void Start()
         {
-            RPC_SendMessage("Hey Mate!");
         }
-    }
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    public void RPC_SendMessage(string message, RpcInfo info = default)
-    {
-        var _messages = "";
+        // Update is called once per frame
+        void Update()
+        {
+            if (Object.HasInputAuthority && Input.GetKeyDown(KeyCode.R))
+            {
+                RPC_SendMessage("Hey Mate!");
+            }
+        }
 
-        if (info.IsInvokeLocal)
-            message = $"You said: {message}\n";
-        else
-            message = $"Some other player said: {message}\n";
-        _messages = message;
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessage(string message, RpcInfo info = default)
+        {
+            var _messages = "";
 
-        Debug.LogWarning(_messages);
+            if (info.IsInvokeLocal)
+                message = $"You said: {message}\n";
+            else
+                message = $"Some other player said: {message}\n";
+            _messages = message;
+
+            Debug.LogWarning(_messages);
+        }
     }
 }
