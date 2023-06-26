@@ -137,6 +137,22 @@ namespace VRC2
             ShowModalDialog(true);
         }
 
+        public void OnCheckGlue()
+        {
+            Debug.Log("You clicked check glue");
+            dialogManager.UpdateDialog("Check Glue", "Is glue enough?", "Yes", "no",
+                PipeInstallEvent.P1CheckGlue);
+            ShowModalDialog(true);
+        }
+
+        public void OnCheckClamp()
+        {
+            Debug.Log("You clicked check clamp");
+            dialogManager.UpdateDialog("Check Glue", "Is clamp enough?", "Yes", "no",
+                PipeInstallEvent.P1CheckClamp);
+            ShowModalDialog(true);
+        }
+
         public void OnCheckLengthAngle()
         {
             Debug.Log("You clicked check length and angle");
@@ -342,6 +358,16 @@ namespace VRC2
                     var ev31 = gameObject.GetComponent<P2CommandRobotEvent>();
                     ev31.Execute();
                     break;
+                
+                case PipeInstallEvent.P1CheckGlue:
+                    // enough   
+                    ShowModalDialog(false);
+                    break;
+                
+                case PipeInstallEvent.P1CheckClamp:
+                    // enough
+                    ShowModalDialog(false);
+                    break;
 
                 case PipeInstallEvent.P2CheckLengthAndAngle:
                     // pass: nothing to do on P2 side, P1 may start glue
@@ -417,6 +443,20 @@ namespace VRC2
                 case PipeInstallEvent.P2MeasureDistanceResult:
                     // after p2 measured the distance
                     ShowModalDialog(false);
+                    break;
+                
+                case PipeInstallEvent.P1CheckGlue:
+                    // not enough   
+                    ShowModalDialog(false);
+                    var cge = gameObject.GetComponent<P1CheckGlueEvent>();
+                    cge.Execute();
+                    break;
+                
+                case PipeInstallEvent.P1CheckClamp:
+                    // not enough
+                    ShowModalDialog(false);
+                    var cce = gameObject.GetComponent<P1CheckClampEvent>();
+                    cce.Execute();
                     break;
 
                 case PipeInstallEvent.P2CheckLengthAndAngle:
