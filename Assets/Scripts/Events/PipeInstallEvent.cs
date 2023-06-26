@@ -7,6 +7,7 @@ namespace VRC2.Events
     public enum PipeInstallEvent
     {
         EmptyEvent = 0, // empty event
+        VoiceControl = 2001, // voice control
         P2GiveP1Instruction = 1000,
         P1GetInstruction = 1001,
         P1CheckStorage = 1,
