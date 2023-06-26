@@ -21,7 +21,7 @@ namespace VRC2.Events
 
         public override void Execute()
         {
-            _recorder.enabled = enableVoice;
+            _recorder.TransmitEnabled = enableVoice;
         }
     }
 }
