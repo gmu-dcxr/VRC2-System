@@ -17,6 +17,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC2;
 
+[RequireComponent(typeof(NetworkRunner))]
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     [Header("Prefab")] public NetworkPrefabRef _playerPrefab;
@@ -25,6 +26,8 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public NetworkPrefabRef _pipePrefab;
 
     public GameObject src;
+    
+    private NetworkRunner _runner;
 
     [Header("Setting")] public bool hideSelf = false;
 
@@ -32,14 +35,17 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     private bool isServer = false;
 
-    private NetworkRunner _runner;
-    
     // local player
     private PlayerRef _localPlayer;
+
+    private bool gameStarted = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        _runner = gameObject.GetComponent<NetworkRunner>();
+        _runner.ProvideInput = true;
+
         GlobalConstants.pipePrefabRef = _pipePrefab;
     }
 
@@ -234,9 +240,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public async void StartGame(GameMode mode)
     {
-        _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.ProvideInput = true;
-
         var result = await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
@@ -252,6 +255,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             // all good
             GlobalConstants.networkRunner = _runner;
+            gameStarted = true;
         }
         else
         {
@@ -266,7 +270,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     private void OnGUI()
     {
-        if (_runner == null)
+        if (!gameStarted)
         {
             if (GUI.Button(new Rect(250, 10, 100, 40), "Host"))
             {
