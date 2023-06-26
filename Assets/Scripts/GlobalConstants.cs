@@ -78,5 +78,12 @@ namespace VRC2
         public static string pipeObjectTag = "Pipe";
 
         #endregion
+
+        #region Voice Communication
+
+        public static string voiceRecorderTag = "Voice";
+        
+
+        #endregion
     }
 }

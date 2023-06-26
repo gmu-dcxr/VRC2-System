@@ -45,10 +45,12 @@ namespace VRC2
 
         /*
          * P1 menu event flows:
+         *  0. OnVoiceControl()
          *  1. OnCheckStorage() - P1CheckStorage - {<true>P1PickupPipeEvent, <false> P1CommandAIDrone
          *  2. OnPickupPipe() - P1PickupPipeEvent
          * 
          * P2 menu event flows:
+         *  0. OnVoiceControl()
          *  1. OnGiveInstruction() - P2GiveInstruction - P1GetInstruction
          *  2. OnCheckPipeSizeColor() - P2CheckSizeAndColor - P1GetSizeAndColorResult
          *  3. OnMeasureDistance() - P2MeasureDistance - P2MeasureDistanceResult
@@ -57,6 +59,16 @@ namespace VRC2
          *  6. OnCheckLevel() - P2CheckLevel - {DirectMessage<true>(clamp), DirectMessage<false>(adjust)}
          */
 
+        public void OnVoiceControl()
+        {
+            // enable or disable voice
+            Debug.Log("You clicked Voice Control");
+            
+            dialogManager.UpdateDialog("Voice Control", "Enable/Disable Voice?", "Enable", "Disable",
+                PipeInstallEvent.VoiceControl);
+            ShowModalDialog(true);
+        }
+        
         public void OnGiveInstruction()
         {
             // p2 gives p1 instruction, size and color
@@ -243,6 +255,14 @@ namespace VRC2
             var ev = modalDialog.currentEvent;
             switch (ev)
             {
+                case PipeInstallEvent.VoiceControl:
+                    ShowModalDialog(false);
+                    // enable voice
+                    var vce = gameObject.GetComponent<VoiceControlEvent>();
+                    vce.enableVoice = true;
+                    vce.Execute();
+                    break;
+                
                 case PipeInstallEvent.P2GiveInstruction:
                     // hide dialog
                     ShowModalDialog(false);
@@ -365,6 +385,14 @@ namespace VRC2
             var ev = modalDialog.currentEvent;
             switch (ev)
             {
+                case PipeInstallEvent.VoiceControl:
+                    ShowModalDialog(false);
+                    // enable voice
+                    var vce = gameObject.GetComponent<VoiceControlEvent>();
+                    vce.enableVoice = false;
+                    vce.Execute();
+                    break;
+                
                 case PipeInstallEvent.P1CheckStorage:
                     // lack
                     // command AI drone to deliver pipes

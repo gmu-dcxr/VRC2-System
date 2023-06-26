@@ -11,6 +11,7 @@ namespace VRC2.Menu
     public enum MenuItem
     {
         Zero = 0,
+        VoiceControl = 1001,
         GiveInstruction = 1,
         CheckStorage = 11,
         Deprecate = 12,
@@ -25,6 +26,7 @@ namespace VRC2.Menu
     internal static class MenuString
     {
         public static string empty = "";
+        public static string VoiceControl = "Voice Control";
         public static string GiveInstruction = "Give Instruction";
         public static string CheckStorage = "Check Storage";
         public static string Deprecate = "Deprecate";
@@ -43,6 +45,7 @@ namespace VRC2.Menu
 
         private List<MenuItem> P1MenuItems = new List<MenuItem>()
         {
+            MenuItem.VoiceControl,
             MenuItem.CheckStorage,
             // MenuItem.PickupPipe, //disable pickup since the logic is changed
             MenuItem.Deprecate,
@@ -50,6 +53,7 @@ namespace VRC2.Menu
 
         private List<MenuItem> P2MenuItems = new List<MenuItem>()
         {
+            MenuItem.VoiceControl,
             MenuItem.GiveInstruction,
             MenuItem.CheckPipeSizeColor,
             MenuItem.MeasureDistance,
@@ -80,7 +84,9 @@ namespace VRC2.Menu
             menuItemNames = new Dictionary<MenuItem, string>();
             nameMenuItems = new Dictionary<string, MenuItem>();
             // add menu items
-
+            
+            // voice control
+            AddPair(MenuItem.VoiceControl, MenuString.VoiceControl);
             // check storage
             AddPair(MenuItem.CheckStorage, MenuString.CheckStorage);
             // pick a pipe
@@ -230,6 +236,9 @@ namespace VRC2.Menu
 
                 switch (item)
                 {
+                    case MenuItem.VoiceControl:
+                        puew.WhenRelease.AddListener(_menuHandler.OnVoiceControl);
+                        break;
                     case MenuItem.GiveInstruction:
                         puew.WhenRelease.AddListener(_menuHandler.OnGiveInstruction);
                         break;
