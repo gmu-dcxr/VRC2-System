@@ -19,6 +19,8 @@ namespace VRC2.Menu
         CheckPipeSizeColor = 3,
         MeasureDistance = 4,
         CommandRobot = 5,
+        CheckGlue = 51,
+        CheckClamp = 52,
         CheckPipeLengthAngle = 6,
         CheckLevel = 7,
     }
@@ -34,6 +36,8 @@ namespace VRC2.Menu
         public static string CheckPipeSizeColor = "Size & Color";
         public static string MeasureDistance = "Measure Distance";
         public static string CommandRobot = "Command Robot";
+        public static string CheckGlue = "Check Glue";
+        public static string CheckClamp = "Check Clamp";
         public static string CheckPipeLengthAngle = "Length & Angle";
         public static string CheckLevel = "Check Level";
     }
@@ -49,6 +53,9 @@ namespace VRC2.Menu
             MenuItem.CheckStorage,
             // MenuItem.PickupPipe, //disable pickup since the logic is changed
             MenuItem.Deprecate,
+            // check glue and clamp
+            MenuItem.CheckGlue,
+            MenuItem.CheckClamp
         };
 
         private List<MenuItem> P2MenuItems = new List<MenuItem>()
@@ -101,6 +108,10 @@ namespace VRC2.Menu
             AddPair(MenuItem.MeasureDistance, MenuString.MeasureDistance);
             // command robot
             AddPair(MenuItem.CommandRobot, MenuString.CommandRobot);
+            // check glue
+            AddPair(MenuItem.CheckGlue, MenuString.CheckGlue);
+            // check clamp
+            AddPair(MenuItem.CheckClamp, MenuString.CheckClamp);
             // check pipe length and angle
             AddPair(MenuItem.CheckPipeLengthAngle, MenuString.CheckPipeLengthAngle);
             // check level
@@ -259,6 +270,12 @@ namespace VRC2.Menu
                         break;
                     case MenuItem.CommandRobot:
                         puew.WhenRelease.AddListener(_menuHandler.OnCommandRobot);
+                        break;
+                    case MenuItem.CheckGlue:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckGlue);
+                        break;
+                    case MenuItem.CheckClamp:
+                        puew.WhenRelease.AddListener(_menuHandler.OnCheckClamp);
                         break;
                     case MenuItem.CheckPipeLengthAngle:
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckLengthAngle);
