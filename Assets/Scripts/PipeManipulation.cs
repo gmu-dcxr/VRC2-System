@@ -10,6 +10,7 @@ namespace VRC2
 
     public enum PipeMaterialColor
     {
+        Default = 0,
         Magenta = 1,
         Blue = 2,
         Yellow = 3,
@@ -84,6 +85,8 @@ namespace VRC2
                     break;
                 case PipeMaterialColor.Green:
                     material = _greenMaterial;
+                    break;
+                default:
                     break;
             }
 
