@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,5 +44,14 @@ namespace VRC2
 
             return result;
         }
+
+        #region Get Enum Variable String
+
+        public static string GetDisplayName<T>(T value)
+        {
+            return Enum.GetName(typeof(T), value);
+        }
+
+        #endregion
     }
 }

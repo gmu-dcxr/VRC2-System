@@ -114,7 +114,19 @@ namespace VRC2
         {
             Debug.Log("You clicked Check Pipe");
 
-            dialogManager.UpdateDialog("Tip", "Are the color and size of the pipe correct?", "Yes", "No",
+            // get size and color
+            var (size, color) = P2CheckSizeAndColorEvent.GetPipeSizeAndColor();
+
+            if (size < 0)
+            {
+                // not valid, maybe network is not ready, or no spawned pipe
+                Debug.LogWarning("Not found a spawned pipe");
+                return;
+            }
+
+            dialogManager.UpdateDialog("Tip",
+                $"Size: {size} Color: {Utils.GetDisplayName<PipeMaterialColor>(color)}\n" +
+                $"All Correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckSizeAndColor);
             ShowModalDialog(true);
         }

@@ -47,5 +47,29 @@ namespace VRC2.Events
 
             Debug.LogWarning(message);
         }
+
+        #region Get Size And Color
+
+        public static (float, PipeMaterialColor) GetPipeSizeAndColor()
+        {
+            float size = -1.0f;
+            PipeMaterialColor color = PipeMaterialColor.Default;
+
+            if (GlobalConstants.lastSpawned.IsValid)
+            {
+                var runner = GlobalConstants.networkRunner;
+                var obj = runner.FindObject(GlobalConstants.lastSpawned);
+                // interactable pipe
+                var go = obj.gameObject;
+                // pipe manipulation
+                var pm = go.GetComponent<PipeManipulation>();
+                size = pm.pipeSize;
+                color = pm.pipeColor;
+            }
+
+            return (size, color);
+        }
+
+        #endregion
     }
 }
