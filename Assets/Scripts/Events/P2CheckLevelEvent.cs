@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using UnityEngine;
 
 namespace VRC2.Events
@@ -42,5 +43,31 @@ namespace VRC2.Events
 
             Debug.LogWarning(message);
         }
+        
+        #region Get Water Level
+        public static float GetWaterLevelValue()
+        {
+            float value = -1.0f;
+            PipeMaterialColor color = PipeMaterialColor.Default;
+
+            if (GlobalConstants.lastSpawned.IsValid)
+            {
+                var runner = GlobalConstants.networkRunner;
+                var obj = runner.FindObject(GlobalConstants.lastSpawned);
+                // interactable pipe
+                var go = obj.gameObject;
+                // pipe manipulation
+                var pm = go.GetComponent<PipeManipulation>();
+                var pipe = pm.pipe;
+                // get z rotation
+                var z = pipe.transform.rotation.eulerAngles.z;
+                // normalize
+                // TODO: check whether it's reasonable
+                value = Math.Abs(z) % 90f;
+            }
+            
+            return value;
+        }
+        #endregion
     }
 }

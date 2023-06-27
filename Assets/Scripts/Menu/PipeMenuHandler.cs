@@ -63,12 +63,12 @@ namespace VRC2
         {
             // enable or disable voice
             Debug.Log("You clicked Voice Control");
-            
+
             dialogManager.UpdateDialog("Voice Control", "Enable/Disable Voice?", "Enable", "Disable",
                 PipeInstallEvent.VoiceControl);
             ShowModalDialog(true);
         }
-        
+
         public void OnGiveInstruction()
         {
             // p2 gives p1 instruction, size and color
@@ -93,7 +93,7 @@ namespace VRC2
         public void OnDeprecate()
         {
             if (!GlobalConstants.lastSpawned.IsValid) return;
-            
+
             // p1 deprecate current pipe
             dialogManager.UpdateDialog("Warning", "Deprecate this pipe?", "Yes", "No",
                 PipeInstallEvent.P1Deprecate);
@@ -177,7 +177,17 @@ namespace VRC2
         public void OnCheckLevel()
         {
             Debug.Log("You clicked check level");
-            dialogManager.UpdateDialog("Check Level", "Are the horizontal and vertical levels correct?", "Yes", "No",
+
+            // get water level value
+            var value = P2CheckLevelEvent.GetWaterLevelValue();
+            if (value < 0)
+            {
+                // not valid, maybe network is not ready, or no spawned pipe
+                Debug.LogWarning("Not found a spawned pipe");
+                return;
+            }
+
+            dialogManager.UpdateDialog("Check Level", $"Level value:{value}\nIs it correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckLevel);
             ShowModalDialog(true);
         }
@@ -255,7 +265,7 @@ namespace VRC2
             {
                 var runner = GlobalConstants.networkRunner;
                 var obj = runner.FindObject(GlobalConstants.lastSpawned);
-                runner.Despawn(obj);   
+                runner.Despawn(obj);
             }
         }
 
@@ -290,7 +300,7 @@ namespace VRC2
                     vce.enableVoice = true;
                     vce.Execute();
                     break;
-                
+
                 case PipeInstallEvent.P2GiveInstruction:
                     // hide dialog
                     ShowModalDialog(false);
@@ -370,12 +380,12 @@ namespace VRC2
                     var ev31 = gameObject.GetComponent<P2CommandRobotEvent>();
                     ev31.Execute();
                     break;
-                
+
                 case PipeInstallEvent.P1CheckGlue:
                     // enough   
                     ShowModalDialog(false);
                     break;
-                
+
                 case PipeInstallEvent.P1CheckClamp:
                     // enough
                     ShowModalDialog(false);
@@ -430,7 +440,7 @@ namespace VRC2
                     vce.enableVoice = false;
                     vce.Execute();
                     break;
-                
+
                 case PipeInstallEvent.P1CheckStorage:
                     // lack
                     // command AI drone to deliver pipes
@@ -456,14 +466,14 @@ namespace VRC2
                     // after p2 measured the distance
                     ShowModalDialog(false);
                     break;
-                
+
                 case PipeInstallEvent.P1CheckGlue:
                     // not enough   
                     ShowModalDialog(false);
                     var cge = gameObject.GetComponent<P1CheckGlueEvent>();
                     cge.Execute();
                     break;
-                
+
                 case PipeInstallEvent.P1CheckClamp:
                     // not enough
                     ShowModalDialog(false);

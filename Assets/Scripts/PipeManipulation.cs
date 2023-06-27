@@ -28,6 +28,12 @@ namespace VRC2
         private Renderer _renderer;
 
         [HideInInspector]
+        public GameObject pipe
+        {
+            get => _pipe;
+        }
+
+        [HideInInspector]
         public Renderer renderer
         {
             get
