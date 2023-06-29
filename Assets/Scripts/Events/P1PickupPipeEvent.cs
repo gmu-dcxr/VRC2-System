@@ -14,7 +14,7 @@ namespace VRC2.Events
         // refer: https://doc.photonengine.com/zh-cn/fusion/current/tutorials/host-mode-basics/5-property-changes
 
         [HideInInspector] public static PipeMaterialColor pipeColor;
-        [HideInInspector] public static float pipeSize;
+        [HideInInspector] public static float pipeLength;
         private static NetworkObject spawnedPipe;
 
         [Networked(OnChanged = nameof(OnPipeSpawned))]
@@ -42,7 +42,7 @@ namespace VRC2.Events
 
             // update color and size
             pm.SetMaterial(pipeColor);
-            pm.SetLength(pipeSize);
+            pm.SetLength(pipeLength);
         }
 
         #endregion
@@ -71,7 +71,7 @@ namespace VRC2.Events
             GlobalConstants.lastSpawned = spawnedPipe.Id;
 
             // send message
-            RPC_SendMessage(spawnedPipe.Id, pipeColor, pipeSize);
+            RPC_SendMessage(spawnedPipe.Id, pipeColor, pipeLength);
         }
 
         internal void SpawnPipeUsingTemplate()
@@ -84,7 +84,8 @@ namespace VRC2.Events
             
             var pm = template.GetComponent<PipeManipulation>();
             var color = pm.pipeColor;
-            var size = pm.pipeLength;
+            var length = pm.pipeLength;
+            var diameter = pm.diameter;
             
             // destroy
             GameObject.DestroyImmediate(GlobalConstants.pipeSpawnTemplate);
@@ -92,7 +93,7 @@ namespace VRC2.Events
             
             // update static variables
             pipeColor = color;
-            pipeSize = size;
+            pipeLength = length;
 
             // make it a bit closer to the camera
             var offset = -Camera.main.transform.forward;
@@ -101,7 +102,10 @@ namespace VRC2.Events
             // spawn object
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
-            var prefab = GlobalConstants.pipePrefabRef;
+            
+            // get prefab by diameter
+            var prefab = GlobalConstants.GetPipeNetworkPrefabRef(diameter);
+            
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
             spawned = !spawned;
         }
