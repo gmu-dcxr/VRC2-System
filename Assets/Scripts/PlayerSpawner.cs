@@ -15,12 +15,14 @@ namespace VRC2
     [RequireComponent(typeof(NetworkRunner))]
     public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
-        [Header("Prefab")] public NetworkPrefabRef _playerPrefab;
+        [Header("Character Prefab")] public NetworkPrefabRef _playerPrefab;
         public string prefabName;
 
-        public NetworkPrefabRef _pipePrefab;
-
-        public GameObject src;
+        [Header("Pipe Prefabs")]
+        public NetworkPrefabRef _pipePrefabDiameter1;
+        public NetworkPrefabRef _pipePrefabDiameter2;
+        public NetworkPrefabRef _pipePrefabDiameter3;
+        public NetworkPrefabRef _pipePrefabDiameter4;
 
         private NetworkRunner _runner;
 
@@ -41,7 +43,11 @@ namespace VRC2
             _runner = gameObject.GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
 
-            GlobalConstants.pipePrefabRef = _pipePrefab;
+            // initialize pipe prefabs
+            GlobalConstants.AddPipeNetworkPrefabRef(1, _pipePrefabDiameter1);
+            GlobalConstants.AddPipeNetworkPrefabRef(2, _pipePrefabDiameter2);
+            GlobalConstants.AddPipeNetworkPrefabRef(3, _pipePrefabDiameter3);
+            GlobalConstants.AddPipeNetworkPrefabRef(4, _pipePrefabDiameter4);
         }
 
         private void OnRequestStartGame(string obj)
@@ -259,12 +265,7 @@ namespace VRC2
                 Debug.LogError($"Failed to Start: {result.ShutdownReason}");
             }
         }
-
-        void CreateNewPipe()
-        {
-            _runner.Spawn(_pipePrefab, new Vector3(0f, 1.5f, 2f), Quaternion.identity, _localPlayer);
-        }
-
+        
         private void OnGUI()
         {
             if (!gameStarted)
@@ -283,13 +284,6 @@ namespace VRC2
                     StartGame(GameMode.Client);
                 }
             }
-            // else
-            // {
-            //     if (GUI.Button(new Rect(0, 300, 100, 40), "Pipe"))
-            //     {
-            //         CreateNewPipe();
-            //     }
-            // }
         }
     }
 }
