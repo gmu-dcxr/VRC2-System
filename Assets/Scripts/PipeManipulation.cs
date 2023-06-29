@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace VRC2
 {
@@ -33,7 +34,6 @@ namespace VRC2
             get => _pipe;
         }
 
-        [HideInInspector]
         public Renderer renderer
         {
             get
@@ -52,7 +52,21 @@ namespace VRC2
 
         // current color
         public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
-        public float pipeSize = 0.5f;
+        [HideInInspector] public float pipeLength = 1.0f;
+
+        public int diameter
+        {
+            get
+            {
+                if (_pipe == null) return 0;
+                else
+                {
+                    var name = _pipe.name;
+                    // get diameter from the name
+                    return int.Parse(name.Substring(0, 1));
+                }
+            }
+        }
 
 
         // Start is called before the first frame update
@@ -66,7 +80,7 @@ namespace VRC2
             {
                 // not spawned object
                 SetMaterial(pipeColor);
-                SetSize(pipeSize);
+                SetLength(pipeLength);
             }
         }
 
@@ -107,13 +121,10 @@ namespace VRC2
             renderer.material = _defaultMaterial;
         }
 
-        public void SetSize(float size)
+        public void SetLength(float length)
         {
-            Debug.Log($"Set Size: {size}");
-            Debug.Log($"Set Size: {_pipe.transform.localScale}");
-            // TODO: size mapping
-            _pipe.transform.localScale = new Vector3(size, size, size);
-            Debug.Log($"Set Size: {_pipe.transform.localScale}");
+            // TODO: Only change x (length)
+            _pipe.transform.localScale = new Vector3(length, 1, 1);
         }
     }
 }

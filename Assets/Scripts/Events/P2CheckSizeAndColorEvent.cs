@@ -63,7 +63,7 @@ namespace VRC2.Events
                 var go = obj.gameObject;
                 // pipe manipulation
                 var pm = go.GetComponent<PipeManipulation>();
-                size = pm.pipeSize;
+                size = pm.pipeLength;
                 color = pm.pipeColor;
             }
 
