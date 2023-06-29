@@ -42,7 +42,7 @@ namespace VRC2.Events
 
             // update color and size
             pm.SetMaterial(pipeColor);
-            pm.SetSize(pipeSize);
+            pm.SetLength(pipeSize);
         }
 
         #endregion
@@ -84,7 +84,7 @@ namespace VRC2.Events
             
             var pm = template.GetComponent<PipeManipulation>();
             var color = pm.pipeColor;
-            var size = pm.pipeSize;
+            var size = pm.pipeLength;
             
             // destroy
             GameObject.DestroyImmediate(GlobalConstants.pipeSpawnTemplate);
@@ -122,7 +122,7 @@ namespace VRC2.Events
             // update material and size
             var pm = go.GetComponent<PipeManipulation>();
             pm.SetMaterial(color);
-            pm.SetSize(size);
+            pm.SetLength(size);
 
             SetSpawnedPipeNotSpawnable(go);
         }
