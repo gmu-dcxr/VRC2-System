@@ -109,9 +109,9 @@ namespace VRC2.Events
             this.EndStart(ref _started);
         }
 
-        #region Spawn clamp for networking
+        #region Spawn object for networking
 
-        // spawn clamp using the current selection
+        // spawn object using the current selection
         internal void SpawnNetworkObject()
         {
             // spawn object
@@ -139,7 +139,7 @@ namespace VRC2.Events
                 case PointerEventType.Select:
                     break;
                 case PointerEventType.Unselect:
-                    // spawn clamp only when the trigger was released.
+                    // spawn object only when the trigger was released.
                     // not spawn under when Select because it may trigger many times.
                     SpawnNetworkObject();
                     break;
