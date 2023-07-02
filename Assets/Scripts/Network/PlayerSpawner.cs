@@ -62,25 +62,6 @@ namespace VRC2
             }
         }
 
-        private void AttachSourceTransforms(NetworkObject nwo, GameObject src)
-        {
-            var go = nwo.gameObject;
-            var childCount = go.transform.childCount;
-            for (var i = 0; i < childCount; i++)
-            {
-                var g = go.transform.GetChild(i).gameObject;
-                TransformAttachment ta;
-                if (g.TryGetComponent<TransformAttachment>(out ta))
-                {
-                    if (g.name == src.name)
-                    {
-                        ta.source = src;
-                        Debug.LogWarning($"[WARN]Attached transform for {g.name}");
-                    }
-                }
-            }
-        }
-
         // Update is called once per frame
         void Update()
         {

@@ -104,6 +104,13 @@ namespace VRC2
 
         #endregion
 
+        #region Clamp Collision with the Wall
+
+        public static string clampObjectTag = "Clamp";
+        
+
+        #endregion
+
         #region Voice Communication
 
         public static string voiceRecorderTag = "Voice";
