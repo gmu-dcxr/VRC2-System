@@ -24,6 +24,8 @@ namespace VRC2
         public NetworkPrefabRef _pipePrefabDiameter3;
         public NetworkPrefabRef _pipePrefabDiameter4;
 
+        [Header("Clamp Prefab")] public NetworkPrefabRef _clampPrefab;
+
         private NetworkRunner _runner;
 
         [Header("Setting")] public bool hideSelf = false;
@@ -48,6 +50,9 @@ namespace VRC2
             GlobalConstants.AddPipeNetworkPrefabRef(2, _pipePrefabDiameter2);
             GlobalConstants.AddPipeNetworkPrefabRef(3, _pipePrefabDiameter3);
             GlobalConstants.AddPipeNetworkPrefabRef(4, _pipePrefabDiameter4);
+            
+            // initialize clamp prefab
+            GlobalConstants.clampNetworkPrefabRef = _clampPrefab;
         }
 
         private void OnRequestStartGame(string obj)
