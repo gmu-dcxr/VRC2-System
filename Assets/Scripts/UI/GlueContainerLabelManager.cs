@@ -11,14 +11,13 @@ namespace VRC2
         {
             // must call it
             base.Start();
-            // update the label
-            base.label = $"Glue Capacity: {GlobalConstants.currentGlueCapacitiy * 100}%";
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            // update the label
+            base.label = $"Glue Capacity: {GlobalConstants.currentGlueCapacitiy * 100}%";
         }
     }
 }

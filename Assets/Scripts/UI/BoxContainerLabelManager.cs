@@ -11,14 +11,13 @@ namespace VRC2
         {
             // must call it
             base.Start();
-            // update the label
-            base.label = $"Box Count: {GlobalConstants.currentBoxCount}";
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            // update the label
+            base.label = $"Box Count: {GlobalConstants.currentBoxCount}";
         }
     }
 }

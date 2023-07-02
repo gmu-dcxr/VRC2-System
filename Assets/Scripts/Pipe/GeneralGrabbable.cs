@@ -6,6 +6,7 @@ using Fusion;
 using UnityEngine;
 
 using Oculus.Interaction;
+using Unity.VisualScripting;
 
 namespace VRC2.Events
 {
@@ -29,7 +30,7 @@ namespace VRC2.Events
         [SerializeField] private NetworkPrefabRef _networkPrefabRef;
 
         private NetworkObject _networkObject = null;
-        private bool isSpawnedClamp
+        private bool isSpawnedObject
         {
             get
             {
@@ -111,6 +112,62 @@ namespace VRC2.Events
 
         #region Spawn object for networking
 
+        void UpdateCapacityAfterSpawn(NetworkObject no)
+        {
+            // Some items' count should decrease after spawn.
+            // This is to simulate the real consumption.
+            // NOTE: here we use compare spawned object name with tags in `GlobalConstants`.
+
+            var name = no.gameObject.name;
+            if (name.Contains(GlobalConstants.clampObjectTag))
+            {
+                // clamp
+                if (GlobalConstants.UseClamp())
+                {
+                    // succeed
+                }
+                else
+                {
+                    // fail because of used out
+                }
+
+            }
+            else if (name.Contains(GlobalConstants.boxObjectTag))
+            {
+                // box
+                if (GlobalConstants.UseBox())
+                {
+                    // succeed
+                }
+                else
+                {
+                    // fail because of used out
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"Unknown name: {name}");
+            }
+
+        }
+
+        void UpdateCapacityAfterUnSelect()
+        {
+            // for those non-spawned object, e.g., glue
+            var name = gameObject.name;
+            if (name.EndsWith(GlobalConstants.glueObjectTag))
+            {
+                if (GlobalConstants.UseGlue())
+                {
+                    // succeed
+                }
+                else
+                {
+                    // fail because of used out
+                }
+            }
+        }
+
         // spawn object using the current selection
         internal void SpawnNetworkObject()
         {
@@ -125,7 +182,8 @@ namespace VRC2.Events
             var offset = -Camera.main.transform.forward;
             pos += offset * 0.1f;
 
-            runner.Spawn(_networkPrefabRef, pos, t.rotation, localPlayer);
+            var no = runner.Spawn(_networkPrefabRef, pos, t.rotation, localPlayer);
+            UpdateCapacityAfterSpawn(no);
         }
 
         #endregion
@@ -153,7 +211,7 @@ namespace VRC2.Events
             }
         }
 
-        private void SpawnedProcessPointerEvent(PointerEvent evt)
+        private void DefaultProcessPointerEvent(PointerEvent evt)
         {
             switch (evt.Type)
             {
@@ -162,6 +220,9 @@ namespace VRC2.Events
                     break;
                 case PointerEventType.Unselect:
                     EndTransform();
+                    // update capacity
+                    UpdateCapacityAfterUnSelect();
+                    
                     break;
                 case PointerEventType.Cancel:
                     EndTransform();
@@ -197,9 +258,9 @@ namespace VRC2.Events
         {
             if (spawnable)
             {
-                if (isSpawnedClamp || gameNotStart)
+                if (isSpawnedObject || gameNotStart)
                 {
-                    SpawnedProcessPointerEvent(evt);
+                    DefaultProcessPointerEvent(evt);
                 }
                 else
                 {
@@ -208,7 +269,7 @@ namespace VRC2.Events
             }
             else
             {
-                SpawnedProcessPointerEvent(evt);
+                DefaultProcessPointerEvent(evt);
             }
         }
 
