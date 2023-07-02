@@ -70,6 +70,7 @@ namespace VRC2
             {
                 diameterPipePrefabRefDict = new Dictionary<int, NetworkPrefabRef>();
             }
+
             diameterPipePrefabRefDict.Add(diameter, prefabRef);
         }
 
@@ -91,14 +92,17 @@ namespace VRC2
 
         // This is to spawn networked pipe object
         public static GameObject pipeSpawnTemplate;
+
         // This is to call spawn event
         public static string menuObjectTag = "Menu";
+
         // This is to despawn object
         public static NetworkId lastSpawned = new NetworkId();
 
         #endregion
 
         #region Pipe Collision with the Wall
+
         // It's the tag of the pipe, not the InteractablePipe
         public static string pipeObjectTag = "Pipe";
 
@@ -119,7 +123,73 @@ namespace VRC2
         #region Voice Communication
 
         public static string voiceRecorderTag = "Voice";
+
+
+        #endregion
+
+        #region Start Settings
+
+        // clamp count
+        public static int clampInitialCount = 20;
+
+        // box count
+        public static int boxInitialCount = 10;
+
+        // glue percentage
+        public static float glueInitialCapacity = 1.0f;
+
+        // clamp consumption per action
+        public static int clampConsumption = 1;
+
+        // box consumption per action
+        public static int boxConsumption = 1;
+
+        // glue consumption per action
+        public static float glueConsumption = 0.01f;
+
+        // current clamp,box, and glue
+        public static int currentClampCount = clampInitialCount;
+        public static int currentBoxCount = boxInitialCount;
+        public static float currentGlueCapacitiy = glueInitialCapacity;
+
+        public static bool IsClampUsedOut
+        {
+            get => currentBoxCount == 0;
+        }
+
+        public static bool IsBoxUsedOut
+        {
+            get => currentBoxCount == 0;
+        }
+
+        public static bool IsGlueUsedOut
+        {
+            get => currentGlueCapacitiy == 0;
+        }
         
+        public static bool UseClamp()
+        {
+            if (IsClampUsedOut) return false;
+
+            currentClampCount -= clampConsumption;
+            return true;
+        }
+
+        public static bool UseBox()
+        {
+            if (IsBoxUsedOut) return false;
+            currentBoxCount -= boxConsumption;
+            return true;
+        }
+
+        public static bool UseGlue()
+        {
+            if (IsGlueUsedOut) return false;
+            currentGlueCapacitiy -= glueConsumption;
+            return true;
+        }
+
+
 
         #endregion
     }
