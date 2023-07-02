@@ -13,14 +13,13 @@ namespace VRC2
         {
             // must call it
             base.Start();
-            // update the label
-            base.label = $"Clamp Count: {GlobalConstants.currentClampCount}";
         }
 
         // Update is called once per frame
         void Update()
         {
-            
+            // update the label
+            base.label = $"Clamp Count: {GlobalConstants.currentClampCount}";
         }
     }
 }

@@ -101,6 +101,8 @@ namespace VRC2
 
         #endregion
 
+        public static string glueObjectTag = "Glue";
+
         #region Pipe Collision with the Wall
 
         // It's the tag of the pipe, not the InteractablePipe
@@ -145,7 +147,7 @@ namespace VRC2
         public static int boxConsumption = 1;
 
         // glue consumption per action
-        public static float glueConsumption = 0.01f;
+        public static float glueConsumption = 0.1f;
 
         // current clamp,box, and glue
         public static int currentClampCount = clampInitialCount;
