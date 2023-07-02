@@ -25,7 +25,8 @@ namespace VRC2.Events
 
         [SerializeField] private int _maxGrabPoints = -1;
 
-        [Header("Prefab")] [SerializeField] private NetworkPrefabRef _networkPrefabRef;
+        [Header("Prefab")] [SerializeField] private bool spawnable = true;
+        [SerializeField] private NetworkPrefabRef _networkPrefabRef;
 
         private NetworkObject _networkObject = null;
         private bool isSpawnedClamp
@@ -34,7 +35,7 @@ namespace VRC2.Events
             {
                 if (_networkObject == null)
                 {
-                    _networkObject= gameObject.GetComponent<NetworkObject>();   
+                    _networkObject= gameObject.GetComponent<NetworkObject>();
                 }
 
                 return !_networkObject.IsSceneObject;
@@ -194,14 +195,20 @@ namespace VRC2.Events
 
         public override void ProcessPointerEvent(PointerEvent evt)
         {
-            
-            if (isSpawnedClamp || gameNotStart)
+            if (spawnable)
             {
-                SpawnedProcessPointerEvent(evt);
+                if (isSpawnedClamp || gameNotStart)
+                {
+                    SpawnedProcessPointerEvent(evt);
+                }
+                else
+                {
+                    NonSpawnedProcessPointerEvent(evt);
+                }
             }
             else
             {
-                NonSpawnedProcessPointerEvent(evt);
+                SpawnedProcessPointerEvent(evt);
             }
         }
 
