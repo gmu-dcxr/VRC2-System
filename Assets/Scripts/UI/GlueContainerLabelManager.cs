@@ -1,12 +1,10 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using VRC2.Events;
 
 namespace VRC2
 {
-    public class ClampContainerLabelManager : HoveringLabelManager
+    public class GlueContainerLabelManager : HoveringLabelManager
     {
         // Start is called before the first frame update
         void Start()
@@ -14,13 +12,13 @@ namespace VRC2
             // must call it
             base.Start();
             // update the label
-            base.label = $"Clamp Count: {GlobalConstants.currentClampCount}";
+            base.label = $"Glue Capacity: {GlobalConstants.currentGlueCapacitiy * 100}%";
         }
 
         // Update is called once per frame
         void Update()
         {
-            
+
         }
     }
 }
