@@ -107,8 +107,7 @@ namespace VRC2
         #region Clamp Collision with the Wall
 
         public static string clampObjectTag = "Clamp";
-        public static NetworkPrefabRef clampNetworkPrefabRef;
-        
+
         #endregion
 
         #region Voice Communication
