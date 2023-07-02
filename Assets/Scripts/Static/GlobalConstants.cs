@@ -110,6 +110,12 @@ namespace VRC2
 
         #endregion
 
+        #region Box Collision with the Wall
+
+        public static string boxObjectTag = "Box";
+
+        #endregion
+
         #region Voice Communication
 
         public static string voiceRecorderTag = "Voice";

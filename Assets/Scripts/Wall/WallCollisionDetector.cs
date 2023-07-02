@@ -20,6 +20,11 @@ namespace VRC2
         public float clampZRotationOffset = -90; // fixed
         public float clampDistanceOffset = 0.15f;
 
+        [Header("Box")]
+        public float boxYRotationOffset = -90f;
+
+        public float boxDistanceOffset = 0.25f;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -58,6 +63,10 @@ namespace VRC2
             {
                 HandleClampCollision(go);
             }
+            else if (go.CompareTag(GlobalConstants.boxObjectTag))
+            {
+                HandleBoxCollision(go);
+            }
         }
 
         #region Handle Pipe's Collision with the Wall
@@ -94,7 +103,7 @@ namespace VRC2
 
         #endregion
 
-        #region Hanle Clamp's Collision with the Wall
+        #region Handle Clamp's Collision with the Wall
 
         void HandleClampCollision(GameObject clamp)
         {
@@ -125,6 +134,40 @@ namespace VRC2
         }
 
 
+
+        #endregion
+
+        #region Handle Box's Collision with the Wall
+
+        void HandleBoxCollision(GameObject box)
+        {
+            // get the Interactable box
+            var ibox = box.transform.parent.gameObject;
+            Debug.Log(ibox.name);
+            
+            var t = ibox.transform;
+            var pos = t.position;
+            var rot = t.rotation.eulerAngles;
+
+            // get the wall transform
+            var wt = gameObject.transform;
+            var wpos = wt.position;
+            var wrot = wt.rotation.eulerAngles;
+
+            // set pipe's x rotation to the wall's x rotation
+            rot.x = wrot.x;
+            // set pipe's y rotation to the wall's y rotation
+            rot.y = wrot.y + boxYRotationOffset;
+            // update
+            ibox.transform.rotation = Quaternion.Euler(rot);
+
+            // update the pipe's distance to the wall
+            pos.x = wpos.x + boxDistanceOffset;
+
+            ibox.transform.position = pos;
+        }
+
+        
 
         #endregion
     }
