@@ -168,7 +168,7 @@ namespace VRC2
         {
             get => currentGlueCapacitiy == 0;
         }
-        
+
         public static bool UseClamp()
         {
             if (IsClampUsedOut) return false;
@@ -192,6 +192,63 @@ namespace VRC2
         }
 
 
+
+        #endregion
+
+        #region Clamp Related
+
+
+        #region Clamp Size-Scale Mapper
+
+        private static IDictionary<int, Vector3> clampSizeScaleDict = null;
+
+        public static Vector3 GetClampScaleBySize(int size)
+        {
+            if (clampSizeScaleDict == null)
+            {
+                clampSizeScaleDict = new Dictionary<int, Vector3>();
+                // 1 inch, y doesn't matter much
+                clampSizeScaleDict.Add(1, new Vector3(0.15f, 0.15f, 0.15f));
+                // 2 inch
+                clampSizeScaleDict.Add(2, new Vector3(0.3f, 0.15f, 0.5f));
+                // 3 inch
+                clampSizeScaleDict.Add(3, new Vector3(0.5f, 0.15f, 0.7f));
+                // 4 inch
+                clampSizeScaleDict.Add(4, new Vector3(0.6f, 0.15f, 0.9f));
+            }
+
+            Vector3 value = Vector3.one;
+            clampSizeScaleDict.TryGetValue(size, out value);
+            return value;
+        }
+
+        #endregion
+
+        #region Clamp Offset When Colliding with the Wall
+
+        private static IDictionary<int, float> clampWallOffsetDict = null;
+
+        public static float GetClampWallCollisionOffsetBySize(int size)
+        {
+            if (clampWallOffsetDict == null)
+            {
+                clampWallOffsetDict = new Dictionary<int, float>();
+                // 1 inch
+                clampWallOffsetDict.Add(1, 0.17f);
+                // 2 inch
+                clampWallOffsetDict.Add(2, 0.20f);
+                // 3 inch 
+                clampWallOffsetDict.Add(3, 0.23f);
+                // 4 inch
+                clampWallOffsetDict.Add(4, 0.25f);
+            }
+
+            float value = 0.1f;
+            clampWallOffsetDict.TryGetValue(size, out value);
+            return value;
+        }
+
+        #endregion
 
         #endregion
     }
