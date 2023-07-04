@@ -1,14 +1,16 @@
 ﻿using System;
+using NodeCanvas.Tasks.Actions;
 using Unity.VisualScripting;
 using UnityEngine;
 
 namespace VRC2.Events
 {
-    public class PipeCollisionDetector: MonoBehaviour
+    public class PipeCollisionDetector : MonoBehaviour
     {
-        [HideInInspector]
-        public GameObject connecting;
+        [HideInInspector] public GameObject connecting;
 
+        // to remove the seam
+        private float eps = 1e-3f;
         private void Start()
         {
         }
@@ -17,7 +19,7 @@ namespace VRC2.Events
         {
 
         }
-        
+
         private void OnTriggerEnter(Collider other)
         {
             OnTriggerEnterAndStay(other);
@@ -46,33 +48,25 @@ namespace VRC2.Events
             // update connecting
             connecting = otherpipe.transform.parent.gameObject; // Interactable pipe
 
-            var opt = otherpipe.transform;
-            
-            // current pipe
-            var cpt = gameObject.transform;
+            // current interactable pipe
+            var cip = gameObject.transform.parent;
 
-            // update rotation
-            connecting.transform.rotation = gameObject.transform.parent.rotation;
-            
-            // // update position
-            // // var position = ctp.transform.position;
-            // // add right vector
-            // var cmax = gameObject.GetComponent<Renderer>().bounds.max;
-            // var omin = otherpipe.GetComponent<Renderer>().bounds.min;
-            //
-            // Debug.Log($"cmax: {cmax.ToString("f5")}");
-            // Debug.Log($"omin: {omin.ToString("f5")}");
-            //
-            // // var position = cpt.transform.position;
-            //
-            // var offset = omin - cmax;
-            // connecting.transform.position = cpt.transform.position + offset;
-            
-            // calculate offset
+            if (connecting.transform.rotation != cip.rotation)
+            {
+                // update rotation first, and update position in the next loop
+                connecting.transform.rotation = cip.rotation;
+            }
+            else
+            {
+                // update position
+                var cbounds = gameObject.GetComponent<Renderer>().bounds;
+                var obounds = gameObject.GetComponent<Renderer>().bounds;
 
-            // position = position + ctp.transform.right * (cmax);
+                // expected distance
+                var ed = cbounds.extents.x + obounds.extents.x - eps;
 
-            // connecting.transform.position = position;
+                connecting.transform.position = cip.position + connecting.transform.right * ed;
+            }
         }
     }
 }
