@@ -29,14 +29,26 @@ namespace VRC2.Events
         [Header("Prefab")] [SerializeField] private bool spawnable = true;
         [SerializeField] private NetworkPrefabRef _networkPrefabRef;
 
+
+        #region Actions
+
+        public System.Action OnSelect;
+        public System.Action OnUnselect;
+        public System.Action OnCancel;
+        public System.Action OnHover;
+        public System.Action OnUnhover;
+
+        #endregion
+
         private NetworkObject _networkObject = null;
+
         private bool isSpawnedObject
         {
             get
             {
                 if (_networkObject == null)
                 {
-                    _networkObject= gameObject.GetComponent<NetworkObject>();
+                    _networkObject = gameObject.GetComponent<NetworkObject>();
                 }
 
                 return !_networkObject.IsSceneObject;
@@ -205,7 +217,7 @@ namespace VRC2.Events
                     break;
                 case PointerEventType.Hover:
                     break;
-                
+
                 case PointerEventType.Unhover:
                     break;
             }
@@ -216,23 +228,30 @@ namespace VRC2.Events
             switch (evt.Type)
             {
                 case PointerEventType.Select:
+                    if (OnSelect != null) OnSelect();
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
+                    if (OnUnselect != null) OnUnselect();
                     EndTransform();
                     // update capacity
                     UpdateCapacityAfterUnSelect();
-                    
+
                     break;
                 case PointerEventType.Cancel:
+                    if (OnCancel != null) OnCancel();
                     EndTransform();
                     break;
                 case PointerEventType.Hover:
+                    if (OnHover != null) OnHover();
                     break;
 
                 case PointerEventType.Unhover:
+                    if (OnUnhover != null) OnUnhover();
                     break;
             }
+
+
 
             base.ProcessPointerEvent(evt);
 
