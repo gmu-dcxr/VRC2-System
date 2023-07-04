@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC2;
+using VRC2.Events;
 
 namespace VRC2
 {
@@ -16,9 +17,8 @@ namespace VRC2
         // for better visualization, it can be updated accordingly.
         public float pipeDistanceOffset = 0.18f;
 
-        [Header("Clamp")] public float clampYRotationOffset = 0;
+        [Header("Clamp")] public float clampYRotationOffset = 90;
         public float clampZRotationOffset = -90; // fixed
-        public float clampDistanceOffset = 0.15f;
 
         [Header("Box")]
         public float boxYRotationOffset = -90f;
@@ -75,7 +75,6 @@ namespace VRC2
         {
             // get the Interactable pipe
             var ipipe = pipe.transform.parent.gameObject;
-            Debug.Log(ipipe.name);
 
             var t = ipipe.transform;
             var pos = t.position;
@@ -109,7 +108,10 @@ namespace VRC2
         {
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
-            Debug.Log(iclamp.name);
+            
+            // get offset
+            var csi = iclamp.GetComponentInChildren<ClampScaleInitializer>();
+            var offset = GlobalConstants.GetClampWallCollisionOffsetBySize(csi.clampSize);
 
             var t = iclamp.transform;
             var pos = t.position;
@@ -128,7 +130,7 @@ namespace VRC2
             // update rotation
             iclamp.transform.rotation = Quaternion.Euler(rot);
             // update distance
-            pos.x = wpos.x + clampDistanceOffset;
+            pos.x = wpos.x + offset;
 
             iclamp.transform.position = pos;
         }
@@ -143,7 +145,6 @@ namespace VRC2
         {
             // get the Interactable box
             var ibox = box.transform.parent.gameObject;
-            Debug.Log(ibox.name);
             
             var t = ibox.transform;
             var pos = t.position;

@@ -124,13 +124,16 @@ namespace VRC2.Events
 
         #region Spawn object for networking
 
-        void UpdateCapacityAfterSpawn(NetworkObject no)
+        public void UpdateCapacityAfterSpawn(NetworkObject no)
         {
             // Some items' count should decrease after spawn.
             // This is to simulate the real consumption.
             // NOTE: here we use compare spawned object name with tags in `GlobalConstants`.
 
             var name = no.gameObject.name;
+            
+            Debug.Log($"UpdateCapacityAfterSpawn for {name}");
+            
             if (name.Contains(GlobalConstants.clampObjectTag))
             {
                 // clamp
@@ -181,7 +184,7 @@ namespace VRC2.Events
         }
 
         // spawn object using the current selection
-        internal void SpawnNetworkObject()
+        public virtual void SpawnNetworkObject()
         {
             // spawn object
             var runner = GlobalConstants.networkRunner;
@@ -191,7 +194,7 @@ namespace VRC2.Events
             var pos = t.position;
 
             // make it a bit closer to the camera
-            var offset = -Camera.main.transform.forward;
+            var offset = Camera.main.transform.up;
             pos += offset * 0.1f;
 
             var no = runner.Spawn(_networkPrefabRef, pos, t.rotation, localPlayer);
