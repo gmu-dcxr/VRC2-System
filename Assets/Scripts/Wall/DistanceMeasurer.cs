@@ -37,7 +37,8 @@ namespace VRC2
                 if (d >= 0)
                 {
                     // invalid
-                    _label.text = $"Distance: {d.ToString("f2")}";
+                    // TODO: Convert to the real world unit
+                    _label.text = $"Distance: {d.ToString("f2")}'";
                     return;
                 }
             }
