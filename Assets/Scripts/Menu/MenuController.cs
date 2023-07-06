@@ -30,16 +30,16 @@ namespace VRC2.Menu
         public static string empty = "";
         public static string VoiceControl = "Voice Control";
         public static string GiveInstruction = "Give Instruction";
-        public static string CheckStorage = "Check Storage";
+        public static string CheckStorage = "Lack of Storage";
         public static string Deprecate = "Deprecate";
         public static string PickupPipe = "Pickup Pipe";
-        public static string CheckPipeSizeColor = "Size & Color";
+        public static string CheckPipeSizeColor = "Wrong Size/Color";
         public static string MeasureDistance = "Measure Distance";
-        public static string CommandRobot = "Command Robot";
-        public static string CheckGlue = "Check Glue";
-        public static string CheckClamp = "Check Clamp";
-        public static string CheckPipeLengthAngle = "Length & Angle";
-        public static string CheckLevel = "Check Level";
+        public static string CommandRobot = "Bend/Cut Pipe";
+        public static string CheckGlue = "Lack of Glue";
+        public static string CheckClamp = "Lack of Clamp";
+        public static string CheckPipeLengthAngle = "Wrong Length/Angle";
+        public static string CheckLevel = "Wrong Level";
     }
 
     public class MenuInitializer
@@ -51,8 +51,8 @@ namespace VRC2.Menu
         {
             MenuItem.VoiceControl,
             MenuItem.CheckStorage,
-            // MenuItem.PickupPipe, //disable pickup since the logic is changed
-            MenuItem.Deprecate,
+            // MenuItem.PickupPipe, // disable pickup since the logic is changed
+            // MenuItem.Deprecate, // disable 
             // check glue and clamp
             MenuItem.CheckGlue,
             MenuItem.CheckClamp
@@ -61,7 +61,7 @@ namespace VRC2.Menu
         private List<MenuItem> P2MenuItems = new List<MenuItem>()
         {
             MenuItem.VoiceControl,
-            MenuItem.GiveInstruction,
+            // MenuItem.GiveInstruction, // disable
             MenuItem.CheckPipeSizeColor,
             MenuItem.MeasureDistance,
             MenuItem.CommandRobot,
