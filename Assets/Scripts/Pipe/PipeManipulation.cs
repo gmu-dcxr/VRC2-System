@@ -2,24 +2,33 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
+using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 
 namespace VRC2
 {
     public class PipeManipulation : MonoBehaviour
     {
-        [SerializeField] private GameObject _pipe;
         [SerializeField] private Material _magentaMaterial;
         [SerializeField] private Material _blueMaterial;
         [SerializeField] private Material _yellowMaterial;
         [SerializeField] private Material _greenMaterial;
+        
+        // current color
+        public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
+        public PipeType pipeType = PipeType.Sewage;
+
+        [Header("Pipes")] [SerializeField] private List<GameObject> pipes;
 
         private Renderer _renderer;
+        private GameObject _pipe;
 
         [HideInInspector]
         public GameObject pipe
@@ -29,23 +38,11 @@ namespace VRC2
 
         public Renderer renderer
         {
-            get
-            {
-                if (_renderer == null)
-                {
-                    _renderer = _pipe.GetComponent<Renderer>();
-                }
-
-                return _renderer;
-            }
+            get { return _pipe.GetComponent<Renderer>(); }
         }
 
         // default material
         private Material _defaultMaterial;
-
-        // current color
-        public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
-        public PipeType pipeType = PipeType.Sewage;
         [HideInInspector] public float pipeLength = 1.0f;
 
         public int diameter
@@ -62,10 +59,21 @@ namespace VRC2
             }
         }
 
+        private IDictionary<PipeBendAngles, GameObject> anglesObjects;
+
 
         // Start is called before the first frame update
         void Start()
         {
+
+            InitDiameterObjects();
+            
+            // default is the straight one
+            _pipe = anglesObjects[PipeBendAngles.Angle_0];
+            
+            // only enable the straigh one
+            EnableOnly(PipeBendAngles.Angle_0);
+            
             _defaultMaterial = renderer.material;
 
             // whether it's the cloned object
@@ -76,6 +84,40 @@ namespace VRC2
                 SetMaterial(pipeColor);
                 // TODO: disabled for debugging connecting pipes
                 // SetLength(pipeLength);
+            }
+        }
+
+        void InitDiameterObjects()
+        {
+            if (anglesObjects != null) return;
+            
+            anglesObjects = new Dictionary<PipeBendAngles, GameObject>();
+            foreach (var go in pipes)
+            {
+                var name = go.name;
+                
+                Debug.Log($"name: {name}");
+
+                var key = PipeBendAngles.Default;
+                
+                if (name.Contains("90"))
+                {
+                    key = PipeBendAngles.Angle_90;
+                }else if (name.Contains("45"))
+                {
+                    key = PipeBendAngles.Angle_45;
+                } else if (name.Contains("135"))
+                {
+                    key = PipeBendAngles.Angle_135;
+                } else if (name.Contains("straight"))
+                {
+                    key = PipeBendAngles.Angle_0;
+                }
+
+                if (key != PipeBendAngles.Default)
+                {
+                    anglesObjects.Add(key, go);
+                }
             }
         }
 
@@ -134,6 +176,28 @@ namespace VRC2
         public void OnUnselect()
         {
             Debug.Log("Pipe OnUnselect");
+        }
+
+        #endregion
+
+        #region Enable/Disable
+
+        public void EnableOnly(PipeBendAngles angle)
+        {
+            foreach (var kvp in anglesObjects)
+            {
+                var k = kvp.Key;
+                if (k == angle)
+                {
+                    kvp.Value.SetActive(true);
+                    // update current pipe
+                    _pipe = kvp.Value;
+                }
+                else
+                {
+                    kvp.Value.SetActive(false);
+                }
+            }
         }
 
         #endregion
