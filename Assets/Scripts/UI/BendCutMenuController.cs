@@ -82,6 +82,9 @@ namespace VRC2
             _parameters.b = 0;
             _parameters.type = PipeType.Default;
             _parameters.color = PipeMaterialColor.Default;
+            
+            // hide on start
+            Hide();
         }
 
         // Update is called once per frame
