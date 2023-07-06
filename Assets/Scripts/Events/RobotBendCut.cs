@@ -60,7 +60,7 @@ namespace VRC2
             // set material
             pm.SetMaterial(pipeParameters.color);
             // edit mesh
-            EditMesh(pipeParameters.angle, pipeParameters.a, pipeParameters.b);
+            EditMesh(go, pipeParameters.angle, pipeParameters.a, pipeParameters.b);
 
             // deliver the pipe to the start point
             staticRobot.transform.position = staticStartPoint.position;
@@ -82,7 +82,7 @@ namespace VRC2
             // set material
             pm.SetMaterial(color);
             // edit mesh
-            EditMesh(angle, a, b);
+            EditMesh(go, angle, a, b);
         }
 
         internal void SpawnPipeUsingSelected()
@@ -184,9 +184,19 @@ namespace VRC2
                 pipeParameters.b);
         }
 
-        static void EditMesh(PipeBendAngles angle, float a, float b)
+        static void EditMesh(GameObject go, PipeBendAngles angle, float a, float b)
         {
             // TODO: 
+            var pm = go.GetComponent<PipeManipulation>();
+
+            switch (angle)
+            {
+                case PipeBendAngles.Angle_0:
+                    pm.SimulateStraightCut(a);
+                    break;
+                default:
+                    break;
+            }
         }
 
     }
