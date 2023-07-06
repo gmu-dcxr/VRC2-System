@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
+using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 
 namespace VRC2
 {
@@ -35,6 +37,34 @@ namespace VRC2
         // result
         private PipeBendCutParameters _parameters;
 
+        private PipeMaterialColor _pipeColor
+        {
+            get
+            {
+                if (GlobalConstants.selectedPipe == null)
+                {
+                    return PipeMaterialColor.Default;
+                }
+
+                var pipe = GlobalConstants.selectedPipe;
+                return pipe.GetComponent<PipeManipulation>().pipeColor;
+            }
+        }
+
+        private PipeType _pipeType
+        {
+            get
+            {
+                if (GlobalConstants.selectedPipe == null)
+                {
+                    return PipeType.Default;
+                }
+
+                var pipe = GlobalConstants.selectedPipe;
+                return pipe.GetComponent<PipeManipulation>().pipeType;
+            }
+        }
+
         public PipeBendCutParameters result
         {
             get => _parameters;
@@ -50,6 +80,8 @@ namespace VRC2
             _parameters.angle = PipeBendAngles.Empty;
             _parameters.a = 0;
             _parameters.b = 0;
+            _parameters.type = PipeType.Default;
+            _parameters.color = PipeMaterialColor.Default;
         }
 
         // Update is called once per frame
@@ -87,6 +119,8 @@ namespace VRC2
                 _parameters.angle = angle;
                 _parameters.a = a;
                 _parameters.b = b;
+                _parameters.type = _pipeType;
+                _parameters.color = _pipeColor;
                 // close window
                 Hide();
                 if (OnConfirmed != null)

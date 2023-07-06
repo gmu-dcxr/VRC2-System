@@ -5241,7 +5241,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  _pointableElement: {fileID: 881791789}
+  _pointableElement: {fileID: 881791795}
 --- !u!114 &250814952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5258,7 +5258,7 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 881791789}
+  _pointableElement: {fileID: 881791795}
   _rigidbody: {fileID: 881791793}
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
@@ -7711,8 +7711,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 1
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!114 &378870277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16742,9 +16742,10 @@ GameObject:
   - component: {fileID: 881791792}
   - component: {fileID: 881791791}
   - component: {fileID: 881791790}
-  - component: {fileID: 881791789}
   - component: {fileID: 881791788}
   - component: {fileID: 881791787}
+  - component: {fileID: 881791795}
+  - component: {fileID: 881791796}
   m_Layer: 0
   m_Name: InteractablePipeD1 (1)
   m_TagString: Untagged
@@ -16789,26 +16790,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   label: {fileID: 77628631}
---- !u!114 &881791789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 881791786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5582b44f0cf8498b95319fe7bb4127b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transferOnSecondSelection: 1
-  _addNewPointsToFront: 0
-  _forwardElement: {fileID: 0}
-  _oneGrabTransformer: {fileID: 0}
-  _twoGrabTransformer: {fileID: 0}
-  _targetTransform: {fileID: 0}
-  _maxGrabPoints: 1
-  _pipeLabelController: {fileID: 881791788}
 --- !u!114 &881791790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16827,8 +16808,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 1
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!114 &881791791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16872,7 +16853,7 @@ MonoBehaviour:
   _candidateTiebreaker: {fileID: 0}
   _maxIterationsPerFrame: 3
   _data: {fileID: 0}
-  _pointableElement: {fileID: 881791789}
+  _pointableElement: {fileID: 881791795}
   _rigidbody: {fileID: 881791793}
   _distanceThreshold: 0.01
   _snapPoseTransform: {fileID: 0}
@@ -16926,6 +16907,83 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &881791795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881791786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _transferOnSecondSelection: 0
+  _addNewPointsToFront: 0
+  _forwardElement: {fileID: 0}
+  _oneGrabTransformer: {fileID: 0}
+  _twoGrabTransformer: {fileID: 0}
+  _targetTransform: {fileID: 0}
+  _maxGrabPoints: -1
+--- !u!114 &881791796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881791786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pointable: {fileID: 881791795}
+  _whenRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenHover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenUnhover:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 881791790}
+        m_TargetAssemblyTypeName: VRC2.PipeManipulation, Assembly-CSharp
+        m_MethodName: OnSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  _whenUnselect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 881791790}
+        m_TargetAssemblyTypeName: VRC2.PipeManipulation, Assembly-CSharp
+        m_MethodName: OnUnselect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  _whenMove:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenCancel:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &886460903
 GameObject:
   m_ObjectHideFlags: 0
@@ -21443,7 +21501,7 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 881791789}
+  _pointableElement: {fileID: 0}
   _rigidbody: {fileID: 881791793}
   _physicsGrabbable: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
@@ -27985,7 +28043,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1489160704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28003,7 +28061,7 @@ MonoBehaviour:
   DestroyWhenStateAuthorityLeaves: 0
   AllowStateAuthorityOverride: 1
   AoiPositionSource: {fileID: 0}
-  Flags: 2561
+  Flags: 133633
   NetworkGuid:
     RawGuidValue: 5979a62a15064f2794beccacdb5122e9
   NestedObjects: []
@@ -28061,8 +28119,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 1
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!114 &1489160708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38160,7 +38218,7 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 881791789}
+  _pointableElement: {fileID: 0}
   _rigidbody: {fileID: 881791793}
   _physicsGrabbable: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
@@ -41766,8 +41824,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 4
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!1 &261140904136453104
 GameObject:
   m_ObjectHideFlags: 0
@@ -55735,10 +55793,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 30
     m_FontStyle: 2
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -57918,10 +57976,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 30
     m_FontStyle: 2
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -61163,10 +61221,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -79881,8 +79939,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 1
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!1 &6153222329067724119
 GameObject:
   m_ObjectHideFlags: 0
@@ -90861,7 +90919,7 @@ GameObject:
   - component: {fileID: 4904540072301333109}
   - component: {fileID: 6428240190818646291}
   m_Layer: 0
-  m_Name: a=
+  m_Name: b=
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92588,8 +92646,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 3
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!1 &7980067821781727610
 GameObject:
   m_ObjectHideFlags: 0
@@ -95413,10 +95471,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 30
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 3
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -101200,8 +101258,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 1
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!1 &9166045931266215798
 GameObject:
   m_ObjectHideFlags: 0
@@ -101288,8 +101346,8 @@ MonoBehaviour:
   _yellowMaterial: {fileID: 2100000, guid: a14e039cf3341884f8083a6172b30e96, type: 2}
   _greenMaterial: {fileID: 2100000, guid: beca26dba4c15b547af568549896a2f0, type: 2}
   pipeColor: 2
+  pipeType: 1
   pipeLength: 1
-  PipeType: 0
 --- !u!222 &9180460521086670132
 CanvasRenderer:
   m_ObjectHideFlags: 0

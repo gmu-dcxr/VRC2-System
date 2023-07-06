@@ -1,4 +1,6 @@
-﻿namespace VRC2.Pipe
+﻿using System;
+
+namespace VRC2.Pipe
 {
     public static class PipeConstants
     {
@@ -32,9 +34,19 @@
         public struct PipeBendCutParameters
         {
             public PipeType type;
+            public PipeMaterialColor color;
             public PipeBendAngles angle;
             public float a;
             public float b;
+
+            public string ToString()
+            {
+                return
+                    $"{Enum.GetName(typeof(PipeType), type)} - " +
+                    $"{Enum.GetName(typeof(PipeMaterialColor), color)} - " +
+                    $"{Enum.GetName(typeof(PipeBendAngles), angle)} - " +
+                    $"{a.ToString("f2")} - {b.ToString("f2")}";
+            }
         }
     }
 }
