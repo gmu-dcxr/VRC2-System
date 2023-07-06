@@ -30,7 +30,7 @@ namespace VRC2
 
         public InputField bInputField;
 
-        private PipeBendAngles _bendAngles = PipeBendAngles.Empty;
+        private PipeBendAngles _bendAngles = PipeBendAngles.Default;
         // action
         public System.Action OnConfirmed;
         
@@ -77,7 +77,7 @@ namespace VRC2
             confirmButton.onClick.AddListener(OnConfirm);
             resetButton.onClick.AddListener(OnReset);
 
-            _parameters.angle = PipeBendAngles.Empty;
+            _parameters.angle = PipeBendAngles.Default;
             _parameters.a = 0;
             _parameters.b = 0;
             _parameters.type = PipeType.Default;
@@ -92,6 +92,9 @@ namespace VRC2
 
         public void Show()
         {
+            // reset 
+            OnReset();
+            
             rootCanvas.SetActive(true);
             UIHelper.SetActive(true);
             reticleLeft.SetActive(false);
@@ -113,7 +116,7 @@ namespace VRC2
             var aflag = float.TryParse(aInputField.text, out a);
             var bflag = float.TryParse(bInputField.text, out b);
             var angle = GetAngle();
-            if (aflag && bflag && angle != PipeBendAngles.Empty)
+            if (aflag && bflag && angle != PipeBendAngles.Default)
             {
                 // set value
                 _parameters.angle = angle;
@@ -159,7 +162,7 @@ namespace VRC2
                 }
             }
 
-            return PipeBendAngles.Empty;
+            return PipeBendAngles.Default;
         }
 
     }

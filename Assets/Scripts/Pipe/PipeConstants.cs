@@ -24,7 +24,7 @@ namespace VRC2.Pipe
         
         public enum PipeBendAngles
         {
-            Empty = -1,
+            Default = -1,
             Angle_0 = 0,
             Angle_45 = 1,
             Angle_90 = 2,
@@ -35,6 +35,7 @@ namespace VRC2.Pipe
         {
             public PipeType type;
             public PipeMaterialColor color;
+            public int diameter;
             public PipeBendAngles angle;
             public float a;
             public float b;
@@ -44,6 +45,7 @@ namespace VRC2.Pipe
                 return
                     $"{Enum.GetName(typeof(PipeType), type)} - " +
                     $"{Enum.GetName(typeof(PipeMaterialColor), color)} - " +
+                    $"{diameter} - " +
                     $"{Enum.GetName(typeof(PipeBendAngles), angle)} - " +
                     $"{a.ToString("f2")} - {b.ToString("f2")}";
             }

@@ -260,6 +260,7 @@ namespace VRC2
         #region Pipe Manipulation
 
         public static GameObject selectedPipe = null;
+        public static string BendCutRobot = "BendCutRobot";
 
         #endregion
     }
