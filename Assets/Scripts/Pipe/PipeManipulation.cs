@@ -45,8 +45,8 @@ namespace VRC2
 
         // current color
         public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
+        public PipeType pipeType = PipeType.Sewage;
         [HideInInspector] public float pipeLength = 1.0f;
-        [HideInInspector] public PipeType PipeType = PipeType.Default;
 
         public int diameter
         {
@@ -121,5 +121,21 @@ namespace VRC2
             // TODO: Only change x (length)
             _pipe.transform.localScale = new Vector3(length, 1, 1);
         }
+
+        #region Pointable Event
+
+        public void OnSelect()
+        {
+            Debug.Log("Pipe OnSelect");
+            // update current select pipe
+            GlobalConstants.selectedPipe = gameObject;
+        }
+
+        public void OnUnselect()
+        {
+            Debug.Log("Pipe OnUnselect");
+        }
+
+        #endregion
     }
 }

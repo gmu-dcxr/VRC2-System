@@ -19,11 +19,9 @@ namespace VRC2.Events
         private void OnConfirmed()
         {
             var parameter = _bendCutMenuController.result;
-            // updated pipe type
-            parameter.type = PipeConstants.PipeType.Sewage;
             // TODO: let robot bend or cut the pipe
             Debug.Log("Robot is going to bend or cut.");
-            Debug.Log(parameter);
+            Debug.Log(parameter.ToString());
         }
 
         // TODO: What are required to do bend or cut?
