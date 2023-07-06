@@ -44,6 +44,7 @@ namespace VRC2
         // default material
         private Material _defaultMaterial;
         [HideInInspector] public float pipeLength = 1.0f;
+        [HideInInspector] public PipeBendAngles angle = PipeBendAngles.Default;
 
         public int diameter
         {
@@ -68,11 +69,14 @@ namespace VRC2
 
             InitDiameterObjects();
             
+            // default angle
+            angle = PipeBendAngles.Angle_0;
+            
             // default is the straight one
-            _pipe = anglesObjects[PipeBendAngles.Angle_0];
+            _pipe = anglesObjects[angle];
             
             // only enable the straigh one
-            EnableOnly(PipeBendAngles.Angle_0);
+            EnableOnly(angle);
             
             _defaultMaterial = renderer.material;
 
@@ -191,6 +195,7 @@ namespace VRC2
                 {
                     kvp.Value.SetActive(true);
                     // update current pipe
+                    angle = k;
                     _pipe = kvp.Value;
                 }
                 else
