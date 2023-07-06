@@ -168,6 +168,13 @@ namespace VRC2
             _pipe.transform.localScale = new Vector3(length, 1, 1);
         }
 
+        public void SimulateStraightCut(float feet)
+        {
+            // the default lenght is 10 feet
+            // set the scale
+            _pipe.transform.localScale = new Vector3(feet / 10.0f, 1, 1);
+        }
+
         #region Pointable Event
 
         public void OnSelect()
