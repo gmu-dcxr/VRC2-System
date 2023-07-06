@@ -2,6 +2,8 @@
 using Fusion;
 using UnityEngine;
 
+using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+
 namespace VRC2.Events
 {
     public class P2CheckLevelEvent : BaseEvent

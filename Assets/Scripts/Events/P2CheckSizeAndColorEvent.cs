@@ -4,6 +4,8 @@ using UnityEngine;
 
 using Fusion;
 
+using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+
 namespace VRC2.Events
 {
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-using PipeBendAngles = VRC2.GlobalConstants.PipeBendAngles;
-using PipeBendCutParameters = VRC2.GlobalConstants.PipeBendCutParameters;
+using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
+using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
 
 namespace VRC2
 {
@@ -23,6 +23,8 @@ namespace VRC2
         public InputField bInputField;
 
         private PipeBendAngles _bendAngles = PipeBendAngles.Empty;
+        // action
+        
         
         // result
         private PipeBendCutParameters _parameters;
