@@ -259,5 +259,25 @@ namespace VRC2
 
 
         #endregion
+
+        #region Pipe Bend/Cut Menu
+
+        public enum PipeBendAngles
+        {
+            Empty = -1,
+            Angle_0 = 0,
+            Angle_45 = 1,
+            Angle_90 = 2,
+            Angle_135 = 3
+        };
+        
+        public struct PipeBendCutParameters
+        {
+            public PipeBendAngles angle;
+            public float a;
+            public float b;
+        }
+
+        #endregion
     }
 }

@@ -13,7 +13,15 @@ namespace VRC2
         public Material selectedMaterial;
 
         private Button _button;
-        
+
+        public Material currentMaterial
+        {
+            get
+            {
+                return gameObject.GetComponent<Image>().material;
+            }
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -28,7 +36,7 @@ namespace VRC2
 
         }
 
-        void ChangeMaterial()
+        public void ChangeMaterial()
         {
             // get button image
             var image = gameObject.GetComponent<Image>();
