@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 
 namespace VRC2.Events
 {

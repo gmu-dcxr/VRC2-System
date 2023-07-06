@@ -6,18 +6,10 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+
 namespace VRC2
 {
-
-    public enum PipeMaterialColor
-    {
-        Default = 0,
-        Magenta = 1,
-        Blue = 2,
-        Yellow = 3,
-        Green = 4
-    }
-
     public class PipeManipulation : MonoBehaviour
     {
         [SerializeField] private GameObject _pipe;

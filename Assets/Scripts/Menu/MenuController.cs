@@ -33,13 +33,13 @@ namespace VRC2.Menu
         public static string CheckStorage = "Lack of Storage";
         public static string Deprecate = "Deprecate";
         public static string PickupPipe = "Pickup Pipe";
-        public static string CheckPipeSizeColor = "Wrong Size/Color";
+        public static string CheckPipeSizeColor = "Check Size/Color";
         public static string MeasureDistance = "Measure Distance";
         public static string CommandRobot = "Bend/Cut Pipe";
         public static string CheckGlue = "Lack of Glue";
         public static string CheckClamp = "Lack of Clamp";
-        public static string CheckPipeLengthAngle = "Wrong Length/Angle";
-        public static string CheckLevel = "Wrong Level";
+        public static string CheckPipeLengthAngle = "Check Length/Angle";
+        public static string CheckLevel = "Check Level";
     }
 
     public class MenuInitializer
@@ -49,7 +49,7 @@ namespace VRC2.Menu
 
         private List<MenuItem> P1MenuItems = new List<MenuItem>()
         {
-            MenuItem.VoiceControl,
+            // MenuItem.VoiceControl, // disable
             MenuItem.CheckStorage,
             // MenuItem.PickupPipe, // disable pickup since the logic is changed
             // MenuItem.Deprecate, // disable 
@@ -60,7 +60,7 @@ namespace VRC2.Menu
 
         private List<MenuItem> P2MenuItems = new List<MenuItem>()
         {
-            MenuItem.VoiceControl,
+            // MenuItem.VoiceControl, // disable
             // MenuItem.GiveInstruction, // disable
             MenuItem.CheckPipeSizeColor,
             MenuItem.MeasureDistance,

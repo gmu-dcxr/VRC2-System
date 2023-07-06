@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using VRC2.Events;
+using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 
 namespace VRC2
 {
