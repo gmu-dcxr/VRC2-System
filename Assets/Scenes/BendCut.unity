@@ -4995,6 +4995,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1387073231}
+  - component: {fileID: 1387073232}
   m_Layer: 0
   m_Name: ButtonController
   m_TagString: Untagged
@@ -5017,6 +5018,28 @@ Transform:
   m_Father: {fileID: 749491256}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1387073232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387073230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63097e40f0db2e0468063f429e959769, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rootCanvas: {fileID: 837775857}
+  buttons:
+  - {fileID: 1668852040}
+  - {fileID: 677609539}
+  - {fileID: 1394720270}
+  - {fileID: 994978938}
+  confirmButton: {fileID: 823207840}
+  resetButton: {fileID: 1224507446}
+  aInputField: {fileID: 578413607}
+  bInputField: {fileID: 1001278940}
 --- !u!1 &1392278800
 GameObject:
   m_ObjectHideFlags: 0
