@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 
 namespace VRC2
 {
@@ -45,6 +46,7 @@ namespace VRC2
         // current color
         public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
         [HideInInspector] public float pipeLength = 1.0f;
+        [HideInInspector] public PipeType PipeType = PipeType.Default;
 
         public int diameter
         {

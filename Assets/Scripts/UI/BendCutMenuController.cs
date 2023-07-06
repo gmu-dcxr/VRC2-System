@@ -11,6 +11,12 @@ namespace VRC2
     public class BendCutMenuController : MonoBehaviour
     {
         [Header("Root canvas")] public GameObject rootCanvas;
+
+        [Header("UIHelper")] public GameObject UIHelper;
+
+        [Header("Reticles")] public GameObject reticleLeft;
+        public GameObject reticleRight;
+        
         [Header("Angle Buttons")] public List<Button> buttons;
 
         [Header("Confirm/Reset")]
@@ -24,7 +30,7 @@ namespace VRC2
 
         private PipeBendAngles _bendAngles = PipeBendAngles.Empty;
         // action
-        
+        public System.Action OnConfirmed;
         
         // result
         private PipeBendCutParameters _parameters;
@@ -52,6 +58,22 @@ namespace VRC2
 
         }
 
+        public void Show()
+        {
+            rootCanvas.SetActive(true);
+            UIHelper.SetActive(true);
+            reticleLeft.SetActive(false);
+            reticleRight.SetActive(false);
+        }
+
+        public void Hide()
+        {
+            rootCanvas.SetActive(false);
+            UIHelper.SetActive(false);
+            reticleLeft.SetActive(true);
+            reticleRight.SetActive(true);
+        }
+
         void OnConfirm()
         {
             // validate
@@ -66,7 +88,11 @@ namespace VRC2
                 _parameters.a = a;
                 _parameters.b = b;
                 // close window
-                rootCanvas.SetActive(false);
+                Hide();
+                if (OnConfirmed != null)
+                {
+                    OnConfirmed();
+                }
             }
         }
 
