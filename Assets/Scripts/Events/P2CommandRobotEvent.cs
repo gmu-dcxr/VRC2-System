@@ -26,13 +26,13 @@ namespace VRC2.Events
             Debug.Log("Robot is going to bend or cut.");
             Debug.Log(parameter.ToString());
 
-            // debug only
-            var go = GameObject.Find(GlobalConstants.BendCutRobot);
-            var rbc = go.GetComponent<RobotBendCut>();
-            rbc.InitParameters(parameter.angle, parameter.a, parameter.b);
-            rbc.Execute();
+            // // debug only
+            // var go = GameObject.Find(GlobalConstants.BendCutRobot);
+            // var rbc = go.GetComponent<RobotBendCut>();
+            // rbc.InitParameters(parameter.angle, parameter.a, parameter.b);
+            // rbc.Execute();
 
-            return;
+            // return;
 
             if (!GlobalConstants.IsNetworkReady())
             {
