@@ -49,6 +49,47 @@ namespace VRC2.Events
             {
                 HandlePipeCollision(go);
             }
+            // collision with clamp
+            if (go.CompareTag(GlobalConstants.clampObjectTag))
+            {
+                HandleClampCollision(go);
+            }
+        }
+
+        void HandleClampCollision(GameObject clamp)
+        {
+            // get the Interactable clamp
+            var iclamp = clamp.transform.parent.gameObject;
+
+            // delete its rigid body
+            Rigidbody rb = null;
+            if (iclamp.TryGetComponent<Rigidbody>(out rb))
+            {
+                // clamp doesn't collide with the wall
+                Debug.Log("Clamp doesn't collide with the wall.");
+                return;
+            }
+
+            // remove pipe's rigid boby
+            // current interactable pipe
+            var cip = gameObject.transform.parent.parent;
+
+            // find root parent (this is caused by the pipe merging)
+            var root = cip;
+            while (true)
+            {
+                if (root.parent == null) break;
+
+                root = root.parent;
+            }
+
+            // remove the rigid body of the root object
+            if (root.gameObject.TryGetComponent<Rigidbody>(out rb))
+            {
+                // remove its rigid body
+                Debug.Log($"Remove rigid body for pipe {root.gameObject.name}");
+                GameObject.Destroy(rb);
+            }
         }
 
         void HandlePipeCollision(GameObject otherpipe)
