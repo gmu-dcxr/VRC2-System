@@ -255,6 +255,8 @@ namespace VRC2
         #region Pipe Connecting Pipe Parent Prefab
         // connect two pipes into one pipe, this would be the parent object of two connected pipes
         public static string pipePipeConnectorPrefabPath = "Assets/Prefabs/InteractablePipeContainer.prefab";
+        // for collision detection
+        public static string interactablePipeContainer = "InteractablePipeContainer";
         #endregion
 
         #region Pipe Bend/Cut Manipulation
