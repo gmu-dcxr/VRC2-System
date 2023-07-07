@@ -11,6 +11,7 @@ using UnityEngine.Serialization;
 using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
+using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2
 {
@@ -46,16 +47,19 @@ namespace VRC2
         [HideInInspector] public float pipeLength = 1.0f;
         [HideInInspector] public PipeBendAngles angle = PipeBendAngles.Default;
 
-        public int diameter
+        public PipeDiameter diameter
         {
             get
             {
-                if (_pipe == null) return 0;
+                if (_pipe == null) return PipeDiameter.Default;
                 else
                 {
                     var name = _pipe.name;
                     // get diameter from the name
-                    return int.Parse(name.Substring(0, 1));
+                    int value = int.Parse(name.Substring(0, 1));
+                    // Diameter_1 = 0 and so forth
+                    var v = (PipeDiameter)(value - 1);
+                    return v;
                 }
             }
         }

@@ -6,22 +6,22 @@ namespace VRC2.Pipe
     {
         public enum PipeMaterialColor
         {
-            Default = 0,
-            Magenta = 1,
-            Blue = 2,
-            Yellow = 3,
-            Green = 4
+            Default = -1,
+            Magenta = 0,
+            Yellow = 1,
+            Green = 2,
+            Blue = 3
         }
-        
+
         public enum PipeType
         {
-            Default = 0,
-            Sewage = 1, // pipe is the normal one (cylinder)
+            Default = -1,
+            Sewage = 0, // pipe is the normal one (cylinder)
+            Gas = 1, //  pipe with intense wrinkle
             Water = 2, // Water pipe: cylinder with metal material
-            Gas = 3, //  pipe with intense wrinkle
-            Electrical = 4 // pipe with loose wrinkle
+            Electrical = 3 // pipe with loose wrinkle
         }
-        
+
         public enum PipeBendAngles
         {
             Default = -1,
@@ -30,12 +30,21 @@ namespace VRC2.Pipe
             Angle_90 = 2,
             Angle_135 = 3
         };
-        
+
+        public enum PipeDiameter
+        {
+            Default = -1,
+            Diameter_1 = 0,
+            Diameter_2 = 1,
+            Diameter_3 = 2,
+            Diameter_4 = 3,
+        }
+
         public struct PipeBendCutParameters
         {
             public PipeType type;
             public PipeMaterialColor color;
-            public int diameter;
+            public PipeDiameter diameter;
             public PipeBendAngles angle;
             public float a;
             public float b;
@@ -45,7 +54,7 @@ namespace VRC2.Pipe
                 return
                     $"{Enum.GetName(typeof(PipeType), type)} - " +
                     $"{Enum.GetName(typeof(PipeMaterialColor), color)} - " +
-                    $"{diameter} - " +
+                    $"{Enum.GetName(typeof(PipeDiameter), diameter)} - " +
                     $"{Enum.GetName(typeof(PipeBendAngles), angle)} - " +
                     $"{a.ToString("f2")} - {b.ToString("f2")}";
             }

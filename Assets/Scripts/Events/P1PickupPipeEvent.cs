@@ -105,7 +105,7 @@ namespace VRC2.Events
             var localPlayer = GlobalConstants.localPlayer;
             
             // get prefab by diameter
-            var prefab = GlobalConstants.GetPipeNetworkPrefabRef(diameter);
+            var prefab = GlobalConstants.GetPipeNetworkPrefabRef(((int)diameter + 1));
             
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
             spawned = !spawned;
