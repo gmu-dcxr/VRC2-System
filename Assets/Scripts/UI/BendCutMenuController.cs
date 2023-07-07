@@ -119,7 +119,8 @@ namespace VRC2
             var aflag = float.TryParse(aInputField.text, out a);
             var bflag = float.TryParse(bInputField.text, out b);
             var angle = GetAngle();
-            if (aflag && bflag && angle != PipeBendAngles.Default)
+            // (a && angle == 0)  || (a && b && angle != 0)
+            if ((aflag && angle == PipeBendAngles.Angle_0) || (aflag && bflag && angle != PipeBendAngles.Default))
             {
                 // set value
                 _parameters.angle = angle;
