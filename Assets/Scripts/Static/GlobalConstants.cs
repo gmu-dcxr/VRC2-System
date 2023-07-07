@@ -257,10 +257,17 @@ namespace VRC2
         public static string pipePipeConnectorPrefabPath = "Assets/Prefabs/InteractablePipeContainer.prefab";
         #endregion
 
-        #region Pipe Manipulation
+        #region Pipe Bend/Cut Manipulation
 
         public static GameObject selectedPipe = null;
         public static string BendCutRobot = "BendCutRobot";
+
+        #endregion
+
+        #region AI Drone
+
+        public static string AIDroneDeliver = "AIDroneDeliver";
+
 
         #endregion
     }

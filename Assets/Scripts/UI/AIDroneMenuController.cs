@@ -50,6 +50,9 @@ namespace VRC2
         {
             confirmButton.onClick.AddListener(OnConfirm);
             resetButton.onClick.AddListener(OnReset);
+            
+            // hide at the beginning
+            Hide();
         }
 
         void OnConfirm()
