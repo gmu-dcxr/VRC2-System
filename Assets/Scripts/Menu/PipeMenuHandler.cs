@@ -82,10 +82,14 @@ namespace VRC2
         {
             // p1 check storage
             Debug.Log("You clicked Check Storage");
+            
+            // change the logic, show the menu directly
+            var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
+            ev0.Execute();
 
-            dialogManager.UpdateDialog("Check Storage", "Is the storage enough?", "Enough", "Lack",
-                PipeInstallEvent.P1CheckStorage);
-            ShowModalDialog(true);
+            // dialogManager.UpdateDialog("Check Storage", "Is the storage enough?", "Enough", "Lack",
+            //     PipeInstallEvent.P1CheckStorage);
+            // ShowModalDialog(true);
         }
 
         public void OnDeprecate()
