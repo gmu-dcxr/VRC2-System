@@ -20,7 +20,7 @@ namespace VRC2
         [SerializeField] private Material _blueMaterial;
         [SerializeField] private Material _yellowMaterial;
         [SerializeField] private Material _greenMaterial;
-        
+
         // current color
         public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
         public PipeType pipeType = PipeType.Sewage;
@@ -60,24 +60,36 @@ namespace VRC2
             }
         }
 
-        private IDictionary<PipeBendAngles, GameObject> anglesObjects;
+        private IDictionary<PipeBendAngles, GameObject> _anglesObjects;
+
+        [HideInInspector]
+        public IDictionary<PipeBendAngles, GameObject> anglesObjects
+        {
+            get
+            {
+                if (_anglesObjects == null)
+                {
+                    InitAnglesObjects();
+                }
+
+                return _anglesObjects;
+            }
+        }
 
 
         // Start is called before the first frame update
         void Start()
         {
 
-            InitDiameterObjects();
-            
             // default angle
             angle = PipeBendAngles.Angle_0;
-            
+
             // default is the straight one
             _pipe = anglesObjects[angle];
-            
+
             // only enable the straigh one
             EnableOnly(angle);
-            
+
             _defaultMaterial = renderer.material;
 
             // whether it's the cloned object
@@ -91,36 +103,37 @@ namespace VRC2
             }
         }
 
-        void InitDiameterObjects()
+        void InitAnglesObjects()
         {
-            if (anglesObjects != null) return;
-            
-            anglesObjects = new Dictionary<PipeBendAngles, GameObject>();
+            _anglesObjects = new Dictionary<PipeBendAngles, GameObject>();
             foreach (var go in pipes)
             {
                 var name = go.name;
-                
+
                 Debug.Log($"name: {name}");
 
                 var key = PipeBendAngles.Default;
-                
+
                 if (name.Contains("90"))
                 {
                     key = PipeBendAngles.Angle_90;
-                }else if (name.Contains("45"))
+                }
+                else if (name.Contains("45"))
                 {
                     key = PipeBendAngles.Angle_45;
-                } else if (name.Contains("135"))
+                }
+                else if (name.Contains("135"))
                 {
                     key = PipeBendAngles.Angle_135;
-                } else if (name.Contains("straight"))
+                }
+                else if (name.Contains("straight"))
                 {
                     key = PipeBendAngles.Angle_0;
                 }
 
                 if (key != PipeBendAngles.Default)
                 {
-                    anglesObjects.Add(key, go);
+                    _anglesObjects.Add(key, go);
                 }
             }
         }
