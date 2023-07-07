@@ -54,10 +54,10 @@ namespace VRC2.Events
         void HandlePipeCollision(GameObject otherpipe)
         {
             // update connecting
-            connecting = otherpipe.transform.parent.gameObject; // Interactable pipe
+            connecting = otherpipe.transform.parent.parent.gameObject; // Interactable pipe
 
             // current interactable pipe
-            var cip = gameObject.transform.parent;
+            var cip = gameObject.transform.parent.parent;
 
             if (connecting.transform.rotation != cip.rotation)
             {
@@ -100,6 +100,9 @@ namespace VRC2.Events
             {
                 go.gameObject.SetActive(false);
             }
+            // delete its rigid body
+            var rb = interactable.GetComponent<Rigidbody>();
+            GameObject.Destroy(rb);
         }
     }
 }

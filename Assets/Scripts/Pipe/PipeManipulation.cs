@@ -103,7 +103,7 @@ namespace VRC2
                 // not spawned object
                 SetMaterial(pipeColor);
                 // TODO: disabled for debugging connecting pipes
-                // SetLength(pipeLength);
+                SetLength(0.1f);
             }
         }
 
