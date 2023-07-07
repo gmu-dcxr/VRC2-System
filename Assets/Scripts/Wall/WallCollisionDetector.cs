@@ -109,6 +109,13 @@ namespace VRC2
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
             
+            // delete its rigid body
+            Rigidbody rb = null;
+            if (iclamp.TryGetComponent<Rigidbody>(out rb))
+            {
+                GameObject.Destroy(rb);
+            }
+
             // get offset
             var csi = iclamp.GetComponentInChildren<ClampScaleInitializer>();
             var offset = GlobalConstants.GetClampWallCollisionOffsetBySize(csi.clampSize);
