@@ -22,7 +22,6 @@ namespace VRC2.Events
         private void OnConfirmed()
         {
             var parameter = _bendCutMenuController.result;
-            // TODO: let robot bend or cut the pipe
             Debug.Log("Robot is going to bend or cut.");
             Debug.Log(parameter.ToString());
 
