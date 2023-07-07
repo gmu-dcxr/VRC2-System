@@ -37,9 +37,6 @@ namespace VRC2
             // add event listener for dialog window
             modalDialog.button1Events.WhenRelease.AddListener(() => { DialogButton1Clicked(); });
             modalDialog.button2Events.WhenRelease.AddListener(() => { DialogButton2Clicked(); });
-
-            var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
-            Debug.LogWarning($"ev0 == null: {ev0 == null}");
         }
 
         #region Menu Button Events
