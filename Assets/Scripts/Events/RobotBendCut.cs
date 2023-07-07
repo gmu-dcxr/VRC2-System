@@ -46,7 +46,6 @@ namespace VRC2
             catch (Exception e)
             {
                 // remote client also called this function
-                Debug.LogException(e);
             }
         }
 
