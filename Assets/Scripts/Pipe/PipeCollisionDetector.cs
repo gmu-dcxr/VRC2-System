@@ -166,8 +166,11 @@ namespace VRC2.Events
             else if (!connected)
             {
                 // update position
-                var cbounds = gameObject.GetComponent<Renderer>().bounds;
-                var obounds = otherpipe.GetComponent<Renderer>().bounds;
+                // var cbounds = gameObject.GetComponent<Renderer>().bounds;
+                // var obounds = otherpipe.GetComponent<Renderer>().bounds;
+
+                var cbounds = gameObject.GetComponent<MeshCollider>().bounds;
+                var obounds = otherpipe.GetComponent<MeshCollider>().bounds;
 
                 // expected distance
                 var ed = cbounds.extents.x + obounds.extents.x;
@@ -228,7 +231,8 @@ namespace VRC2.Events
                 var pcm = cic.gameObject.GetComponent<PipeContainerManager>();
                 // right bounds
                 var cbounds = pcm.rightChildBounds;
-                var obounds = otherpipe.GetComponent<Renderer>().bounds;
+                // var obounds = otherpipe.GetComponent<Renderer>().bounds;
+                var obounds = otherpipe.GetComponent<MeshCollider>().bounds;
 
                 // expected distance
                 var ed = cbounds.extents.x + obounds.extents.x;
