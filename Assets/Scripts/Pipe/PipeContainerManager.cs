@@ -9,6 +9,9 @@ namespace VRC2
         private PointableUnityEventWrapper _wrapper;
 
         private Rigidbody _rigidbody;
+
+        [HideInInspector]public Bounds leftChildBounds;
+        [HideInInspector]public Bounds rightChildBounds;
         
         private void Start()
         {

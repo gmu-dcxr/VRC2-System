@@ -141,6 +141,23 @@ namespace VRC2.Events
             // current interactable pipe (left-hand)
             var cip = gameObject.transform.parent.parent;
 
+            if (cip.parent == null)
+            {
+                // left is a pipe
+                HandlePipePipeConnecting(otherpipe);
+            }
+            else
+            {
+                // left is a container
+                HandleContainerPipeConnecting(otherpipe);
+            }
+        }
+
+        // left is a pipe, right is a pipe
+        void HandlePipePipeConnecting(GameObject otherpipe)
+        {
+            Debug.Log($"HandlePipePipeConnecting: {otherpipe.name}");
+            var cip = gameObject.transform.parent.parent;
             if (connecting.transform.rotation != cip.rotation)
             {
                 // update rotation first, and update position in the next loop
@@ -162,6 +179,11 @@ namespace VRC2.Events
                 // connected
                 var parentObject = Instantiate(pipeParent, pos, cip.rotation) as GameObject;
 
+                // update bounds information
+                var pcm = parentObject.GetComponent<PipeContainerManager>();
+                pcm.leftChildBounds = cbounds;
+                pcm.rightChildBounds = obounds;
+
                 // update parent to make them move together
                 cip.transform.parent = parentObject.transform;
                 connecting.transform.parent = parentObject.transform;
@@ -181,6 +203,70 @@ namespace VRC2.Events
 
                 // disable children's interactions
                 DisableInteraction(cip.gameObject);
+                // diable collision detecting for the left one
+                DisableCollisionDetector(cip.gameObject);
+                DisableInteraction(connecting.gameObject);
+
+                connected = true;
+            }
+        }
+
+        // left is a container, right is a pipe
+        void HandleContainerPipeConnecting(GameObject otherpipe)
+        {
+            Debug.Log($"HandleContainerPipeConnecting: {otherpipe.name}");
+            // interactable pipe container
+            var cic = gameObject.transform.parent.parent.parent;
+            // get the left connected pipe, the 1st child with name "pipe"
+            if (connecting.transform.rotation != cic.rotation)
+            {
+                // update rotation first, and update position in the next loop
+                connecting.transform.rotation = cic.rotation;
+            }
+            else if (!connected)
+            {
+                var pcm = cic.gameObject.GetComponent<PipeContainerManager>();
+                // right bounds
+                var cbounds = pcm.rightChildBounds;
+                var obounds = otherpipe.GetComponent<Renderer>().bounds;
+
+                // expected distance
+                var ed = cbounds.extents.x + obounds.extents.x;
+
+                connecting.transform.position = cic.position + connecting.transform.right * ed;
+
+                var pos = GlobalConstants.RightPokeObject.transform.position;
+
+                // connected
+                var parentObject = Instantiate(pipeParent, pos, cic.rotation) as GameObject;
+
+                // update bounds information
+                var pcmNew = parentObject.GetComponent<PipeContainerManager>();
+                pcmNew.leftChildBounds = cbounds;
+                pcmNew.rightChildBounds = obounds;
+
+                // update parent to make them move together
+                cic.transform.parent = parentObject.transform;
+                connecting.transform.parent = parentObject.transform;
+
+                // update local position
+                var localCip = cic.transform.localPosition;
+                var localOip = connecting.transform.localPosition;
+
+                localCip.y = 0;
+                localCip.z = 0;
+
+                localOip.y = 0;
+                localOip.z = 0;
+
+                cic.transform.localPosition = localCip;
+                connecting.transform.localPosition = localOip;
+
+                // disable children's interactions
+                DisableInteraction(cic.gameObject);
+                // diable collision detecting for the left one
+                DisableCollisionDetector(cic.gameObject);
+
                 DisableInteraction(connecting.gameObject);
 
                 connected = true;
@@ -206,6 +292,12 @@ namespace VRC2.Events
                 go.gameObject.SetActive(false);
                 DisableRigidBody(interactable);
             }
+        }
+
+        void DisableCollisionDetector(GameObject obj)
+        {
+            var pcd = obj.GetComponentInChildren<PipeCollisionDetector>(false);
+            pcd.enabled = false;
         }
     }
 }

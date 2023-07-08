@@ -73,10 +73,18 @@ namespace VRC2
 
         void HandlePipeCollision(GameObject pipe)
         {
-            // get the Interactable pipe
-            var ipipe = pipe.transform.parent.gameObject;
+            // here the pipe may belong to a pipe container
+            // find the root object
+            var root = pipe.transform;
+            while (true)
+            {
+                if (root.parent == null) break;
+                root = root.parent;
+            }
 
-            var t = ipipe.transform;
+            var rootObject = root.gameObject;
+
+            var t = rootObject.transform;
             var pos = t.position;
             var rot = t.rotation.eulerAngles;
 
@@ -90,12 +98,12 @@ namespace VRC2
             // set pipe's y rotation to the wall's y rotation
             rot.y = wrot.y + pipeYRotationOffset;
             // update
-            ipipe.transform.rotation = Quaternion.Euler(rot);
+            rootObject.transform.rotation = Quaternion.Euler(rot);
 
             // update the pipe's distance to the wall
             pos.x = wpos.x + pipeDistanceOffset;
 
-            ipipe.transform.position = pos;
+            rootObject.transform.position = pos;
         }
 
 
