@@ -69,6 +69,11 @@ namespace VRC2
         {
             get => _parameters;
         }
+
+        public bool showing
+        {
+            get => rootCanvas.activeSelf;
+        }
         
         // Start is called before the first frame update
         void Start()
