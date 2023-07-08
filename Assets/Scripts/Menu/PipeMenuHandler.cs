@@ -154,9 +154,12 @@ namespace VRC2
         public void OnCheckGlue()
         {
             Debug.Log("You clicked check glue");
-            dialogManager.UpdateDialog("Check Glue", "Is glue enough?", "Yes", "no",
-                PipeInstallEvent.P1CheckGlue);
-            ShowModalDialog(true);
+            // dialogManager.UpdateDialog("Check Glue", "Is glue enough?", "Yes", "no",
+            //     PipeInstallEvent.P1CheckGlue);
+            // ShowModalDialog(true);
+            // change logic, directly refill glue
+            var cge = gameObject.GetComponent<P1CheckGlueEvent>();
+            cge.Execute();
         }
 
         public void OnCheckClamp()
