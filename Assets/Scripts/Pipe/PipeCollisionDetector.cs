@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using NodeCanvas.Tasks.Actions;
 using Oculus.Interaction.DistanceReticles;
 using Unity.VisualScripting;
@@ -12,13 +13,12 @@ namespace VRC2.Events
     {
         [HideInInspector] public GameObject connecting;
         private Object pipeParent;
-        
+
         private bool connected = false;
 
-        // to remove the seam
-        private float eps = 1e-3f;
         private void Start()
         {
+            InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
         }
@@ -26,6 +26,32 @@ namespace VRC2.Events
         private void Update()
         {
 
+        }
+
+        void InitializePokeLocation()
+        {
+            if (GlobalConstants.LeftPokeObject == null)
+            {
+                // make it only set once
+                var name = "PokeLocation";
+                var objects = VRC2.Utils.FindAll(name);
+                foreach (var obj in objects)
+                {
+                    var ppp = obj.transform.parent.parent.parent.gameObject;
+                    // LeftController
+                    if (ppp.name.StartsWith("Left"))
+                    {
+                        GlobalConstants.LeftPokeObject = obj;
+
+                        Debug.Log("Set LeftPokeObject");
+                    }
+                    else if (ppp.name.StartsWith("Right")) // RightController
+                    {
+                        GlobalConstants.RightPokeObject = obj;
+                        Debug.Log("Set RightPokeObject");
+                    }
+                }
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -49,6 +75,7 @@ namespace VRC2.Events
             {
                 HandlePipeCollision(go);
             }
+
             // collision with clamp
             if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
@@ -97,7 +124,21 @@ namespace VRC2.Events
             // update connecting
             connecting = otherpipe.transform.parent.parent.gameObject; // Interactable pipe
 
-            // current interactable pipe
+            // only move the pipe held by the right hand to right
+            var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+            var rightHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+            // other pipe distance should be left hand > right hand
+            var otherIpipePos = connecting.transform.position;
+            if (Vector3.Distance(otherIpipePos, leftHandPos) <
+                Vector3.Distance(otherIpipePos, rightHandPos))
+            {
+                // Other pipe is held by the left hand
+                return;
+            }
+            // now, otherpipe is on the right-hand
+
+            // current interactable pipe (left-hand)
             var cip = gameObject.transform.parent.parent;
 
             if (connecting.transform.rotation != cip.rotation)
@@ -109,27 +150,50 @@ namespace VRC2.Events
             {
                 // update position
                 var cbounds = gameObject.GetComponent<Renderer>().bounds;
-                var obounds = gameObject.GetComponent<Renderer>().bounds;
+                var obounds = otherpipe.GetComponent<Renderer>().bounds;
 
                 // expected distance
-                var ed = cbounds.extents.x + obounds.extents.x - eps;
+                var ed = cbounds.extents.x + obounds.extents.x;
 
                 connecting.transform.position = cip.position + connecting.transform.right * ed;
 
-                var pos = cip.position + connecting.transform.right * ed / 2.0f;
-                var rot = cip.rotation;
+                var pos = GlobalConstants.RightPokeObject.transform.position;
 
-                var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+                // connected
+                var parentObject = Instantiate(pipeParent, pos, cip.rotation) as GameObject;
 
                 // update parent to make them move together
                 cip.transform.parent = parentObject.transform;
                 connecting.transform.parent = parentObject.transform;
+
+                // update local position
+                var localCip = cip.transform.localPosition;
+                var localOip = connecting.transform.localPosition;
+
+                localCip.y = 0;
+                localCip.z = 0;
+
+                localOip.y = 0;
+                localOip.z = 0;
+
+                cip.transform.localPosition = localCip;
+                connecting.transform.localPosition = localOip;
 
                 // disable children's interactions
                 DisableInteraction(cip.gameObject);
                 DisableInteraction(connecting.gameObject);
 
                 connected = true;
+            }
+        }
+
+        void DisableRigidBody(GameObject interactable)
+        {
+            Rigidbody rb = null;
+            if (interactable.TryGetComponent<Rigidbody>(out rb))
+            {
+                // delete its rigid body
+                GameObject.Destroy(rb);
             }
         }
 
@@ -140,10 +204,8 @@ namespace VRC2.Events
             if (go != null)
             {
                 go.gameObject.SetActive(false);
+                DisableRigidBody(interactable);
             }
-            // delete its rigid body
-            var rb = interactable.GetComponent<Rigidbody>();
-            GameObject.Destroy(rb);
         }
     }
 }

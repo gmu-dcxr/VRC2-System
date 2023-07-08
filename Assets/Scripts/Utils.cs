@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace VRC2
@@ -51,6 +52,17 @@ namespace VRC2
         {
             return Enum.GetName(typeof(T), value);
         }
+
+        #endregion
+
+        #region Find Object with The Same Name
+
+        public static IEnumerable<GameObject> FindAll(string name)
+        {
+            var objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(obj => obj.name == name);
+            return objects;
+        }
+        
 
         #endregion
     }
