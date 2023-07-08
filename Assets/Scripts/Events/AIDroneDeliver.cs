@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using UnityEngine;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -29,14 +30,110 @@ namespace VRC2.Events
             get => storage.position;
         }
 
-        private PipeBendCutParameters _parameters;
-
         private GameObject _currentPipe;
 
         [Header("Prefab")] public NetworkPrefabRef prefab;
 
+        #region Synchronize Remote Object
 
-        private NetworkObject spawnedPipe;
+        [HideInInspector] public static PipeBendCutParameters parameters;
+
+
+        private static NetworkObject spawnedPipe;
+
+        private static GameObject staticDrone;
+        private static Vector3 staticStartPoint;
+        private static Vector3 staticStoragePoint;
+
+        [Networked(OnChanged = nameof(OnPipePicked))]
+        [HideInInspector]
+        public NetworkBool picked { get; set; }
+
+        static void OnPipePicked(Changed<AIDroneDeliver> changed)
+        {
+            try
+            {
+                // update locally
+                UpdateLocalSpawnedPipe();
+            }
+            catch (Exception e)
+            {
+                // remote client also called this function
+            }
+        }
+
+        static void UpdateLocalSpawnedPipe()
+        {
+            var go = spawnedPipe.gameObject;
+            var pm = go.GetComponent<PipeManipulation>();
+
+            // enable straight pipe
+            pm.EnableOnly(PipeBendAngles.Angle_0);
+            // set material
+            pm.SetMaterial(parameters.color);
+
+            Debug.Log($"UpdateLocalSpawnedPipe: {parameters.color}");
+            // deliver
+            MoveToStorage(staticDrone, go, staticStoragePoint);
+
+            // drop off
+            DropoffPipe(go);
+
+            // drone return to base
+            BackToBase(staticDrone, staticStartPoint);
+        }
+
+        // update spawned pipe since it might be different from the prefab
+        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeType type, PipeMaterialColor color)
+        {
+            var runner = GlobalConstants.networkRunner;
+            var go = runner.FindObject(nid).gameObject;
+
+            // update material
+            var pm = go.GetComponent<PipeManipulation>();
+
+            // enable only
+            pm.EnableOnly(PipeBendAngles.Angle_0);
+            // set material
+            pm.SetMaterial(color);
+        }
+
+        internal void SpawnPipeUsingSelected(PipeType type, PipeDiameter diameter)
+        {
+            // TODO: spawn different pipe according to different pipes
+
+            // spawn object
+            var runner = GlobalConstants.networkRunner;
+            var localPlayer = GlobalConstants.localPlayer;
+
+            var pos = storagePoint;
+            var rot = Quaternion.identity;
+
+            spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
+            picked = !picked;
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SendMessage(NetworkId nid, PipeType type, PipeMaterialColor color, RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+            {
+                message = $"AIDrone message ({type}, {color})\n";
+                Debug.LogWarning(message);
+            }
+            else
+            {
+                message = $"RobotBendCut received message ({type}, {color})\n";
+                Debug.LogWarning(message);
+
+                // update spawned object material
+                UpdateRemoteSpawnedPipe(nid, type, color);
+            }
+        }
+
+        #endregion
 
         void Start()
         {
@@ -44,25 +141,27 @@ namespace VRC2.Events
 
         public override void Execute()
         {
+
             MoveToWarehouse();
             PickupPipe();
-            MoveToStorage();
-            DropoffPipe();
-            BackToStart();
+            RPC_SendMessage(spawnedPipe.Id, parameters.type, parameters.color);
         }
 
-        public void InitParameters(PipeBendCutParameters parameters)
+        public void InitParameters(PipeBendCutParameters para)
         {
-            _parameters.type = parameters.type;
-            _parameters.color = parameters.color;
-            _parameters.diameter = parameters.diameter;
+            // update static variables
+            parameters.type = para.type;
+            parameters.color = para.color;
+            parameters.diameter = para.diameter;
             // other parameters are unnecessary
+            staticStoragePoint = storage.position;
         }
 
         public void MoveToWarehouse()
         {
             // backup current position
             startPoint = drone.transform.position;
+            staticStartPoint = startPoint;
 
             Debug.Log("[AI Drone] backup the position");
 
@@ -73,19 +172,20 @@ namespace VRC2.Events
 
         }
 
-        public void MoveToStorage()
+        public static void MoveToStorage(GameObject drone, GameObject pipe, Vector3 storagePoint)
         {
             Debug.Log("[AI Drone] move to storage");
+            pipe.transform.parent = drone.transform;
             drone.transform.position = storagePoint;
         }
 
-        public void DropoffPipe()
+        public static void DropoffPipe(GameObject pipe)
         {
             Debug.Log("[AI Drone] drop off pipe");
-            spawnedPipe.transform.parent = null;
+            pipe.transform.parent = null;
         }
 
-        public void BackToStart()
+        public static void BackToBase(GameObject drone, Vector3 startPoint)
         {
             Debug.Log("[AI Drone] back to start point");
             drone.transform.position = startPoint;
@@ -96,39 +196,12 @@ namespace VRC2.Events
             Debug.Log("[AI Drone] pickup a pipe");
 
             // use current parameters to spawn a pipe
-            var type = _parameters.type;
-            var color = _parameters.color;
-            var diameter = _parameters.diameter;
+            var type = parameters.type;
+            var color = parameters.color;
+            var diameter = parameters.diameter;
 
-            // initialize different pipe use the parameters
-            var pipe = SpawnPipe(type, diameter);
-
-            // update the pipe appearance
-            // update material
-            var pm = pipe.gameObject.GetComponent<PipeManipulation>();
-
-            // enable straight pipe (default setting)
-            pm.EnableOnly(PipeBendAngles.Angle_0);
-            // set material
-            pm.SetMaterial(color);
-
-            // update pipe's parent
-            spawnedPipe.transform.parent = drone.transform;
-        }
-
-        public NetworkObject SpawnPipe(PipeType type, PipeDiameter diameter)
-        {
-            // TODO: spawn different pipe according to different pipes
-
-            var pos = storagePoint;
-            var rot = Quaternion.identity;
-            // spawn object
-            var runner = GlobalConstants.networkRunner;
-            var localPlayer = GlobalConstants.localPlayer;
-
-            spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
-
-            return spawnedPipe;
+            // spawn pipe
+            SpawnPipeUsingSelected(type, diameter);
         }
     }
 }
