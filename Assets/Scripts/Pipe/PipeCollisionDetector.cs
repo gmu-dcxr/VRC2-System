@@ -30,27 +30,34 @@ namespace VRC2.Events
 
         void InitializePokeLocation()
         {
-            if (GlobalConstants.LeftPokeObject == null)
+            try
             {
-                // make it only set once
-                var name = "PokeLocation";
-                var objects = VRC2.Utils.FindAll(name);
-                foreach (var obj in objects)
+                if (GlobalConstants.LeftPokeObject == null)
                 {
-                    var ppp = obj.transform.parent.parent.parent.gameObject;
-                    // LeftController
-                    if (ppp.name.StartsWith("Left"))
+                    // make it only set once
+                    var name = "PokeLocation";
+                    var objects = VRC2.Utils.FindAll(name);
+                    foreach (var obj in objects)
                     {
-                        GlobalConstants.LeftPokeObject = obj;
+                        var ppp = obj.transform.parent.parent.parent.gameObject;
+                        // LeftController
+                        if (ppp.name.StartsWith("Left"))
+                        {
+                            GlobalConstants.LeftPokeObject = obj;
 
-                        Debug.Log("Set LeftPokeObject");
-                    }
-                    else if (ppp.name.StartsWith("Right")) // RightController
-                    {
-                        GlobalConstants.RightPokeObject = obj;
-                        Debug.Log("Set RightPokeObject");
+                            Debug.Log("Set LeftPokeObject");
+                        }
+                        else if (ppp.name.StartsWith("Right")) // RightController
+                        {
+                            GlobalConstants.RightPokeObject = obj;
+                            Debug.Log("Set RightPokeObject");
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Exception in InitializePokeLocation(): {e.ToString()}");
             }
         }
 

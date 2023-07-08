@@ -4,26 +4,38 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Fusion;
+using Oculus.Interaction;
 
 namespace VRC2.Events
 {
 
     public class P2MeasureDistanceEvent : BaseEvent
     {
+        public GameObject wall;
 
-        private float distance = 1.0f;
+        private DistanceMeasurer _distanceMeasurer;
+        private RayInteractable _rayInteractable;
 
-        public void Initialize()
+        void Start()
         {
-            distance = 0.0f;
+            _distanceMeasurer = wall.GetComponent<DistanceMeasurer>();
+            _rayInteractable = wall.GetComponent<RayInteractable>();
+
+            // disable at the start
+            _distanceMeasurer.enabled = false;
+            _distanceMeasurer.enabled = false;
         }
 
         public override void Execute()
         {
-            dialogManager.UpdateDialog("Instruction", $"The distance is {distance}.\nSend the instruction to robot?"
-                , "OK", "Cancel",
-                PipeInstallEvent.P2MeasureDistanceResult);
-            dialogManager.Show(true);
+            Switch();
+        }
+
+        void Switch()
+        {
+            var enabled = _distanceMeasurer.enabled;
+            _distanceMeasurer.enabled = !enabled;
+            _rayInteractable.enabled = !enabled;
         }
     }
 }

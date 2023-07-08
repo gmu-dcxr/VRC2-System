@@ -137,9 +137,12 @@ namespace VRC2
         {
             Debug.Log("You clicked measure distance");
 
-            dialogManager.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
-                PipeInstallEvent.P2MeasureDistance);
-            ShowModalDialog(true);
+            // dialogManager.UpdateDialog("Measure Distance", "TODO: instruct how to measure distance.", "Yes", null,
+            //     PipeInstallEvent.P2MeasureDistance);
+            // ShowModalDialog(true);
+            // change logic
+            var mde = gameObject.GetComponent<P2MeasureDistanceEvent>();
+            mde.Execute();
         }
 
         public void OnCommandRobot()
