@@ -41,22 +41,6 @@ namespace VRC2
 
         #region Menu Button Events
 
-        /*
-         * P1 menu event flows:
-         *  0. OnVoiceControl()
-         *  1. OnCheckStorage() - P1CheckStorage - {<true>P1PickupPipeEvent, <false> P1CommandAIDrone
-         *  2. OnPickupPipe() - P1PickupPipeEvent
-         * 
-         * P2 menu event flows:
-         *  0. OnVoiceControl()
-         *  1. OnGiveInstruction() - P2GiveInstruction - P1GetInstruction
-         *  2. OnCheckPipeSizeColor() - P2CheckSizeAndColor - P1GetSizeAndColorResult
-         *  3. OnMeasureDistance() - P2MeasureDistance - P2MeasureDistanceResult
-         *  4. OnCommandRobot() - P2CommandRobotBendOrCut - 
-         *  5. OnCheckLengthAngle() - P2CheckLengthAndAngle - {DirectMessage<true>(glue), P2CommandRobotBendOrCut<false>}
-         *  6. OnCheckLevel() - P2CheckLevel - {DirectMessage<true>(clamp), DirectMessage<false>(adjust)}
-         */
-
         public void OnVoiceControl()
         {
             // enable or disable voice
@@ -82,7 +66,7 @@ namespace VRC2
         {
             // p1 check storage
             Debug.Log("You clicked Check Storage");
-            
+
             // change the logic, show the menu directly
             var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
             ev0.Execute();
@@ -149,9 +133,12 @@ namespace VRC2
         {
             Debug.Log("You clicked command robot");
 
-            dialogManager.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
-                PipeInstallEvent.P2CommandRobotBendOrCut);
-            ShowModalDialog(true);
+            // dialogManager.UpdateDialog("Command Robot", "Command the robot to bend ro cut the pipe", "Yes", null,
+            //     PipeInstallEvent.P2CommandRobotBendOrCut);
+            // ShowModalDialog(true);
+            // change logic
+            var cre = gameObject.GetComponent<P2CommandRobotEvent>();
+            cre.Execute();
         }
 
         public void OnCheckGlue()

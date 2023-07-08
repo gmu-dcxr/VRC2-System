@@ -66,7 +66,14 @@ namespace VRC2.Events
 
         public override void Execute()
         {
-            _bendCutMenuController.Show();
+            if (_bendCutMenuController.showing)
+            {
+                _bendCutMenuController.Hide();
+            }
+            else
+            {
+                _bendCutMenuController.Show();
+            }
         }
     }
 }
