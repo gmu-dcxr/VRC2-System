@@ -25,7 +25,9 @@ namespace VRC2
         // current color
         public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
         public PipeType pipeType = PipeType.Sewage;
+        public PipeBendAngles angle = PipeBendAngles.Angle_0;
         public float pipeLength = 1.0f;
+        
 
         [Header("Pipes")] [SerializeField] private List<GameObject> pipes;
 
@@ -45,7 +47,6 @@ namespace VRC2
 
         // default material
         private Material _defaultMaterial;
-        [HideInInspector] public PipeBendAngles angle = PipeBendAngles.Default;
 
         public PipeDiameter diameter
         {
@@ -84,10 +85,6 @@ namespace VRC2
         // Start is called before the first frame update
         void Start()
         {
-
-            // default angle
-            angle = PipeBendAngles.Angle_0;
-
             // default is the straight one
             _pipe = anglesObjects[angle];
 
