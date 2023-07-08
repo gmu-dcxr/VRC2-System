@@ -62,11 +62,11 @@ namespace VRC2.Menu
         {
             // MenuItem.VoiceControl, // disable
             // MenuItem.GiveInstruction, // disable
-            MenuItem.CheckPipeSizeColor,
+            // MenuItem.CheckPipeSizeColor, // disable
             MenuItem.MeasureDistance,
             MenuItem.CommandRobot,
-            MenuItem.CheckPipeLengthAngle,
-            MenuItem.CheckLevel
+            // MenuItem.CheckPipeLengthAngle, // disable
+            // MenuItem.CheckLevel // disable
         };
 
         public List<MenuItem> P1Menu
