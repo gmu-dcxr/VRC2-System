@@ -165,9 +165,12 @@ namespace VRC2
         public void OnCheckClamp()
         {
             Debug.Log("You clicked check clamp");
-            dialogManager.UpdateDialog("Check Glue", "Is clamp enough?", "Yes", "no",
-                PipeInstallEvent.P1CheckClamp);
-            ShowModalDialog(true);
+            // dialogManager.UpdateDialog("Check Glue", "Is clamp enough?", "Yes", "no",
+            //     PipeInstallEvent.P1CheckClamp);
+            // ShowModalDialog(true);
+            // change logic
+            var cce = gameObject.GetComponent<P1CheckClampEvent>();
+            cce.Execute();
         }
 
         public void OnCheckLengthAngle()
