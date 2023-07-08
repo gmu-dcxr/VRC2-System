@@ -272,5 +272,12 @@ namespace VRC2
 
 
         #endregion
+
+        #region PokeLocation Objects
+
+        public static GameObject LeftPokeObject = null;
+        public static GameObject RightPokeObject = null;
+
+        #endregion
     }
 }

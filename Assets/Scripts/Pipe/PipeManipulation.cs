@@ -25,6 +25,7 @@ namespace VRC2
         // current color
         public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
         public PipeType pipeType = PipeType.Sewage;
+        public float pipeLength = 1.0f;
 
         [Header("Pipes")] [SerializeField] private List<GameObject> pipes;
 
@@ -44,7 +45,6 @@ namespace VRC2
 
         // default material
         private Material _defaultMaterial;
-        [HideInInspector] public float pipeLength = 1.0f;
         [HideInInspector] public PipeBendAngles angle = PipeBendAngles.Default;
 
         public PipeDiameter diameter
@@ -102,8 +102,7 @@ namespace VRC2
             {
                 // not spawned object
                 SetMaterial(pipeColor);
-                // TODO: disabled for debugging connecting pipes
-                SetLength(0.1f);
+                SetLength(pipeLength);
             }
         }
 
