@@ -15,20 +15,12 @@ namespace VRC2.Events
     {
         [Header("AI Drone Setting")] public GameObject drone;
 
-        public Transform warehouse; // where to get the pipe
-        public Transform storage; // where is the storage place
+        private AIDroneController _droneController;
 
-        private Vector3 startPoint;
+        public GameObject droneBase; // where is the drone is
+        public GameObject warehouse; // where to get the pipe
+        public GameObject storage; // where is the storage place
 
-        private Vector3 warehousePoint
-        {
-            get => warehouse.position;
-        }
-
-        private Vector3 storagePoint
-        {
-            get => storage.position;
-        }
 
         private GameObject _currentPipe;
 
@@ -37,13 +29,12 @@ namespace VRC2.Events
         #region Synchronize Remote Object
 
         [HideInInspector] public static PipeBendCutParameters parameters;
+        public static AIDroneController staticDroneController;
 
 
         private static NetworkObject spawnedPipe;
 
         private static GameObject staticDrone;
-        private static Vector3 staticStartPoint;
-        private static Vector3 staticStoragePoint;
 
         [Networked(OnChanged = nameof(OnPipePicked))]
         [HideInInspector]
@@ -72,15 +63,8 @@ namespace VRC2.Events
             // set material
             pm.SetMaterial(parameters.color);
 
-            Debug.Log($"UpdateLocalSpawnedPipe: {parameters.color}");
-            // deliver
-            MoveToStorage(staticDrone, go, staticStoragePoint);
-
-            // drop off
-            DropoffPipe(go);
-
-            // drone return to base
-            BackToBase(staticDrone, staticStartPoint);
+            // start pick up
+            staticDroneController.PickUp();
         }
 
         // update spawned pipe since it might be different from the prefab
@@ -106,7 +90,7 @@ namespace VRC2.Events
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
 
-            var pos = storagePoint;
+            var pos = warehouse.transform.position;
             var rot = Quaternion.identity;
 
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
@@ -137,13 +121,47 @@ namespace VRC2.Events
 
         void Start()
         {
+            _droneController = drone.GetComponent<AIDroneController>();
+
+            _droneController.pipeWarehouse = warehouse;
+            _droneController.pipeStorage = storage;
+            _droneController.droneBase = droneBase;
+
+            _droneController.ReadyToPickUp += ReadyToPickUp;
+            _droneController.ReadyToDropOff += ReadyToDropOff;
+            _droneController.ReadyToReturnToBase += ReadyToReturnToBase;
+
+            staticDroneController = _droneController;
+        }
+
+        private void ReadyToReturnToBase()
+        {
+            print("ReadyToReturnToBase");
+            _droneController.Stop();
+        }
+
+        private void ReadyToDropOff()
+        {
+            print("ReadyToDropoff");
+            spawnedPipe.transform.parent = null;
+            _droneController.ReturnToBase();
+        }
+
+        private void ReadyToPickUp()
+        {
+            print("ReadyToDropOff");
+            // set pipe's parent to drone
+            spawnedPipe.transform.parent = _droneController.gameObject.transform;
+            _droneController.DropOff();
         }
 
         public override void Execute()
         {
+            var type = parameters.type;
+            var color = parameters.color;
+            var diameter = parameters.diameter;
+            SpawnPipeUsingSelected(type, diameter);
 
-            MoveToWarehouse();
-            PickupPipe();
             RPC_SendMessage(spawnedPipe.Id, parameters.type, parameters.color);
         }
 
@@ -153,55 +171,6 @@ namespace VRC2.Events
             parameters.type = para.type;
             parameters.color = para.color;
             parameters.diameter = para.diameter;
-            // other parameters are unnecessary
-            staticStoragePoint = storage.position;
-        }
-
-        public void MoveToWarehouse()
-        {
-            // backup current position
-            startPoint = drone.transform.position;
-            staticStartPoint = startPoint;
-
-            Debug.Log("[AI Drone] backup the position");
-
-            // move to ware house
-            drone.transform.position = warehousePoint;
-
-            Debug.Log("[AI Drone] move to warehouse");
-
-        }
-
-        public static void MoveToStorage(GameObject drone, GameObject pipe, Vector3 storagePoint)
-        {
-            Debug.Log("[AI Drone] move to storage");
-            pipe.transform.parent = drone.transform;
-            drone.transform.position = storagePoint;
-        }
-
-        public static void DropoffPipe(GameObject pipe)
-        {
-            Debug.Log("[AI Drone] drop off pipe");
-            pipe.transform.parent = null;
-        }
-
-        public static void BackToBase(GameObject drone, Vector3 startPoint)
-        {
-            Debug.Log("[AI Drone] back to start point");
-            drone.transform.position = startPoint;
-        }
-
-        public void PickupPipe()
-        {
-            Debug.Log("[AI Drone] pickup a pipe");
-
-            // use current parameters to spawn a pipe
-            var type = parameters.type;
-            var color = parameters.color;
-            var diameter = parameters.diameter;
-
-            // spawn pipe
-            SpawnPipeUsingSelected(type, diameter);
         }
     }
 }
