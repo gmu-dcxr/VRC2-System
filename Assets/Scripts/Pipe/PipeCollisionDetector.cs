@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using NodeCanvas.Tasks.Actions;
 using Oculus.Interaction.DistanceReticles;
@@ -16,6 +17,8 @@ namespace VRC2.Events
 
         private bool connected = false;
 
+        private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
+
         private void Start()
         {
             InitializePokeLocation();
@@ -25,7 +28,10 @@ namespace VRC2.Events
 
         private void Update()
         {
-
+            while (_mainThreadWorkQueue.TryDequeue(out Action workload))
+            {
+                workload();
+            }
         }
 
         void InitializePokeLocation()
@@ -63,7 +69,9 @@ namespace VRC2.Events
 
         private void OnTriggerEnter(Collider other)
         {
-            OnTriggerEnterAndStay(other);
+            _mainThreadWorkQueue.Enqueue(() => {
+                OnTriggerEnterAndStay(other);
+            });
         }
 
         private void OnTriggerExit(Collider other)
@@ -72,7 +80,9 @@ namespace VRC2.Events
 
         private void OnTriggerStay(Collider other)
         {
-            OnTriggerEnterAndStay(other);
+            _mainThreadWorkQueue.Enqueue(() => {
+                OnTriggerEnterAndStay(other);
+            });
         }
 
         void OnTriggerEnterAndStay(Collider other)
@@ -126,6 +136,106 @@ namespace VRC2.Events
             }
         }
 
+        (Vector3, Vector3) GetIndexedPoint(GameObject go)
+        {
+            // TODO: select index by different pipe models
+            var index1 = GlobalConstants.PipeStraight1InchIndex1;
+            var index2 = GlobalConstants.PipeStraight1InchIndex2;
+            // get it in the world space
+            // refer: https://stackoverflow.com/questions/61351923/unity-get-mesh-after-scaling
+            var mesh = go.GetComponent<MeshFilter>().mesh;
+            var vertices = mesh.vertices;
+            var t = go.transform;
+            // left and right
+            var left = vertices[index1];
+            var right = vertices[index2];
+            // since the model x points +x direction, smaller x is left
+            if (left.x < right.x)
+            {
+                return (t.TransformPoint(left), t.TransformPoint(right));
+            }
+            else
+            {
+                return (t.TransformPoint(right), t.TransformPoint(left));
+            }
+        }
+
+        void HandlePipeCollisionV2(GameObject otherpipe)
+        {
+            if (connected) return;
+
+            Debug.Log($"HandlePipeCollisionV2: {otherpipe.name}");
+            var cip = gameObject.transform.parent.parent;
+
+            // get root cip
+            while (true)
+            {
+                if (cip.parent == null) break;
+                cip = cip.parent;
+            }
+
+            var oip = otherpipe.transform.parent.parent.gameObject; // Interactable pipe
+
+            var (p1Left, p1Right) = GetIndexedPoint(gameObject);
+            var (p2Left, p2Right) = GetIndexedPoint(otherpipe);
+
+            // second, calculate the target distance
+            var d1 = Vector3.Distance(p1Left, p1Right);
+            var d2 = Vector3.Distance(p2Left, p2Right);
+
+            var offset = Vector3.zero;
+            offset.x = (d1 + d2) / 2.0f;
+
+            // make a dummy object to calculate the target position
+            var dummy = new GameObject();
+            dummy.transform.position = cip.transform.position;
+            dummy.transform.rotation = cip.transform.rotation;
+            dummy.transform.Translate(offset, Space.Self);
+            var targetPos = dummy.transform.position;
+
+            // destroy dummy
+            GameObject.Destroy(dummy);
+
+            // update oip
+            oip.transform.position = targetPos;
+
+            var pos = GlobalConstants.RightPokeObject.transform.position;
+
+            // connected
+            var parentObject = Instantiate(pipeParent, pos, cip.rotation) as GameObject;
+
+            // update parent to make them move together
+            cip.transform.parent = parentObject.transform;
+            oip.transform.parent = parentObject.transform;
+
+            // update local position
+            var localCip = cip.transform.localPosition;
+            var localOip = oip.transform.localPosition;
+
+            localCip.y = 0;
+            localCip.z = 0;
+
+            localOip.y = 0;
+            localOip.z = 0;
+
+            cip.transform.localPosition = localCip;
+            oip.transform.localPosition = localOip;
+
+
+            // fix local rotation
+            var rot = Quaternion.Euler(0, 0, 0);
+            cip.transform.localRotation = rot;
+            oip.transform.localRotation = rot;
+
+            // disable children's interactions
+            DisableInteraction(cip.gameObject);
+            // disable collision detecting for the left one
+            DisableCollisionDetector(cip.gameObject);
+            DisableInteraction(oip.gameObject);
+
+            connected = true;
+        }
+
         void HandlePipeCollision(GameObject otherpipe)
         {
             // update connecting
@@ -145,143 +255,8 @@ namespace VRC2.Events
             }
             // now, otherpipe is on the right-hand
 
-            // current interactable pipe (left-hand)
-            var cip = gameObject.transform.parent.parent;
-
-            if (cip.parent == null)
-            {
-                // left is a pipe
-                HandlePipePipeConnecting(otherpipe);
-            }
-            else
-            {
-                // left is a container
-                HandleContainerPipeConnecting(otherpipe);
-            }
-        }
-
-        // left is a pipe, right is a pipe
-        void HandlePipePipeConnecting(GameObject otherpipe)
-        {
-            Debug.Log($"HandlePipePipeConnecting: {otherpipe.name}");
-            var cip = gameObject.transform.parent.parent;
-            if (connecting.transform.rotation != cip.rotation)
-            {
-                // update rotation first, and update position in the next loop
-                connecting.transform.rotation = cip.rotation;
-            }
-            else if (!connected)
-            {
-                // update position
-                // var cbounds = gameObject.GetComponent<Renderer>().bounds;
-                // var obounds = otherpipe.GetComponent<Renderer>().bounds;
-
-                var cbounds = gameObject.GetComponent<MeshCollider>().bounds;
-                var obounds = otherpipe.GetComponent<MeshCollider>().bounds;
-
-                // expected distance
-                var ed = cbounds.extents.x + obounds.extents.x;
-
-                connecting.transform.position = cip.position + connecting.transform.right * ed;
-
-                var pos = GlobalConstants.RightPokeObject.transform.position;
-
-                // connected
-                var parentObject = Instantiate(pipeParent, pos, cip.rotation) as GameObject;
-
-                // update bounds information
-                var pcm = parentObject.GetComponent<PipeContainerManager>();
-                pcm.leftChildBounds = cbounds;
-                pcm.rightChildBounds = obounds;
-
-                // update parent to make them move together
-                cip.transform.parent = parentObject.transform;
-                connecting.transform.parent = parentObject.transform;
-
-                // update local position
-                var localCip = cip.transform.localPosition;
-                var localOip = connecting.transform.localPosition;
-
-                localCip.y = 0;
-                localCip.z = 0;
-
-                localOip.y = 0;
-                localOip.z = 0;
-
-                cip.transform.localPosition = localCip;
-                connecting.transform.localPosition = localOip;
-
-                // disable children's interactions
-                DisableInteraction(cip.gameObject);
-                // diable collision detecting for the left one
-                DisableCollisionDetector(cip.gameObject);
-                DisableInteraction(connecting.gameObject);
-
-                connected = true;
-            }
-        }
-
-        // left is a container, right is a pipe
-        void HandleContainerPipeConnecting(GameObject otherpipe)
-        {
-            Debug.Log($"HandleContainerPipeConnecting: {otherpipe.name}");
-            // interactable pipe container
-            var cic = gameObject.transform.parent.parent.parent;
-            // get the left connected pipe, the 1st child with name "pipe"
-            if (connecting.transform.rotation != cic.rotation)
-            {
-                // update rotation first, and update position in the next loop
-                connecting.transform.rotation = cic.rotation;
-            }
-            else if (!connected)
-            {
-                var pcm = cic.gameObject.GetComponent<PipeContainerManager>();
-                // right bounds
-                var cbounds = pcm.rightChildBounds;
-                // var obounds = otherpipe.GetComponent<Renderer>().bounds;
-                var obounds = otherpipe.GetComponent<MeshCollider>().bounds;
-
-                // expected distance
-                var ed = cbounds.extents.x + obounds.extents.x;
-
-                connecting.transform.position = cic.position + connecting.transform.right * ed;
-
-                var pos = GlobalConstants.RightPokeObject.transform.position;
-
-                // connected
-                var parentObject = Instantiate(pipeParent, pos, cic.rotation) as GameObject;
-
-                // update bounds information
-                var pcmNew = parentObject.GetComponent<PipeContainerManager>();
-                pcmNew.leftChildBounds = cbounds;
-                pcmNew.rightChildBounds = obounds;
-
-                // update parent to make them move together
-                cic.transform.parent = parentObject.transform;
-                connecting.transform.parent = parentObject.transform;
-
-                // update local position
-                var localCip = cic.transform.localPosition;
-                var localOip = connecting.transform.localPosition;
-
-                localCip.y = 0;
-                localCip.z = 0;
-
-                localOip.y = 0;
-                localOip.z = 0;
-
-                cic.transform.localPosition = localCip;
-                connecting.transform.localPosition = localOip;
-
-                // disable children's interactions
-                DisableInteraction(cic.gameObject);
-                // diable collision detecting for the left one
-                DisableCollisionDetector(cic.gameObject);
-
-                DisableInteraction(connecting.gameObject);
-
-                connected = true;
-            }
+            // new version
+            HandlePipeCollisionV2(otherpipe);
         }
 
         void DisableRigidBody(GameObject interactable)
