@@ -7,7 +7,7 @@ using Fusion;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-
+using VRC2.Events;
 using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -28,8 +28,8 @@ namespace VRC2
         public PipeBendAngles angle = PipeBendAngles.Angle_0;
         public float pipeLength = 1.0f;
         
-
-        [Header("Pipes")] [SerializeField] private List<GameObject> pipes;
+        // all pipes
+        private List<GameObject> pipes;
 
         private Renderer _renderer;
         private GameObject _pipe;
@@ -106,7 +106,10 @@ namespace VRC2
         void InitAnglesObjects()
         {
             _anglesObjects = new Dictionary<PipeBendAngles, GameObject>();
-            foreach (var go in pipes)
+
+            var allChildren = Utils.GetChildren<PipeCollisionDetector>(gameObject);
+            
+            foreach (var go in allChildren)
             {
                 var name = go.name;
 
