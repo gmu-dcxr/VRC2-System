@@ -1,23 +1,21 @@
 ﻿using System;
 using Oculus.Interaction;
 using UnityEngine;
+
 namespace VRC2
 {
     [RequireComponent(typeof(PointableUnityEventWrapper))]
-    public class PipeContainerManager: MonoBehaviour
+    public class PipeContainerManager : MonoBehaviour
     {
         private PointableUnityEventWrapper _wrapper;
 
         private Rigidbody _rigidbody;
 
-        [HideInInspector]public Bounds leftChildBounds;
-        [HideInInspector]public Bounds rightChildBounds;
-        
         private void Start()
         {
             _rigidbody = gameObject.GetComponent<Rigidbody>();
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
-            
+
             _wrapper.WhenUnselect.AddListener(OnUnselect);
             _wrapper.WhenSelect.AddListener(OnSelect);
         }

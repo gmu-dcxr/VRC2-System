@@ -279,5 +279,13 @@ namespace VRC2
         public static GameObject RightPokeObject = null;
 
         #endregion
+
+        #region Pipe Collision
+
+        public static int PipeStraight1InchIndex1 = 92;
+        public static int PipeStraight1InchIndex2 = 64;
+        
+
+        #endregion
     }
 }
