@@ -18,12 +18,17 @@ namespace VRC2.Events
         private bool connected = false;
 
         private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
+        
+        public bool enableDetection { set; get; }
 
         private void Start()
         {
             InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
+            
+            // default is false
+            enableDetection = false;
         }
 
         private void Update()
@@ -87,6 +92,8 @@ namespace VRC2.Events
 
         void OnTriggerEnterAndStay(Collider other)
         {
+            if(!enableDetection) return;
+            
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.pipeObjectTag))
             {
