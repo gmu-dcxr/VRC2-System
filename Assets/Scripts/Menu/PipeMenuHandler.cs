@@ -71,17 +71,6 @@ namespace VRC2
             // change the logic, show the menu directly
             var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
             ev0.Execute();
-
-            // // debug
-            // var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
-            // var add = go.GetComponent<AIDroneDeliver>();
-            // var parameter = new PipeConstants.PipeBendCutParameters();
-            // parameter.type = PipeConstants.PipeType.Sewage;
-            // parameter.color = PipeMaterialColor.Blue;
-            // parameter.diameter = PipeConstants.PipeDiameter.Diameter_1;
-            //
-            // add.InitParameters(parameter);
-            // add.Execute();
         }
 
         public void OnDeprecate()
@@ -147,15 +136,6 @@ namespace VRC2
             // change logic
             var cre = gameObject.GetComponent<P2CommandRobotEvent>();
             cre.Execute();
-        }
-
-        public void OnBendCut()
-        {
-            // debug purpose
-            var go = GameObject.Find(GlobalConstants.BendCutRobot);
-            var rbc = go.GetComponent<RobotBendCut>();
-            rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 2f, 0);
-            rbc.Execute();
         }
 
         public void OnCheckGlue()
@@ -512,6 +492,39 @@ namespace VRC2
                     break;
             }
         }
+
+        #endregion
+
+        #region NON-VR Simulation
+
+        public void Simulate_AIDroneDeliver()
+        {
+            var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
+            var add = go.GetComponent<AIDroneDeliver>();
+            var parameter = new PipeConstants.PipeBendCutParameters();
+            parameter.type = PipeConstants.PipeType.Sewage;
+            parameter.color = PipeMaterialColor.Blue;
+            parameter.diameter = PipeConstants.PipeDiameter.Diameter_1;
+
+            add.InitParameters(parameter);
+            add.Execute();
+        }
+
+        public void Simulate_RobotBendCut()
+        {
+            // set global select pipe
+
+            var pipes = GameObject.Find("Pipes");
+
+            var pipe = pipes.transform.GetChild(0).gameObject;
+
+            GlobalConstants.selectedPipe = pipe;
+            var go = GameObject.Find(GlobalConstants.BendCutRobot);
+            var rbc = go.GetComponent<RobotBendCut>();
+            rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 2f, 0);
+            rbc.Execute();
+        }
+
 
         #endregion
     }
