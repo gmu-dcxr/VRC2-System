@@ -5,8 +5,7 @@ namespace VRC2.Menu
 {
     public class MenuSimulation : MonoBehaviour
     {
-        [SerializeField]
-        private PipeMenuHandler _handler;
+        [SerializeField] private PipeMenuHandler _handler;
 
         private void Start()
         {
@@ -14,9 +13,9 @@ namespace VRC2.Menu
 
         private void Update()
         {
-            if(!GlobalConstants.GameStarted)
+            if (!GlobalConstants.GameStarted)
                 return;
-            
+
             if (GlobalConstants.Checker)
             {
                 if (Input.GetKeyUp(KeyCode.Keypad1))
@@ -38,11 +37,12 @@ namespace VRC2.Menu
                 {
                     _handler.OnCommandRobot();
                 }
-                
+
                 if (Input.GetKeyUp(KeyCode.Keypad5))
                 {
                     _handler.OnCheckLengthAngle();
-                }                
+                }
+
                 if (Input.GetKeyUp(KeyCode.Keypad6))
                 {
                     _handler.OnCheckLevel();
@@ -59,14 +59,19 @@ namespace VRC2.Menu
                 {
                     _handler.OnPickupPipe();
                 }
+
+                if (Input.GetKeyUp(KeyCode.Keypad3))
+                {
+                    _handler.OnBendCut();
+                }
             }
         }
 
         private void OnGUI()
         {
-            if(!GlobalConstants.GameStarted)
+            if (!GlobalConstants.GameStarted)
                 return;
-            
+
             if (GlobalConstants.Checker)
             {
                 GUI.Button(new Rect(10, 10, 200, 30), "1 - Give Instruction");
@@ -80,6 +85,7 @@ namespace VRC2.Menu
             {
                 GUI.Button(new Rect(10, 10, 200, 30), "1 - Check Storage");
                 GUI.Button(new Rect(10, 60, 200, 30), "2 - Pickup Pipe");
+                GUI.Button(new Rect(10, 110, 200, 30), "3 - Bend/Cut Pipe");
             }
         }
     }

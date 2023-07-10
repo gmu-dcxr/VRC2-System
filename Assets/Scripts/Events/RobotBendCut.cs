@@ -1,6 +1,8 @@
 ﻿using System;
 using Fusion;
+using Oculus.Interaction.DistanceReticles;
 using UnityEngine;
+using UnityEngine.AI;
 using VRC2.Events;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -9,62 +11,52 @@ using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 
 namespace VRC2
 {
+    enum RobotRoutine
+    {
+        Default = 0,
+        PickUp = 1,
+        BendCut = 2,
+        DropOff = 3,
+    }
+
     public class RobotBendCut : BaseEvent
     {
         [Header("Robot Setting")] public GameObject robot;
-
-        public Transform startPoint;
-        public Transform middlePoint;
-
-        private PipeBendCutParameters _parameters;
-
-        private GameObject _currentPipe;
+        public GameObject robotBase;
 
         [Header("Prefab")] public NetworkPrefabRef prefab;
 
-        #region Synchronize Remote Object
 
-        [HideInInspector] public static PipeBendCutParameters pipeParameters;
+        // private GameObject currentPipe
+        // {
+        //     get => GlobalConstants.selectedPipe;
+        // }
+
+        // debug:
+
+        public GameObject currentPipe;
+
+        private PipeBendCutParameters parameters;
+
+        private NetworkObject spawnedPipe;
+
+        private NavMeshAgent _agent;
+
+        private RobotRoutine _routine;
+
+        private Vector3 destination;
 
 
-        private static NetworkObject spawnedPipe;
-
-        private static GameObject staticRobot;
-        private static Transform staticStartPoint;
-
-        [Networked(OnChanged = nameof(OnPipeSpawned))]
-        [HideInInspector]
-        public NetworkBool spawned { get; set; }
-
-        static void OnPipeSpawned(Changed<RobotBendCut> changed)
+        void UpdateLocalSpawnedPipe(GameObject go)
         {
-            try
-            {
-                // update locally
-                UpdateLocalSpawnedPipe();
-            }
-            catch (Exception e)
-            {
-                // remote client also called this function
-            }
-        }
-
-        static void UpdateLocalSpawnedPipe()
-        {
-            var go = spawnedPipe.gameObject;
             var pm = go.GetComponent<PipeManipulation>();
 
             // enable only
-            pm.EnableOnly(pipeParameters.angle);
+            pm.EnableOnly(parameters.angle);
             // set material
-            pm.SetMaterial(pipeParameters.color);
+            pm.SetMaterial(parameters.color);
             // edit mesh
-            EditMesh(go, pipeParameters.angle, pipeParameters.a, pipeParameters.b);
-
-            // deliver the pipe to the start point
-            staticRobot.transform.position = staticStartPoint.position;
-            // un parent
-            spawnedPipe.transform.parent = null;
+            EditMesh(go, parameters.angle, parameters.a, parameters.b);
         }
 
         // update spawned pipe since it might be different from the prefab
@@ -84,29 +76,26 @@ namespace VRC2
             EditMesh(go, angle, a, b);
         }
 
-        internal void SpawnPipeUsingSelected()
+        void SpawnPipeUsingSelected()
         {
-            var template = GlobalConstants.selectedPipe;
-            var t = template.transform;
+            // unparent
+            currentPipe.transform.parent = null;
+
+            var t = currentPipe.transform;
             var pos = t.position;
             var rot = t.rotation;
             // var scale = t.localScale;
 
-
             // destroy
-            GameObject.DestroyImmediate(GlobalConstants.selectedPipe);
+            GameObject.DestroyImmediate(currentPipe);
             GlobalConstants.selectedPipe = null;
 
-            // // make it a bit closer to the camera
-            // var offset = -Camera.main.transform.forward;
-            // pos += offset * 0.1f;
 
             // spawn object
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
 
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
-            spawned = !spawned;
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -130,60 +119,106 @@ namespace VRC2
             }
         }
 
-        #endregion
-
 
         private void Start()
         {
-            staticStartPoint = startPoint;
-            staticRobot = robot;
+            _routine = RobotRoutine.Default;
+            _agent = robot.GetComponent<NavMeshAgent>();
+            _agent.stoppingDistance = 0.5f;
+        }
+
+        private void Update()
+        {
+            if (_routine == RobotRoutine.PickUp)
+            {
+                // reach to the workspace
+                if (ReachDestination(_agent))
+                {
+                    // save for future delivery
+                    destination = currentPipe.transform.position;
+                    // set pipe parent
+                    currentPipe.transform.parent = robot.transform;
+                    currentPipe.transform.rotation = Quaternion.identity;
+                    // make a bit higher
+                    currentPipe.transform.localPosition = new Vector3(0, 1f, 0);
+
+                    PipeHelper.BeforeMove(ref currentPipe);
+
+                    // move to robot base
+                    _routine = RobotRoutine.BendCut;
+                    _agent.SetDestination(robotBase.transform.position);
+                }
+            }
+            else if (_routine == RobotRoutine.BendCut)
+            {
+                if (ReachDestination(_agent))
+                {
+                    // start bend/cut
+                    SpawnPipeUsingSelected();
+                    UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
+                    // update remote object
+                    RPC_SendMessage(spawnedPipe.Id, parameters.color, parameters.angle, parameters.a,
+                        parameters.b);
+
+                    var go = spawnedPipe.gameObject;
+                    PipeHelper.BeforeMove(ref go);
+
+                    // parent object
+                    spawnedPipe.transform.parent = robot.transform;
+                    spawnedPipe.transform.localPosition = new Vector3(0, 1f, 0);
+                    spawnedPipe.transform.rotation = Quaternion.identity;
+
+                    // move to workspace
+                    _routine = RobotRoutine.DropOff;
+                    _agent.SetDestination(destination);
+                }
+            }
+            else if (_routine == RobotRoutine.DropOff)
+            {
+                if (ReachDestination(_agent))
+                {
+                    spawnedPipe.transform.parent = null;
+
+                    var go = spawnedPipe.gameObject;
+                    PipeHelper.AfterMove(ref go);
+
+                    // return to base
+                    _routine = RobotRoutine.Default;
+                    _agent.SetDestination(robotBase.transform.position);
+                }
+            }
         }
 
         public void InitParameters(PipeBendAngles angle, float a, float b)
         {
-            _parameters.angle = angle;
-            _parameters.a = a;
-            _parameters.b = b;
+            parameters.angle = angle;
+            parameters.a = a;
+            parameters.b = b;
             // color and type and from global constants
-            _currentPipe = GlobalConstants.selectedPipe;
             // get color and type
-            var pm = _currentPipe.GetComponent<PipeManipulation>();
-            _parameters.color = pm.pipeColor;
-            _parameters.type = pm.pipeType;
-            _parameters.diameter = pm.diameter;
-
-            // update static variables
-            pipeParameters.color = _parameters.color;
-            pipeParameters.angle = _parameters.angle;
-            pipeParameters.a = _parameters.a;
-            pipeParameters.b = _parameters.b;
-            pipeParameters.type = _parameters.type;
-            pipeParameters.diameter = _parameters.diameter;
+            var pm = currentPipe.GetComponent<PipeManipulation>();
+            parameters.color = pm.pipeColor;
+            parameters.type = pm.pipeType;
+            parameters.diameter = pm.diameter;
         }
 
         public void PickUp()
         {
             Debug.Log("Robot PickUp");
-            // get the pipe from P1, and move to the middle point where to bend/cut
+            // get the pipe from P1, and move to the robot base to bend/cut
+            // robot move to the pipe position
+            var pos = currentPipe.transform.position;
 
-            var pipe = GlobalConstants.selectedPipe;
-            // set parent to robot
-            pipe.transform.parent = robot.transform.parent;
-            // move robot to the middle point to do bend or cut
-            robot.transform.position = middlePoint.position;
+            _routine = RobotRoutine.PickUp;
+            _agent.SetDestination(pos);
         }
 
         public void Execute()
         {
             PickUp();
-            // bend/cut using spawned pipe
-            SpawnPipeUsingSelected();
-
-            RPC_SendMessage(spawnedPipe.Id, pipeParameters.color, pipeParameters.angle, pipeParameters.a,
-                pipeParameters.b);
         }
 
-        static void EditMesh(GameObject go, PipeBendAngles angle, float a, float b)
+        void EditMesh(GameObject go, PipeBendAngles angle, float a, float b)
         {
             // TODO: 
             var pm = go.GetComponent<PipeManipulation>();
@@ -198,5 +233,26 @@ namespace VRC2
             }
         }
 
+        #region Nav Agent
+
+        bool ReachDestination(NavMeshAgent agent)
+        {
+            if (!agent.pathPending)
+            {
+                Debug.Log(agent.remainingDistance);
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                {
+                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                    {
+                        // Done
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        #endregion
     }
 }
