@@ -83,7 +83,11 @@ namespace VRC2
             }
 
             var rootObject = root.gameObject;
-
+            
+            // disable gravity
+            var rb = rootObject.GetComponent<Rigidbody>();
+            GameObject.Destroy(rb);
+            
             var t = rootObject.transform;
             var pos = t.position;
             var rot = t.rotation.eulerAngles;
