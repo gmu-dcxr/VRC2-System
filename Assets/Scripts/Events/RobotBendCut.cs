@@ -8,6 +8,7 @@ using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
 using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+using AgentHelper = VRC2.Agent.AgentHelper;
 
 namespace VRC2
 {
@@ -128,7 +129,7 @@ namespace VRC2
             if (_routine == RobotRoutine.PickUp)
             {
                 // reach to the workspace
-                if (ReachDestination(_agent))
+                if (AgentHelper.ReachDestination(_agent))
                 {
                     // save for future delivery
                     destination = currentPipe.transform.position;
@@ -149,7 +150,7 @@ namespace VRC2
             }
             else if (_routine == RobotRoutine.BendCut)
             {
-                if (ReachDestination(_agent))
+                if (AgentHelper.ReachDestination(_agent))
                 {
                     // start bend/cut
                     SpawnPipeUsingSelected();
@@ -173,7 +174,7 @@ namespace VRC2
             }
             else if (_routine == RobotRoutine.DropOff)
             {
-                if (ReachDestination(_agent))
+                if (AgentHelper.ReachDestination(_agent))
                 {
                     spawnedPipe.transform.parent = null;
 
@@ -231,26 +232,6 @@ namespace VRC2
             }
         }
 
-        #region Nav Agent
 
-        bool ReachDestination(NavMeshAgent agent)
-        {
-            if (!agent.pathPending)
-            {
-                Debug.Log(agent.remainingDistance);
-                if (agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                    {
-                        // Done
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        #endregion
     }
 }
