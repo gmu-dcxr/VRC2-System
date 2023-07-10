@@ -118,20 +118,13 @@ namespace VRC2.Events
         private void ReadyToDropOff()
         {
             print("ReadyToDropoff");
-            // spawn object
-            var runner = GlobalConstants.networkRunner;
-            var localPlayer = GlobalConstants.localPlayer;
-            // spawn a new pipe
-            var t = spawnedPipe.transform;
-            var newSpawned = runner.Spawn(prefab, t.position, t.rotation, localPlayer);
-            // update it
-            UpdateLocalSpawnedPipe(newSpawned.gameObject);
+
+            var go = spawnedPipe.gameObject;
+
+            PipeHelper.AfterMove(ref go);
 
             // Despawn the previous one
             spawnedPipe.transform.parent = null;
-            runner.Despawn(spawnedPipe);
-
-            spawnedPipe = newSpawned;
 
             _droneController.ReturnToBase();
         }
@@ -142,10 +135,9 @@ namespace VRC2.Events
             // set pipe's parent to drone
             spawnedPipe.transform.parent = _droneController.gameObject.transform;
 
-            // remove its rigid body. This drone can not have workload right now.
             var go = spawnedPipe.gameObject;
-            var rb = go.GetComponent<Rigidbody>();
-            GameObject.Destroy(rb);
+
+            PipeHelper.BeforeMove(ref go);
 
             var pos = _droneController.gameObject.transform.position;
             pos.y -= pipeDroneDistance;

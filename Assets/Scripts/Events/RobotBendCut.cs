@@ -27,14 +27,10 @@ namespace VRC2
         [Header("Prefab")] public NetworkPrefabRef prefab;
 
 
-        // private GameObject currentPipe
-        // {
-        //     get => GlobalConstants.selectedPipe;
-        // }
-
-        // debug:
-
-        public GameObject currentPipe;
+        private GameObject currentPipe
+        {
+            get => GlobalConstants.selectedPipe;
+        }
 
         private PipeBendCutParameters parameters;
 
@@ -142,7 +138,9 @@ namespace VRC2
                     // make a bit higher
                     currentPipe.transform.localPosition = new Vector3(0, 1f, 0);
 
-                    PipeHelper.BeforeMove(ref currentPipe);
+                    var go = currentPipe;
+
+                    PipeHelper.BeforeMove(ref go);
 
                     // move to robot base
                     _routine = RobotRoutine.BendCut;

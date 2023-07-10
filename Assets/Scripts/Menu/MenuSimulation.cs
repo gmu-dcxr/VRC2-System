@@ -52,7 +52,7 @@ namespace VRC2.Menu
             {
                 if (Input.GetKeyUp(KeyCode.Keypad1))
                 {
-                    _handler.OnCheckStorage();
+                    _handler.Simulate_AIDroneDeliver();
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad2))
@@ -62,7 +62,7 @@ namespace VRC2.Menu
 
                 if (Input.GetKeyUp(KeyCode.Keypad3))
                 {
-                    _handler.OnBendCut();
+                    _handler.Simulate_RobotBendCut();
                 }
             }
         }
@@ -83,9 +83,9 @@ namespace VRC2.Menu
             }
             else
             {
-                GUI.Button(new Rect(10, 10, 200, 30), "1 - Check Storage");
+                GUI.Button(new Rect(10, 10, 200, 30), "1 - Simulate AI Drone");
                 GUI.Button(new Rect(10, 60, 200, 30), "2 - Pickup Pipe");
-                GUI.Button(new Rect(10, 110, 200, 30), "3 - Bend/Cut Pipe");
+                GUI.Button(new Rect(10, 110, 200, 30), "3 - Simulate Robot");
             }
         }
     }
