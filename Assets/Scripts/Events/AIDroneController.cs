@@ -36,6 +36,9 @@ namespace VRC2
 
         public float force = 0.1f;
 
+        private float heightThreshold = 0.5f;
+        private float angleThrehold = 2f;
+        private float distanceThrehold = 0.5f;
 
         // actions
 
@@ -80,7 +83,7 @@ namespace VRC2
 
                     var angle = Vector3.Angle(direction, transform.forward);
 
-                    if (angle < 0.1f)
+                    if (angle < angleThrehold)
                     {
                         // move forward
                         Turn(0);
@@ -94,9 +97,7 @@ namespace VRC2
                     // calculate distance
                     var distance = GetDistance();
 
-                    print(distance);
-
-                    if (distance < 0.2f)
+                    if (distance < distanceThrehold)
                     {
                         // go down
                         ForwardBack(0);
@@ -109,7 +110,7 @@ namespace VRC2
                 case DroneStatus.Down:
                     // calculate height from the
                     var height = GetHeight();
-                    if (height < 0.2f)
+                    if (height < heightThreshold)
                     {
                         // drop off
                         if (_routine == DroneRoutine.PickUp)
@@ -134,6 +135,9 @@ namespace VRC2
                     }
 
                     break;
+                case DroneStatus.Stop:
+                    break;
+
                 default:
                     break;
             }
@@ -204,10 +208,11 @@ namespace VRC2
             _status = DroneStatus.Lift;
             Lift(force);
         }
-        
+
 
         public void PickUp()
         {
+            print("pickup");
             _routine = DroneRoutine.PickUp;
             MoveTo(pipeWarehouse.transform.position);
         }
@@ -227,6 +232,7 @@ namespace VRC2
         public void Stop()
         {
             _controller.motorOn = false;
+            _status = DroneStatus.Stop;
         }
     }
 }

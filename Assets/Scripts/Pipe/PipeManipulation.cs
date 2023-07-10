@@ -113,8 +113,6 @@ namespace VRC2
             {
                 var name = go.name;
 
-                Debug.Log($"name: {name}");
-
                 var key = PipeBendAngles.Default;
 
                 if (name.Contains("90"))
