@@ -8,6 +8,7 @@ namespace VRC2
     public class GlueContainerLabelManager : MonoBehaviour
     {
         private TextMeshPro _textMeshPro;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -18,7 +19,8 @@ namespace VRC2
         void Update()
         {
             // update the label
-            _textMeshPro.text = $"Glue: {GlobalConstants.currentGlueCapacitiy * 100}%";
+            var value = GlobalConstants.currentGlueCapacitiy * 100;
+            _textMeshPro.text = $"Glue: {value.ToString("f2")}%";
         }
     }
 }
