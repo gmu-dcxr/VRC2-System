@@ -27,8 +27,8 @@ namespace VRC2.Events
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
             
-            // default is false
-            enableDetection = false;
+            // default is true
+            enableDetection = true;
         }
 
         private void Update()

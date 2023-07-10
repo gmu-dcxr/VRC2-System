@@ -110,6 +110,8 @@ namespace VRC2
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
             _wrapper.WhenSelect.AddListener(OnSelect);
             _wrapper.WhenSelect.AddListener(OnUnselect);
+            // _wrapper.WhenHover.AddListener(OnHover);
+            // _wrapper.WhenUnhover.AddListener(OnUnhover);
         }
 
         void InitAnglesObjects()
@@ -206,20 +208,26 @@ namespace VRC2
             cd.enableDetection = flag;
         }
 
+        void OnHover()
+        {
+            EnableCollisionDetector(true);
+        }
+
+        void OnUnhover()
+        {
+            EnableCollisionDetector(false);
+        }
+
         public void OnSelect()
         {
             Debug.Log("Pipe OnSelect");
             // update current select pipe
             GlobalConstants.selectedPipe = gameObject;
-            
-            // enable collision
-            EnableCollisionDetector(true);
         }
 
         public void OnUnselect()
         {
             Debug.Log("Pipe OnUnselect");
-            EnableCollisionDetector(false);
         }
 
         #endregion
