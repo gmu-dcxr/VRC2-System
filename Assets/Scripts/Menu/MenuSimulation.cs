@@ -64,6 +64,11 @@ namespace VRC2.Menu
                 {
                     _handler.Simulate_RobotBendCut();
                 }
+
+                if (Input.GetKeyUp(KeyCode.Keypad4))
+                {
+                    _handler.Simulate_RefillClamp();
+                }
             }
         }
 
@@ -86,6 +91,7 @@ namespace VRC2.Menu
                 GUI.Button(new Rect(10, 10, 200, 30), "1 - Simulate AI Drone");
                 GUI.Button(new Rect(10, 60, 200, 30), "2 - Pickup Pipe");
                 GUI.Button(new Rect(10, 110, 200, 30), "3 - Simulate Robot");
+                GUI.Button(new Rect(10, 160, 200, 30), "4 - Refill Clamp");
             }
         }
     }

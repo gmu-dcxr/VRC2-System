@@ -525,6 +525,11 @@ namespace VRC2
             rbc.Execute();
         }
 
+        public void Simulate_RefillClamp()
+        {
+            var cce = gameObject.GetComponent<P1CheckClampEvent>();
+            cce.Execute();
+        }
 
         #endregion
     }
