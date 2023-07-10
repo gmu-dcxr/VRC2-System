@@ -149,6 +149,15 @@ namespace VRC2
             cre.Execute();
         }
 
+        public void OnBendCut()
+        {
+            // debug purpose
+            var go = GameObject.Find(GlobalConstants.BendCutRobot);
+            var rbc = go.GetComponent<RobotBendCut>();
+            rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 2f, 0);
+            rbc.Execute();
+        }
+
         public void OnCheckGlue()
         {
             Debug.Log("You clicked check glue");
