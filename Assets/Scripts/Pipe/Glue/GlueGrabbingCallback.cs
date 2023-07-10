@@ -1,14 +1,27 @@
 ﻿using System;
+using Oculus.Interaction;
 using UnityEngine;
 
 namespace VRC2.Events
 {
-    public class GlueGrabbingCallback: MonoBehaviour
+    [RequireComponent(typeof(PointableUnityEventWrapper))]
+    public class GlueGrabbingCallback : MonoBehaviour
     {
         public GameObject horizontalGameObject;
         public GameObject verticalGameObject;
 
-        public void OnSelect()
+
+        private PointableUnityEventWrapper _wrapper;
+
+        void Start()
+        {
+            _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
+
+            _wrapper.WhenSelect.AddListener(OnSelect);
+            _wrapper.WhenUnselect.AddListener(OnUnselect);
+        }
+
+        void OnSelect()
         {
             // enable horizontal object and disable vertical object to make it look real
             horizontalGameObject.SetActive(true);
@@ -20,6 +33,20 @@ namespace VRC2.Events
             // restore it
             horizontalGameObject.SetActive(false);
             verticalGameObject.SetActive(true);
+
+            UseGlue();
+        }
+
+        void UseGlue()
+        {
+            if (GlobalConstants.UseGlue())
+            {
+                // succeed
+            }
+            else
+            {
+                // fail because of used out
+            }
         }
     }
 }

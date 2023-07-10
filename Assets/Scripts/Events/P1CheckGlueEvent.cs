@@ -1,54 +1,89 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Fusion;
+using UnityEngine;
+using UnityEngine.AI;
+using VRC2.Agent;
 
 namespace VRC2.Events
 {
     public class P1CheckGlueEvent : BaseEvent
     {
-        public GameObject experimenter;
-        public GameObject glue;
-        public GameObject destination;
+        [Header("Settings")] public NavMeshAgent experimenter;
+        public GameObject experimenterBase; // where is the experimenter position
+        public GameObject gluebox; // glue box to store the glue
 
-        private Vector3 startPosition;
-        private Vector3 gluePosition;
-        private Vector3 destPosition;
+        [Header("Animation")] public string animationString = "Walking";
+
+        private ExperimenterRoutine _routine = ExperimenterRoutine.Default;
+
+        private Animator _animator;
 
         void Start()
         {
-            startPosition = experimenter.transform.position;
-            gluePosition = glue.transform.position;
-            destPosition = destination.transform.position;
+            // clampSizeDict = new Dictionary<int, NetworkPrefabRef>();
+            //
+            // for (int i = 0; i < clampsTemplate.Count; i++)
+            // {
+            //     var prefab = clampsTemplate[i];
+            //     clampSizeDict.Add(i + 1, prefab);
+            // }
+
+            experimenter.stoppingDistance = 0.5f;
+            var animator = experimenter.gameObject.GetComponent<Animator>();
+            animator.SetBool(animationString, true);
         }
 
-        public void MoveToDestination()
+        void MoveToGlueBox()
         {
-            Debug.Log("MoveToDestination");
-            experimenter.transform.position = destPosition;
+            Debug.Log("MoveToGlueBox");
+            _routine = ExperimenterRoutine.Go;
+            experimenter.SetDestination(gluebox.transform.position);
         }
 
-        public void RefillGlue()
+        void RefillGlue()
         {
             Debug.Log("RefillGlue");
+
             GlobalConstants.currentGlueCapacitiy = GlobalConstants.glueInitialCapacity;
         }
 
-        public void BackToGluePosition()
+        public void BackToBase()
         {
-            Debug.Log("BackToGluePosition");
-            experimenter.transform.position = gluePosition;
-        }
-
-        public void MoveAway()
-        {
-            Debug.Log("MoveAway");
-            experimenter.transform.position = startPosition;
+            Debug.Log("BackToBase");
+            experimenter.SetDestination(experimenterBase.transform.position);
         }
 
         public override void Execute()
         {
-            MoveToDestination();
-            BackToGluePosition();
-            RefillGlue();
-            MoveAway();
+            MoveToGlueBox();
+        }
+
+        private void Update()
+        {
+
+            switch (_routine)
+            {
+                case ExperimenterRoutine.Go:
+                    if (AgentHelper.ReachDestination(experimenter))
+                    {
+                        // fill clamp box
+                        RefillGlue();
+                        _routine = ExperimenterRoutine.Come;
+                        BackToBase();
+                    }
+
+                    break;
+                case ExperimenterRoutine.Come:
+                    if (AgentHelper.ReachDestination(experimenter))
+                    {
+                        // reach base
+                        _routine = ExperimenterRoutine.Default;
+                    }
+
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

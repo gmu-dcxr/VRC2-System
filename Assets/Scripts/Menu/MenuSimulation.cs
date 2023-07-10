@@ -69,6 +69,10 @@ namespace VRC2.Menu
                 {
                     _handler.Simulate_RefillClamp();
                 }
+                if (Input.GetKeyUp(KeyCode.Keypad5))
+                {
+                    _handler.Simulate_RefillGlue();
+                }
             }
         }
 
@@ -92,6 +96,7 @@ namespace VRC2.Menu
                 GUI.Button(new Rect(10, 60, 200, 30), "2 - Pickup Pipe");
                 GUI.Button(new Rect(10, 110, 200, 30), "3 - Simulate Robot");
                 GUI.Button(new Rect(10, 160, 200, 30), "4 - Refill Clamp");
+                GUI.Button(new Rect(10, 210, 200, 30), "5 - Refill Glue");
             }
         }
     }

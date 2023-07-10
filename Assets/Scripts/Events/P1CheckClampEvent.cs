@@ -24,6 +24,10 @@ namespace VRC2.Events
 
         [Header("Clamp Prefabs")] public List<NetworkPrefabRef> clampsTemplate;
 
+        [Header("Animation")] public string animationString = "Walking";
+        
+        private Animator _animator;
+        
         // private IDictionary<int, NetworkPrefabRef> clampSizeDict;
 
         private ExperimenterRoutine _routine = ExperimenterRoutine.Default;
@@ -42,7 +46,7 @@ namespace VRC2.Events
             experimenter.stoppingDistance = 0.5f;
 
             var animator = experimenter.gameObject.GetComponent<Animator>();
-            animator.SetBool("Walking", true);
+            animator.SetBool(animationString, true);
         }
 
         void MoveToClampBox()

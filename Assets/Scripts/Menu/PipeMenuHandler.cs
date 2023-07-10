@@ -531,6 +531,12 @@ namespace VRC2
             cce.Execute();
         }
 
+        public void Simulate_RefillGlue()
+        {
+            var cge = gameObject.GetComponent<P1CheckGlueEvent>();
+            cge.Execute();
+        }
+
         #endregion
     }
 }
