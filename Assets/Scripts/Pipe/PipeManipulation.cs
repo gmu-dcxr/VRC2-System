@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
+using Oculus.Interaction;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -15,6 +16,7 @@ using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2
 {
+    [RequireComponent(typeof(PointableUnityEventWrapper))]
     public class PipeManipulation : MonoBehaviour
     {
         [SerializeField] private Material _magentaMaterial;
@@ -27,6 +29,8 @@ namespace VRC2
         public PipeType pipeType = PipeType.Sewage;
         public PipeBendAngles angle = PipeBendAngles.Angle_0;
         public float pipeLength = 1.0f;
+
+        private PointableUnityEventWrapper _wrapper;
         
         // all pipes
         private List<GameObject> pipes;
@@ -101,6 +105,11 @@ namespace VRC2
                 SetMaterial(pipeColor);
                 SetLength(pipeLength);
             }
+            
+            // bind event
+            _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
+            _wrapper.WhenSelect.AddListener(OnSelect);
+            _wrapper.WhenSelect.AddListener(OnUnselect);
         }
 
         void InitAnglesObjects()
@@ -191,16 +200,26 @@ namespace VRC2
 
         #region Pointable Event
 
+        public void EnableCollisionDetector(bool flag)
+        {
+            var cd = gameObject.GetComponentInChildren<PipeCollisionDetector>(false);
+            cd.enableDetection = flag;
+        }
+
         public void OnSelect()
         {
             Debug.Log("Pipe OnSelect");
             // update current select pipe
             GlobalConstants.selectedPipe = gameObject;
+            
+            // enable collision
+            EnableCollisionDetector(true);
         }
 
         public void OnUnselect()
         {
             Debug.Log("Pipe OnUnselect");
+            EnableCollisionDetector(false);
         }
 
         #endregion
