@@ -34,10 +34,12 @@ namespace VRC2
 
         [Header("Fly Settings")] public float flyHeight = 10.0f;
 
-        public float force = 0.1f;
+        public float moveForce = 0.5f;
+        public float turnForce = 0.1f;
+        public float liftForce = 0.2f;
 
         private float heightThreshold = 0.5f;
-        private float angleThrehold = 2f;
+        private float angleThrehold = 0.2f;
         private float distanceThrehold = 0.5f;
 
         // actions
@@ -73,7 +75,7 @@ namespace VRC2
                         Lift(0);
                         // turn and move forward
                         _status = DroneStatus.Turn;
-                        Turn(force);
+                        Turn(turnForce);
                     }
 
                     break;
@@ -88,7 +90,7 @@ namespace VRC2
                         // move forward
                         Turn(0);
                         _status = DroneStatus.Move;
-                        ForwardBack(force);
+                        ForwardBack(moveForce);
                     }
 
                     break;
@@ -102,7 +104,7 @@ namespace VRC2
                         // go down
                         ForwardBack(0);
                         _status = DroneStatus.Down;
-                        Lift(-force);
+                        Lift(-liftForce);
                     }
 
                     break;
@@ -206,7 +208,7 @@ namespace VRC2
             RunMotor(true);
             // lift till the expected height
             _status = DroneStatus.Lift;
-            Lift(force);
+            Lift(liftForce);
         }
 
 

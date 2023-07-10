@@ -68,20 +68,20 @@ namespace VRC2
             // p1 check storage
             Debug.Log("You clicked Check Storage");
 
-            // // change the logic, show the menu directly
-            // var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
-            // ev0.Execute();
+            // change the logic, show the menu directly
+            var ev0 = gameObject.GetComponent<P1CommandAIDroneEvent>();
+            ev0.Execute();
 
-            // debug
-            var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
-            var add = go.GetComponent<AIDroneDeliver>();
-            var parameter = new PipeConstants.PipeBendCutParameters();
-            parameter.type = PipeConstants.PipeType.Sewage;
-            parameter.color = PipeMaterialColor.Blue;
-            parameter.diameter = PipeConstants.PipeDiameter.Diameter_1;
-
-            add.InitParameters(parameter);
-            add.Execute();
+            // // debug
+            // var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
+            // var add = go.GetComponent<AIDroneDeliver>();
+            // var parameter = new PipeConstants.PipeBendCutParameters();
+            // parameter.type = PipeConstants.PipeType.Sewage;
+            // parameter.color = PipeMaterialColor.Blue;
+            // parameter.diameter = PipeConstants.PipeDiameter.Diameter_1;
+            //
+            // add.InitParameters(parameter);
+            // add.Execute();
         }
 
         public void OnDeprecate()
