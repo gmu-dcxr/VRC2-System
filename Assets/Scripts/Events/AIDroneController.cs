@@ -35,11 +35,11 @@ namespace VRC2
         [Header("Fly Settings")] public float flyHeight = 10.0f;
 
         public float moveForce = 0.5f;
-        public float turnForce = 0.1f;
+        public float turnForce = 0.05f;
         public float liftForce = 0.2f;
 
         private float heightThreshold = 0.5f;
-        private float angleThrehold = 0.2f;
+        private float angleThrehold = 1f;
         private float distanceThrehold = 0.5f;
 
         // actions
