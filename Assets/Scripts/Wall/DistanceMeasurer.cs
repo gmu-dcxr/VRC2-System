@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Oculus.Interaction;
@@ -14,15 +15,20 @@ namespace VRC2
 
         [SerializeField] private RayInteractor right;
 
-        [Header("Label")] [SerializeField] private TextMeshPro _label;
+        [Header("Quad")] [SerializeField] private GameObject quad;
+
+        [Header("Labels")] [SerializeField] private TextMeshPro _horizontal;
+        [SerializeField] private TextMeshPro _vertical;
+        [SerializeField] private TextMeshPro _diagonal;
+
+        private string format = "f2";
 
         // measure distance only when two controllers' select button (trigger) are pressed.
 
         // Start is called before the first frame update
         void Start()
         {
-            // hide it 
-            _label.text = "";
+
         }
 
         // Update is called once per frame
@@ -33,17 +39,38 @@ namespace VRC2
 
             if (l && r)
             {
-                var d = GetTouchPointsDistance();
-                if (d >= 0)
+                var (h, v, d) = GetTouchPointsDistances();
+                if (h >= 0)
                 {
-                    // invalid
+                    // valid
                     // TODO: Convert to the real world unit
-                    _label.text = $"Distance: {d.ToString("f2")}'";
+                    SetTexts(h, v, d);
                     return;
                 }
             }
 
-            _label.text = "";
+            ClearTexts();
+        }
+
+        void ClearTexts()
+        {
+            quad.SetActive(false);
+            _horizontal.text = "";
+            _vertical.text = "";
+            _diagonal.text = "";
+        }
+
+        string FormatDistance(float value)
+        {
+            return $"{value.ToString(format)}'";
+        }
+
+        void SetTexts(float horizontal, float vertical, float diagonal)
+        {
+            quad.SetActive(true);
+            _horizontal.text = FormatDistance(horizontal);
+            _vertical.text = FormatDistance(vertical);
+            _diagonal.text = FormatDistance(diagonal);
         }
 
         bool GetTouchPoint(RayInteractor interactor, out Vector3 point)
@@ -58,7 +85,7 @@ namespace VRC2
             return false;
         }
 
-        float GetTouchPointsDistance()
+        (float, float, float) GetTouchPointsDistances()
         {
             Vector3 leftValue;
             var left = GetTouchPoint(this.left, out leftValue);
@@ -66,12 +93,16 @@ namespace VRC2
             Vector3 rightValue;
             var right = GetTouchPoint(this.right, out rightValue);
 
+            float h = -1, v = -1, d = -1;
+
             if (left && right)
             {
-                return Vector3.Distance(leftValue, rightValue);
+                h = Math.Abs(leftValue.x - rightValue.x);
+                v = Math.Abs(leftValue.y = rightValue.y);
+                d = Vector3.Distance(leftValue, rightValue);
             }
 
-            return -1;
+            return (h, v, d);
         }
     }
 }
