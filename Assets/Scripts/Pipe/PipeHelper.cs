@@ -19,10 +19,6 @@ namespace VRC2.Pipe
             // disable its interactable ability
             var reticle = interactablePipe.GetComponentInChildren<ReticleDataIcon>();
             reticle.gameObject.SetActive(false);
-
-            // disable pipe collision detector
-            var pcd = interactablePipe.GetComponentInChildren<PipeCollisionDetector>(false);
-            pcd.enabled = false;
         }
 
         public static void AfterMove(ref GameObject interactablePipe)
@@ -34,14 +30,12 @@ namespace VRC2.Pipe
                 // add new one
                 rb = interactablePipe.AddComponent<Rigidbody>();
             }
+            // update detection method
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
             // enable interactable ability
             var reticle = interactablePipe.GetComponentInChildren<ReticleDataIcon>(true);
             reticle.gameObject.SetActive(true);
-
-            // enable collision detector
-            var pcd = interactablePipe.GetComponentInChildren<PipeCollisionDetector>(false);
-            pcd.enabled = true;
 
             // update rigid body
             var si = interactablePipe.GetComponent<SnapInteractor>();

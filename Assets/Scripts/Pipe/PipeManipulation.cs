@@ -91,6 +91,7 @@ namespace VRC2
             {
                 // pipe was released
                 beingSelected = false;
+                return;
             }
 
             if (heldByRightHand())
@@ -159,20 +160,12 @@ namespace VRC2
 
         #region Pointable Event
 
-        public void EnableCollisionDetector(bool flag)
-        {
-            var cd = gameObject.GetComponentInChildren<PipeCollisionDetector>(false);
-            cd.enableDetection = flag;
-        }
-
         void OnHover()
         {
-            EnableCollisionDetector(true);
         }
 
         void OnUnhover()
         {
-            EnableCollisionDetector(false);
         }
 
         void OnMove()
