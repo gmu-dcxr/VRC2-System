@@ -132,82 +132,95 @@ namespace VRC2.Events
 
             Debug.Log($"HandlePipeCollision: {otherpipe.name}");
             var cip = gameObject.transform.parent;
+            var cipRoot = gameObject.transform.parent;
 
             // get root cip
             while (true)
             {
-                if (cip.parent == null) break;
-                cip = cip.parent;
+                if (cipRoot.parent == null) break;
+                cipRoot = cipRoot.parent;
             }
 
-            var oip = otherpipe.transform.parent.gameObject; // Interactable pipe
+            var oip = otherpipe.transform.parent.gameObject; // other interactable pipe
 
             // disable interactions
-            DisableInteraction(cip.gameObject);
+            DisableInteraction(cipRoot.gameObject);
             DisableInteraction(oip.gameObject);
 
             var cid = gameObject.GetComponentInChildren<BoxCollider>().bounds.extents.x;
             var oid = otherpipe.GetComponentInChildren<BoxCollider>().bounds.extents.x;
-
-            var ng = cip.GetComponent<NetworkGrabbable>();
-            // get grab point for the left object
-            var grabPoint = ng.GrabPoints[0];
-            // last pointer event
-            var pointerEvent = ng.lastPointerEvent;
-
+            
+            
             var offset = Vector3.zero;
             offset.x = 2 * (cid + oid);
-
+            
             // make a dummy object to calculate the target position
             var dummy = new GameObject();
             dummy.transform.position = cip.transform.position;
             dummy.transform.rotation = cip.transform.rotation;
             dummy.transform.Translate(offset, Space.Self);
             var targetPos = dummy.transform.position;
-
-            // destroy dummy
-            GameObject.Destroy(dummy);
-
-            // update oip
+            
+            // initialize parent at the current root position
+            var pos = cipRoot.transform.position;
+            var rot = cipRoot.transform.rotation;
+            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            // set parent
+            cipRoot.transform.parent = parentObject.transform;
             oip.transform.position = targetPos;
-
-            var pos = (gameObject.transform.position + targetPos) / 2.0f;
-
-            // update pos.y
-            pos.y = grabPoint.position.y;
-
-            // connected
-            var parentObject = Instantiate(pipeParent, pos, cip.rotation) as GameObject;
-
-            // update parent to make them move together
-            cip.transform.parent = parentObject.transform;
+            oip.transform.rotation = cip.transform.rotation;
             oip.transform.parent = parentObject.transform;
 
-            // update local position
-            var localCip = cip.transform.localPosition;
-            var localOip = oip.transform.localPosition;
-
-            localCip.y = 0;
-            localCip.z = 0;
-
-            localOip.y = 0;
-            localOip.z = 0;
-
-            cip.transform.localPosition = localCip;
-            oip.transform.localPosition = localOip;
 
 
-            // fix local rotation
-            var rot = Quaternion.Euler(0, 0, 0);
-            cip.transform.localRotation = rot;
-            oip.transform.localRotation = rot;
-            
-            // add rigid body for parent object
-            PipeHelper.AfterMove(ref parentObject);
-            
-            // simulate grab event
-            ng = parentObject.GetComponent<NetworkGrabbable>();
-            ng.ProcessPointerEvent(pointerEvent);
+
+            //
+            // var ng = cipRoot.GetComponent<NetworkGrabbable>();
+            // // get grab point for the left object
+            // var grabPoint = ng.GrabPoints[0];
+            // // last pointer event
+            // var pointerEvent = ng.lastPointerEvent;
+            //
+            //
+            //
+            // // destroy dummy
+            // GameObject.Destroy(dummy);
+            //
+            // // update oip
+            // oip.transform.position = targetPos;
+            //
+            // var pos = (gameObject.transform.position + targetPos) / 2.0f;
+            //
+            // // update pos.y
+            // pos.y = grabPoint.position.y;
+            //
+            //
+            //
+            // // update parent to make them move together
+            // cipRoot.transform.parent = parentObject.transform;
+            // oip.transform.parent = parentObject.transform;
+            //
+            // // update local position
+            // var localCip = cipRoot.transform.localPosition;
+            // var localOip = oip.transform.localPosition;
+            //
+            // localCip.y = 0;
+            // localCip.z = 0;
+            //
+            // localOip.y = 0;
+            // localOip.z = 0;
+            //
+            // cipRoot.transform.localPosition = localCip;
+            // oip.transform.localPosition = localOip;
+            //
+            //
+            // // fix local rotation
+            // var rot = Quaternion.Euler(0, 0, 0);
+            // cipRoot.transform.localRotation = rot;
+            // oip.transform.localRotation = rot;
+            //
+            // // add rigid body for parent object
+            // PipeHelper.AfterMove(ref parentObject);
 
             connected = true;
         }
