@@ -44,8 +44,15 @@ namespace VRC2
 
         private PointableUnityEventWrapper _wrapper;
 
+        private NetworkGrabbable _networkGrabbable;
+
         private Renderer _rendererA;
         private Renderer _rendererB;
+
+        private bool beingSelected;
+
+        private MeshCollider _meshColliderA;
+        private MeshCollider _meshColliderB;
 
 
         // Start is called before the first frame update
@@ -53,6 +60,9 @@ namespace VRC2
         {
             _rendererA = segmentA.GetComponent<Renderer>();
             _rendererB = segmentB.GetComponent<Renderer>();
+
+            _meshColliderA = segmentA.GetComponent<MeshCollider>();
+            _meshColliderB = segmentB.GetComponent<MeshCollider>();
 
             // set length
             SetLength(segmentALength, segmentBLength);
@@ -64,13 +74,43 @@ namespace VRC2
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
             _wrapper.WhenSelect.AddListener(OnSelect);
             _wrapper.WhenSelect.AddListener(OnUnselect);
+            _wrapper.WhenMove.AddListener(OnMove);
+            _wrapper.WhenCancel.AddListener(OnCancel);
             // _wrapper.WhenHover.AddListener(OnHover);
             // _wrapper.WhenUnhover.AddListener(OnUnhover);
+
+            _networkGrabbable = gameObject.GetComponent<NetworkGrabbable>();
+
+            beingSelected = false;
         }
 
         // Update is called once per frame
         void Update()
         {
+            if (beingSelected && !OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch))
+            {
+                // pipe was released
+                beingSelected = false;
+            }
+
+            if (heldByRightHand())
+            {
+                Debug.Log("heldByRightHand");
+                if (_meshColliderA.isTrigger)
+                {
+                    // disable mesh colliders' is trigger
+                    Debug.Log($"Disable mesh triggers for {gameObject.name}");
+                    _meshColliderA.isTrigger = false;
+                    _meshColliderB.isTrigger = false;
+                }
+            }
+            else if (!_meshColliderA.isTrigger)
+            {
+                // enable mesh colliders' is trigger
+                Debug.Log($"Enable mesh triggers for {gameObject.name}");
+                _meshColliderA.isTrigger = true;
+                _meshColliderB.isTrigger = true;
+            }
         }
 
         public void SetMaterial()
@@ -135,15 +175,30 @@ namespace VRC2
             EnableCollisionDetector(false);
         }
 
+        void OnMove()
+        {
+            // Debug.Log("Pipe OnMove");
+            beingSelected = true;
+        }
+
+        void OnCancel()
+        {
+            Debug.Log("Pipe Cancel");
+            beingSelected = false;
+        }
+
         public void OnSelect()
         {
             Debug.Log("Pipe OnSelect");
+
+            beingSelected = true;
             // update current select pipe
             GlobalConstants.selectedPipe = gameObject;
         }
 
         public void OnUnselect()
         {
+            beingSelected = false;
             Debug.Log("Pipe OnUnselect");
         }
 
@@ -155,6 +210,43 @@ namespace VRC2
         {
             // TODO
             return null;
+        }
+
+
+
+        #endregion
+
+        #region Pipe-pipe Connecting
+        
+        bool heldByRightHand()
+        {
+            if (!beingSelected) return false;
+
+            var lb = OVRInput.Get(OVRInput.RawButton.LHandTrigger, OVRInput.Controller.LTouch); // grip button
+            var rb = OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch); 
+
+            if (!lb && !rb) return false;
+
+            if (rb && !lb)
+            {
+                return true;
+            }
+
+            var grabpoint = _networkGrabbable.GrabPoints[0];
+
+            var l = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+            var r = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+
+            var ld = Vector3.Distance(l, grabpoint.position);
+            var rd = Vector3.Distance(r, grabpoint.position);
+
+            if (ld > rd)
+            {
+                return true;
+            }
+
+            return false;
         }
 
 
