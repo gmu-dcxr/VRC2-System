@@ -24,6 +24,8 @@ namespace VRC2.Events
         private Transform _targetTransform;
 
         [SerializeField] private int _maxGrabPoints = -1;
+
+        [HideInInspector] public PointerEvent lastPointerEvent;
         
         private NetworkObject _networkObject = null;
 
@@ -123,6 +125,8 @@ namespace VRC2.Events
 
         public override void ProcessPointerEvent(PointerEvent evt)
         {
+            lastPointerEvent = evt;
+            
             // if game started and spawned object but no input authority, return
             if (gameStarted && isSpawned &&!hasInputAuthority) return;
             

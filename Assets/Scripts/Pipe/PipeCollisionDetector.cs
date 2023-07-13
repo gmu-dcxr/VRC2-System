@@ -6,27 +6,22 @@ using Oculus.Interaction.DistanceReticles;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using VRC2.Pipe;
 using Object = UnityEngine.Object;
 
 namespace VRC2.Events
 {
     public class PipeCollisionDetector : MonoBehaviour
     {
-        [HideInInspector] public GameObject connecting;
         private Object pipeParent;
 
         private bool connected = false;
-
-        public bool enableDetection { set; get; }
 
         private void Start()
         {
             InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
-
-            // default is true
-            enableDetection = true;
         }
 
         private void Update()
@@ -82,8 +77,6 @@ namespace VRC2.Events
 
         void OnTriggerEnterAndStay(Collider other)
         {
-            if (!enableDetection) return;
-
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.pipeObjectTag))
             {
@@ -133,11 +126,11 @@ namespace VRC2.Events
             }
         }
 
-        void HandlePipeCollisionV2(GameObject otherpipe)
+        void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
 
-            Debug.Log($"HandlePipeCollisionV2: {otherpipe.name}");
+            Debug.Log($"HandlePipeCollision: {otherpipe.name}");
             var cip = gameObject.transform.parent;
 
             // get root cip
@@ -149,8 +142,18 @@ namespace VRC2.Events
 
             var oip = otherpipe.transform.parent.gameObject; // Interactable pipe
 
+            // disable interactions
+            DisableInteraction(cip.gameObject);
+            DisableInteraction(oip.gameObject);
+
             var cid = gameObject.GetComponentInChildren<BoxCollider>().bounds.extents.x;
             var oid = otherpipe.GetComponentInChildren<BoxCollider>().bounds.extents.x;
+
+            var ng = cip.GetComponent<NetworkGrabbable>();
+            // get grab point for the left object
+            var grabPoint = ng.GrabPoints[0];
+            // last pointer event
+            var pointerEvent = ng.lastPointerEvent;
 
             var offset = Vector3.zero;
             offset.x = 2 * (cid + oid);
@@ -168,7 +171,10 @@ namespace VRC2.Events
             // update oip
             oip.transform.position = targetPos;
 
-            var pos = GlobalConstants.RightPokeObject.transform.position;
+            var pos = (gameObject.transform.position + targetPos) / 2.0f;
+
+            // update pos.y
+            pos.y = grabPoint.position.y;
 
             // connected
             var parentObject = Instantiate(pipeParent, pos, cip.rotation) as GameObject;
@@ -195,38 +201,15 @@ namespace VRC2.Events
             var rot = Quaternion.Euler(0, 0, 0);
             cip.transform.localRotation = rot;
             oip.transform.localRotation = rot;
-
-            // disable children's interactions
-            DisableInteraction(cip.gameObject);
-            // disable collision detecting for the left one
-            DisableCollisionDetector(cip.gameObject);
-            DisableInteraction(oip.gameObject);
+            
+            // add rigid body for parent object
+            PipeHelper.AfterMove(ref parentObject);
+            
+            // simulate grab event
+            ng = parentObject.GetComponent<NetworkGrabbable>();
+            ng.ProcessPointerEvent(pointerEvent);
 
             connected = true;
-        }
-
-        void HandlePipeCollision(GameObject otherpipe)
-        {
-            Debug.Log("HandlePipeCollision");
-            // update connecting
-            connecting = otherpipe.transform.parent.gameObject; // Interactable pipe
-
-            // only move the pipe held by the right hand to right
-            var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
-            var rightHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
-
-            // other pipe distance should be left hand > right hand
-            var otherIpipePos = connecting.transform.position;
-            if (Vector3.Distance(otherIpipePos, leftHandPos) <
-                Vector3.Distance(otherIpipePos, rightHandPos))
-            {
-                // Other pipe is held by the left hand
-                return;
-            }
-            // now, otherpipe is on the right-hand
-
-            // new version
-            HandlePipeCollisionV2(otherpipe);
         }
 
         void DisableRigidBody(GameObject interactable)
@@ -248,12 +231,6 @@ namespace VRC2.Events
                 go.gameObject.SetActive(false);
                 DisableRigidBody(interactable);
             }
-        }
-
-        void DisableCollisionDetector(GameObject obj)
-        {
-            var pcd = obj.GetComponentInChildren<PipeCollisionDetector>(false);
-            pcd.enabled = false;
         }
     }
 }
