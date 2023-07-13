@@ -225,6 +225,11 @@ namespace VRC2
                 return true;
             }
 
+            var points = _networkGrabbable.GrabPoints;
+            if (points.Count < 1)
+            {
+                return false;
+            }
             var grabpoint = _networkGrabbable.GrabPoints[0];
 
             var l = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
