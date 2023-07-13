@@ -5,7 +5,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using VRC2.Events;
 using VRC2.Pipe;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 
 namespace VRC2
 {
@@ -98,9 +97,9 @@ namespace VRC2
             Debug.Log("You clicked Check Pipe");
 
             // get size and color
-            var (size, color) = P2CheckSizeAndColorEvent.GetPipeSizeAndColor();
+            var (sa, sb, color) = P2CheckSizeAndColorEvent.GetPipeSizeAndColor();
 
-            if (size < 0)
+            if (sa < 0)
             {
                 // not valid, maybe network is not ready, or no spawned pipe
                 Debug.LogWarning("Not found a spawned pipe");
@@ -108,7 +107,7 @@ namespace VRC2
             }
 
             dialogManager.UpdateDialog("Tip",
-                $"Size: {size} Color: {Utils.GetDisplayName<PipeMaterialColor>(color)}\n" +
+                $"Size: {sa} x {sb} Color: {Utils.GetDisplayName<PipeConstants.PipeColor>(color)}\n" +
                 $"All Correct?", "Yes", "No",
                 PipeInstallEvent.P2CheckSizeAndColor);
             ShowModalDialog(true);
@@ -172,19 +171,19 @@ namespace VRC2
         public void OnCheckLevel()
         {
             Debug.Log("You clicked check level");
-
-            // get water level value
-            var value = P2CheckLevelEvent.GetWaterLevelValue();
-            if (value < 0)
-            {
-                // not valid, maybe network is not ready, or no spawned pipe
-                Debug.LogWarning("Not found a spawned pipe");
-                return;
-            }
-
-            dialogManager.UpdateDialog("Check Level", $"Level value:{value}\nIs it correct?", "Yes", "No",
-                PipeInstallEvent.P2CheckLevel);
-            ShowModalDialog(true);
+        
+            // // get water level value
+            // var value = P2CheckLevelEvent.GetWaterLevelValue();
+            // if (value < 0)
+            // {
+            //     // not valid, maybe network is not ready, or no spawned pipe
+            //     Debug.LogWarning("Not found a spawned pipe");
+            //     return;
+            // }
+            //
+            // dialogManager.UpdateDialog("Check Level", $"Level value:{value}\nIs it correct?", "Yes", "No",
+            //     PipeInstallEvent.P2CheckLevel);
+            // ShowModalDialog(true);
         }
 
         #endregion
@@ -501,9 +500,9 @@ namespace VRC2
         {
             var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
             var add = go.GetComponent<AIDroneDeliver>();
-            var parameter = new PipeConstants.PipeBendCutParameters();
+            var parameter = new PipeConstants.PipeParameters();
             parameter.type = PipeConstants.PipeType.Sewage;
-            parameter.color = PipeMaterialColor.Blue;
+            parameter.color = PipeConstants.PipeColor.Blue;
             parameter.diameter = PipeConstants.PipeDiameter.Diameter_1;
 
             add.InitParameters(parameter);

@@ -3,10 +3,9 @@ using Fusion;
 using UnityEngine;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
-using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
+using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
 
 
 namespace VRC2.Events
@@ -27,7 +26,7 @@ namespace VRC2.Events
 
         private float pipeDroneDistance = 0.2f;
 
-        private PipeBendCutParameters parameters;
+        private PipeConstants.PipeParameters parameters;
 
         private NetworkObject spawnedPipe;
 
@@ -35,14 +34,12 @@ namespace VRC2.Events
         {
             var pm = go.GetComponent<PipeManipulation>();
 
-            // enable straight pipe
-            pm.EnableOnly(PipeBendAngles.Angle_0);
             // set material
-            pm.SetMaterial(parameters.color);
+            pm.SetMaterial(parameters);
         }
 
         // update spawned pipe since it might be different from the prefab
-        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeType type, PipeMaterialColor color)
+        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeParameters para)
         {
             var runner = GlobalConstants.networkRunner;
             var go = runner.FindObject(nid).gameObject;
@@ -50,10 +47,8 @@ namespace VRC2.Events
             // update material
             var pm = go.GetComponent<PipeManipulation>();
 
-            // enable only
-            pm.EnableOnly(PipeBendAngles.Angle_0);
             // set material
-            pm.SetMaterial(color);
+            pm.SetMaterial(para);
         }
 
         void SpawnPipeUsingSelected(PipeType type, PipeDiameter diameter)
@@ -71,28 +66,28 @@ namespace VRC2.Events
 
             UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
 
-            RPC_SendMessage(spawnedPipe.Id, parameters.type, parameters.color);
+            RPC_SendMessage(spawnedPipe.Id, parameters);
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_SendMessage(NetworkId nid, PipeType type, PipeMaterialColor color, RpcInfo info = default)
+        private void RPC_SendMessage(NetworkId nid, PipeParameters para, RpcInfo info = default)
         {
             var message = "";
 
             if (info.IsInvokeLocal)
             {
-                message = $"AIDrone message ({type}, {color})\n";
+                message = $"AIDrone message ({para.ToString()})\n";
                 Debug.LogWarning(message);
                 // start pick up
                 _droneController.PickUp();
             }
             else
             {
-                message = $"RobotBendCut received message ({type}, {color})\n";
+                message = $"RobotBendCut received message ({para.ToString()})\n";
                 Debug.LogWarning(message);
 
                 // update spawned object material
-                UpdateRemoteSpawnedPipe(nid, type, color);
+                UpdateRemoteSpawnedPipe(nid, para);
             }
         }
 
@@ -156,7 +151,7 @@ namespace VRC2.Events
             SpawnPipeUsingSelected(type, diameter);
         }
 
-        public void InitParameters(PipeBendCutParameters para)
+        public void InitParameters(PipeParameters para)
         {
             // update static variables
             parameters.type = para.type;

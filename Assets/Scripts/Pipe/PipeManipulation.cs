@@ -9,103 +9,57 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC2.Events;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+using VRC2.Pipe;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
+using PipeColor = VRC2.Pipe.PipeConstants.PipeColor;
+using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
 
 namespace VRC2
 {
     [RequireComponent(typeof(PointableUnityEventWrapper))]
     public class PipeManipulation : MonoBehaviour
     {
-        [SerializeField] private Material _magentaMaterial;
-        [SerializeField] private Material _blueMaterial;
-        [SerializeField] private Material _yellowMaterial;
-        [SerializeField] private Material _greenMaterial;
+        [Header("Segments")] [SerializeField] private GameObject segmentA;
+        [SerializeField] private GameObject segmentB;
 
+        // [Header("Materials")] [SerializeField] private Material _magentaMaterial;
+        // [SerializeField] private Material _blueMaterial;
+        // [SerializeField] private Material _yellowMaterial;
+        // [SerializeField] private Material _greenMaterial;
+
+        [Header("Pipe Settings")]
         // current color
-        public PipeMaterialColor pipeColor = PipeMaterialColor.Green;
+        public PipeConstants.PipeColor pipeColor = PipeConstants.PipeColor.Green;
+
         public PipeType pipeType = PipeType.Sewage;
         public PipeBendAngles angle = PipeBendAngles.Angle_0;
-        public float pipeLength = 1.0f;
+        public PipeDiameter diameter = PipeDiameter.Diameter_1;
+        public float segmentALength = 1.0f;
+        public float segmentBLength = 1.0f;
+
+        // the default length for each segment
+        private float defaultSegmentLengthInFeet = 5;
 
         private PointableUnityEventWrapper _wrapper;
-        
-        // all pipes
-        private List<GameObject> pipes;
 
-        private Renderer _renderer;
-        private GameObject _pipe;
-
-        [HideInInspector]
-        public GameObject pipe
-        {
-            get => _pipe;
-        }
-
-        public Renderer renderer
-        {
-            get { return _pipe.GetComponent<Renderer>(); }
-        }
-
-        // default material
-        private Material _defaultMaterial;
-
-        public PipeDiameter diameter
-        {
-            get
-            {
-                if (_pipe == null) return PipeDiameter.Default;
-                else
-                {
-                    var name = _pipe.name;
-                    // get diameter from the name
-                    int value = int.Parse(name.Substring(0, 1));
-                    // Diameter_1 = 0 and so forth
-                    var v = (PipeDiameter)(value - 1);
-                    return v;
-                }
-            }
-        }
-
-        private IDictionary<PipeBendAngles, GameObject> _anglesObjects;
-
-        [HideInInspector]
-        public IDictionary<PipeBendAngles, GameObject> anglesObjects
-        {
-            get
-            {
-                if (_anglesObjects == null)
-                {
-                    InitAnglesObjects();
-                }
-
-                return _anglesObjects;
-            }
-        }
+        private Renderer _rendererA;
+        private Renderer _rendererB;
 
 
         // Start is called before the first frame update
         void Start()
         {
-            // default is the straight one
-            _pipe = anglesObjects[angle];
+            _rendererA = segmentA.GetComponent<Renderer>();
+            _rendererB = segmentB.GetComponent<Renderer>();
 
-            // only enable the straigh one
-            EnableOnly(angle);
+            // set length
+            SetLength(segmentALength, segmentBLength);
 
-            _defaultMaterial = renderer.material;
+            // set materials
+            SetMaterial();
 
-            // whether it's the cloned object
-            var no = gameObject.GetComponent<NetworkObject>();
-            if (no.IsSceneObject)
-            {
-                // not spawned object
-                SetMaterial(pipeColor);
-                SetLength(pipeLength);
-            }
-            
             // bind event
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
             _wrapper.WhenSelect.AddListener(OnSelect);
@@ -114,90 +68,53 @@ namespace VRC2
             // _wrapper.WhenUnhover.AddListener(OnUnhover);
         }
 
-        void InitAnglesObjects()
-        {
-            _anglesObjects = new Dictionary<PipeBendAngles, GameObject>();
-
-            var allChildren = Utils.GetChildren<PipeCollisionDetector>(gameObject);
-            
-            foreach (var go in allChildren)
-            {
-                var name = go.name;
-
-                var key = PipeBendAngles.Default;
-
-                if (name.Contains("90"))
-                {
-                    key = PipeBendAngles.Angle_90;
-                }
-                else if (name.Contains("45"))
-                {
-                    key = PipeBendAngles.Angle_45;
-                }
-                else if (name.Contains("135"))
-                {
-                    key = PipeBendAngles.Angle_135;
-                }
-                else if (name.Contains("straight"))
-                {
-                    key = PipeBendAngles.Angle_0;
-                }
-
-                if (key != PipeBendAngles.Default)
-                {
-                    _anglesObjects.Add(key, go);
-                }
-            }
-        }
-
         // Update is called once per frame
         void Update()
         {
         }
 
-        public void SetMaterial(PipeMaterialColor color)
+        public void SetMaterial()
         {
-            Material material = null;
-            switch (color)
+            var m = GetMaterial(diameter, pipeType, pipeColor);
+            if (m == null)
             {
-                case PipeMaterialColor.Magenta:
-                    material = _magentaMaterial;
-                    break;
-                case PipeMaterialColor.Blue:
-                    material = _blueMaterial;
-                    break;
-                case PipeMaterialColor.Yellow:
-                    material = _yellowMaterial;
-                    break;
-                case PipeMaterialColor.Green:
-                    material = _greenMaterial;
-                    break;
-                default:
-                    break;
+                Debug.LogWarning($"Not found material for ({diameter}, {pipeType}, {pipeColor})");
+                return;
             }
 
-            if (material != null)
-            {
-                renderer.material = material;
-            }
+            _rendererA.material = m;
+            _rendererB.material = m;
         }
 
-        void RestoreMaterial()
+        public void SetMaterial(PipeDiameter d, PipeType t, PipeColor c)
         {
-            renderer.material = _defaultMaterial;
+            diameter = d;
+            pipeType = t;
+            pipeColor = c;
+
+            SetMaterial();
         }
 
-        public void SetLength(float length)
+        public void SetMaterial(PipeParameters param)
         {
-            // TODO: Only change x (length)
-            _pipe.transform.localScale = new Vector3(length, 1, 1);
+            SetMaterial(param.diameter, param.type, param.color);
         }
 
-        public void SimulateStraightCut(float feet)
+        public void SetLength(float a, float b)
         {
-            // the default lenght is 10 feet
-            // set the scale
-            _pipe.transform.localScale = new Vector3(feet / 10.0f, 1, 1);
+            // calculate the x-scale factor for the object
+            var fa = a / defaultSegmentLengthInFeet;
+            var fb = b / defaultSegmentLengthInFeet;
+
+            var sa = segmentA.transform.localScale;
+            sa.x = fa;
+
+            segmentA.transform.localScale = sa;
+
+            var sb = segmentB.transform.localScale;
+            sb.x = fb;
+
+            segmentB.transform.localScale = sb;
         }
 
         #region Pointable Event
@@ -232,26 +149,15 @@ namespace VRC2
 
         #endregion
 
-        #region Enable/Disable
+        #region Get Material By Parameters
 
-        public void EnableOnly(PipeBendAngles angle)
+        Material GetMaterial(PipeDiameter d, PipeType t, PipeColor c)
         {
-            foreach (var kvp in anglesObjects)
-            {
-                var k = kvp.Key;
-                if (k == angle)
-                {
-                    kvp.Value.SetActive(true);
-                    // update current pipe
-                    angle = k;
-                    _pipe = kvp.Value;
-                }
-                else
-                {
-                    kvp.Value.SetActive(false);
-                }
-            }
+            // TODO
+            return null;
         }
+
+
 
         #endregion
     }

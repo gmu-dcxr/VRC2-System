@@ -46,7 +46,6 @@ namespace VRC2
 
         void UpdateLabel()
         {
-            var l = _pipeManipulation.pipeLength;
             var d = _pipeManipulation.diameter;
             // update text
             // _textMeshPro.text = $"Length: {l} diameter: {d}";

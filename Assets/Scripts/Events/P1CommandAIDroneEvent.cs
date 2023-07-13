@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using VRC2.Pipe;
 
-using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
-
 namespace VRC2.Events
 {
     public class P1CommandAIDroneEvent : BaseEvent
     {
         public AIDroneMenuController _controller;
-        private PipeBendCutParameters _parameters;
+        private PipeConstants.PipeParameters _parameters;
 
         // Start is called before the first frame update
         void Start()

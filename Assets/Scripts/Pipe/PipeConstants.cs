@@ -1,10 +1,11 @@
 ﻿using System;
+using Fusion;
 
 namespace VRC2.Pipe
 {
     public static class PipeConstants
     {
-        public enum PipeMaterialColor
+        public enum PipeColor
         {
             Default = -1,
             Magenta = 0,
@@ -40,10 +41,10 @@ namespace VRC2.Pipe
             Diameter_4 = 3,
         }
 
-        public struct PipeBendCutParameters
+        public struct PipeParameters: INetworkStruct
         {
             public PipeType type;
-            public PipeMaterialColor color;
+            public PipeColor color;
             public PipeDiameter diameter;
             public PipeBendAngles angle;
             public float a;
@@ -53,7 +54,7 @@ namespace VRC2.Pipe
             {
                 return
                     $"{Enum.GetName(typeof(PipeType), type)} - " +
-                    $"{Enum.GetName(typeof(PipeMaterialColor), color)} - " +
+                    $"{Enum.GetName(typeof(PipeColor), color)} - " +
                     $"{Enum.GetName(typeof(PipeDiameter), diameter)} - " +
                     $"{Enum.GetName(typeof(PipeBendAngles), angle)} - " +
                     $"{a.ToString("f2")} - {b.ToString("f2")}";
