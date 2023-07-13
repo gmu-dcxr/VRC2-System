@@ -17,8 +17,6 @@ namespace VRC2.Events
 
         private bool connected = false;
 
-        private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
-        
         public bool enableDetection { set; get; }
 
         private void Start()
@@ -26,17 +24,13 @@ namespace VRC2.Events
             InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
-            
+
             // default is true
             enableDetection = true;
         }
 
         private void Update()
         {
-            while (_mainThreadWorkQueue.TryDequeue(out Action workload))
-            {
-                workload();
-            }
         }
 
         void InitializePokeLocation()
@@ -74,9 +68,7 @@ namespace VRC2.Events
 
         private void OnTriggerEnter(Collider other)
         {
-            _mainThreadWorkQueue.Enqueue(() => {
-                OnTriggerEnterAndStay(other);
-            });
+            OnTriggerEnterAndStay(other);
         }
 
         private void OnTriggerExit(Collider other)
@@ -85,15 +77,13 @@ namespace VRC2.Events
 
         private void OnTriggerStay(Collider other)
         {
-            _mainThreadWorkQueue.Enqueue(() => {
-                OnTriggerEnterAndStay(other);
-            });
+            OnTriggerEnterAndStay(other);
         }
 
         void OnTriggerEnterAndStay(Collider other)
         {
-            if(!enableDetection) return;
-            
+            if (!enableDetection) return;
+
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.pipeObjectTag))
             {
@@ -143,36 +133,12 @@ namespace VRC2.Events
             }
         }
 
-        (Vector3, Vector3) GetIndexedPoint(GameObject go)
-        {
-            // TODO: select index by different pipe models
-            var index1 = GlobalConstants.PipeStraight1InchIndex1;
-            var index2 = GlobalConstants.PipeStraight1InchIndex2;
-            // get it in the world space
-            // refer: https://stackoverflow.com/questions/61351923/unity-get-mesh-after-scaling
-            var mesh = go.GetComponent<MeshFilter>().mesh;
-            var vertices = mesh.vertices;
-            var t = go.transform;
-            // left and right
-            var left = vertices[index1];
-            var right = vertices[index2];
-            // since the model x points +x direction, smaller x is left
-            if (left.x < right.x)
-            {
-                return (t.TransformPoint(left), t.TransformPoint(right));
-            }
-            else
-            {
-                return (t.TransformPoint(right), t.TransformPoint(left));
-            }
-        }
-
         void HandlePipeCollisionV2(GameObject otherpipe)
         {
             if (connected) return;
 
             Debug.Log($"HandlePipeCollisionV2: {otherpipe.name}");
-            var cip = gameObject.transform.parent.parent;
+            var cip = gameObject.transform.parent;
 
             // get root cip
             while (true)
@@ -181,17 +147,13 @@ namespace VRC2.Events
                 cip = cip.parent;
             }
 
-            var oip = otherpipe.transform.parent.parent.gameObject; // Interactable pipe
+            var oip = otherpipe.transform.parent.gameObject; // Interactable pipe
 
-            var (p1Left, p1Right) = GetIndexedPoint(gameObject);
-            var (p2Left, p2Right) = GetIndexedPoint(otherpipe);
-
-            // second, calculate the target distance
-            var d1 = Vector3.Distance(p1Left, p1Right);
-            var d2 = Vector3.Distance(p2Left, p2Right);
+            var cid = gameObject.GetComponentInChildren<BoxCollider>().bounds.extents.x;
+            var oid = otherpipe.GetComponentInChildren<BoxCollider>().bounds.extents.x;
 
             var offset = Vector3.zero;
-            offset.x = (d1 + d2) / 2.0f;
+            offset.x = 2 * (cid + oid);
 
             // make a dummy object to calculate the target position
             var dummy = new GameObject();
@@ -245,8 +207,9 @@ namespace VRC2.Events
 
         void HandlePipeCollision(GameObject otherpipe)
         {
+            Debug.Log("HandlePipeCollision");
             // update connecting
-            connecting = otherpipe.transform.parent.parent.gameObject; // Interactable pipe
+            connecting = otherpipe.transform.parent.gameObject; // Interactable pipe
 
             // only move the pipe held by the right hand to right
             var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
