@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Fusion;
-
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+using VRC2.Pipe;
 
 namespace VRC2.Events
 {
@@ -52,10 +51,10 @@ namespace VRC2.Events
 
         #region Get Size And Color
 
-        public static (float, PipeMaterialColor) GetPipeSizeAndColor()
+        public static (float, float, PipeConstants.PipeColor) GetPipeSizeAndColor()
         {
-            float size = -1.0f;
-            PipeMaterialColor color = PipeMaterialColor.Default;
+            float sa = -1.0f, sb = -1.0f;
+            PipeConstants.PipeColor color = PipeConstants.PipeColor.Default;
 
             if (GlobalConstants.lastSpawned.IsValid)
             {
@@ -65,11 +64,12 @@ namespace VRC2.Events
                 var go = obj.gameObject;
                 // pipe manipulation
                 var pm = go.GetComponent<PipeManipulation>();
-                size = pm.pipeLength;
+                sa = pm.segmentALength;
+                sb = pm.segmentBLength;
                 color = pm.pipeColor;
             }
 
-            return (size, color);
+            return (sa, sb, color);
         }
 
         #endregion

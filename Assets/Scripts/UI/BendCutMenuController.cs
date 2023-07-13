@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
-using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 
 namespace VRC2
@@ -35,15 +33,15 @@ namespace VRC2
         public System.Action OnConfirmed;
         
         // result
-        private PipeBendCutParameters _parameters;
+        private PipeConstants.PipeParameters _parameters;
 
-        private PipeMaterialColor _pipeColor
+        private PipeConstants.PipeColor _pipeColor
         {
             get
             {
                 if (GlobalConstants.selectedPipe == null)
                 {
-                    return PipeMaterialColor.Default;
+                    return PipeConstants.PipeColor.Default;
                 }
 
                 var pipe = GlobalConstants.selectedPipe;
@@ -65,7 +63,7 @@ namespace VRC2
             }
         }
 
-        public PipeBendCutParameters result
+        public PipeConstants.PipeParameters result
         {
             get => _parameters;
         }
@@ -86,7 +84,7 @@ namespace VRC2
             _parameters.a = 0;
             _parameters.b = 0;
             _parameters.type = PipeType.Default;
-            _parameters.color = PipeMaterialColor.Default;
+            _parameters.color = PipeConstants.PipeColor.Default;
             
             // hide on start
             Hide();

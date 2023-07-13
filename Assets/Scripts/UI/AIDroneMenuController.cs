@@ -5,8 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
-using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
@@ -39,9 +37,9 @@ namespace VRC2
         public System.Action OnConfirmed;
 
         // reuse the same parameter as bend/cut
-        private PipeBendCutParameters _parameters;
+        private PipeConstants.PipeParameters _parameters;
 
-        public PipeBendCutParameters result
+        public PipeConstants.PipeParameters result
         {
             get => _parameters;
         }
@@ -62,7 +60,7 @@ namespace VRC2
             var type = GetPipeType();
             var diameter = GetPipeDiameter();
 
-            if (color != PipeMaterialColor.Default && type != PipeType.Default && diameter != PipeDiameter.Default)
+            if (color != PipeConstants.PipeColor.Default && type != PipeType.Default && diameter != PipeDiameter.Default)
             {
                 _parameters.type = type;
                 _parameters.color = color;
@@ -135,18 +133,18 @@ namespace VRC2
             return PipeType.Default;
         }
 
-        PipeMaterialColor GetPipeColor()
+        PipeConstants.PipeColor GetPipeColor()
         {
             for (var i = 0; i < pipeColorButtons.Count; i++)
             {
                 var bclm = pipeColorButtons[i].gameObject.GetComponent<ButtonMaterialController>();
                 if (bclm.currentMaterial == bclm.selectedMaterial)
                 {
-                    return (PipeMaterialColor)i;
+                    return (PipeConstants.PipeColor)i;
                 }
             }
 
-            return PipeMaterialColor.Default;
+            return PipeConstants.PipeColor.Default;
         }
 
         PipeDiameter GetPipeDiameter()

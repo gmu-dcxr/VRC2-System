@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
+using VRC2.Pipe;
 
 namespace VRC2.Events
 {
@@ -14,7 +14,7 @@ namespace VRC2.Events
         // NOTE: here variables and methods should be static except `spawned`
         // refer: https://doc.photonengine.com/zh-cn/fusion/current/tutorials/host-mode-basics/5-property-changes
 
-        [HideInInspector] public static PipeMaterialColor pipeColor;
+        [HideInInspector] public static PipeConstants.PipeColor pipeColor;
         [HideInInspector] public static float pipeLength;
         private static NetworkObject spawnedPipe;
 
@@ -42,8 +42,8 @@ namespace VRC2.Events
             var pm = go.GetComponent<PipeManipulation>();
 
             // update color and size
-            pm.SetMaterial(pipeColor);
-            pm.SetLength(pipeLength);
+            pm.SetMaterial();
+            // pm.SetLength(pipeLength);
         }
 
         #endregion
@@ -85,7 +85,7 @@ namespace VRC2.Events
             
             var pm = template.GetComponent<PipeManipulation>();
             var color = pm.pipeColor;
-            var length = pm.pipeLength;
+            // var length = pm.pipeLength;
             var diameter = pm.diameter;
             
             // destroy
@@ -94,7 +94,7 @@ namespace VRC2.Events
             
             // update static variables
             pipeColor = color;
-            pipeLength = length;
+            // pipeLength = length;
 
             // make it a bit closer to the camera
             var offset = -Camera.main.transform.forward;
@@ -119,22 +119,22 @@ namespace VRC2.Events
         }
 
         // update spawned pipe since it might be different from the prefab
-        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeMaterialColor color, float size)
+        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeConstants.PipeColor color, float size)
         {
             var runner = GlobalConstants.networkRunner;
             var go = runner.FindObject(nid).gameObject;
 
             // update material and size
             var pm = go.GetComponent<PipeManipulation>();
-            pm.SetMaterial(color);
-            pm.SetLength(size);
+            pm.SetMaterial();
+            // pm.SetLength(size);
 
             SetSpawnedPipeNotSpawnable(go);
         }
 
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_SendMessage(NetworkId nid, PipeMaterialColor color, float size, RpcInfo info = default)
+        private void RPC_SendMessage(NetworkId nid, PipeConstants.PipeColor color, float size, RpcInfo info = default)
         {
             var message = "";
 

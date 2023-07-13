@@ -6,9 +6,8 @@ using UnityEngine.AI;
 using VRC2.Events;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
-using PipeBendCutParameters = VRC2.Pipe.PipeConstants.PipeBendCutParameters;
-using PipeMaterialColor = VRC2.Pipe.PipeConstants.PipeMaterialColor;
 using AgentHelper = VRC2.Agent.AgentHelper;
+using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
 
 namespace VRC2
 {
@@ -33,7 +32,7 @@ namespace VRC2
             get => GlobalConstants.selectedPipe;
         }
 
-        private PipeBendCutParameters parameters;
+        private PipeParameters parameters;
 
         private NetworkObject spawnedPipe;
 
@@ -48,16 +47,15 @@ namespace VRC2
         {
             var pm = go.GetComponent<PipeManipulation>();
 
-            // enable only
-            pm.EnableOnly(parameters.angle);
             // set material
-            pm.SetMaterial(parameters.color);
+            pm.SetMaterial(parameters);
             // edit mesh
-            EditMesh(go, parameters.angle, parameters.a, parameters.b);
+            UpdateSpawnedPipe(go, parameters.angle, parameters.a, parameters.b);
         }
 
         // update spawned pipe since it might be different from the prefab
-        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeMaterialColor color, PipeBendAngles angle, float a, float b)
+        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeConstants.PipeColor color, PipeBendAngles angle, float a,
+            float b)
         {
             var runner = GlobalConstants.networkRunner;
             var go = runner.FindObject(nid).gameObject;
@@ -65,12 +63,10 @@ namespace VRC2
             // update material
             var pm = go.GetComponent<PipeManipulation>();
 
-            // enable only
-            pm.EnableOnly(angle);
             // set material
-            pm.SetMaterial(color);
+            pm.SetMaterial(parameters);
             // edit mesh
-            EditMesh(go, angle, a, b);
+            UpdateSpawnedPipe(go, angle, a, b);
         }
 
         void SpawnPipeUsingSelected()
@@ -96,7 +92,8 @@ namespace VRC2
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_SendMessage(NetworkId nid, PipeMaterialColor color, PipeBendAngles angle, float a, float b,
+        private void RPC_SendMessage(NetworkId nid, PipeConstants.PipeColor color, PipeBendAngles angle, float a,
+            float b,
             RpcInfo info = default)
         {
             var message = "";
@@ -217,19 +214,10 @@ namespace VRC2
             PickUp();
         }
 
-        void EditMesh(GameObject go, PipeBendAngles angle, float a, float b)
+        void UpdateSpawnedPipe(GameObject go, PipeBendAngles angle, float a, float b)
         {
             // TODO: 
             var pm = go.GetComponent<PipeManipulation>();
-
-            switch (angle)
-            {
-                case PipeBendAngles.Angle_0:
-                    pm.SimulateStraightCut(a);
-                    break;
-                default:
-                    break;
-            }
         }
 
 
