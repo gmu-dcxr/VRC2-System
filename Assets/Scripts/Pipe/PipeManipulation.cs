@@ -70,6 +70,8 @@ namespace VRC2
             // set materials
             SetMaterial();
 
+            beingSelected = false;
+
             // bind event
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
             _wrapper.WhenSelect.AddListener(OnSelect);
@@ -80,8 +82,6 @@ namespace VRC2
             // _wrapper.WhenUnhover.AddListener(OnUnhover);
 
             _networkGrabbable = gameObject.GetComponent<NetworkGrabbable>();
-
-            beingSelected = false;
         }
 
         // Update is called once per frame
@@ -91,27 +91,15 @@ namespace VRC2
             {
                 // pipe was released
                 beingSelected = false;
-                return;
+                SetTriggers(true);
             }
+        }
 
-            if (heldByRightHand())
-            {
-                Debug.Log("heldByRightHand");
-                if (_meshColliderA.isTrigger)
-                {
-                    // disable mesh colliders' is trigger
-                    Debug.Log($"Disable mesh triggers for {gameObject.name}");
-                    _meshColliderA.isTrigger = false;
-                    _meshColliderB.isTrigger = false;
-                }
-            }
-            else if (!_meshColliderA.isTrigger)
-            {
-                // enable mesh colliders' is trigger
-                Debug.Log($"Enable mesh triggers for {gameObject.name}");
-                _meshColliderA.isTrigger = true;
-                _meshColliderB.isTrigger = true;
-            }
+        public void SetTriggers(bool flag)
+        {
+            print($"Update triggers for {gameObject.name} - {flag}");
+            _meshColliderA.isTrigger = flag;
+            _meshColliderB.isTrigger = flag;
         }
 
         public void SetMaterial()
@@ -170,28 +158,30 @@ namespace VRC2
 
         void OnMove()
         {
-            // Debug.Log("Pipe OnMove");
-            beingSelected = true;
+
         }
 
         void OnCancel()
         {
             Debug.Log("Pipe Cancel");
-            beingSelected = false;
         }
 
         public void OnSelect()
         {
             Debug.Log("Pipe OnSelect");
 
-            beingSelected = true;
+            if (heldByRightHand())
+            {
+                beingSelected = true;
+                SetTriggers(false);
+            }
+
             // update current select pipe
             GlobalConstants.selectedPipe = gameObject;
         }
 
         public void OnUnselect()
         {
-            beingSelected = false;
             Debug.Log("Pipe OnUnselect");
         }
 
@@ -210,26 +200,20 @@ namespace VRC2
         #endregion
 
         #region Pipe-pipe Connecting
-        
+
         bool heldByRightHand()
         {
-            if (!beingSelected) return false;
+            // var lb = OVRInput.Get(OVRInput.RawButton.LHandTrigger, OVRInput.Controller.LTouch); // grip button
+            var rb = OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch);
 
-            var lb = OVRInput.Get(OVRInput.RawButton.LHandTrigger, OVRInput.Controller.LTouch); // grip button
-            var rb = OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch); 
-
-            if (!lb && !rb) return false;
-
-            if (rb && !lb)
-            {
-                return true;
-            }
+            if (!rb) return false;
 
             var points = _networkGrabbable.GrabPoints;
             if (points.Count < 1)
             {
                 return false;
             }
+
             var grabpoint = _networkGrabbable.GrabPoints[0];
 
             var l = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);

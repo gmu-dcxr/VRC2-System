@@ -17,8 +17,13 @@ namespace VRC2.Events
 
         private bool connected = false;
 
+        [HideInInspector] public float ExtendsX = 0.0f;
+
         private void Start()
         {
+            var extends = gameObject.GetComponent<MeshRenderer>().bounds.extents;
+            ExtendsX = extends.x;
+
             InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
@@ -147,22 +152,25 @@ namespace VRC2.Events
             DisableInteraction(cipRoot.gameObject);
             DisableInteraction(oip.gameObject);
 
-            var cid = gameObject.GetComponentInChildren<BoxCollider>().bounds.extents.x;
-            var oid = otherpipe.GetComponentInChildren<BoxCollider>().bounds.extents.x;
-            
-            
+            // BUG: Get the extends x is not correct during the VR runtime,
+            // so, use the stored x that is initialized at Start.
+            var cid = ExtendsX;
+            var oid = otherpipe.GetComponent<PipeCollisionDetector>().ExtendsX;
+
             var offset = Vector3.zero;
             offset.x = 2 * (cid + oid);
-            
+
             // make a dummy object to calculate the target position
             var dummy = new GameObject();
             dummy.transform.position = cip.transform.position;
             dummy.transform.rotation = cip.transform.rotation;
             dummy.transform.Translate(offset, Space.Self);
             var targetPos = dummy.transform.position;
-            
-            // initialize parent at the current root position
+
+            // initialize parent at the object position and left controller's height
             var pos = cipRoot.transform.position;
+            pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
+
             var rot = cipRoot.transform.rotation;
             var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
             // set parent
@@ -171,56 +179,28 @@ namespace VRC2.Events
             oip.transform.rotation = cip.transform.rotation;
             oip.transform.parent = parentObject.transform;
 
+            // update local position
+            var localCip = cipRoot.transform.localPosition;
+            var localOip = oip.transform.localPosition;
+
+            localCip.x = 0;
+            localCip.y = 0;
+            localCip.z = 0;
+
+            localOip.y = 0;
+            localOip.z = 0;
+
+            cipRoot.transform.localPosition = localCip;
+            oip.transform.localPosition = localOip;
 
 
-
-            //
-            // var ng = cipRoot.GetComponent<NetworkGrabbable>();
-            // // get grab point for the left object
-            // var grabPoint = ng.GrabPoints[0];
-            // // last pointer event
-            // var pointerEvent = ng.lastPointerEvent;
-            //
-            //
-            //
-            // // destroy dummy
-            // GameObject.Destroy(dummy);
-            //
-            // // update oip
-            // oip.transform.position = targetPos;
-            //
-            // var pos = (gameObject.transform.position + targetPos) / 2.0f;
-            //
-            // // update pos.y
-            // pos.y = grabPoint.position.y;
-            //
-            //
-            //
-            // // update parent to make them move together
-            // cipRoot.transform.parent = parentObject.transform;
-            // oip.transform.parent = parentObject.transform;
-            //
-            // // update local position
-            // var localCip = cipRoot.transform.localPosition;
-            // var localOip = oip.transform.localPosition;
-            //
-            // localCip.y = 0;
-            // localCip.z = 0;
-            //
-            // localOip.y = 0;
-            // localOip.z = 0;
-            //
-            // cipRoot.transform.localPosition = localCip;
-            // oip.transform.localPosition = localOip;
-            //
-            //
-            // // fix local rotation
-            // var rot = Quaternion.Euler(0, 0, 0);
-            // cipRoot.transform.localRotation = rot;
-            // oip.transform.localRotation = rot;
-            //
-            // // add rigid body for parent object
-            // PipeHelper.AfterMove(ref parentObject);
+            // fix local rotation
+            rot = Quaternion.Euler(0, 0, 0);
+            cipRoot.transform.localRotation = rot;
+            oip.transform.localRotation = rot;
+            
+            // add rigid body for parent object
+            PipeHelper.AfterMove(ref parentObject);
 
             connected = true;
         }
