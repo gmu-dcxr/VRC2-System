@@ -17,8 +17,11 @@ namespace VRC2.Events
 
         private bool connected = false;
 
+        private GameObject parentObject;
+
         private void Start()
         {
+            InitializeOVRControllerVisual();
             InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
@@ -28,6 +31,36 @@ namespace VRC2.Events
         {
         }
 
+        void InitializeOVRControllerVisual()
+        {
+            try
+            {
+                if (GlobalConstants.LeftOVRControllerVisual == null)
+                {
+                    var name = GlobalConstants.ControllerVisual;
+                    var objects = VRC2.Utils.FindAll(name);
+                    foreach (var obj in objects)
+                    {
+                        var parent = obj.transform.parent.gameObject;
+                        if (parent.name.StartsWith("Left"))
+                        {
+                            GlobalConstants.LeftOVRControllerVisual = obj;
+                            Debug.Log("Set LeftOVRControllerVisual");
+                        }
+                        else if (parent.name.StartsWith("Right"))
+                        {
+                            GlobalConstants.RightOVRControllerVisual = obj;
+                            Debug.Log("Set RightOVRControllerVisual");
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Exception in InitializeOVRControllerVisual(): {e.ToString()}");
+            }
+        }
+
         void InitializePokeLocation()
         {
             try
@@ -35,7 +68,7 @@ namespace VRC2.Events
                 if (GlobalConstants.LeftPokeObject == null)
                 {
                     // make it only set once
-                    var name = "PokeLocation";
+                    var name = GlobalConstants.PokeLocation;
                     var objects = VRC2.Utils.FindAll(name);
                     foreach (var obj in objects)
                     {
@@ -198,7 +231,7 @@ namespace VRC2.Events
             pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
 
             var rot = cipRoot.transform.rotation;
-            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
             // set parent
             cipRoot.transform.parent = parentObject.transform;
             // oip.transform.position = targetPos;
@@ -226,11 +259,11 @@ namespace VRC2.Events
             cipRoot.transform.localRotation = rot;
             oip.transform.localRotation = rot;
 
-            // add rigid body for parent object
-            PipeHelper.AfterMove(ref parentObject);
+            // remove rigid body for parent object
+            PipeHelper.BeforeMove(ref parentObject);
 
-            // var lpe = gameObject.GetComponent<NetworkGrabbable>().lastPointerEvent;
-            // parentObject.GetComponent<NetworkGrabbable>().ProcessPointerEvent(lpe);
+            // set parent to attach the the left-hand controller
+            parentObject.GetComponent<PipesContainerManager>().AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
