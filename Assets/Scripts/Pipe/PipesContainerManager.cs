@@ -46,8 +46,9 @@ namespace VRC2
                     // add rigid body and enable interactability
                     var go = gameObject;
                     PipeHelper.AfterMove(ref go);
+                    return;
                 }
-
+                
                 // synchronize transform of the parent
                 var t = _controller.transform;
                 transform.position = t.position;

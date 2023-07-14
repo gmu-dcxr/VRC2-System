@@ -19,6 +19,28 @@ namespace VRC2.Events
 
         private GameObject parentObject;
 
+        private GlueHintManager _glueHintManager;
+
+        private GlueHintManager hintManager
+        {
+            get
+            {
+                if (_glueHintManager == null)
+                {
+                    _glueHintManager = gameObject.transform.parent.GetComponent<GlueHintManager>();
+                }
+
+                return _glueHintManager;
+            }
+        }
+
+        // minimum glue collision count
+        private int minimumGlue = 10;
+        private int glued = 0;
+
+
+
+
         private void Start()
         {
             InitializeOVRControllerVisual();
@@ -121,6 +143,22 @@ namespace VRC2.Events
             {
                 HandleClampCollision(go);
             }
+
+            // collision with glue
+            if (go.CompareTag(GlobalConstants.glueObjectTag))
+            {
+                HandleGlueCollision(go);
+            }
+        }
+
+        void HandleGlueCollision(GameObject glue)
+        {
+            glued += 1;
+            if (glued >= minimumGlue)
+            {
+                // show glue hint
+                hintManager.ShowHintFor(gameObject);
+            }
         }
 
         void HandleClampCollision(GameObject clamp)
@@ -163,7 +201,17 @@ namespace VRC2.Events
         {
             if (connected) return;
 
+            if (!hintManager.glued)
+            {
+                Debug.LogWarning("Please glue it first");
+                return;
+            }
+
             Debug.Log($"HandlePipeCollision: {otherpipe.name}");
+
+            // disable glue hint first
+            hintManager.HideHint();
+
             var cip = gameObject.transform.parent;
             var cipRoot = gameObject.transform.parent;
 
