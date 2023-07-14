@@ -44,5 +44,34 @@ namespace VRC2.Pipe
             var dgi = interactablePipe.GetComponentInChildren<DistanceGrabInteractable>();
             dgi.InjectRigidbody(rb);
         }
+        
+        public static float GetExtendsX(GameObject pipe)
+        {
+            var mesh = pipe.GetComponent<MeshFilter>().mesh;
+
+            var vertices = mesh.vertices;
+
+            var minx = vertices[0].x;
+            var maxx = minx;
+
+            foreach (var v in vertices)
+            {
+                if (v.x > maxx) maxx = v.x;
+                if (v.x < minx) minx = v.x;
+            }
+
+            var p1 = Vector3.zero;
+            p1.x = minx;
+
+            var p2 = Vector3.zero;
+            p2.x = maxx;
+
+            var t = pipe.transform;
+
+            p1 = t.TransformPoint(p1);
+            p2 = t.TransformPoint(p2);
+
+            return Vector3.Distance(p1, p2);
+        }
     }
 }
