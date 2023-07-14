@@ -17,13 +17,8 @@ namespace VRC2.Events
 
         private bool connected = false;
 
-        [HideInInspector] public float ExtendsX = 0.0f;
-
         private void Start()
         {
-            var extends = gameObject.GetComponent<MeshRenderer>().bounds.extents;
-            ExtendsX = extends.x;
-
             InitializePokeLocation();
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
@@ -131,6 +126,35 @@ namespace VRC2.Events
             }
         }
 
+        float GetExtends(GameObject pipe)
+        {
+            var mesh = pipe.GetComponent<MeshFilter>().mesh;
+
+            var vertices = mesh.vertices;
+
+            var minx = vertices[0].x;
+            var maxx = minx;
+
+            foreach (var v in vertices)
+            {
+                if (v.x > maxx) maxx = v.x;
+                if (v.x < minx) minx = v.x;
+            }
+
+            var p1 = Vector3.zero;
+            p1.x = minx;
+
+            var p2 = Vector3.zero;
+            p2.x = maxx;
+
+            var t = pipe.transform;
+
+            p1 = t.TransformPoint(p1);
+            p2 = t.TransformPoint(p2);
+
+            return Vector3.Distance(p1, p2);
+        }
+
         void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
@@ -152,22 +176,24 @@ namespace VRC2.Events
             DisableInteraction(cipRoot.gameObject);
             DisableInteraction(oip.gameObject);
 
-            // BUG: Get the extends x is not correct during the VR runtime,
-            // so, use the stored x that is initialized at Start.
-            var cid = ExtendsX;
-            var oid = otherpipe.GetComponent<PipeCollisionDetector>().ExtendsX;
+            // get extends
+            var cid = GetExtends(gameObject);
+            var oid = GetExtends(otherpipe);
+
+            print(cid);
+            print(oid);
 
             var offset = Vector3.zero;
-            offset.x = 2 * (cid + oid);
+            offset.x = cid + oid;
 
-            // make a dummy object to calculate the target position
-            var dummy = new GameObject();
-            dummy.transform.position = cip.transform.position;
-            dummy.transform.rotation = cip.transform.rotation;
-            dummy.transform.Translate(offset, Space.Self);
-            var targetPos = dummy.transform.position;
+            // // make a dummy object to calculate the target position
+            // var dummy = new GameObject();
+            // dummy.transform.position = cip.transform.position;
+            // dummy.transform.rotation = cip.transform.rotation;
+            // dummy.transform.Translate(offset, Space.Self);
+            // var targetPos = dummy.transform.position;
 
-            // initialize parent at the object position and left controller's height
+            // initialize parent at the current pipe position and left controller's height
             var pos = cipRoot.transform.position;
             pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
 
@@ -175,18 +201,19 @@ namespace VRC2.Events
             var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
             // set parent
             cipRoot.transform.parent = parentObject.transform;
-            oip.transform.position = targetPos;
-            oip.transform.rotation = cip.transform.rotation;
+            // oip.transform.position = targetPos;
+            // oip.transform.rotation = cip.transform.rotation;
             oip.transform.parent = parentObject.transform;
 
             // update local position
             var localCip = cipRoot.transform.localPosition;
             var localOip = oip.transform.localPosition;
 
-            localCip.x = 0;
+            localCip.x = -(cid + oid); // move it to left 
             localCip.y = 0;
             localCip.z = 0;
 
+            localOip.x = 0;
             localOip.y = 0;
             localOip.z = 0;
 
@@ -198,9 +225,12 @@ namespace VRC2.Events
             rot = Quaternion.Euler(0, 0, 0);
             cipRoot.transform.localRotation = rot;
             oip.transform.localRotation = rot;
-            
+
             // add rigid body for parent object
             PipeHelper.AfterMove(ref parentObject);
+
+            // var lpe = gameObject.GetComponent<NetworkGrabbable>().lastPointerEvent;
+            // parentObject.GetComponent<NetworkGrabbable>().ProcessPointerEvent(lpe);
 
             connected = true;
         }
