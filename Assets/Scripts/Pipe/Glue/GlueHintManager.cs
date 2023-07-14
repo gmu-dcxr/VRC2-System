@@ -7,12 +7,19 @@ public class GlueHintManager : MonoBehaviour
 {
     public GameObject hint;
 
-    public GameObject pipe;
+    private GameObject _pipe;
+
+    [HideInInspector]
+    public bool glued
+    {
+        get => hint.activeSelf;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        MoveHint();
+        // disable at the beginning
+        HideHint();
     }
 
     // Update is called once per frame
@@ -21,37 +28,30 @@ public class GlueHintManager : MonoBehaviour
 
     }
 
-    void MoveHint()
+    public void ShowHintFor(GameObject p)
+    {
+        _pipe = p;
+
+        MoveHintTo(p);
+        hint.SetActive(true);
+    }
+
+    public void HideHint()
+    {
+        hint.SetActive(false);
+    }
+
+    void MoveHintTo(GameObject pipe)
     {
         // get hint width (x)
         var width = PipeHelper.GetExtendsX(hint);
-        // to the pipe's right end
-        var x = GetPipeRightMostX(pipe);
-        var pos = pipe.transform.position;
+        // get pipe width (x)
+        var x = PipeHelper.GetExtendsX(pipe);
+
+        var pos = Vector3.zero;
         pos.x = x - width;
-        var rot = pipe.transform.rotation;
-        hint.transform.position = pos;
-        hint.transform.rotation = rot;
-    }
 
-    float GetPipeRightMostX(GameObject pipe)
-    {
-        var mesh = pipe.GetComponent<MeshFilter>().mesh;
-
-        var vertices = mesh.vertices;
-
-        var maxx = vertices[0].x;
-
-        foreach (var v in vertices)
-        {
-            if (v.x > maxx) maxx = v.x;
-        }
-
-        var p = Vector3.zero;
-        p.x = maxx;
-
-        var t = pipe.transform;
-
-        return t.TransformPoint(p).x;
+        hint.transform.localPosition = pos;
+        hint.transform.localRotation = Quaternion.identity;
     }
 }
