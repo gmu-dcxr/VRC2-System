@@ -205,6 +205,19 @@ namespace VRC2.Events
 
             var oip = otherpipe.transform.parent.gameObject; // other interactable pipe
 
+            // check whether cipRoot is pipe container
+            PipesContainerManager pcm = null;
+            if (cipRoot.TryGetComponent<PipesContainerManager>(out pcm))
+            {
+                // it's a pipe container
+                if (pcm.AttachedToController())
+                {
+                    // attached to controller
+                    // detach it
+                    pcm.DetachController();
+                }
+            }
+
             // disable interactions
             DisableInteraction(cipRoot.gameObject);
             DisableInteraction(oip.gameObject);
@@ -259,11 +272,9 @@ namespace VRC2.Events
             cipRoot.transform.localRotation = rot;
             oip.transform.localRotation = rot;
 
-            // remove rigid body for parent object
-            PipeHelper.BeforeMove(ref parentObject);
-
             // set parent to attach the the left-hand controller
-            parentObject.GetComponent<PipesContainerManager>().AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            parentObject.GetComponent<PipesContainerManager>()
+                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
