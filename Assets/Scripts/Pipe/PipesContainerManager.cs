@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Oculus.Interaction;
 using UnityEngine;
 using VRC2.Pipe;
 
@@ -13,12 +14,22 @@ namespace VRC2
         // Start is called before the first frame update
         void Start()
         {
-
         }
 
         public void AttachToController(GameObject controller)
         {
             _controller = controller;
+        }
+
+        public bool AttachedToController()
+        {
+            return _controller != null;
+        }
+
+        public void DetachController()
+        {
+            print($"Detach object from the controller: {gameObject.name}");
+            _controller = null;
         }
 
         // Update is called once per frame
