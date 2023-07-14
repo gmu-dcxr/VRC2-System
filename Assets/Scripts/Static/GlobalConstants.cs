@@ -275,16 +275,19 @@ namespace VRC2
 
         #region PokeLocation Objects
 
+        public static string PokeLocation = "PokeLocation";
         public static GameObject LeftPokeObject = null;
         public static GameObject RightPokeObject = null;
 
         #endregion
 
-        #region Pipe Collision
 
-        public static int PipeStraight1InchIndex1 = 92;
-        public static int PipeStraight1InchIndex2 = 64;
-        
+        #region Controller Visuals
+
+        public static string ControllerVisual = "OVRControllerVisual";
+
+        public static GameObject LeftOVRControllerVisual = null;
+        public static GameObject RightOVRControllerVisual = null;
 
         #endregion
     }
