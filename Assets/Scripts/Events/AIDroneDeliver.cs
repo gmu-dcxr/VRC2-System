@@ -21,9 +21,6 @@ namespace VRC2.Events
         public GameObject storage; // where is the storage place
 
 
-        [Header("Prefab")] public NetworkPrefabRef prefab;
-
-
         private float pipeDroneDistance = 0.2f;
 
         private PipeConstants.PipeParameters parameters;
@@ -61,6 +58,8 @@ namespace VRC2.Events
 
             var pos = warehouse.transform.position;
             var rot = Quaternion.identity;
+
+            var prefab = PipeHelper.GetStraightPipePrefabRef(diameter);
 
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
 
