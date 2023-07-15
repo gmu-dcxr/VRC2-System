@@ -1,8 +1,12 @@
-﻿using Oculus.Interaction;
+﻿using UnityEngine;
+using Fusion;
+using Oculus.Interaction;
 using Oculus.Interaction.DistanceReticles;
-using UnityEngine;
-using VRC2.Events;
-
+using Unity.VisualScripting;
+using UnityEditor;
+using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
+using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
+using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 
 namespace VRC2.Pipe
 {
@@ -30,6 +34,7 @@ namespace VRC2.Pipe
                 // add new one
                 rb = interactablePipe.AddComponent<Rigidbody>();
             }
+
             // update detection method
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
@@ -44,7 +49,7 @@ namespace VRC2.Pipe
             var dgi = interactablePipe.GetComponentInChildren<DistanceGrabInteractable>();
             dgi.InjectRigidbody(rb);
         }
-        
+
         public static float GetExtendsX(GameObject pipe)
         {
             var mesh = pipe.GetComponent<MeshFilter>().mesh;
@@ -72,6 +77,75 @@ namespace VRC2.Pipe
             p2 = t.TransformPoint(p2);
 
             return Vector3.Distance(p1, p2);
+        }
+
+        public static string GetPipePrefabName(PipeParameters para)
+        {
+            // format: {diameter} {angle} pipe
+            var name = "";
+            switch (para.diameter)
+            {
+                case PipeDiameter.Diameter_1:
+                    name += "1";
+                    break;
+                case PipeDiameter.Diameter_2:
+                    name += "2";
+                    break;
+                case PipeDiameter.Diameter_3:
+                    name += "3";
+                    break;
+                case PipeDiameter.Diameter_4:
+                    name += "4";
+                    break;
+                default:
+                    break;
+            }
+
+            name += " inch ";
+
+            switch (para.angle)
+            {
+                case PipeBendAngles.Angle_0:
+                    name += "straight";
+                    break;
+                case PipeBendAngles.Angle_45:
+                    name += "45 deg";
+                    break;
+                case PipeBendAngles.Angle_90:
+                    name += "90 deg";
+                    break;
+                case PipeBendAngles.Angle_135:
+                    name += "135 deg";
+                    break;
+                default:
+                    break;
+            }
+
+            name += " pipe";
+            return name;
+        }
+
+        public static NetworkObject GetPipePrefabRef(PipeParameters para)
+        {
+            var table = NetworkProjectConfig.Global.PrefabTable;
+
+            var name = GetPipePrefabName(para);
+
+            var path = $"{GlobalConstants.PipePrefabsPath}{name}.prefab";
+
+            GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
+
+            var no = go.GetComponent<NetworkObject>();
+            var nid = no.NetworkGuid;
+
+            NetworkPrefabId npid;
+            NetworkObject networkObject = null;
+            if (table.TryGetId(nid, out npid))
+            {
+                table.TryGetPrefab(npid, out networkObject);
+            }
+
+            return networkObject;
         }
     }
 }

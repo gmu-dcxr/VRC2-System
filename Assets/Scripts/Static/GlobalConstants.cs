@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Fusion;
+using VRC2.Pipe;
 
 namespace VRC2
 {
@@ -261,6 +262,7 @@ namespace VRC2
 
         #region Pipe Bend/Cut Manipulation
 
+        public static string PipePrefabsPath = "Assets/Prefabs/Pipe/";
         public static GameObject selectedPipe = null;
         public static string BendCutRobot = "BendCutRobot";
 

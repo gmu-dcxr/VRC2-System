@@ -57,7 +57,7 @@ namespace VRC2.Menu
 
                 if (Input.GetKeyUp(KeyCode.Keypad2))
                 {
-                    _handler.OnPickupPipe();
+                    _handler.Simulate_SpawnPipe();
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad3))
@@ -93,7 +93,7 @@ namespace VRC2.Menu
             else
             {
                 GUI.Button(new Rect(10, 10, 200, 30), "1 - Simulate AI Drone");
-                GUI.Button(new Rect(10, 60, 200, 30), "2 - Pickup Pipe");
+                GUI.Button(new Rect(10, 60, 200, 30), "2 - Spawn Pipe");
                 GUI.Button(new Rect(10, 110, 200, 30), "3 - Simulate Robot");
                 GUI.Button(new Rect(10, 160, 200, 30), "4 - Refill Clamp");
                 GUI.Button(new Rect(10, 210, 200, 30), "5 - Refill Glue");
