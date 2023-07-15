@@ -44,12 +44,12 @@ public class GlueHintManager : MonoBehaviour
     void MoveHintTo(GameObject pipe)
     {
         // get hint width (x)
-        var width = PipeHelper.GetExtendsX(hint);
+        // var width = PipeHelper.GetExtendsX(hint);
         // get pipe width (x)
         var x = PipeHelper.GetExtendsX(pipe);
 
         var pos = Vector3.zero;
-        pos.x = x - width;
+        pos.x = x;
 
         hint.transform.localPosition = pos;
         hint.transform.localRotation = Quaternion.identity;
