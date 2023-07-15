@@ -509,6 +509,18 @@ namespace VRC2
             add.Execute();
         }
 
+        public void Simulate_SpawnPipe()
+        {
+            PipeConstants.PipeParameters para = new PipeConstants.PipeParameters();
+            para.diameter = PipeConstants.PipeDiameter.Diameter_1;
+            para.angle = PipeConstants.PipeBendAngles.Angle_0;
+
+            var runner = GlobalConstants.networkRunner;
+            var prefab = PipeHelper.GetPipePrefabRef(para);
+
+            runner.Spawn(prefab);
+        }
+
         public void Simulate_RobotBendCut()
         {
             // set global select pipe
