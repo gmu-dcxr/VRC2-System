@@ -147,5 +147,14 @@ namespace VRC2.Pipe
 
             return networkObject;
         }
+
+        public static NetworkObject GetStraightPipePrefabRef(PipeDiameter diameter)
+        {
+            var para = new PipeParameters();
+            para.diameter = diameter;
+            para.angle = PipeBendAngles.Angle_0;
+
+            return GetPipePrefabRef(para);
+        }
     }
 }

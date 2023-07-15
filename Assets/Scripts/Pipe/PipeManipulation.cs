@@ -129,6 +129,13 @@ namespace VRC2
             SetMaterial(param.diameter, param.type, param.color);
         }
 
+        public void SetMaterial(PipeType type, PipeColor color)
+        {
+            pipeType = type;
+            pipeColor = color;
+            SetMaterial();
+        }
+
         public void SetLength(float a, float b)
         {
             // calculate the x-scale factor for the object

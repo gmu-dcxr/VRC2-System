@@ -8,6 +8,8 @@ using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using AgentHelper = VRC2.Agent.AgentHelper;
 using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
+using PipeColor = VRC2.Pipe.PipeConstants.PipeColor;
+using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 
 namespace VRC2
 {
@@ -23,9 +25,6 @@ namespace VRC2
     {
         [Header("Robot Setting")] public GameObject robot;
         public GameObject robotBase;
-
-        [Header("Prefab")] public NetworkPrefabRef prefab;
-
 
         private GameObject currentPipe
         {
@@ -50,11 +49,11 @@ namespace VRC2
             // set material
             pm.SetMaterial(parameters);
             // edit mesh
-            UpdateSpawnedPipe(go, parameters.angle, parameters.a, parameters.b);
+            UpdateSpawnedPipe(go, parameters.a, parameters.b);
         }
 
         // update spawned pipe since it might be different from the prefab
-        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeConstants.PipeColor color, PipeBendAngles angle, float a,
+        void UpdateRemoteSpawnedPipe(NetworkId nid, PipeType type, PipeColor color, float a,
             float b)
         {
             var runner = GlobalConstants.networkRunner;
@@ -64,9 +63,9 @@ namespace VRC2
             var pm = go.GetComponent<PipeManipulation>();
 
             // set material
-            pm.SetMaterial(parameters);
-            // edit mesh
-            UpdateSpawnedPipe(go, angle, a, b);
+            pm.SetMaterial(type, color);
+            // set length
+            UpdateSpawnedPipe(go, a, b);
         }
 
         void SpawnPipeUsingSelected()
@@ -88,11 +87,13 @@ namespace VRC2
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
 
+            var prefab = PipeHelper.GetPipePrefabRef(parameters);
+
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_SendMessage(NetworkId nid, PipeConstants.PipeColor color, PipeBendAngles angle, float a,
+        private void RPC_SendMessage(NetworkId nid, PipeType type, PipeColor color, float a,
             float b,
             RpcInfo info = default)
         {
@@ -100,16 +101,16 @@ namespace VRC2
 
             if (info.IsInvokeLocal)
             {
-                message = $"RobotBendCut message ({color}, {angle}, {a}, {b})\n";
+                message = $"RobotBendCut message ({type}, {color}, {a}, {b})\n";
                 Debug.LogWarning(message);
             }
             else
             {
-                message = $"RobotBendCut received message ({color}, {angle}, {a}, {b})\n";
+                message = $"RobotBendCut received message ({type}, {color}, {a}, {b})\n";
                 Debug.LogWarning(message);
 
                 // update spawned object material
-                UpdateRemoteSpawnedPipe(nid, color, angle, a, b);
+                UpdateRemoteSpawnedPipe(nid, type, color, a, b);
             }
         }
 
@@ -153,8 +154,7 @@ namespace VRC2
                     SpawnPipeUsingSelected();
                     UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
                     // update remote object
-                    RPC_SendMessage(spawnedPipe.Id, parameters.color, parameters.angle, parameters.a,
-                        parameters.b);
+                    RPC_SendMessage(spawnedPipe.Id, parameters.type, parameters.color, parameters.a, parameters.b);
 
                     var go = spawnedPipe.gameObject;
                     PipeHelper.BeforeMove(ref go);
@@ -214,12 +214,11 @@ namespace VRC2
             PickUp();
         }
 
-        void UpdateSpawnedPipe(GameObject go, PipeBendAngles angle, float a, float b)
+        void UpdateSpawnedPipe(GameObject go, float a, float b)
         {
             // TODO: 
             var pm = go.GetComponent<PipeManipulation>();
+            pm.SetLength(a, b);
         }
-
-
     }
 }
