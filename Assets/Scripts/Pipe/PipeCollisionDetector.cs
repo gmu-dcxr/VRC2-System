@@ -61,20 +61,23 @@ namespace VRC2.Events
                 {
                     var name = GlobalConstants.ControllerVisual;
                     var objects = VRC2.Utils.FindAll(name);
+                    GameObject left = null, right = null;
                     foreach (var obj in objects)
                     {
                         var parent = obj.transform.parent.gameObject;
                         if (parent.name.StartsWith("Left"))
                         {
-                            GlobalConstants.LeftOVRControllerVisual = obj;
+                            left = obj;
                             Debug.Log("Set LeftOVRControllerVisual");
                         }
                         else if (parent.name.StartsWith("Right"))
                         {
-                            GlobalConstants.RightOVRControllerVisual = obj;
+                            right = obj;
                             Debug.Log("Set RightOVRControllerVisual");
                         }
                     }
+
+                    GlobalConstants.SetOVRControllerVisual(ref left, ref right);
                 }
             }
             catch (Exception e)
