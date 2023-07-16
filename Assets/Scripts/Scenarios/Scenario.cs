@@ -22,7 +22,8 @@ namespace VRC2.Scenarios
 
         private int startTimestamp { get; set; }
 
-        private bool started;
+        private bool started = false;
+        private bool finished = false;
 
         public System.Action OnStart;
         public System.Action OnFinish;
@@ -37,18 +38,24 @@ namespace VRC2.Scenarios
             {
                 incidents = new List<Incident>();
             }
+
             incidents.Add(incident);
         }
 
         public void Execute(int timestamp)
         {
+            print($"{this.GetType().Name}.Execute()");
             startTimestamp = timestamp;
             ready = true;
+            started = false;
+            finished = false;
         }
 
         private void Update()
         {
             if (!ready) return;
+
+            if (finished) return;
 
             var sec = Helper.SecondNow();
 
@@ -56,20 +63,28 @@ namespace VRC2.Scenarios
             {
                 if (!started)
                 {
+                    print($"{this.GetType().Name} start @ {sec}");
                     // start it
                     started = true;
                     StartIncidents();
-                    OnStart();
+                    if (OnStart != null)
+                    {
+                        OnStart();
+                    }
                 }
                 else
                 {
                     // check whether it needs to stop this scenario
                     if (sec - startTimestamp >= endInSec)
                     {
+                        print($"{this.GetType().Name} finsh @ {sec}");
                         // time to stop it
-                        started = false;
+                        finished = true;
                         ForceQuitIncidents();
-                        OnFinish();
+                        if (OnFinish != null)
+                        {
+                            OnFinish();
+                        }
                     }
                 }
             }
@@ -97,7 +112,7 @@ namespace VRC2.Scenarios
             var text = System.IO.File.ReadAllText(path);
             var deser = new DeserializerBuilder().Build();
             scenario = deser.Deserialize<YamlHelper.Scenario>(text);
-            
+
             // init _rawtime
             _rawTime = $"{scenario.start}{Helper.timeSep}{scenario.end}";
             // parse time in incidents
