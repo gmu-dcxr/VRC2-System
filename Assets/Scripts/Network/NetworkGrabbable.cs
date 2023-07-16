@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
-
 using Oculus.Interaction;
 
 namespace VRC2.Events
@@ -25,8 +24,19 @@ namespace VRC2.Events
 
         [SerializeField] private int _maxGrabPoints = -1;
 
-        [HideInInspector] public PointerEvent lastPointerEvent;
-        
+        public int MaxGrabPoints
+        {
+            get { return _maxGrabPoints; }
+            set { _maxGrabPoints = value; }
+        }
+
+        public Transform Transform => _targetTransform;
+        public List<Pose> GrabPoints => _selectingPoints;
+
+        private ITransformer _activeTransformer = null;
+        private ITransformer OneGrabTransformer;
+        private ITransformer TwoGrabTransformer;
+
         private NetworkObject _networkObject = null;
 
         private bool isSpawned
@@ -67,19 +77,6 @@ namespace VRC2.Events
                 return _networkObject.HasInputAuthority;
             }
         }
-
-        public int MaxGrabPoints
-        {
-            get { return _maxGrabPoints; }
-            set { _maxGrabPoints = value; }
-        }
-
-        public Transform Transform => _targetTransform;
-        public List<Pose> GrabPoints => _selectingPoints;
-
-        private ITransformer _activeTransformer = null;
-        private ITransformer OneGrabTransformer;
-        private ITransformer TwoGrabTransformer;
 
         protected override void Awake()
         {
@@ -122,14 +119,11 @@ namespace VRC2.Events
             this.EndStart(ref _started);
         }
 
-
         public override void ProcessPointerEvent(PointerEvent evt)
         {
-            lastPointerEvent = evt;
-            
             // if game started and spawned object but no input authority, return
-            if (gameStarted && isSpawned &&!hasInputAuthority) return;
-            
+            if (gameStarted && isSpawned && !hasInputAuthority) return;
+
             switch (evt.Type)
             {
                 case PointerEventType.Select:
@@ -140,11 +134,6 @@ namespace VRC2.Events
                     break;
                 case PointerEventType.Cancel:
                     EndTransform();
-                    break;
-                case PointerEventType.Hover:
-                    break;
-
-                case PointerEventType.Unhover:
                     break;
             }
 
