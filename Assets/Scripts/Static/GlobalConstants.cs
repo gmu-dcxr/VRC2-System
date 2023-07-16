@@ -291,6 +291,16 @@ namespace VRC2
         public static GameObject LeftOVRControllerVisual = null;
         public static GameObject RightOVRControllerVisual = null;
 
+        public static void SetOVRControllerVisual(ref GameObject left, ref GameObject right)
+        {
+            object _locker = new object();
+            lock (_locker)
+            {
+                LeftOVRControllerVisual = left;
+                RightOVRControllerVisual = right;
+            }
+        }
+
         #endregion
     }
 }
