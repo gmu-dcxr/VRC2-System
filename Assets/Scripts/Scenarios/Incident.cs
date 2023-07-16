@@ -27,6 +27,7 @@ namespace VRC2.Scenarios
         public System.Action OnFinish;
 
         private bool started = false;
+        private bool finished = false;
 
         private bool ready = false;
 
@@ -59,19 +60,22 @@ namespace VRC2.Scenarios
             _warning = warning;
             _rawTime = time;
             Helper.ParseTime(time, ref startInSec, ref endInSec);
-
-            _timer = new Timer();
         }
 
         public void Execute(int timestamp)
         {
+            print($"{this.GetType().Name}.Execute()");
             startTimestamp = timestamp;
             ready = true;
+            started = false;
+            finished = false;
         }
 
         private void Update()
         {
             if (!ready) return;
+
+            if (finished) return;
 
             var sec = Helper.SecondNow();
 
@@ -79,18 +83,26 @@ namespace VRC2.Scenarios
             {
                 if (!started)
                 {
+                    print($"{this.GetType().Name} - {_desc} start @ {sec}");
                     // start it
                     started = true;
-                    OnStart();
+                    if (OnStart != null)
+                    {
+                        OnStart();
+                    }
                 }
-                else
+                else if(endInSec != -1)
                 {
                     // check whether it needs to stop
                     if (sec - startTimestamp >= endInSec)
                     {
+                        print($"{this.GetType().Name} - {_desc} finish @ {sec}");
                         // time to stop it
-                        started = false;
-                        OnFinish();
+                        finished = true;
+                        if (OnFinish != null)
+                        {
+                            OnFinish();
+                        }
                     }
                 }
             }
@@ -98,7 +110,7 @@ namespace VRC2.Scenarios
 
         public void ForceQuit()
         {
-            started = false;
+            finished = true;
         }
     }
 }
