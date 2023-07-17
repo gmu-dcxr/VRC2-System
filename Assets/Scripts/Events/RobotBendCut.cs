@@ -48,8 +48,8 @@ namespace VRC2
 
             // set material
             pm.SetMaterial(parameters);
-            // edit mesh
-            UpdateSpawnedPipe(go, parameters.a, parameters.b);
+            // set length
+            pm.SetLength(parameters.a, parameters.b);
         }
 
         // update spawned pipe since it might be different from the prefab
@@ -65,7 +65,7 @@ namespace VRC2
             // set material
             pm.SetMaterial(type, color);
             // set length
-            UpdateSpawnedPipe(go, a, b);
+            pm.SetLength(a, b);
         }
 
         void SpawnPipeUsingSelected()
@@ -212,13 +212,6 @@ namespace VRC2
         public void Execute()
         {
             PickUp();
-        }
-
-        void UpdateSpawnedPipe(GameObject go, float a, float b)
-        {
-            // TODO: 
-            var pm = go.GetComponent<PipeManipulation>();
-            pm.SetLength(a, b);
         }
     }
 }
