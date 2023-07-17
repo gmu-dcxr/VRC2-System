@@ -10,10 +10,10 @@ namespace VRC2
 {
     public class DistanceMeasurer : MonoBehaviour
     {
-        [Header("Controller RayInteractors")] [SerializeField]
-        private RayInteractor left;
+        [Header("Oculus Cursor")] [SerializeField]
+        private GameObject left;
 
-        [SerializeField] private RayInteractor right;
+        [SerializeField] private GameObject right;
 
         [Header("Quad")] [SerializeField] private GameObject quad;
 
@@ -87,19 +87,19 @@ namespace VRC2
 
         (float, float, float) GetTouchPointsDistances()
         {
-            Vector3 leftValue;
-            var left = GetTouchPoint(this.left, out leftValue);
+            Vector3 leftValue = left.transform.position;
+            // var left = GetTouchPoint(this.left, out leftValue);
 
-            Vector3 rightValue;
-            var right = GetTouchPoint(this.right, out rightValue);
+            Vector3 rightValue = right.transform.position;
+            // var right = GetTouchPoint(this.right, out rightValue);
 
             float h = -1, v = -1, d = -1;
 
             if (left && right)
             {
-                h = Math.Abs(leftValue.x - rightValue.x);
-                v = Math.Abs(leftValue.y = rightValue.y);
-                d = Vector3.Distance(leftValue, rightValue);
+                h = Math.Abs(leftValue.z - rightValue.z);
+                v = Math.Abs(leftValue.y - rightValue.y);
+                d = (float)Math.Sqrt(h * h + v * v);
             }
 
             return (h, v, d);
