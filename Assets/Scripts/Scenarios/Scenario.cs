@@ -8,6 +8,12 @@ using YamlDotNet.Serialization;
 
 namespace VRC2.Scenarios
 {
+    public enum ScenarioCallback
+    {
+        Start = 1,
+        Finish = 2,
+    }
+
     public class Scenario : MonoBehaviour
     {
         public List<Incident> incidents = null;
@@ -25,12 +31,27 @@ namespace VRC2.Scenarios
         private bool started = false;
         private bool finished = false;
 
-        public System.Action OnStart;
-        public System.Action OnFinish;
+        public System.Action ScenarioStart;
+        public System.Action ScenarioFinish;
+
+        public System.Action<int> IncidentStart;
+        public System.Action<int> IncidentFinish;
+
+        private string _clsName = "";
+
+        public string ClsName
+        {
+            get => _clsName;
+        }
 
         private bool ready = false;
 
         [HideInInspector] public YamlHelper.Scenario scenario;
+
+        public void Start()
+        {
+            _clsName = this.GetType().Name;
+        }
 
         public void AddIncident(Incident incident)
         {
@@ -44,7 +65,7 @@ namespace VRC2.Scenarios
 
         public void Execute(int timestamp)
         {
-            print($"{this.GetType().Name}.Execute()");
+            print($"{ClsName}.Execute()");
             startTimestamp = timestamp;
             ready = true;
             started = false;
@@ -65,13 +86,13 @@ namespace VRC2.Scenarios
             {
                 if (!started)
                 {
-                    print($"{this.GetType().Name} start @ {localts}");
+                    print($"Scenario {_name} Start @ {localts}");
                     // start it
                     started = true;
                     StartIncidents();
-                    if (OnStart != null)
+                    if (ScenarioStart != null)
                     {
-                        OnStart();
+                        ScenarioStart();
                     }
                 }
                 else
@@ -79,13 +100,13 @@ namespace VRC2.Scenarios
                     // check whether it needs to stop this scenario
                     if (localts >= endInSec)
                     {
-                        print($"{this.GetType().Name} finsh @ {localts}");
+                        print($"Scenario {_name} Finish @ {localts}");
                         // time to stop it
                         finished = true;
                         ForceQuitIncidents();
-                        if (OnFinish != null)
+                        if (ScenarioFinish != null)
                         {
-                            OnFinish();
+                            ScenarioFinish();
                         }
                     }
                 }
@@ -126,8 +147,58 @@ namespace VRC2.Scenarios
             {
                 Incident incident = gameObject.AddComponent<Incident>();
                 incident.InitIncident(_name, icd.id, icd.time, icd.incident, icd.warning);
+                // bind actions
+                incident.OnStart += OnIncidentStart;
+                incident.OnFinish += OnIncidentFinish;
                 AddIncident(incident);
             }
+        }
+
+        private void OnIncidentFinish(int obj)
+        {
+            print($"{_name} #{obj} OnIncidentFinish");
+            if (IncidentFinish != null)
+            {
+                IncidentFinish(obj);
+            }
+        }
+
+        private void OnIncidentStart(int obj)
+        {
+            print($"{_name} #{obj} OnIncidentStart");
+            if (IncidentStart != null)
+            {
+                IncidentStart(obj);
+            }
+        }
+
+        public void CheckIncidentsCallbacks()
+        {
+            bool pass = true;
+
+            var @namespace = "VRC2.Scenarios.ScenarioFactory";
+            var myClassType = Type.GetType($"{@namespace}.{ClsName}");
+
+            foreach (var incident in incidents)
+            {
+                var _id = incident.ID;
+                var name1 = Helper.GetIncidentCallbackName(ClsName, _id, ScenarioCallback.Start);
+                var name2 = Helper.GetIncidentCallbackName(ClsName, _id, ScenarioCallback.Finish);
+
+                if (myClassType.GetMethod(name1) == null)
+                {
+                    pass = false;
+                    Debug.LogError($"[{ClsName}] missing method: {name1}");
+                }
+
+                if (myClassType.GetMethod(name2) == null)
+                {
+                    pass = false;
+                    Debug.LogError($"[{ClsName}] missing method: {name2}");
+                }
+            }
+
+            Debug.LogWarning($"{ClsName} Check Incidents Callbacks Result: {pass}");
         }
     }
 }
