@@ -31,7 +31,7 @@ namespace VRC2
 
         [Header("Pipe Settings")]
         // current color
-        public PipeConstants.PipeColor pipeColor = PipeConstants.PipeColor.Green;
+        public PipeColor pipeColor = PipeColor.Green;
 
         public PipeType pipeType = PipeType.Sewage;
         public PipeBendAngles angle = PipeBendAngles.Angle_0;
