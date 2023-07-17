@@ -16,7 +16,7 @@ namespace VRC2.Scenarios
 
     public class Scenario : MonoBehaviour
     {
-        public List<Incident> incidents = null;
+        [HideInInspector]public List<Incident> incidents = null;
 
         private int startInSec;
         private int endInSec;
@@ -63,6 +63,18 @@ namespace VRC2.Scenarios
             incidents.Add(incident);
         }
 
+        public Incident GetIncident(int idx)
+        {
+            if (incidents == null || idx >= incidents.Count) return null;
+
+            foreach (var incident in incidents)
+            {
+                if (incident.ID == idx) return incident;
+            }
+
+            return null;
+        }
+
         public void Execute(int timestamp)
         {
             print($"{ClsName}.Execute()");
@@ -72,7 +84,7 @@ namespace VRC2.Scenarios
             finished = false;
         }
 
-        private void Update()
+        void FixedUpdate()
         {
             if (!ready) return;
 
