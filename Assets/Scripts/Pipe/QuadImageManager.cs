@@ -29,6 +29,7 @@ namespace VRC2
         void SetImageAsTexture()
         {
             var name = $"{folder}/{filename}";
+            print($"set image texture: {name}");
             _texture = Resources.Load<Texture2D>(name);
             _texture.alphaIsTransparency = true;
             Debug.Log(_texture.dimension);
