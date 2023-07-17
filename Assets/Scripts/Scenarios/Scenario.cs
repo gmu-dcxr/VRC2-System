@@ -59,11 +59,13 @@ namespace VRC2.Scenarios
 
             var sec = Helper.SecondNow();
 
-            if (sec - startTimestamp >= startInSec)
+            var localts = sec - startTimestamp;
+
+            if (localts >= startInSec)
             {
                 if (!started)
                 {
-                    print($"{this.GetType().Name} start @ {sec}");
+                    print($"{this.GetType().Name} start @ {localts}");
                     // start it
                     started = true;
                     StartIncidents();
@@ -75,9 +77,9 @@ namespace VRC2.Scenarios
                 else
                 {
                     // check whether it needs to stop this scenario
-                    if (sec - startTimestamp >= endInSec)
+                    if (localts >= endInSec)
                     {
-                        print($"{this.GetType().Name} finsh @ {sec}");
+                        print($"{this.GetType().Name} finsh @ {localts}");
                         // time to stop it
                         finished = true;
                         ForceQuitIncidents();
@@ -113,6 +115,8 @@ namespace VRC2.Scenarios
             var deser = new DeserializerBuilder().Build();
             scenario = deser.Deserialize<YamlHelper.Scenario>(text);
 
+            _name = scenario.name;
+
             // init _rawtime
             _rawTime = $"{scenario.start}{Helper.timeSep}{scenario.end}";
             // parse time in incidents
@@ -121,7 +125,7 @@ namespace VRC2.Scenarios
             foreach (var icd in scenario.incidents)
             {
                 Incident incident = gameObject.AddComponent<Incident>();
-                incident.InitIncident(icd.incident, icd.warning, icd.time);
+                incident.InitIncident(_name, icd.id, icd.time, icd.incident, icd.warning);
                 AddIncident(incident);
             }
         }

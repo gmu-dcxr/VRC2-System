@@ -6,6 +6,7 @@ namespace VRC2.Scenarios
     {
         public class Incident
         {
+            public int id { get; set; }
             public string time { get; set; }
             public string incident { get; set; }
             public string warning { get; set; }

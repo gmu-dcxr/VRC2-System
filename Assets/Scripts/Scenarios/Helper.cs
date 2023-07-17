@@ -10,6 +10,7 @@ namespace VRC2.Scenarios
 
         public static string GetConfigureFile(string root, string name)
         {
+            // var dir = Directory.CreateDirectory(Path.Combine(root, "../Conf")).FullName;
             return Path.Combine(root, $"./Conf/{name}");
         }
 
