@@ -65,7 +65,7 @@ namespace VRC2
             _meshColliderB = segmentB.GetComponent<MeshCollider>();
 
             // set length
-            SetLength(segmentALength, segmentBLength);
+            // SetLength(segmentALength, segmentBLength);
 
             // set materials
             SetMaterial();

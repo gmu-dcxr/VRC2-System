@@ -11,7 +11,6 @@ namespace VRC2.Agent
         {
             if (!agent.pathPending)
             {
-                Debug.Log(agent.remainingDistance);
                 if (agent.remainingDistance <= agent.stoppingDistance)
                 {
                     if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
