@@ -1,0 +1,33 @@
+﻿name: "BaselineS5"
+desc: "Baseline for scenario 5"
+start: "0:00"
+end: "07:00"
+incidents:
+  - id: 1
+    time: "0:00~6:00"
+    incident: "Participants work on the installment."
+    warning: ""
+  - id: 2
+    time: "0:30"
+    incident: "A crane truck loaded with windows parks next to the working zone, and is going to unload the windows next to participants."
+    warning: "Warning: A crane truck is unloading goods next to you."
+  - id: 3
+    time: "2:00"
+    incident: "The unload finishes and the crane truck leaves."
+    warning: ""
+  - id: 4
+    time: "3:00"
+    incident: "Another crane truck loaded with heavier windows parks and is going to unload the windows. This time the crane tilts a little bit."
+    warning: "Warning: A crane truck is unloading goods next to you."
+  - id: 5
+    time: "4:30"
+    incident: "The unload finishes and the crane truck leaves."
+    warning: ""
+  - id: 6
+    time: "5:30"
+    incident: "Another crane truck loaded with even heavier windows parks and is going to unload the windows. This time the crane is about to overturn."
+    warning: "Warning: A crane truck is unloading goods next to you."
+  - id: 7
+    time: "6:00~7:00"
+    incident: "SAGAT query"
+    warning: ""
