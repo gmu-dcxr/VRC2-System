@@ -231,7 +231,7 @@ namespace VRC2
                 CustomLobbyName = "VRC2",
                 Scene = SceneManager.GetActiveScene().buildIndex,
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-                PlayerCount = 2,
+                // PlayerCount = 2,
                 DisableClientSessionCreation = true
             });
 
