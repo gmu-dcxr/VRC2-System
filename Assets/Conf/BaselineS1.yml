@@ -3,30 +3,39 @@ desc: "Base line for scenario 1"
 start: "0:00"
 end: "06:30"
 incidents:
-  - time: "0:00~5:30"
+  - id: 1
+    time: "0:00~5:30"
     incident: "Participants work on the installment."
     warning: ""
-  - time: "0:30"
+  - id: 2
+    time: "0:30"
     incident: "A load is passing overhead."
     warning: "Warning: A load is approaching overhead, please avoid working beneath the load"
-  - time: "1:30"
+  - id: 3
+    time: "1:30"
     incident: "A hook (without a load) is passing overhead in the opposite direction."
     warning: ""
-  - time: "2:30"
+  - id: 4
+    time: "2:30"
     incident: "A load with an unpacked pipe is passing overhead."
     warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling."
-  - time: "3:30"
+  - id: 5
+    time: "3:30"
     incident: "A hook (without a load) is passing overhead in the opposite direction."
     warning: ""
-  - time: "4:30"
+  - id: 6
+    time: "4:30"
     incident: "A load with an unpacked pipe is passing overhead."
     warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling."
-  - time: "4:40"
+  - id: 7
+    time: "4:40"
     incident: "The unpacked pipe drops next to the participants. And the load is still passing overhead."
     warning: "4:40"
-  - time: "5:30"
+  - id: 8
+    time: "5:30"
     incident: "A load with an unpacked pipe is passing overhead."
     warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling."
-  - time: "5:30~6:30"
+  - id: 9
+    time: "5:30~6:30"
     incident: "SAGAT query"
     warning: ""

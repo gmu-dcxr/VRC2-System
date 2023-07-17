@@ -7,6 +7,8 @@ namespace VRC2.Scenarios
 {
     public class Incident : MonoBehaviour
     {
+        private string _scenario;
+        private int _id;
         private string _desc;
         private string _warning;
         private string _rawTime;
@@ -33,6 +35,15 @@ namespace VRC2.Scenarios
 
         private Timer _timer;
 
+        public string Scenario
+        {
+            get => _scenario;
+        }
+        public int ID
+        {
+            get => _id;
+        }
+
         public string Desc
         {
             get => _desc;
@@ -54,8 +65,10 @@ namespace VRC2.Scenarios
         }
 
 
-        public void InitIncident(string desc, string warning, string time)
+        public void InitIncident(string scenario, int idx, string time, string desc, string warning)
         {
+            _scenario = scenario;
+            _id = idx;
             _desc = desc;
             _warning = warning;
             _rawTime = time;
@@ -64,7 +77,7 @@ namespace VRC2.Scenarios
 
         public void Execute(int timestamp)
         {
-            print($"{this.GetType().Name}.Execute()");
+            print($"{Scenario} - Incident #{_id} - Execute()");
             startTimestamp = timestamp;
             ready = true;
             started = false;
@@ -79,11 +92,13 @@ namespace VRC2.Scenarios
 
             var sec = Helper.SecondNow();
 
-            if (sec - startTimestamp >= startInSec)
+            var localts = sec - startTimestamp;
+
+            if (localts >= startInSec)
             {
                 if (!started)
                 {
-                    print($"{this.GetType().Name} - {_desc} start @ {sec}");
+                    print($"{Scenario} - Incident #{_id} - Start @ {localts}");
                     // start it
                     started = true;
                     if (OnStart != null)
@@ -94,9 +109,9 @@ namespace VRC2.Scenarios
                 else if(endInSec != -1)
                 {
                     // check whether it needs to stop
-                    if (sec - startTimestamp >= endInSec)
+                    if (localts >= endInSec)
                     {
-                        print($"{this.GetType().Name} - {_desc} finish @ {sec}");
+                        print($"{Scenario} - Incident #{_id} - Finish @ {localts}");
                         // time to stop it
                         finished = true;
                         if (OnFinish != null)
