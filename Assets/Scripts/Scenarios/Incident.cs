@@ -84,7 +84,7 @@ namespace VRC2.Scenarios
             finished = false;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (!ready) return;
 
