@@ -25,8 +25,8 @@ namespace VRC2.Scenarios
             get;
         }
 
-        public System.Action OnStart;
-        public System.Action OnFinish;
+        public System.Action<int> OnStart;
+        public System.Action<int> OnFinish;
 
         private bool started = false;
         private bool finished = false;
@@ -103,7 +103,7 @@ namespace VRC2.Scenarios
                     started = true;
                     if (OnStart != null)
                     {
-                        OnStart();
+                        OnStart(_id);
                     }
                 }
                 else if(endInSec != -1)
@@ -116,7 +116,7 @@ namespace VRC2.Scenarios
                         finished = true;
                         if (OnFinish != null)
                         {
-                            OnFinish();
+                            OnFinish(_id);
                         }
                     }
                 }
