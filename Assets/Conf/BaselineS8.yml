@@ -1,0 +1,23 @@
+﻿name: "BaselineS8"
+desc: "Baseline for scenario 8"
+start: "0:00"
+end: "06:00"
+incidents:
+  - id: 1
+    time: "0:00~5:00"
+    incident: "Participants work on the installment."
+    warning: ""
+  - id: 2
+    time: "0:30"
+    incident: "A truck backs up to carry the mud and leaves, and the water leaks along the path the truck goes. Repeat this multiple times, so the water stain on the ground grows bigger and it is approaching the wire on the ground."
+    warning: ""
+  # need special design for incident 3
+  # N: the time a participant is going to take the pipe from the storage place, Estimate 4 crossings in 5 min.
+  - id: 3
+    time: "0:00"
+    incident: "Repeat every time when participants are passing the road."
+    warning: "Electrical struck warning: please be aware of the water stain when crossing the road."
+  - id: 4
+    time: "5:00~6:00"
+    incident: "SAGAT query"
+    warning: ""
