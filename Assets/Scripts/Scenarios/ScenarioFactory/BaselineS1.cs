@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -24,11 +25,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         private float randomYawIncrease;
 
         private GameObject crane;
+        private GameObject pipeDolly;
 
         [Header("Player")] public GameObject player;
 
 
         private bool triggered = false;
+        private bool backwardsTriggered = false;
 
         private void Start()
         {
@@ -47,6 +50,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             randomYawIncrease = Random.Range(1, 10);
             // make it rotate at the start
             triggered = true;
+
+            //Find pipeDolly Object
+            pipeDolly = GameObject.Find("Pipes");
         }
         
         private void Update()
@@ -54,6 +60,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             if (triggered)
             {
                 yaw += Time.deltaTime * randomYawIncrease;
+                UpdateAnimator(yaw, dolly, hook);
+            }
+
+            if (backwardsTriggered)
+            {
+                yaw += Time.deltaTime * -randomYawIncrease;
                 UpdateAnimator(yaw, dolly, hook);
             }
         }
@@ -147,7 +159,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS1_1_Start()
         {
-
+            triggered = false;
         }
 
         public void On_BaselineS1_1_Finish()
@@ -163,6 +175,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
+            pipe.SetActive(false);
 
             // get yaw
             yaw = CalculateRawBetweenCranePlayer(crane, player);
@@ -172,6 +185,126 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS1_2_Finish()
         {
             // A load is passing overhead.
+        }
+
+        public void On_BaselineS1_3_Start()
+        {
+            print("On_BaselineS1_3_Start");
+            // A hook (without a load) is passing overhead in the opposite direction.
+            // get incident
+            var incident = GetIncident(3);
+
+            pipeDolly.SetActive(false);
+            triggered = false;
+            backwardsTriggered = true;
+        }
+
+        public void On_BaselineS1_3_Finish()
+        {
+            // A hook (without a load) is passing overhead in the opposite direction.
+        }
+
+        public void On_BaselineS1_4_Start()
+        {
+            print("On_BaselineS1_4_Start");
+            // A load with an unpacked pipe is passing overhead.
+            // get incident
+            var incident = GetIncident(4);
+            var warning = incident.Warning;
+            print(warning);
+
+            pipeDolly.SetActive(true);
+            pipe.SetActive(true);
+            backwardsTriggered = false;
+            triggered = true;
+        }
+
+        public void On_BaselineS1_4_Finish()
+        {
+            // A load with an unpacked pipe is passing overhead.
+        }
+
+        public void On_BaselineS1_5_Start()
+        {
+            print("On_BaselineS1_5_Start");
+            // A hook (without a load) is passing overhead in the opposite direction.
+            // get incident
+            var incident = GetIncident(5);
+
+            pipeDolly.SetActive(false);
+            backwardsTriggered = true;
+            triggered = false;
+        }
+
+        public void On_BaselineS1_5_Finish()
+        {
+            // A hook (without a load) is passing overhead in the opposite direction.
+        }
+
+        public void On_BaselineS1_6_Start()
+        {
+            print("On_BaselineS1_6_Start");
+            // A load with an unpacked pipe is passing overhead.
+            // get incident
+            var incident = GetIncident(6);
+            var warning = incident.Warning;
+            print(warning);
+
+            pipeDolly.SetActive(true);
+            backwardsTriggered = false;
+            triggered = true;
+        }
+
+        public void On_BaselineS1_6_Finish()
+        {
+            // A load with an unpacked pipe is passing overhead.
+        }
+
+        public void On_BaselineS1_7_Start()
+        {
+            print("On_BaselineS1_7_Start");
+            // The unpacked pipe drops next to the participants. And the load is still passing overhead.
+            // get incident
+            var incident = GetIncident(7);
+
+            pipe.transform.parent = null;
+            pipe.transform.position = GameObject.Find("Player").GetComponent<Transform>().position + new Vector3(-6, 0, -4);
+        }
+
+        public void On_BaselineS1_7_Finish()
+        {
+            // The unpacked pipe drops next to the participants. And the load is still passing overhead.
+        }
+
+        public void On_BaselineS1_8_Start()
+        {
+            print("On_BaselineS1_8_Start");
+            // A load with an unpacked pipe is passing overhead.
+            // get incident
+            var incident = GetIncident(8);
+
+            pipe.transform.parent = pipeDolly.transform;
+            pipe.transform.position = pipeDolly.transform.position + new Vector3(0, 0.94f, 0);
+            pipe.transform.rotation = pipeDolly.transform.rotation;
+            var warning = incident.Warning;
+            print(warning);
+        }
+
+        public void On_BaselineS1_8_Finish()
+        {
+            // A load with an unpacked pipe is passing overhead.
+        }
+
+        public void On_BaselineS1_9_Start()
+        {
+            print("On_BaselineS1_9_Start");
+            // SAGAT query
+        }
+
+        public void On_BaselineS1_9_Finish()
+        {
+            // SAGAT query
+            triggered = false;
         }
 
         #endregion
