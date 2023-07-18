@@ -37,11 +37,9 @@ namespace VRC2.Scenarios
         public System.Action<int> IncidentStart;
         public System.Action<int> IncidentFinish;
 
-        private string _clsName = "";
-
         public string ClsName
         {
-            get => _clsName;
+            get => GetType().Name;
         }
 
         private bool ready = false;
@@ -50,7 +48,6 @@ namespace VRC2.Scenarios
 
         public void Start()
         {
-            _clsName = this.GetType().Name;
         }
 
         public void AddIncident(Incident incident)
