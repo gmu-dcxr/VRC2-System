@@ -12,7 +12,9 @@ public class GlueHintManager : MonoBehaviour
     [HideInInspector]
     public bool glued
     {
-        get => hint.activeSelf;
+        // get => hint.activeSelf;
+        // TODO: always return true for debug purpose.
+        get => true;
     }
 
     // Start is called before the first frame update
