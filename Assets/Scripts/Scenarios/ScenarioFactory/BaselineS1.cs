@@ -35,8 +35,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            base.Start();
-
             InitFromFile(filename);
 
             IncidentStart += OnIncidentStart;
@@ -54,7 +52,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             //Find pipeDolly Object
             pipeDolly = GameObject.Find("Pipes");
         }
-        
+
         private void Update()
         {
             if (triggered)
