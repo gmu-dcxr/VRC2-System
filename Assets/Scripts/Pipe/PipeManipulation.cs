@@ -65,7 +65,7 @@ namespace VRC2
             _meshColliderB = segmentB.GetComponent<MeshCollider>();
 
             // set length
-            // SetLength(segmentALength, segmentBLength);
+            SetLength(segmentALength, segmentBLength);
 
             // set materials
             SetMaterial();
@@ -138,6 +138,10 @@ namespace VRC2
 
         public void SetLength(float a, float b)
         {
+            // update 
+            segmentALength = a;
+            segmentBLength = b;
+            
             // calculate the x-scale factor for the object
             var fa = a / defaultSegmentLengthInFeet;
             var fb = b / defaultSegmentLengthInFeet;
