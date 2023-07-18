@@ -45,6 +45,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             crane = animator.gameObject;
             randomYawIncrease = Random.Range(1, 10);
+            // make it rotate at the start
+            triggered = true;
         }
         
         private void Update()
