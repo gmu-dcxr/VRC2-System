@@ -37,6 +37,7 @@ namespace VRC2.Pipe
 
             // update detection method
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            rb.useGravity = true;
 
             // enable interactable ability
             var reticle = interactablePipe.GetComponentInChildren<ReticleDataIcon>(true);

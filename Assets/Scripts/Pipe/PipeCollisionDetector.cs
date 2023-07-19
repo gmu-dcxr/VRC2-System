@@ -326,6 +326,10 @@ namespace VRC2.Events
             // update parent
             oip.transform.parent = parentObject.transform;
             cipRoot.transform.parent = parentObject.transform;
+            
+            // fix local rotation
+            // oip.transform.localRotation = Quaternion.identity;
+            cipRoot.transform.localRotation = op.transform.localRotation;
 
             // set parent to attach the the left-hand controller
             parentObject.GetComponent<PipesContainerManager>()
