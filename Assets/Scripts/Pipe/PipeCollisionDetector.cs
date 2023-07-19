@@ -203,6 +203,7 @@ namespace VRC2.Events
         bool RightHandHoldRightPipe(GameObject otherpipe)
         {
             if (otherpipe.name.Contains("straight")) return false;
+            if (otherpipe.name.Contains("90")) return true;
             
             // current interactable pipe
             // only move the pipe held by the right hand to right
@@ -284,94 +285,37 @@ namespace VRC2.Events
             
             cipRoot.transform.rotation = Quaternion.identity;
 
-            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
-
-            print(cc.ToString("f5"));
-
-            var obj = new GameObject();
-            obj.transform.position = cc;
-            
-            var up = gameObject.transform.up;
-            var forward = Vector3.Cross(cr, up);
-            obj.transform.rotation = Quaternion.LookRotation(forward, up);
-
-            var parentRelPos = otherpipe.transform.InverseTransformPoint(otherpipe.transform.parent.position);
-
-            var localPos = otherpipe.transform.localPosition;
-            var localRot = otherpipe.transform.localRotation;
-            
-            otherpipe.transform.position = cc;
-            otherpipe.transform.rotation = obj.transform.rotation;
-            
-            //  ts
+            var cx = PipeHelper.GetExtendsX(gameObject);
+            var ox = PipeHelper.GetExtendsX(otherpipe);
             
             var (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
-            //
-            var translate = cc - oc;
-            translate.y = 0;
-            translate.z = 0;
-            print(translate.ToString("f5"));
-            otherpipe.transform.Translate(translate);
+
+            var obj = new GameObject();
+            var up = otherpipe.transform.up;
+            var forward = Vector3.Cross(or, up);
             
-            (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
+            obj.transform.position = oc;
+            obj.transform.rotation = Quaternion.LookRotation(forward, up);
             
-            print(oc.ToString("f5"));
-            print(cc.ToString("f5"));
+            obj.transform.Translate(cx, 0,0);
+
+            var pos = obj.transform.position; // the pivot where the left pipe should be
+            var rot = obj.transform.rotation;
+
+            var obj2 = new GameObject();
+            obj2.transform.position = gameObject.transform.position;
+            obj2.transform.rotation = gameObject.transform.rotation;
             
-            // finetune y
-            var pos = otherpipe.transform.position;
-            pos.y = cc.y;
-            pos.z = cc.z;
-            otherpipe.transform.position = pos;
-
-
-            //
-            // update parent pos
-            otherpipe.transform.parent.position = otherpipe.transform.TransformPoint(parentRelPos);
-            // restore local pos
-            otherpipe.transform.localPosition = localPos;
-            otherpipe.transform.localRotation = localRot;
+            var parentPos = obj2.transform.InverseTransformPoint(cipRoot.transform.position);
+            obj2.transform.position = pos;
+            // gameObject.transform.rotation = rot;
             
-            // (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
-            // //
-            // // print(oc.ToString("f5"));
-            // // print(cc.ToString("f5"));
-            // // // translate a bit
-
-
-
-
-
-
-            // move cc to oc 
+            var newPos = obj2.transform.TransformPoint(parentPos);
             
-
-            // // get extends, distance in world space
-            // var cid = PipeHelper.GetExtendsX(gameObject);
-            // var oid = PipeHelper.GetExtendsX(otherpipe);
-            //
-            // print(cid);
-            // print(oid);
-            //
-            // var offset = Vector3.zero;
-            // offset.x = -(cid + oid);
-            //
-            // // only move the left pipe
-            // // var pos = op.InverseTransformPoint(oid, 0, 0);
-            // // op.transform.Translate(new Vector3(oid, 0, 0), Space.World);
-            //
-            // // make a dummy object to calculate the target position
-            // var dummy = new GameObject();
-            // dummy.transform.parent = op.transform.parent;
-            //
-            // dummy.transform.localPosition = op.transform.localPosition;
-            // dummy.transform.localRotation = op.transform.localRotation;
-            // dummy.transform.localScale = op.transform.localScale;
-            //
-            // dummy.transform.Translate(offset, Space.World);
-            // var targetPos = dummy.transform.position;
-            //
-            // gameObject.transform.position = targetPos;
+            GameObject.Destroy(obj);
+            GameObject.Destroy(obj2);
+            
+            cipRoot.transform.position = newPos;
 
 
             //
