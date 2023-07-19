@@ -16,9 +16,7 @@ namespace VRC2.Events
         private Object pipeParent;
 
         private bool connected = false;
-
-        private GameObject parentObject;
-
+        
         private GlueHintManager _glueHintManager;
 
         private GlueHintManager hintManager
@@ -202,9 +200,8 @@ namespace VRC2.Events
 
         bool RightHandHoldRightPipe(GameObject otherpipe)
         {
-            if (otherpipe.name.Contains("straight")) return false;
-            if (otherpipe.name.Contains("90")) return true;
-            
+            // if (otherpipe.name.Contains("straight")) return false;
+
             // current interactable pipe
             // only move the pipe held by the right hand to right
             var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
@@ -282,22 +279,22 @@ namespace VRC2.Events
             // disable interactions
             DisableInteraction(cipRoot.gameObject);
             DisableInteraction(oip.gameObject);
-            
+
             cipRoot.transform.rotation = Quaternion.identity;
 
             var cx = PipeHelper.GetExtendsX(gameObject);
             var ox = PipeHelper.GetExtendsX(otherpipe);
-            
+
             var (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
 
             var obj = new GameObject();
             var up = otherpipe.transform.up;
             var forward = Vector3.Cross(or, up);
-            
+
             obj.transform.position = oc;
             obj.transform.rotation = Quaternion.LookRotation(forward, up);
-            
-            obj.transform.Translate(cx, 0,0);
+
+            obj.transform.Translate(cx, 0, 0);
 
             var pos = obj.transform.position; // the pivot where the left pipe should be
             var rot = obj.transform.rotation;
@@ -305,78 +302,34 @@ namespace VRC2.Events
             var obj2 = new GameObject();
             obj2.transform.position = gameObject.transform.position;
             obj2.transform.rotation = gameObject.transform.rotation;
-            
+
             var parentPos = obj2.transform.InverseTransformPoint(cipRoot.transform.position);
             obj2.transform.position = pos;
             // gameObject.transform.rotation = rot;
-            
+
             var newPos = obj2.transform.TransformPoint(parentPos);
-            
+
             GameObject.Destroy(obj);
             GameObject.Destroy(obj2);
-            
+
             cipRoot.transform.position = newPos;
 
 
-            //
             // initialize parent at the current pipe position and left controller's height
-            // var pos = cipRoot.transform.position;
+            pos = oip.transform.position;
+            rot = oip.transform.rotation;
             // pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
-            
-            // // var rot = cipRoot.transform.rotation;
-            // parentObject = new GameObject();
-            //
-            // op.parent = parentObject.transform;
-            // gameObject.transform.parent = parentObject.transform;
-            // op.localRotation = Quaternion.identity;
-            // op.localPosition = Vector3.zero;
-            //
-            // // offset.x = -oid;
-            //
-            // gameObject.transform.localPosition = offset;
-            // // gameObject.transform.localRotation = Quaternion.identity;
-            
-            
-            
-            // // set parent
-            // cipRoot.transform.parent = parentObject.transform;
-            // // oip.transform.position = targetPos;
-            // // oip.transform.rotation = cip.transform.rotation;
-            // oip.transform.parent = parentObject.transform;
-            //
-            // // update local position
-            // var localCip = cipRoot.transform.localPosition;
-            // var localOip = oip.transform.localPosition;
-            //
-            // localCip.x = -(cid + oid); // move it to left 
-            // localCip.y = 0;
-            // localCip.z = 0;
-            //
-            // localOip.x = 0;
-            // localOip.y = 0;
-            // localOip.z = 0;
-            //
-            // cipRoot.transform.localPosition = localCip;
-            // oip.transform.localPosition = localOip;
-            //
-            // print(cipRoot.transform.position.ToString("f5"));
-            //
-            // // calculate it
-            // var mp = op.TransformPoint(localCip.x, 0,0); // this is the cip world position relative to the op
-            // print(mp.ToString("f5"));
-            // // calculate it to oip space
-            // mp = parentObject.transform.InverseTransformPoint(mp);
-            // print(mp.ToString("f5"));
-            //
-            //
-            // // fix local rotation
-            // rot = Quaternion.Euler(0, 0, 0);
-            // cipRoot.transform.localRotation = rot;
-            // oip.transform.localRotation = rot;
+
+            // initialize a parent object
+            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+
+            // update parent
+            oip.transform.parent = parentObject.transform;
+            cipRoot.transform.parent = parentObject.transform;
 
             // set parent to attach the the left-hand controller
-            // parentObject.GetComponent<PipesContainerManager>()
-            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            parentObject.GetComponent<PipesContainerManager>()
+                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
