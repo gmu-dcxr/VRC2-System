@@ -18385,8 +18385,6 @@ GameObject:
   - component: {fileID: 748493073}
   - component: {fileID: 748493072}
   - component: {fileID: 748493071}
-  - component: {fileID: 748493070}
-  - component: {fileID: 748493069}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Menu
@@ -18406,42 +18404,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7727e114132c7b042a209119fd879db5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &748493069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 748493067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3820524c0adf48f2a346eda91ff6ac04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  experimenter: {fileID: 0}
-  experimenterBase: {fileID: 0}
-  clampbox: {fileID: 0}
-  amount: 1
-  clampsTemplate: []
-  animationString: Walking
---- !u!114 &748493070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 748493067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f86be7c932514a0c88a1d8e520cdd880, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  experimenter: {fileID: 0}
-  experimenterBase: {fileID: 0}
-  gluebox: {fileID: 0}
-  animationString: Walking
 --- !u!114 &748493071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18590,8 +18552,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _spawned:
-    _value: 0
 --- !u!114 &748493082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18638,8 +18598,6 @@ MonoBehaviour:
   - {fileID: 748493074}
   - {fileID: 748493072}
   - {fileID: 748493071}
-  - {fileID: 748493070}
-  - {fileID: 748493069}
   SimulationBehaviours: []
 --- !u!114 &748493084
 MonoBehaviour:
