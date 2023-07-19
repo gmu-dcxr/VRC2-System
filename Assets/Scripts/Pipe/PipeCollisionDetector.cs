@@ -221,6 +221,19 @@ namespace VRC2.Events
             return true;
         }
 
+        GameObject GetMiddlePart(GameObject otherpipe)
+        {
+            var parent = otherpipe.transform.parent;
+            var children = Utils.GetChildren<GameObject>(parent.gameObject);
+            foreach (var child in children)
+            {
+                if (child.name.Contains("mid"))
+                    return child;
+            }
+
+            return null;
+        }
+
         void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
@@ -281,18 +294,51 @@ namespace VRC2.Events
             var up = gameObject.transform.up;
             var forward = Vector3.Cross(cr, up);
             obj.transform.rotation = Quaternion.LookRotation(forward, up);
+
+            var parentRelPos = otherpipe.transform.InverseTransformPoint(otherpipe.transform.parent.position);
+
+            var localPos = otherpipe.transform.localPosition;
+            var localRot = otherpipe.transform.localRotation;
             
             otherpipe.transform.position = cc;
             otherpipe.transform.rotation = obj.transform.rotation;
             
+            //  ts
+            
             var (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
-            print(oc.ToString("f5"));
-            
-            print(oc - cc);
-            
+            //
             var translate = cc - oc;
+            translate.y = 0;
+            translate.z = 0;
+            print(translate.ToString("f5"));
             otherpipe.transform.Translate(translate);
             
+            (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
+            
+            print(oc.ToString("f5"));
+            print(cc.ToString("f5"));
+            
+            // finetune y
+            var pos = otherpipe.transform.position;
+            pos.y = cc.y;
+            pos.z = cc.z;
+            otherpipe.transform.position = pos;
+
+
+            //
+            // update parent pos
+            otherpipe.transform.parent.position = otherpipe.transform.TransformPoint(parentRelPos);
+            // restore local pos
+            otherpipe.transform.localPosition = localPos;
+            otherpipe.transform.localRotation = localRot;
+            
+            // (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
+            // //
+            // // print(oc.ToString("f5"));
+            // // print(cc.ToString("f5"));
+            // // // translate a bit
+
+
 
 
 
