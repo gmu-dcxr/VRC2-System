@@ -297,16 +297,16 @@ namespace VRC2.Events
             var rot = oip.transform.rotation;
             // pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
 
-            // initialize a parent object
-            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
-
-            // update parent
-            oip.transform.parent = parentObject.transform;
-            cipRoot.transform.parent = parentObject.transform;
-
-            // set parent to attach the the left-hand controller
-            parentObject.GetComponent<PipesContainerManager>()
-                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            // // initialize a parent object
+            // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            //
+            // // update parent
+            // oip.transform.parent = parentObject.transform;
+            // cipRoot.transform.parent = parentObject.transform;
+            //
+            // // set parent to attach the the left-hand controller
+            // parentObject.GetComponent<PipesContainerManager>()
+            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
@@ -374,14 +374,12 @@ namespace VRC2.Events
             // set new position
             obj.transform.position = newpivot;
 
-            // original rotation
-            var rot = otherpipe.transform.rotation;
-            // get new forward vector
-            var forward = Vector3.Cross(cr, otherpipe.transform.up);
-            rot = Quaternion.LookRotation(forward, otherpipe.transform.up);
+            var forward = gameObject.transform.forward;
+            var up = Vector3.Cross(-cr, forward);
+            var newRot = Quaternion.LookRotation(forward, up);
 
             // set new rotation
-            obj.transform.rotation = rot;
+            obj.transform.rotation = newRot;
 
             // get the new position of the parent object
             var pos = obj.transform.TransformPoint(parentLocalPos);
@@ -394,27 +392,30 @@ namespace VRC2.Events
 
         Quaternion GetRightPipeRootRotation(GameObject otherpipe, Vector3 newPivot)
         {
+            var rot = gameObject.transform.rotation;
+
+            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
+            var forward = gameObject.transform.forward;
+            var up = Vector3.Cross(-cr, forward);
+            var newRot = Quaternion.LookRotation(forward, up);
+
             var obj = new GameObject();
-            
-            // set other pipe's parent's parent to the new gameobject
+            obj.transform.position = otherpipe.transform.position;
+            obj.transform.rotation = otherpipe.transform.rotation;
+
             otherpipe.transform.parent.parent = obj.transform;
 
-            // move the new object to the desired position and rotation
             obj.transform.position = newPivot;
-            obj.transform.rotation = gameObject.transform.rotation;
+            obj.transform.rotation = newRot;
 
-            // remove it's parent
-            otherpipe.transform.parent.parent = null;
-            
-            // get the new rotation
-            var rot = otherpipe.transform.parent.rotation;
+            rot = otherpipe.transform.parent.rotation;
 
             GameObject.Destroy(obj);
 
+            otherpipe.transform.parent.parent = null;
+
             return rot;
         }
-
-
 
         #endregion
     }
