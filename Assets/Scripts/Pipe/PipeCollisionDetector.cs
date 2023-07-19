@@ -297,16 +297,16 @@ namespace VRC2.Events
             var rot = oip.transform.rotation;
             // pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
 
-            // // initialize a parent object
-            // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
-            //
-            // // update parent
-            // oip.transform.parent = parentObject.transform;
-            // cipRoot.transform.parent = parentObject.transform;
-            //
-            // // set parent to attach the the left-hand controller
-            // parentObject.GetComponent<PipesContainerManager>()
-            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            // initialize a parent object
+            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            
+            // update parent
+            oip.transform.parent = parentObject.transform;
+            cipRoot.transform.parent = parentObject.transform;
+            
+            // set parent to attach the the left-hand controller
+            parentObject.GetComponent<PipesContainerManager>()
+                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
