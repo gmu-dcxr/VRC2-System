@@ -79,6 +79,59 @@ namespace VRC2.Pipe
             return Vector3.Distance(p1, p2);
         }
 
+        public static (Vector3, Vector3) GetRightMostCenter(GameObject pipe)
+        {
+            var mesh = pipe.GetComponent<MeshFilter>().mesh;
+
+            var vertices = mesh.vertices;
+
+            var minx = vertices[0].x;
+            var maxx = minx;
+
+            var miny = vertices[0].y;
+            var maxy = miny;
+
+            var minz = vertices[0].z;
+            var maxz = minz;
+
+            foreach (var v in vertices)
+            {
+                if (v.x > maxx) maxx = v.x;
+                if (v.x < minx) minx = v.x;
+                if (v.y > maxy) maxy = v.y;
+                if (v.y < miny) miny = v.y;
+                if (v.z > maxz) maxz = v.z;
+                if (v.z < minz) minz = v.z;
+            }
+
+            var p1 = Vector3.zero;
+            p1.x = maxx;
+            p1.y = (miny + maxy) / 2.0f;
+            p1.z = (minz + maxz) / 2.0f;
+
+            var t = pipe.transform;
+
+            var p2 = p1;
+            p2.x = minx;
+
+            p1 = t.TransformPoint(p1);
+            p2 = t.TransformPoint(p2);
+
+            var center = t.TransformPoint(Vector3.zero);
+
+            var d1 = Vector3.Distance(p1, center);
+            var d2 = Vector3.Distance(p2, center);
+
+            if (d1 > d2)
+            {
+                return (p1, (p1-p2).normalized);
+            }
+            else
+            {
+                return (p2, (p2 - p1).normalized);
+            }
+        }
+
         public static string GetPipePrefabName(PipeParameters para)
         {
             // format: {diameter} {angle} pipe
