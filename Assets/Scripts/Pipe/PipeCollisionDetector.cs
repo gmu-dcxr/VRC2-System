@@ -16,7 +16,7 @@ namespace VRC2.Events
         private Object pipeParent;
 
         private bool connected = false;
-        
+
         private GlueHintManager _glueHintManager;
 
         private GlueHintManager hintManager
@@ -215,6 +215,7 @@ namespace VRC2.Events
                 // Other pipe is held by the left hand
                 return false;
             }
+
             // now, otherpipe is on the right-hand
             return true;
         }
@@ -279,134 +280,33 @@ namespace VRC2.Events
             // disable interactions
             DisableInteraction(cipRoot.gameObject);
             DisableInteraction(oip.gameObject);
-            
+
 
             //// Fix the left part, and move the right part
-            
-            
-            var cx = PipeHelper.GetExtendsX(gameObject);
-            var ox = PipeHelper.GetExtendsX(otherpipe);
-            
-            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
-            
-            var obj = new GameObject();
-            var up = gameObject.transform.up;
-            var forward = Vector3.Cross(cr, up);
-            
-            obj.transform.position = cc;
-            obj.transform.rotation = Quaternion.LookRotation(forward, up);
-            
-            obj.transform.Translate(ox, 0, 0);
+            var newPivot = GetRightPipeNewPivot(otherpipe);
 
-            var pos = obj.transform.position; // this is where the right pipe's pivot should be
+            var parentPos = GetRightPipeRootPivot(otherpipe, newPivot);
 
-            var obj2 = new GameObject();
-            obj2.transform.position = otherpipe.transform.position;
-            obj2.transform.rotation = otherpipe.transform.rotation;
-            
-            var parentLocalPos = obj2.transform.InverseTransformPoint(otherpipe.transform.parent.position);
+            var parentRot = GetRightPipeRootRotation(otherpipe, newPivot);
 
-            obj2.transform.position = pos;
-            
-            // also update it's rotation
-            var rot = otherpipe.transform.rotation;
-            forward = Vector3.Cross(cr, otherpipe.transform.up);
-            rot = Quaternion.LookRotation(forward, otherpipe.transform.up);
-            obj2.transform.rotation = rot;
-            
-            
-            pos = obj2.transform.TransformPoint(parentLocalPos);
-            otherpipe.transform.parent.position = pos;
-            // update rotation
-            // otherpipe.transform.parent.rotation = rot;
-            
-            // get right rotation of the parent
-            var obj3 = new GameObject();
-            obj3.transform.position = otherpipe.transform.position;
-            obj3.transform.rotation = otherpipe.transform.rotation;
-            otherpipe.transform.parent.parent = obj3.transform;
+            oip.transform.position = parentPos;
+            oip.transform.rotation = parentRot;
 
-            obj3.transform.position = pos;
-            obj3.transform.rotation = gameObject.transform.rotation;
-            
-            // get new rotation
-            // rot = otherpipe.transform.parent.rotation;
-            otherpipe.transform.parent.parent = null;
-            
-            
-            
+            // initialize parent at the current pipe position and left controller's height
+            var pos = oip.transform.position;
+            var rot = oip.transform.rotation;
+            // pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
 
+            // initialize a parent object
+            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
 
+            // update parent
+            oip.transform.parent = parentObject.transform;
+            cipRoot.transform.parent = parentObject.transform;
 
-            // var rot1 = gameObject.transform.rotation.normalized;
-            // var rot2 = otherpipe.transform.rotation.normalized;
-            //
-            // print(rot1);
-            // print(rot2);
-            //
-            // otherpipe.transform.rotation = rot1;
-
-
-
-
-
-
-
-
-            //// Fix right part, and move the left part
-            
-            // var cx = PipeHelper.GetExtendsX(gameObject);
-            // var ox = PipeHelper.GetExtendsX(otherpipe);
-            //
-            // var (oc, or) = PipeHelper.GetRightMostCenter(otherpipe);
-            //
-            // var obj = new GameObject();
-            // var up = otherpipe.transform.up;
-            // var forward = Vector3.Cross(or, up);
-            //
-            // obj.transform.position = oc;
-            // obj.transform.rotation = Quaternion.LookRotation(forward, up);
-            //
-            // obj.transform.Translate(cx, 0, 0);
-            //
-            // var pos = obj.transform.position; // the pivot where the left pipe should be
-            // var rot = obj.transform.rotation;
-            //
-            // var obj2 = new GameObject();
-            // obj2.transform.position = gameObject.transform.position;
-            // obj2.transform.rotation = gameObject.transform.rotation;
-            //
-            // var parentPos = obj2.transform.InverseTransformPoint(cipRoot.transform.position);
-            // obj2.transform.position = pos;
-            // // gameObject.transform.rotation = rot;
-            //
-            // var newPos = obj2.transform.TransformPoint(parentPos);
-            //
-            // GameObject.Destroy(obj);
-            // GameObject.Destroy(obj2);
-            //
-            // cipRoot.transform.position = newPos;
-            //
-            //
-            // // initialize parent at the current pipe position and left controller's height
-            // pos = oip.transform.position;
-            // rot = oip.transform.rotation;
-            // // pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
-
-            // // initialize a parent object
-            // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
-            //
-            // // update parent
-            // oip.transform.parent = parentObject.transform;
-            // cipRoot.transform.parent = parentObject.transform;
-            //
-            // // fix local rotation
-            // // oip.transform.localRotation = Quaternion.identity;
-            // cipRoot.transform.localRotation = op.transform.localRotation;
-            //
-            // // set parent to attach the the left-hand controller
-            // parentObject.GetComponent<PipesContainerManager>()
-            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            // set parent to attach the the left-hand controller
+            parentObject.GetComponent<PipesContainerManager>()
+                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
@@ -431,5 +331,91 @@ namespace VRC2.Events
                 DisableRigidBody(interactable);
             }
         }
+
+        #region Pipe Connecting
+
+        Vector3 GetRightPipeNewPivot(GameObject otherpipe)
+        {
+            // pipe length in the x direction
+            var ox = PipeHelper.GetExtendsX(otherpipe);
+
+            // right center, and right vector
+            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
+
+            // initialize a new gameobject at the cc position, and rotation
+            var obj = new GameObject();
+            var up = gameObject.transform.up;
+            var forward = Vector3.Cross(cr, up);
+
+            obj.transform.position = cc;
+            obj.transform.rotation = Quaternion.LookRotation(forward, up);
+            // translate to get the pivot position for the other pipe
+            obj.transform.Translate(ox, 0, 0);
+
+            var pos = obj.transform.position; // this is where the right pipe's pivot should be
+
+            // destory the new object
+            GameObject.Destroy(obj);
+            return pos;
+        }
+
+        Vector3 GetRightPipeRootPivot(GameObject otherpipe, Vector3 newpivot)
+        {
+            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
+
+            var parent = otherpipe.transform.parent;
+
+            var obj = new GameObject();
+            obj.transform.position = otherpipe.transform.position;
+            obj.transform.rotation = otherpipe.transform.rotation;
+
+            var parentLocalPos = obj.transform.InverseTransformPoint(parent.position);
+
+            // set new position
+            obj.transform.position = newpivot;
+
+            // original rotation
+            var rot = otherpipe.transform.rotation;
+            // get new forward vector
+            var forward = Vector3.Cross(cr, otherpipe.transform.up);
+            rot = Quaternion.LookRotation(forward, otherpipe.transform.up);
+
+            // set new rotation
+            obj.transform.rotation = rot;
+
+            // get the new position of the parent object
+            var pos = obj.transform.TransformPoint(parentLocalPos);
+
+            // destroy
+            GameObject.Destroy(obj);
+
+            return pos;
+        }
+
+        Quaternion GetRightPipeRootRotation(GameObject otherpipe, Vector3 newPivot)
+        {
+            var obj = new GameObject();
+            
+            // set other pipe's parent's parent to the new gameobject
+            otherpipe.transform.parent.parent = obj.transform;
+
+            // move the new object to the desired position and rotation
+            obj.transform.position = newPivot;
+            obj.transform.rotation = gameObject.transform.rotation;
+
+            // remove it's parent
+            otherpipe.transform.parent.parent = null;
+            
+            // get the new rotation
+            var rot = otherpipe.transform.parent.rotation;
+
+            GameObject.Destroy(obj);
+
+            return rot;
+        }
+
+
+
+        #endregion
     }
 }

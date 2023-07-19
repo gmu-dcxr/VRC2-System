@@ -125,7 +125,7 @@ namespace VRC2.Pipe
 
             if (d1 > d2)
             {
-                return (p1, (p1-p2).normalized);
+                return (p1, (p1 - p2).normalized);
             }
             else
             {
