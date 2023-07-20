@@ -12,9 +12,7 @@ public class GlueHintManager : MonoBehaviour
     [HideInInspector]
     public bool glued
     {
-        // get => hint.activeSelf;
-        // TODO: always return true for debug purpose.
-        get => true;
+        get => hint.activeSelf;
     }
 
     // Start is called before the first frame update
@@ -45,15 +43,15 @@ public class GlueHintManager : MonoBehaviour
 
     void MoveHintTo(GameObject pipe)
     {
-        // get hint width (x)
-        // var width = PipeHelper.GetExtendsX(hint);
-        // get pipe width (x)
-        var x = PipeHelper.GetExtendsX(pipe);
+        var (cc, cr) = PipeHelper.GetRightMostCenter(pipe);
 
-        var pos = Vector3.zero;
-        pos.x = x;
+        var rot = pipe.transform.rotation;
+        var up = pipe.transform.up;
+        var forward = Vector3.Cross(cr, up);
 
-        hint.transform.localPosition = pos;
-        hint.transform.localRotation = Quaternion.identity;
+        rot = Quaternion.LookRotation(forward, up);
+
+        hint.transform.position = cc;
+        hint.transform.rotation = rot;
     }
 }

@@ -65,7 +65,6 @@ namespace VRC2
             var rot = grabPoint.rotation * _grabDeltaInLocalSpace.rotation;
 
             var rotation = rot.eulerAngles;
-            print(rotation);
 
             rotation.z += zOffset;
 
