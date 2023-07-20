@@ -245,12 +245,25 @@ namespace VRC2.Events
 
             if (!RightHandHoldRightPipe(otherpipe)) return;
 
+            var cip = gameObject.transform.parent;
+            var oip = otherpipe.transform.parent.gameObject; // other interactable pipe
+
+            var d1 = cip.GetComponent<PipeManipulation>().diameter;
+            var d2 = oip.GetComponent<PipeManipulation>().diameter;
+
+            if (d1 != d2)
+            {
+                Debug.LogWarning("Different diameters of pipes can not connect");
+                return;
+            }
+
+
+
             Debug.Log($"HandlePipeCollision: {otherpipe.name}");
 
             // disable glue hint first
             hintManager.HideHint();
 
-            var cip = gameObject.transform.parent;
             var cipRoot = gameObject.transform.parent;
 
             // get root cip
@@ -260,9 +273,7 @@ namespace VRC2.Events
                 cipRoot = cipRoot.parent;
             }
 
-            var op = otherpipe.transform; // other pipe, one segment of other interactable pipe
 
-            var oip = op.parent.gameObject; // other interactable pipe
 
             // check whether cipRoot is pipe container
             PipesContainerManager pcm = null;
