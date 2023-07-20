@@ -25799,6 +25799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab3b071ee3d54e0faa07d0ab26f54dca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   textMeshPro: {fileID: 35704991}
   waterLevel:
     RawGuidValue: 00000000000000000000000000000000
@@ -57486,6 +57487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab3b071ee3d54e0faa07d0ab26f54dca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   textMeshPro: {fileID: 35704991}
   waterLevel:
     RawGuidValue: 00000000000000000000000000000000
@@ -57538,6 +57540,8 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1830167023}
+  - {fileID: 1830167022}
+  - {fileID: 802477734}
   SimulationBehaviours: []
 --- !u!114 &1830167025
 MonoBehaviour:
@@ -80043,7 +80047,7 @@ MonoBehaviour:
     RawGuidValue: 539bc00cf11a4c3a8c053c312d7ff1b1
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 8380055191941043918}
+  - {fileID: 8380055191941043891}
   SimulationBehaviours: []
 --- !u!114 &8380055191941043890
 MonoBehaviour:
@@ -80076,6 +80080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab3b071ee3d54e0faa07d0ab26f54dca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   textMeshPro: {fileID: 8380055192769451763}
   waterLevel:
     RawGuidValue: cfd9ba1a96f6b334d980a3d6f93aeafe
@@ -80107,7 +80112,6 @@ GameObject:
   - component: {fileID: 8380055191941043916}
   - component: {fileID: 8380055191941043919}
   - component: {fileID: 8380055191941043889}
-  - component: {fileID: 8380055191941043918}
   - component: {fileID: 8380055191941043888}
   - component: {fileID: 8380055191941043891}
   - component: {fileID: 8380055191941043890}
@@ -80118,32 +80122,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8380055191941043918
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8380055191941043917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  InterpolationSpace: 0
-  InterpolationTarget: {fileID: 0}
-  InterpolateErrorCorrection: 1
-  InterpolatedErrorCorrectionSettings:
-    MinRate: 3.3
-    MaxRate: 10
-    PosBlendStart: 0.25
-    PosBlendEnd: 1
-    PosMinCorrection: 0.025
-    PosTeleportDistance: 2
-    RotBlendStart: 0.1
-    RotBlendEnd: 0.5
-    RotTeleportRadians: 1.5
 --- !u!54 &8380055191941043919
 Rigidbody:
   m_ObjectHideFlags: 0
