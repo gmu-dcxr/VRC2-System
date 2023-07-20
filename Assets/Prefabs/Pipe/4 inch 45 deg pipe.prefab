@@ -16,8 +16,8 @@ GameObject:
   - component: {fileID: 1118016315763254961}
   - component: {fileID: 6263520220520953617}
   - component: {fileID: 7736191450180491158}
-  - component: {fileID: 8306554099581646775}
   - component: {fileID: 413515706647936478}
+  - component: {fileID: 2938952904470775011}
   m_Layer: 0
   m_Name: 4 inch 45 deg pipe
   m_TagString: Untagged
@@ -128,7 +128,7 @@ MonoBehaviour:
   _candidateTiebreaker: {fileID: 0}
   _maxIterationsPerFrame: 3
   _data: {fileID: 0}
-  _pointableElement: {fileID: 8306554099581646775}
+  _pointableElement: {fileID: 2938952904470775011}
   _rigidbody: {fileID: 2910668167025348634}
   _distanceThreshold: 0.01
   _snapPoseTransform: {fileID: 0}
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointable: {fileID: 8306554099581646775}
+  _pointable: {fileID: 2938952904470775011}
   _whenRelease:
     m_PersistentCalls:
       m_Calls: []
@@ -185,8 +185,8 @@ MonoBehaviour:
   segmentB: {fileID: 2243965052428262771}
   pipeColor: 2
   pipeType: 0
-  angle: 0
-  diameter: 0
+  angle: 1
+  diameter: 3
   segmentALength: 5
   segmentBLength: 5
 --- !u!114 &7736191450180491158
@@ -202,25 +202,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   label: {fileID: 7121617927706318105}
---- !u!114 &8306554099581646775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059559196892753981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5582b44f0cf8498b95319fe7bb4127b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transferOnSecondSelection: 0
-  _addNewPointsToFront: 0
-  _forwardElement: {fileID: 0}
-  _oneGrabTransformer: {fileID: 0}
-  _twoGrabTransformer: {fileID: 0}
-  _targetTransform: {fileID: 0}
-  _maxGrabPoints: -1
 --- !u!114 &413515706647936478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,6 +215,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hint: {fileID: 2111123482479038289}
+--- !u!114 &2938952904470775011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059559196892753981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f60dee99365f423984d469e72c7a8abd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _transferOnSecondSelection: 0
+  _addNewPointsToFront: 0
+  _forwardElement: {fileID: 0}
+  _oneGrabTransformer: {fileID: 0}
+  _twoGrabTransformer: {fileID: 0}
+  _targetTransform: {fileID: 0}
+  _maxGrabPoints: -1
 --- !u!1 &2111123482479038289
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +599,7 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 8306554099581646775}
+  _pointableElement: {fileID: 2938952904470775011}
   _rigidbody: {fileID: 2910668167025348634}
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
@@ -644,7 +644,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  _pointableElement: {fileID: 8306554099581646775}
+  _pointableElement: {fileID: 2938952904470775011}
 --- !u!114 &967064538898144506
 MonoBehaviour:
   m_ObjectHideFlags: 0
