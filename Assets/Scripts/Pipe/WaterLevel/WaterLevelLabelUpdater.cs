@@ -12,6 +12,7 @@ namespace VRC2.Events
         public NetworkPrefabRef waterLevel;
 
         private bool spawned = false;
+
         private NetworkRunner _runner
         {
             get => GlobalConstants.networkRunner;
@@ -24,7 +25,7 @@ namespace VRC2.Events
 
         private void Update()
         {
-            if(spawned) return;
+            if (spawned) return;
             UpdateInputAuthority();
 
             var d = GetDegree();
@@ -58,7 +59,7 @@ namespace VRC2.Events
                 // }
                 //
                 print("Spawn water level");
-                
+
                 runner.Spawn(waterLevel, t.position, t.rotation, player);
 
                 // if (networkObject != null)
@@ -73,26 +74,26 @@ namespace VRC2.Events
         {
             var runner = GlobalConstants.networkRunner;
             var player = GlobalConstants.remotePlayer;
-            
+
             // update authority on the host side
             if (runner != null && runner.IsRunning && runner.IsServer)
             {
-                // SpawnObject();
-                print("assign water level");
-
-                var no = gameObject.GetComponent<NetworkObject>();
-                no.AssignInputAuthority(player);
+                // // SpawnObject();
+                // print("assign water level");
+                //
+                // var no = gameObject.GetComponent<NetworkObject>();
+                // no.AssignInputAuthority(player);
 
                 // spawned = true;
 
-                // var t = gameObject.transform;
-                //
-                // var spo = runner.Spawn(waterLevel, t.position, t.rotation);
-                //
-                // if (spo != null)
-                // {
-                //     spawned = true;   
-                // }
+                var t = gameObject.transform;
+
+                var spo = runner.Spawn(waterLevel, t.position, t.rotation, player);
+
+                if (spo != null)
+                {
+                    spawned = true;
+                }
             }
         }
     }
