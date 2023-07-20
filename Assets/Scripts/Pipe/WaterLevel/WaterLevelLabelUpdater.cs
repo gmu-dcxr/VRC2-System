@@ -5,12 +5,13 @@ using UnityEngine;
 
 namespace VRC2.Events
 {
-    public class WaterLevelLabelUpdater : NetworkBehaviour
+    public class WaterLevelLabelUpdater : MonoBehaviour
     {
         [Header("Label")] public TextMeshPro textMeshPro;
 
-        private bool authorityConfirmed;
+        public NetworkPrefabRef waterLevel;
 
+        private bool spawned = false;
         private NetworkRunner _runner
         {
             get => GlobalConstants.networkRunner;
@@ -18,11 +19,12 @@ namespace VRC2.Events
 
         private void Start()
         {
-            authorityConfirmed = false;
+
         }
 
         private void Update()
         {
+            if(spawned) return;
             UpdateInputAuthority();
 
             var d = GetDegree();
@@ -35,19 +37,61 @@ namespace VRC2.Events
             return (int)(Math.Abs(t.x % 90));
         }
 
+        void SpawnObject()
+        {
+            var no = gameObject.GetComponent<NetworkObject>();
+
+            if (no != null && no.IsSceneObject)
+            {
+                var t = gameObject.transform;
+
+                var runner = GlobalConstants.networkRunner;
+                var player = GlobalConstants.localPlayer;
+                var nid = no.NetworkGuid;
+                var table = NetworkProjectConfig.Global.PrefabTable;
+                //
+                // NetworkPrefabId npid;
+                // NetworkObject networkObject = null;
+                // if (table.TryGetId(nid, out npid))
+                // {
+                //     table.TryGetPrefab(npid, out networkObject);
+                // }
+                //
+                print("Spawn water level");
+                
+                runner.Spawn(waterLevel, t.position, t.rotation, player);
+
+                // if (networkObject != null)
+                // {
+                //     print("Spawn water level 2");
+                //     runner.Spawn(waterLevel, t.position, t.rotation, player);
+                // }
+            }
+        }
+
         void UpdateInputAuthority()
         {
-            if (authorityConfirmed || _runner == null || !_runner.IsRunning) return;
-
-            if (_runner.IsClient)
+            var runner = GlobalConstants.networkRunner;
+            if (runner != null && runner.IsRunning)
             {
-                Debug.LogWarning("Override the input authority for water level");
-                var no = gameObject.GetComponent<NetworkObject>();
-                // set input authority to P2
-                no.AssignInputAuthority(GlobalConstants.localPlayer);
-            }
+                // SpawnObject();
+                print("Spawn water level");
+                var t = gameObject.transform;
+            
+                var player = GlobalConstants.localPlayer;
+                
+                print(player.PlayerId);
+                print(player.IsValid);
+                print(player.IsNone);
+                
+                var spo = runner.Spawn(waterLevel, t.position, t.rotation);
 
-            authorityConfirmed = true;
+                if (spo != null)
+                {
+                    print(spo.Name);
+                    spawned = true;   
+                }
+            }
         }
     }
 }
