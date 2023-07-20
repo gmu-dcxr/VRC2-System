@@ -105,6 +105,7 @@ namespace VRC2
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             Debug.LogError("OnPlayerJoined");
+            print($"{player.PlayerId} {runner.IsServer} {runner.IsClient} {runner.IsSharedModeMasterClient}");
             if (runner.IsServer)
             {
                 isServer = true;

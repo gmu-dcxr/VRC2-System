@@ -78,10 +78,17 @@ namespace VRC2.Events
             {
                 // SpawnObject();
                 print("Spawn water level");
+
+                // var no = gameObject.GetComponent<NetworkObject>();
+                
+                // no.AssignInputAuthority(player);
+
+                // spawned = true;
+
                 var t = gameObject.transform;
                 
                 var spo = runner.Spawn(waterLevel, t.position, t.rotation);
-
+                
                 if (spo != null)
                 {
                     spawned = true;   
