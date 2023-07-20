@@ -292,18 +292,20 @@ namespace VRC2.Events
             oip.transform.position = parentPos;
             oip.transform.rotation = parentRot;
 
-            // initialize parent at the current pipe position and left controller's height
+            // initialize parent at the other pipe position
             var pos = oip.transform.position;
-            var rot = oip.transform.rotation;
-            // pos.y = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch).y;
+
+            // get the rotation based on the left controller's rotation
+            var rot = GetParentRotation(oip);
+
 
             // initialize a parent object
             var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
-            
+
             // update parent
             oip.transform.parent = parentObject.transform;
             cipRoot.transform.parent = parentObject.transform;
-            
+
             // set parent to attach the the left-hand controller
             parentObject.GetComponent<PipesContainerManager>()
                 .AttachToController(GlobalConstants.LeftOVRControllerVisual);
@@ -413,6 +415,42 @@ namespace VRC2.Events
             GameObject.Destroy(obj);
 
             otherpipe.transform.parent.parent = null;
+
+            return rot;
+        }
+
+        Quaternion GetParentRotation(GameObject oip)
+        {
+            // get angle
+            var angle = oip.GetComponent<PipeManipulation>().angle;
+
+            var rot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+
+            var zoffset = 0;
+
+            // rotate according to different pipe angles
+
+            switch (angle)
+            {
+                case PipeConstants.PipeBendAngles.Angle_0:
+                    break;
+                case PipeConstants.PipeBendAngles.Angle_45:
+                    zoffset = 135;
+                    break;
+                case PipeConstants.PipeBendAngles.Angle_90:
+                    zoffset = 90;
+                    break;
+                case PipeConstants.PipeBendAngles.Angle_135:
+                    zoffset = 45;
+                    break;
+                default:
+                    break;
+            }
+
+            var vec = rot.eulerAngles;
+            vec.z += zoffset;
+
+            rot = Quaternion.Euler(vec);
 
             return rot;
         }
