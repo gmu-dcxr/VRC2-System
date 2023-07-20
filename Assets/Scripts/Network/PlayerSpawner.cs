@@ -31,9 +31,6 @@ namespace VRC2
 
         private bool isServer = false;
 
-        // local player
-        private PlayerRef _localPlayer;
-
         private bool gameStarted = false;
 
         // Start is called before the first frame update
@@ -116,20 +113,26 @@ namespace VRC2
                     runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, player);
                 // Keep track of the player avatars so we can remove it when they disconnect
                 _spawnedCharacters.Add(player, networkPlayerObject);
+                
+                // The first will be host (P1), all spawning actions will be done host
+                // The second will be client (P2)
 
-                // p1 side
-                if (networkPlayerObject.HasInputAuthority)
+                if (GlobalConstants.localPlayer == PlayerRef.None)
                 {
-                    // attach transform
-                    // AttachSourceTransforms(networkPlayerObject, src);
-                    _localPlayer = player;
+                    // host
                     GlobalConstants.localPlayer = player;
+                }
+                else
+                {
+                    // client
+                    GlobalConstants.remotePlayer = player;
                 }
             }
             else
             {
                 isServer = false;
                 // p2 side
+                GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
             }
 

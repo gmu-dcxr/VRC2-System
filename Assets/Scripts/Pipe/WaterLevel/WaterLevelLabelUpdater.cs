@@ -72,27 +72,27 @@ namespace VRC2.Events
         void UpdateInputAuthority()
         {
             var runner = GlobalConstants.networkRunner;
-            var player = GlobalConstants.localPlayer;
+            var player = GlobalConstants.remotePlayer;
             
-            if (runner != null && runner.IsRunning && runner.IsConnectedToServer && player.IsValid)
+            // update authority on the host side
+            if (runner != null && runner.IsRunning && !runner.IsClient)
             {
                 // SpawnObject();
-                print("Spawn water level");
+                print("assign water level");
 
-                // var no = gameObject.GetComponent<NetworkObject>();
-                
-                // no.AssignInputAuthority(player);
+                var no = gameObject.GetComponent<NetworkObject>();
+                no.AssignInputAuthority(player);
 
                 // spawned = true;
 
-                var t = gameObject.transform;
-                
-                var spo = runner.Spawn(waterLevel, t.position, t.rotation);
-                
-                if (spo != null)
-                {
-                    spawned = true;   
-                }
+                // var t = gameObject.transform;
+                //
+                // var spo = runner.Spawn(waterLevel, t.position, t.rotation);
+                //
+                // if (spo != null)
+                // {
+                //     spawned = true;   
+                // }
             }
         }
     }
