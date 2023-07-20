@@ -32,7 +32,7 @@ namespace VRC2.Events
 
         void UpdateInputAuthority()
         {
-            if (authorityConfirmed || !Runner.IsRunning) return;
+            if (authorityConfirmed || Runner == null || !Runner.IsRunning) return;
 
             if (Runner.IsClient)
             {
