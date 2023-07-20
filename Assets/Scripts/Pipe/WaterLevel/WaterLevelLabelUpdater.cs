@@ -11,6 +11,11 @@ namespace VRC2.Events
 
         private bool authorityConfirmed;
 
+        private NetworkRunner _runner
+        {
+            get => GlobalConstants.networkRunner;
+        }
+
         private void Start()
         {
             authorityConfirmed = false;
@@ -32,9 +37,9 @@ namespace VRC2.Events
 
         void UpdateInputAuthority()
         {
-            if (authorityConfirmed || Runner == null || !Runner.IsRunning) return;
+            if (authorityConfirmed || _runner == null || !_runner.IsRunning) return;
 
-            if (Runner.IsClient)
+            if (_runner.IsClient)
             {
                 Debug.LogWarning("Override the input authority for water level");
                 var no = gameObject.GetComponent<NetworkObject>();
