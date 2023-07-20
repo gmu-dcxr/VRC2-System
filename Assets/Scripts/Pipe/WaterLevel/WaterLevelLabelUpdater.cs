@@ -76,7 +76,7 @@ namespace VRC2.Events
             var player = GlobalConstants.remotePlayer;
 
             // update authority on the host side
-            if (runner != null && runner.IsRunning && runner.IsServer)
+            if (runner != null && runner.IsRunning && runner.IsServer && player != PlayerRef.None)
             {
                 // // SpawnObject();
                 // print("assign water level");
