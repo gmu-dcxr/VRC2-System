@@ -39,7 +39,7 @@ namespace VRC2.Events
                 Debug.LogWarning("Override the input authority for water level");
                 var no = gameObject.GetComponent<NetworkObject>();
                 // set input authority to P2
-                no.AssignInputAuthority(Runner.LocalPlayer);
+                no.AssignInputAuthority(GlobalConstants.localPlayer);
             }
 
             authorityConfirmed = true;
