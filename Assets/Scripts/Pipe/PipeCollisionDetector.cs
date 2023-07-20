@@ -200,8 +200,6 @@ namespace VRC2.Events
 
         bool RightHandHoldRightPipe(GameObject otherpipe)
         {
-            if (otherpipe.name.Contains("45")) return false;
-
             // current interactable pipe
             // only move the pipe held by the right hand to right
             var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
