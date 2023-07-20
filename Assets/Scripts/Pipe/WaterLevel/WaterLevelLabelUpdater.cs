@@ -1,20 +1,25 @@
 ﻿using System;
+using Fusion;
 using TMPro;
 using UnityEngine;
 
 namespace VRC2.Events
 {
-    public class WaterLevelLabelUpdater : MonoBehaviour
+    public class WaterLevelLabelUpdater : NetworkBehaviour
     {
         [Header("Label")] public TextMeshPro textMeshPro;
 
+        private bool authorityConfirmed;
+
         private void Start()
         {
-
+            authorityConfirmed = false;
         }
 
         private void Update()
         {
+            UpdateInputAuthority();
+
             var d = GetDegree();
             textMeshPro.text = $"{d}";
         }
@@ -23,6 +28,21 @@ namespace VRC2.Events
         {
             var t = gameObject.transform.rotation.eulerAngles;
             return (int)(Math.Abs(t.x % 90));
+        }
+
+        void UpdateInputAuthority()
+        {
+            if (authorityConfirmed || !Runner.IsRunning) return;
+
+            if (Runner.IsClient)
+            {
+                Debug.LogWarning("Override the input authority for water level");
+                var no = gameObject.GetComponent<NetworkObject>();
+                // set input authority to P2
+                no.AssignInputAuthority(Runner.LocalPlayer);
+            }
+
+            authorityConfirmed = true;
         }
     }
 }
