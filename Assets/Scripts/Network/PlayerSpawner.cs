@@ -18,12 +18,11 @@ namespace VRC2
         [Header("Character Prefab")] public NetworkPrefabRef _playerPrefab;
         public string prefabName;
 
-        [Header("Pipe Prefabs")]
-        public NetworkPrefabRef _pipePrefabDiameter1;
+        [Header("Pipe Prefabs")] public NetworkPrefabRef _pipePrefabDiameter1;
         public NetworkPrefabRef _pipePrefabDiameter2;
         public NetworkPrefabRef _pipePrefabDiameter3;
         public NetworkPrefabRef _pipePrefabDiameter4;
-        
+
         private NetworkRunner _runner;
 
         [Header("Setting")] public bool hideSelf = false;
@@ -231,8 +230,8 @@ namespace VRC2
                 CustomLobbyName = "VRC2",
                 Scene = SceneManager.GetActiveScene().buildIndex,
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-                // PlayerCount = 2,
-                DisableClientSessionCreation = true
+                PlayerCount = 2,
+                // DisableClientSessionCreation = true
             });
 
             if (result.Ok)
@@ -246,7 +245,7 @@ namespace VRC2
                 Debug.LogError($"Failed to Start: {result.ShutdownReason}");
             }
         }
-        
+
         private void OnGUI()
         {
             if (!gameStarted)
@@ -264,6 +263,14 @@ namespace VRC2
                     GlobalConstants.Checker = true; // P2
                     StartGame(GameMode.Client);
                 }
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (_runner != null && _runner.IsRunning)
+            {
+                _runner.Shutdown();
             }
         }
     }
