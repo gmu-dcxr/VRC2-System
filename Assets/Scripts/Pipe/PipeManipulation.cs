@@ -91,7 +91,7 @@ namespace VRC2
             {
                 // pipe was released
                 beingSelected = false;
-                SetTriggers(true);
+                // SetTriggers(true);
             }
         }
 
@@ -141,7 +141,7 @@ namespace VRC2
             // update 
             segmentALength = a;
             segmentBLength = b;
-            
+
             // calculate the x-scale factor for the object
             var fa = a / defaultSegmentLengthInFeet;
             var fb = b / defaultSegmentLengthInFeet;
@@ -181,11 +181,11 @@ namespace VRC2
         {
             Debug.Log("Pipe OnSelect");
 
-            if (heldByRightHand())
-            {
-                beingSelected = true;
-                SetTriggers(false);
-            }
+            // if (heldByRightHand())
+            // {
+            //     beingSelected = true;
+            //     SetTriggers(false);
+            // }
 
             // update current select pipe
             GlobalConstants.selectedPipe = gameObject;
