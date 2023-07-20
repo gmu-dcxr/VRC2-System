@@ -210,5 +210,23 @@ namespace VRC2.Pipe
 
             return GetPipePrefabRef(para);
         }
+
+        public static NetworkObject GetPipeContainerPrefab()
+        {
+            var table = NetworkProjectConfig.Global.PrefabTable;
+            var container =
+                AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
+            var no = container.GetComponent<NetworkObject>();
+            var nid = no.NetworkGuid;
+
+            NetworkPrefabId npid;
+            NetworkObject networkObject = null;
+            if (table.TryGetId(nid, out npid))
+            {
+                table.TryGetPrefab(npid, out networkObject);
+            }
+
+            return networkObject;
+        }
     }
 }
