@@ -472,7 +472,9 @@ namespace VRC2.Events
         #region Network Behavior
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId left, NetworkId right, NetworkId parent, RpcInfo info = default)
+        public void RPC_SendMessage(NetworkId left, NetworkId right, NetworkId parent,
+            Vector3 leftlocalpos, Quaternion leftlocalrot, Vector3 rightlocalpos, Quaternion rightlocalrot,
+            RpcInfo info = default)
         {
             var message = "";
 
@@ -493,6 +495,12 @@ namespace VRC2.Events
 
                 leftObj.transform.parent = parentObj.transform;
                 rightObj.transform.parent = parentObj.transform;
+
+                leftObj.transform.localPosition = leftlocalpos;
+                leftObj.transform.localRotation = leftlocalrot;
+
+                rightObj.transform.localPosition = rightlocalpos;
+                rightObj.transform.localRotation = rightlocalrot;
             }
 
             Debug.LogWarning(message);
@@ -513,6 +521,12 @@ namespace VRC2.Events
                 oip.transform.parent = parentObject.transform;
                 cip.transform.parent = parentObject.transform;
 
+                var leftlocalpos = cip.transform.localPosition;
+                var leftlocalrot = cip.transform.localRotation;
+
+                var rightlocalpos = oip.transform.localPosition;
+                var rightlocalrot = oip.transform.localRotation;
+
                 // set parent to attach the the left-hand controller
                 parentObject.GetComponent<PipesContainerManager>()
                     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
@@ -526,7 +540,7 @@ namespace VRC2.Events
                 DisableNetworkTransform(ref cip);
                 DisableNetworkTransform(ref oip);
 
-                RPC_SendMessage(cid, oid, pid);
+                RPC_SendMessage(cid, oid, pid, leftlocalpos, leftlocalrot, rightlocalpos, rightlocalrot);
             }
             else
             {
