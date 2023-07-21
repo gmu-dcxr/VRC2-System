@@ -516,6 +516,7 @@ namespace VRC2.Events
             print(cip.name);
             print(oip.name);
             print(parentObj.name);
+            print($"{_cid} - {_oid} - {_pid}");
 
             // disable network transform
             DisableNetworkTransform(ref cip);
