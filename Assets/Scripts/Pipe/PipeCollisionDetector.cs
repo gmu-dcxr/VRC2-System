@@ -203,7 +203,7 @@ namespace VRC2.Events
         {
             // always return true for the client side
             if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
-            
+
             // current interactable pipe
             // only move the pipe held by the right hand to right
             var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
@@ -305,19 +305,18 @@ namespace VRC2.Events
             // get the rotation based on the left controller's rotation
             var rot = GetParentRotation(oip);
 
-            // InitializeParent(gameObject, cipRoot.gameObject, otherpipe, oip, pos, rot);
-
-
-            // initialize a parent object
-            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            InitializeParent(cipRoot.gameObject, oip, pos, rot);
             
-            // update parent
-            oip.transform.parent = parentObject.transform;
-            cipRoot.transform.parent = parentObject.transform;
-            
-            // set parent to attach the the left-hand controller
-            parentObject.GetComponent<PipesContainerManager>()
-                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            // // initialize a parent object
+            // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            //
+            // // update parent
+            // oip.transform.parent = parentObject.transform;
+            // cipRoot.transform.parent = parentObject.transform;
+            //
+            // // set parent to attach the the left-hand controller
+            // parentObject.GetComponent<PipesContainerManager>()
+            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
@@ -448,51 +447,30 @@ namespace VRC2.Events
         #region Network Behavior
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId left, string cpname, NetworkId right, string opname, NetworkId parent,
-            Vector3 llocalpos, Quaternion llocalrot, Vector3 rlocalpos, Quaternion rlocalrot,
-            RpcInfo info = default)
+        public void RPC_SendMessage(NetworkId cid, NetworkId oid, NetworkId parent, RpcInfo info = default)
         {
             var message = "";
 
             if (info.IsInvokeLocal)
-                message = $"You sent container: {left} {cpname} {right} {opname} {parent}\n";
+                message = $"You sent container: {cid} {oid} {parent}\n";
             else
             {
-                message = $"Some other said container: {left} {cpname} {right} {opname} {parent}\n";
+                message = $"Some other said container: {cid} {oid} {parent}\n";
                 // update
-                var runner = Runner;
-                var leftObj = runner.FindObject(left).gameObject;
-                var rightObj = runner.FindObject(right).gameObject;
-                var parentObj = runner.FindObject(parent).gameObject;
+                var cip = Runner.FindObject(cid).gameObject;
+                var oip = Runner.FindObject(oid).gameObject;
+                var parentObj = Runner.FindObject(parent).gameObject;
 
-                // disable networktransform
-                DisableNetworkTransform(ref leftObj);
-                DisableNetworkTransform(ref rightObj);
+                // disable network transform
+                DisableNetworkTransform(ref cip);
+                DisableNetworkTransform(ref oip);
 
                 // disable interaction
-                PipeHelper.DisableInteraction(leftObj.gameObject);
-                PipeHelper.DisableInteraction(rightObj.gameObject);
+                PipeHelper.DisableInteraction(cip);
+                PipeHelper.DisableInteraction(oip);
 
-                // connect pipe on the other end
-                var cp = GetChildByName(leftObj, cpname);
-                var op = GetChildByName(rightObj, opname);
-
-                // connect them on the other side
-                var newPivot = GetRightPipeNewPivot(cp, op);
-                var parentPos = GetRightPipeRootPivot(cp, op, newPivot);
-                var parentRot = GetRightPipeRootRotation(cp, op, newPivot);
-                rightObj.transform.position = parentPos;
-                rightObj.transform.rotation = parentRot;
-
-
-                leftObj.transform.parent = parentObj.transform;
-                rightObj.transform.parent = parentObj.transform;
-
-                // update local transform
-                leftObj.transform.localPosition = llocalpos;
-                leftObj.transform.localRotation = llocalrot;
-                rightObj.transform.localPosition = rlocalpos;
-                rightObj.transform.localRotation = rlocalrot;
+                cip.transform.parent = parentObj.transform;
+                oip.transform.parent = parentObj.transform;
             }
 
             Debug.LogWarning(message);
@@ -510,40 +488,36 @@ namespace VRC2.Events
         }
 
 
-        void InitializeParent(GameObject cp, GameObject cip, GameObject op, GameObject oip, Vector3 pos, Quaternion rot)
+        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot)
         {
-            var runner = GlobalConstants.networkRunner;
-            if (runner != null && runner.IsRunning)
+            if (Runner != null && Runner.IsRunning)
             {
-                var player = GlobalConstants.localPlayer;
-                var prefab = PipeHelper.GetPipeContainerPrefab();
-                var spo = runner.Spawn(prefab, pos, rot, player);
+                if (Runner.IsServer)
+                {
+                    var player = GlobalConstants.localPlayer;
+                    var prefab = PipeHelper.GetPipeContainerPrefab();
+                    var spo = Runner.Spawn(prefab, pos, rot, player);
 
-                var parentObject = spo.gameObject;
+                    var parentObject = spo.gameObject;
 
-                oip.transform.parent = parentObject.transform;
-                cip.transform.parent = parentObject.transform;
+                    oip.transform.parent = parentObject.transform;
+                    cip.transform.parent = parentObject.transform;
 
-                // set parent to attach the the left-hand controller
-                parentObject.GetComponent<PipesContainerManager>()
-                    .AttachToController(GlobalConstants.LeftOVRControllerVisual);
-                
-                // disable networktransform
-                DisableNetworkTransform(ref cip);
-                DisableNetworkTransform(ref oip);
+                    // set parent to attach the the left-hand controller
+                    parentObject.GetComponent<PipesContainerManager>()
+                        .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
-                // // send message
-                // var pid = spo.Id;
-                // var oid = oip.GetComponent<NetworkObject>().Id;
-                // var cid = cip.GetComponent<NetworkObject>().Id;
+                    // disable networktransform
+                    DisableNetworkTransform(ref cip);
+                    DisableNetworkTransform(ref oip);
 
-                // var cipt = cip.transform;
-                // var oipt = oip.transform;
+                    // send message
+                    var pid = spo.Id;
+                    var oid = oip.GetComponent<NetworkObject>().Id;
+                    var cid = cip.GetComponent<NetworkObject>().Id;
 
-
-                // RPC_SendMessage(cid, cp.name, oid, op.name, pid,
-                //     cipt.localPosition, cipt.localRotation,
-                //     oipt.localPosition, oipt.localRotation);
+                    RPC_SendMessage(cid, oid, pid);
+                }
             }
             else
             {
