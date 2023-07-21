@@ -472,6 +472,10 @@ namespace VRC2.Events
                 DisableNetworkTransform(ref leftObj);
                 DisableNetworkTransform(ref rightObj);
 
+                // disable interaction
+                PipeHelper.DisableInteraction(leftObj.gameObject);
+                PipeHelper.DisableInteraction(rightObj.gameObject);
+
                 leftObj.transform.parent = parentObj.transform;
                 rightObj.transform.parent = parentObj.transform;
 
