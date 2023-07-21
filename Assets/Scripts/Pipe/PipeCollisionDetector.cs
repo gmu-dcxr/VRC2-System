@@ -247,6 +247,14 @@ namespace VRC2.Events
             return hintManager.glued;
         }
 
+        bool CheckOtherPipe(GameObject otherpipe)
+        {
+            // other pipe must be a simple pipe
+            var parent = otherpipe.transform.parent;
+            
+            return parent.parent == null;
+        }
+
         void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
@@ -258,6 +266,8 @@ namespace VRC2.Events
             }
 
             if (!RightHandHoldRightPipe(otherpipe)) return;
+            
+            if(!CheckOtherPipe(otherpipe)) return;
 
             var cip = gameObject.transform.parent;
             var oip = otherpipe.transform.parent.gameObject; // other interactable pipe
