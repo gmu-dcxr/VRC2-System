@@ -293,11 +293,11 @@ namespace VRC2.Events
 
 
             //// Fix the left part, and move the right part
-            var newPivot = GetRightPipeNewPivot(otherpipe);
+            var newPivot = GetRightPipeNewPivot(gameObject, otherpipe);
 
-            var parentPos = GetRightPipeRootPivot(otherpipe, newPivot);
+            var parentPos = GetRightPipeRootPivot(gameObject, otherpipe, newPivot);
 
-            var parentRot = GetRightPipeRootRotation(otherpipe, newPivot);
+            var parentRot = GetRightPipeRootRotation(gameObject, otherpipe, newPivot);
 
             oip.transform.position = parentPos;
             oip.transform.rotation = parentRot;
@@ -308,7 +308,7 @@ namespace VRC2.Events
             // get the rotation based on the left controller's rotation
             var rot = GetParentRotation(oip);
 
-            InitializeParent(cipRoot.gameObject, oip, pos, rot);
+            InitializeParent(gameObject, cipRoot.gameObject, otherpipe, oip, pos, rot);
 
 
             // // initialize a parent object
@@ -327,17 +327,17 @@ namespace VRC2.Events
 
         #region Pipe Connecting
 
-        Vector3 GetRightPipeNewPivot(GameObject otherpipe)
+        Vector3 GetRightPipeNewPivot(GameObject currentpipe, GameObject otherpipe)
         {
             // pipe length in the x direction
             var ox = PipeHelper.GetExtendsX(otherpipe);
 
             // right center, and right vector
-            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
+            var (cc, cr) = PipeHelper.GetRightMostCenter(currentpipe);
 
             // initialize a new gameobject at the cc position, and rotation
             var obj = new GameObject();
-            var up = gameObject.transform.up;
+            var up = currentpipe.transform.up;
             var forward = Vector3.Cross(cr, up);
 
             obj.transform.position = cc;
@@ -352,9 +352,9 @@ namespace VRC2.Events
             return pos;
         }
 
-        Vector3 GetRightPipeRootPivot(GameObject otherpipe, Vector3 newpivot)
+        Vector3 GetRightPipeRootPivot(GameObject currentpipe, GameObject otherpipe, Vector3 newpivot)
         {
-            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
+            var (cc, cr) = PipeHelper.GetRightMostCenter(currentpipe);
 
             var parent = otherpipe.transform.parent;
 
@@ -367,7 +367,7 @@ namespace VRC2.Events
             // set new position
             obj.transform.position = newpivot;
 
-            var forward = gameObject.transform.forward;
+            var forward = currentpipe.transform.forward;
             var up = Vector3.Cross(-cr, forward);
             var newRot = Quaternion.LookRotation(forward, up);
 
@@ -383,12 +383,12 @@ namespace VRC2.Events
             return pos;
         }
 
-        Quaternion GetRightPipeRootRotation(GameObject otherpipe, Vector3 newPivot)
+        Quaternion GetRightPipeRootRotation(GameObject currentpipe, GameObject otherpipe, Vector3 newPivot)
         {
-            var rot = gameObject.transform.rotation;
+            var rot = currentpipe.transform.rotation;
 
-            var (cc, cr) = PipeHelper.GetRightMostCenter(gameObject);
-            var forward = gameObject.transform.forward;
+            var (cc, cr) = PipeHelper.GetRightMostCenter(currentpipe);
+            var forward = currentpipe.transform.forward;
             var up = Vector3.Cross(-cr, forward);
             var newRot = Quaternion.LookRotation(forward, up);
 
@@ -451,8 +451,7 @@ namespace VRC2.Events
         #region Network Behavior
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId left, NetworkId right, NetworkId parent,
-            Vector3 leftlocalpos, Quaternion leftlocalrot, Vector3 rightlocalpos, Quaternion rightlocalrot,
+        public void RPC_SendMessage(NetworkId left, string cipname, NetworkId right, string oipname, NetworkId parent,
             RpcInfo info = default)
         {
             var message = "";
@@ -472,25 +471,41 @@ namespace VRC2.Events
                 DisableNetworkTransform(ref leftObj);
                 DisableNetworkTransform(ref rightObj);
 
+                // connect pipe on the other end
+                var cp = GetChildByName(leftObj, cipname);
+                var op = GetChildByName(rightObj, oipname);
+
+                // connect them on the other side
+                var newPivot = GetRightPipeNewPivot(cp, op);
+                var parentPos = GetRightPipeRootPivot(cp, op, newPivot);
+                var parentRot = GetRightPipeRootRotation(cp, op, newPivot);
+                leftObj.transform.position = parentPos;
+                rightObj.transform.rotation = parentRot;
+
                 // disable interaction
                 PipeHelper.DisableInteraction(leftObj.gameObject);
                 PipeHelper.DisableInteraction(rightObj.gameObject);
 
                 leftObj.transform.parent = parentObj.transform;
                 rightObj.transform.parent = parentObj.transform;
-
-                leftObj.transform.localPosition = leftlocalpos;
-                leftObj.transform.localRotation = leftlocalrot;
-
-                rightObj.transform.localPosition = rightlocalpos;
-                rightObj.transform.localRotation = rightlocalrot;
             }
 
             Debug.LogWarning(message);
         }
 
+        internal GameObject GetChildByName(GameObject parent, string name)
+        {
+            var children = Utils.GetChildren(parent);
+            foreach (var child in children)
+            {
+                if (child.name == name) return child;
+            }
 
-        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot)
+            return null;
+        }
+
+
+        void InitializeParent(GameObject cp, GameObject cip, GameObject op, GameObject oip, Vector3 pos, Quaternion rot)
         {
             var runner = GlobalConstants.networkRunner;
             if (runner != null && runner.IsRunning)
@@ -503,12 +518,6 @@ namespace VRC2.Events
 
                 oip.transform.parent = parentObject.transform;
                 cip.transform.parent = parentObject.transform;
-
-                var leftlocalpos = cip.transform.localPosition;
-                var leftlocalrot = cip.transform.localRotation;
-
-                var rightlocalpos = oip.transform.localPosition;
-                var rightlocalrot = oip.transform.localRotation;
 
                 // set parent to attach the the left-hand controller
                 parentObject.GetComponent<PipesContainerManager>()
@@ -523,7 +532,7 @@ namespace VRC2.Events
                 DisableNetworkTransform(ref cip);
                 DisableNetworkTransform(ref oip);
 
-                RPC_SendMessage(cid, oid, pid, leftlocalpos, leftlocalrot, rightlocalpos, rightlocalrot);
+                RPC_SendMessage(cid, cp.name, oid, op.name, pid);
             }
             else
             {
