@@ -37,6 +37,18 @@ namespace VRC2.Events
         private int minimumGlue = 10;
         private int glued = 0;
 
+        #region RPC Messages
+
+        private Vector3 _cLocalPos;
+        private Quaternion _cLocalRot;
+        private Vector3 _oLocalPos;
+        private Quaternion _oLocalRot;
+        private NetworkId _cid;
+        private NetworkId _oid;
+        private NetworkId _pid;
+
+        #endregion
+
 
 
 
@@ -459,41 +471,13 @@ namespace VRC2.Events
             {
                 message = $"Some other said container: {cid} {oid} {parent}\n";
 
-                var runner = GlobalConstants.networkRunner;
-                
-                // update
-                var cip = runner.FindObject(cid).gameObject;
-                var oip = runner.FindObject(oid).gameObject;
-                var parentObj = runner.FindObject(parent).gameObject;
-
-                // disable network transform
-                DisableNetworkTransform(ref cip);
-                DisableNetworkTransform(ref oip);
-
-                // // disable interaction
-                // PipeHelper.DisableInteraction(cip);
-                // PipeHelper.DisableInteraction(oip);
-
-                while (cip.transform.parent != parentObj.transform)
-                {
-                    print("Update cip parent");
-                    cip.transform.parent = parentObj.transform;
-                }
-
-                while (oip.transform.parent != parentObj.transform)
-                {
-                    print("Update oip parent");
-                    oip.transform.parent = parentObj.transform;
-                }
-
-                cip.transform.localPosition = clocalpos;
-                cip.transform.localRotation = clocalrot;
-
-                oip.transform.localPosition = olocalpos;
-                oip.transform.localRotation = olocalrot;
-
-
-                print("Update parent");
+                _cid = cid;
+                _oid = oid;
+                _pid = parent;
+                _cLocalPos = clocalpos;
+                _cLocalRot = clocalrot;
+                _oLocalPos = olocalpos;
+                _oLocalRot = olocalrot;
             }
 
             Debug.LogWarning(message);
@@ -545,6 +529,42 @@ namespace VRC2.Events
                     RPC_SendMessage(cid, oid, pid,
                         cipt.localPosition, cipt.localRotation,
                         oipt.localPosition, oipt.localRotation);
+                }
+                else
+                {
+                    // update local side (client side)
+                    var runner = GlobalConstants.networkRunner;
+
+                    var parentObj = runner.FindObject(_pid).gameObject;
+
+                    // disable network transform
+                    DisableNetworkTransform(ref cip);
+                    DisableNetworkTransform(ref oip);
+
+                    // // disable interaction
+                    // PipeHelper.DisableInteraction(cip);
+                    // PipeHelper.DisableInteraction(oip);
+
+                    while (cip.transform.parent != parentObj.transform)
+                    {
+                        print("Update cip parent");
+                        cip.transform.parent = parentObj.transform;
+                    }
+
+                    while (oip.transform.parent != parentObj.transform)
+                    {
+                        print("Update oip parent");
+                        oip.transform.parent = parentObj.transform;
+                    }
+
+                    cip.transform.localPosition = _cLocalPos;
+                    cip.transform.localRotation = _cLocalRot;
+
+                    oip.transform.localPosition = _oLocalPos;
+                    oip.transform.localRotation = _oLocalRot;
+
+
+                    print("Update parent");
                 }
             }
             else
