@@ -452,6 +452,7 @@ namespace VRC2.Events
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RPC_SendMessage(NetworkId left, string cpname, NetworkId right, string opname, NetworkId parent,
+            Vector3 llocalpos, Quaternion llocalrot, Vector3 rlocalpos, Quaternion rlocalrot,
             RpcInfo info = default)
         {
             var message = "";
@@ -489,6 +490,12 @@ namespace VRC2.Events
 
                 leftObj.transform.parent = parentObj.transform;
                 rightObj.transform.parent = parentObj.transform;
+
+                // update local transform
+                leftObj.transform.localPosition = llocalpos;
+                leftObj.transform.localRotation = llocalrot;
+                rightObj.transform.localPosition = rlocalpos;
+                rightObj.transform.localRotation = rlocalrot;
             }
 
             Debug.LogWarning(message);
@@ -533,7 +540,13 @@ namespace VRC2.Events
                 DisableNetworkTransform(ref cip);
                 DisableNetworkTransform(ref oip);
 
-                RPC_SendMessage(cid, cp.name, oid, op.name, pid);
+                var cipt = cip.transform;
+                var oipt = oip.transform;
+
+
+                RPC_SendMessage(cid, cp.name, oid, op.name, pid,
+                    cipt.localPosition, cipt.localRotation,
+                    oipt.localPosition, oipt.localRotation);
             }
             else
             {
