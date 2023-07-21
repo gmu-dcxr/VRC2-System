@@ -471,6 +471,10 @@ namespace VRC2.Events
                 DisableNetworkTransform(ref leftObj);
                 DisableNetworkTransform(ref rightObj);
 
+                // disable interaction
+                PipeHelper.DisableInteraction(leftObj.gameObject);
+                PipeHelper.DisableInteraction(rightObj.gameObject);
+
                 // connect pipe on the other end
                 var cp = GetChildByName(leftObj, cipname);
                 var op = GetChildByName(rightObj, oipname);
@@ -482,9 +486,6 @@ namespace VRC2.Events
                 leftObj.transform.position = parentPos;
                 rightObj.transform.rotation = parentRot;
 
-                // disable interaction
-                PipeHelper.DisableInteraction(leftObj.gameObject);
-                PipeHelper.DisableInteraction(rightObj.gameObject);
 
                 leftObj.transform.parent = parentObj.transform;
                 rightObj.transform.parent = parentObj.transform;
