@@ -451,16 +451,16 @@ namespace VRC2.Events
         #region Network Behavior
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId left, string cipname, NetworkId right, string oipname, NetworkId parent,
+        public void RPC_SendMessage(NetworkId left, string cpname, NetworkId right, string opname, NetworkId parent,
             RpcInfo info = default)
         {
             var message = "";
 
             if (info.IsInvokeLocal)
-                message = $"You sent container: {left} {right} {parent}\n";
+                message = $"You sent container: {left} {cpname} {right} {opname} {parent}\n";
             else
             {
-                message = $"Some other said container: {left} {right} {parent}\n";
+                message = $"Some other said container: {left} {cpname} {right} {opname} {parent}\n";
                 // update
                 var runner = Runner;
                 var leftObj = runner.FindObject(left).gameObject;
@@ -476,14 +476,14 @@ namespace VRC2.Events
                 PipeHelper.DisableInteraction(rightObj.gameObject);
 
                 // connect pipe on the other end
-                var cp = GetChildByName(leftObj, cipname);
-                var op = GetChildByName(rightObj, oipname);
+                var cp = GetChildByName(leftObj, cpname);
+                var op = GetChildByName(rightObj, opname);
 
                 // connect them on the other side
                 var newPivot = GetRightPipeNewPivot(cp, op);
                 var parentPos = GetRightPipeRootPivot(cp, op, newPivot);
                 var parentRot = GetRightPipeRootRotation(cp, op, newPivot);
-                leftObj.transform.position = parentPos;
+                rightObj.transform.position = parentPos;
                 rightObj.transform.rotation = parentRot;
 
 
