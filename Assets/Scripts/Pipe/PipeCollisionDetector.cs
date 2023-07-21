@@ -201,6 +201,9 @@ namespace VRC2.Events
 
         bool RightHandHoldRightPipe(GameObject otherpipe)
         {
+            // always return true for the client side
+            if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
+            
             // current interactable pipe
             // only move the pipe held by the right hand to right
             var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
@@ -219,24 +222,18 @@ namespace VRC2.Events
             return true;
         }
 
-        GameObject GetMiddlePart(GameObject otherpipe)
+        bool IsGlued()
         {
-            var parent = otherpipe.transform.parent;
-            var children = Utils.GetChildren<GameObject>(parent.gameObject);
-            foreach (var child in children)
-            {
-                if (child.name.Contains("mid"))
-                    return child;
-            }
+            if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
 
-            return null;
+            return hintManager.glued;
         }
 
         void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
 
-            if (!hintManager.glued)
+            if (IsGlued())
             {
                 Debug.LogWarning("Please glue it first");
                 return;
@@ -308,19 +305,19 @@ namespace VRC2.Events
             // get the rotation based on the left controller's rotation
             var rot = GetParentRotation(oip);
 
-            InitializeParent(gameObject, cipRoot.gameObject, otherpipe, oip, pos, rot);
+            // InitializeParent(gameObject, cipRoot.gameObject, otherpipe, oip, pos, rot);
 
 
-            // // initialize a parent object
-            // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
-            //
-            // // update parent
-            // oip.transform.parent = parentObject.transform;
-            // cipRoot.transform.parent = parentObject.transform;
-            //
-            // // set parent to attach the the left-hand controller
-            // parentObject.GetComponent<PipesContainerManager>()
-            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            // initialize a parent object
+            var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
+            
+            // update parent
+            oip.transform.parent = parentObject.transform;
+            cipRoot.transform.parent = parentObject.transform;
+            
+            // set parent to attach the the left-hand controller
+            parentObject.GetComponent<PipesContainerManager>()
+                .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
         }
@@ -530,23 +527,23 @@ namespace VRC2.Events
                 // set parent to attach the the left-hand controller
                 parentObject.GetComponent<PipesContainerManager>()
                     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
-
-                // send message
-                var pid = spo.Id;
-                var oid = oip.GetComponent<NetworkObject>().Id;
-                var cid = cip.GetComponent<NetworkObject>().Id;
-
+                
                 // disable networktransform
                 DisableNetworkTransform(ref cip);
                 DisableNetworkTransform(ref oip);
 
-                var cipt = cip.transform;
-                var oipt = oip.transform;
+                // // send message
+                // var pid = spo.Id;
+                // var oid = oip.GetComponent<NetworkObject>().Id;
+                // var cid = cip.GetComponent<NetworkObject>().Id;
+
+                // var cipt = cip.transform;
+                // var oipt = oip.transform;
 
 
-                RPC_SendMessage(cid, cp.name, oid, op.name, pid,
-                    cipt.localPosition, cipt.localRotation,
-                    oipt.localPosition, oipt.localRotation);
+                // RPC_SendMessage(cid, cp.name, oid, op.name, pid,
+                //     cipt.localPosition, cipt.localRotation,
+                //     oipt.localPosition, oipt.localRotation);
             }
             else
             {
