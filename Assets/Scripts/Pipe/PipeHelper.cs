@@ -228,5 +228,26 @@ namespace VRC2.Pipe
 
             return networkObject;
         }
+        
+        public static void DisableRigidBody(GameObject interactable)
+        {
+            Rigidbody rb = null;
+            if (interactable.TryGetComponent<Rigidbody>(out rb))
+            {
+                // delete its rigid body
+                GameObject.Destroy(rb);
+            }
+        }
+
+        public static void DisableInteraction(GameObject interactable)
+        {
+            // disable GrabInteractable who own ReticleDataIcon
+            var go = interactable.GetComponentInChildren<ReticleDataIcon>();
+            if (go != null)
+            {
+                go.gameObject.SetActive(false);
+                DisableRigidBody(interactable);
+            }
+        }
     }
 }
