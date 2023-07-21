@@ -22,7 +22,7 @@ namespace VRC2.Events
 
         }
 
-        private void Update()
+        private void FixedUpdateNetwork()
         {
             SyncWaterLevel();
         }
@@ -46,23 +46,6 @@ namespace VRC2.Events
             var t = gameObject.transform.rotation.eulerAngles;
             return (int)(Math.Abs(t.x % 90));
         }
-
-        // void UpdateInputAuthority()
-        // {
-        //     // update authority on the host side
-        //     if (_runner != null && _runner.IsRunning && _runner.IsServer && _player != PlayerRef.None)
-        //     {
-        //         print("assign water level");
-        //         //
-        //         var no = gameObject.GetComponent<NetworkObject>();
-        //         no.AssignInputAuthority(_player);
-        //
-        //         if (no.HasInputAuthority)
-        //         {
-        //             assigned = true;
-        //         }
-        //     }
-        // }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RPC_SendMessage(Vector3 pos, Quaternion rot, int deg, RpcInfo info = default)
