@@ -535,6 +535,7 @@ namespace VRC2.Events
             // disable interaction
             PipeHelper.DisableInteraction(cip);
             PipeHelper.DisableInteraction(oip);
+            PipeHelper.DisableInteraction(parentObj);
 
             cip.transform.parent = parentObj.transform;
             oip.transform.parent = parentObj.transform;
