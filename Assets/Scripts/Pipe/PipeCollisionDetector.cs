@@ -288,8 +288,8 @@ namespace VRC2.Events
             }
 
             // disable interactions
-            DisableInteraction(cipRoot.gameObject);
-            DisableInteraction(oip.gameObject);
+            PipeHelper.DisableInteraction(cipRoot.gameObject);
+            PipeHelper.DisableInteraction(oip.gameObject);
 
 
             //// Fix the left part, and move the right part
@@ -323,27 +323,6 @@ namespace VRC2.Events
             //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
 
             connected = true;
-        }
-
-        void DisableRigidBody(GameObject interactable)
-        {
-            Rigidbody rb = null;
-            if (interactable.TryGetComponent<Rigidbody>(out rb))
-            {
-                // delete its rigid body
-                GameObject.Destroy(rb);
-            }
-        }
-
-        void DisableInteraction(GameObject interactable)
-        {
-            // disable GrabInteractable who own ReticleDataIcon
-            var go = interactable.GetComponentInChildren<ReticleDataIcon>();
-            if (go != null)
-            {
-                go.gameObject.SetActive(false);
-                DisableRigidBody(interactable);
-            }
         }
 
         #region Pipe Connecting

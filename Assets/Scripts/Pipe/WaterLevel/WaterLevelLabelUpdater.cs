@@ -4,6 +4,8 @@ using Fusion;
 using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
+using VRC2.Pipe;
+using VRC2.Scenarios;
 
 namespace VRC2.Events
 {
@@ -11,6 +13,7 @@ namespace VRC2.Events
     {
         [Header("Label")] public TextMeshPro textMeshPro;
 
+        private bool privilegeUpdated = false;
 
         private NetworkRunner runner
         {
@@ -56,6 +59,13 @@ namespace VRC2.Events
                 message = $"You sent : {pos} {rot} {deg}\n";
             else
             {
+                if (!privilegeUpdated)
+                {
+                    // disable interaction
+                    PipeHelper.DisableInteraction(gameObject);
+                    privilegeUpdated = true;
+                }
+
                 message = $"Some other said : {pos} {rot} {deg}\n";
                 gameObject.transform.position = pos;
                 gameObject.transform.rotation = rot;
