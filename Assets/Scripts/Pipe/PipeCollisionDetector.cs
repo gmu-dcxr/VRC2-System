@@ -233,7 +233,7 @@ namespace VRC2.Events
         {
             if (connected) return;
 
-            if (IsGlued())
+            if (!IsGlued())
             {
                 Debug.LogWarning("Please glue it first");
                 return;
