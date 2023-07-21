@@ -22,7 +22,7 @@ namespace VRC2.Events
 
         }
 
-        private void FixedUpdateNetwork()
+        private void FixedUpdate()
         {
             SyncWaterLevel();
         }
