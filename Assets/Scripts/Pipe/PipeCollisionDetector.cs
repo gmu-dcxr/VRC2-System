@@ -38,7 +38,6 @@ namespace VRC2.Events
         private int glued = 0;
 
         #region RPC Messages
-        
         private bool requiredUpdated = false;
         private bool requiredUpdatedDone = false;
 
@@ -511,6 +510,12 @@ namespace VRC2.Events
             var cip = runner.FindObject(_cid).gameObject;
             var oip = runner.FindObject(_oid).gameObject;
             var parentObj = runner.FindObject(_pid).gameObject;
+            
+            print("UpdateOnClient");
+            
+            print(cip.name);
+            print(oip.name);
+            print(parentObj.name);
 
             // disable network transform
             DisableNetworkTransform(ref cip);
