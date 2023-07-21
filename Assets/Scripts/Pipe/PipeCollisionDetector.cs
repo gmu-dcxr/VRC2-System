@@ -306,7 +306,7 @@ namespace VRC2.Events
             var rot = GetParentRotation(oip);
 
             InitializeParent(cipRoot.gameObject, oip, pos, rot);
-            
+
             // // initialize a parent object
             // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
             //
@@ -447,7 +447,9 @@ namespace VRC2.Events
         #region Network Behavior
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId cid, NetworkId oid, NetworkId parent, RpcInfo info = default)
+        public void RPC_SendMessage(NetworkId cid, NetworkId oid, NetworkId parent,
+            Vector3 clocalpos, Quaternion clocalrot, Vector3 olocalpos, Quaternion olocalrot,
+            RpcInfo info = default)
         {
             var message = "";
 
@@ -457,21 +459,35 @@ namespace VRC2.Events
             {
                 message = $"Some other said container: {cid} {oid} {parent}\n";
                 // update
-                var cip = Runner.FindObject(cid);
-                var oip = Runner.FindObject(oid);
-                var parentObj = Runner.FindObject(parent);
+                var cip = Runner.FindObject(cid).gameObject;
+                var oip = Runner.FindObject(oid).gameObject;
+                var parentObj = Runner.FindObject(parent).gameObject;
 
                 // disable network transform
-                // DisableNetworkTransform(ref cip);
-                // DisableNetworkTransform(ref oip);
+                DisableNetworkTransform(ref cip);
+                DisableNetworkTransform(ref oip);
 
                 // disable interaction
-                // PipeHelper.DisableInteraction(cip);
-                // PipeHelper.DisableInteraction(oip);
+                PipeHelper.DisableInteraction(cip);
+                PipeHelper.DisableInteraction(oip);
 
-                cip.transform.parent = parentObj.transform;
-                oip.transform.parent = parentObj.transform;
-                
+                while (cip.transform.parent != parentObj.transform)
+                {
+                    cip.transform.parent = parentObj.transform;
+                }
+
+                while (oip.transform.parent != parentObj.transform)
+                {
+                    oip.transform.parent = parentObj.transform;
+                }
+
+                cip.transform.localPosition = clocalpos;
+                cip.transform.localRotation = clocalrot;
+
+                oip.transform.localPosition = olocalpos;
+                oip.transform.localRotation = olocalrot;
+
+
                 print("Update parent");
             }
 
@@ -518,7 +534,12 @@ namespace VRC2.Events
                     var oid = oip.GetComponent<NetworkObject>().Id;
                     var cid = cip.GetComponent<NetworkObject>().Id;
 
-                    RPC_SendMessage(cid, oid, pid);
+                    var cipt = cip.transform;
+                    var oipt = oip.transform;
+
+                    RPC_SendMessage(cid, oid, pid,
+                        cipt.localPosition, cipt.localRotation,
+                        oipt.localPosition, oipt.localRotation);
                 }
             }
             else
