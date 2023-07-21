@@ -516,21 +516,12 @@ namespace VRC2.Events
             DisableNetworkTransform(ref cip);
             DisableNetworkTransform(ref oip);
 
-            // // disable interaction
-            // PipeHelper.DisableInteraction(cip);
-            // PipeHelper.DisableInteraction(oip);
+            // disable interaction
+            PipeHelper.DisableInteraction(cip);
+            PipeHelper.DisableInteraction(oip);
 
-            while (cip.transform.parent != parentObj.transform)
-            {
-                print("Update cip parent");
-                cip.transform.parent = parentObj.transform;
-            }
-
-            while (oip.transform.parent != parentObj.transform)
-            {
-                print("Update oip parent");
-                oip.transform.parent = parentObj.transform;
-            }
+            cip.transform.parent = parentObj.transform;
+            oip.transform.parent = parentObj.transform;
 
             cip.transform.localPosition = _cLocalPos;
             cip.transform.localRotation = _cLocalRot;
@@ -538,8 +529,7 @@ namespace VRC2.Events
             oip.transform.localPosition = _oLocalPos;
             oip.transform.localRotation = _oLocalRot;
 
-
-            print("Update parent");
+            requiredUpdatedDone = true;
         }
 
 
