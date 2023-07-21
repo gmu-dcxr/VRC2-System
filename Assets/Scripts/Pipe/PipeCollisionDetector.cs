@@ -457,20 +457,22 @@ namespace VRC2.Events
             {
                 message = $"Some other said container: {cid} {oid} {parent}\n";
                 // update
-                var cip = Runner.FindObject(cid).gameObject;
-                var oip = Runner.FindObject(oid).gameObject;
-                var parentObj = Runner.FindObject(parent).gameObject;
+                var cip = Runner.FindObject(cid);
+                var oip = Runner.FindObject(oid);
+                var parentObj = Runner.FindObject(parent);
 
                 // disable network transform
-                DisableNetworkTransform(ref cip);
-                DisableNetworkTransform(ref oip);
+                // DisableNetworkTransform(ref cip);
+                // DisableNetworkTransform(ref oip);
 
                 // disable interaction
-                PipeHelper.DisableInteraction(cip);
-                PipeHelper.DisableInteraction(oip);
+                // PipeHelper.DisableInteraction(cip);
+                // PipeHelper.DisableInteraction(oip);
 
                 cip.transform.parent = parentObj.transform;
                 oip.transform.parent = parentObj.transform;
+                
+                print("Update parent");
             }
 
             Debug.LogWarning(message);
