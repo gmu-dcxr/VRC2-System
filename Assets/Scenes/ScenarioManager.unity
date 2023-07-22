@@ -189,7 +189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &153712648
 Transform:
   m_ObjectHideFlags: 0
@@ -221,6 +221,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   incidents: []
+  startInSec: 0
+  endInSec: 0
   filename: BaselineS2.yml
   drone: {fileID: 5280597242349820364}
   speed: 6
@@ -1166,7 +1168,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &851164756
 Transform:
   m_ObjectHideFlags: 0
@@ -1197,6 +1199,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   incidents: []
+  startInSec: 0
+  endInSec: 0
   filename: BaselineS1.yml
   pipe: {fileID: 919132147786637609}
   animator: {fileID: 664824976}
@@ -1588,7 +1592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1111079852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1602,6 +1606,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   incidents: []
+  startInSec: 0
+  endInSec: 0
   filename: BaselineS3.yml
   pipes: {fileID: 216265635}
   player: {fileID: 916563541}
@@ -8443,11 +8449,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 3c6df430bd953b647b784d72b5ca8e7f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7044356
+      value: -0.70443857
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 3c6df430bd953b647b784d72b5ca8e7f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.7097679
+      value: 0.709765
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 3c6df430bd953b647b784d72b5ca8e7f, type: 3}
       propertyPath: m_LocalRotation.y
@@ -13192,11 +13198,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d6309758dd28a4145afc01bd7c35225b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.000009536743
+      value: 0.00002026558
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d6309758dd28a4145afc01bd7c35225b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.000036478043
+      value: 0.00003671646
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: d6309758dd28a4145afc01bd7c35225b, type: 3}
       propertyPath: m_LocalRotation.w
