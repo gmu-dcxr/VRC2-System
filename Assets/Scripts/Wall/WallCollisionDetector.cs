@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using VRC2;
 using VRC2.Events;
+using VRC2.Pipe;
 
 namespace VRC2
 {
@@ -14,21 +15,19 @@ namespace VRC2
         // pipe's axes are different from wall's 
         [Header("Pipe")] public float pipeYRotationOffset = -90f;
 
-        // for better visualization, it can be updated accordingly.
-        public float pipeDistanceOffset = 0.18f;
-
         [Header("Clamp")] public float clampYRotationOffset = 90;
         public float clampZRotationOffset = -90; // fixed
 
-        [Header("Box")]
-        public float boxYRotationOffset = -90f;
+        [Header("Box")] public float boxYRotationOffset = -90f;
 
         public float boxDistanceOffset = 0.25f;
+
+        private Vector3 _wallExtends;
 
         // Start is called before the first frame update
         void Start()
         {
-
+            _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
         }
 
         // Update is called once per frame
@@ -73,6 +72,8 @@ namespace VRC2
 
         void HandlePipeCollision(GameObject pipe)
         {
+            var pipez = pipe.GetComponent<MeshCollider>().bounds.extents.z;
+
             // here the pipe may belong to a pipe container
             // find the root object
             var root = pipe.transform;
@@ -83,11 +84,11 @@ namespace VRC2
             }
 
             var rootObject = root.gameObject;
-            
+
             // disable gravity
             var rb = rootObject.GetComponent<Rigidbody>();
             GameObject.Destroy(rb);
-            
+
             var t = rootObject.transform;
             var pos = t.position;
             var rot = t.rotation.eulerAngles;
@@ -105,7 +106,7 @@ namespace VRC2
             rootObject.transform.rotation = Quaternion.Euler(rot);
 
             // update the pipe's distance to the wall
-            pos.x = wpos.x + pipeDistanceOffset;
+            pos.x = wpos.x + _wallExtends.x + pipez;
 
             rootObject.transform.position = pos;
         }
@@ -120,7 +121,7 @@ namespace VRC2
         {
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
-            
+
             // delete its rigid body
             Rigidbody rb = null;
             if (iclamp.TryGetComponent<Rigidbody>(out rb))
@@ -164,7 +165,7 @@ namespace VRC2
         {
             // get the Interactable box
             var ibox = box.transform.parent.gameObject;
-            
+
             var t = ibox.transform;
             var pos = t.position;
             var rot = t.rotation.eulerAngles;
@@ -187,7 +188,7 @@ namespace VRC2
             ibox.transform.position = pos;
         }
 
-        
+
 
         #endregion
     }
