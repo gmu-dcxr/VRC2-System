@@ -79,6 +79,76 @@ namespace VRC2.Pipe
 
             return Vector3.Distance(p1, p2);
         }
+        
+        public static float GetExtendsZ(GameObject pipe)
+        {
+            // real diameter
+            var mesh = pipe.GetComponent<MeshFilter>().mesh;
+
+            var vertices = mesh.vertices;
+
+            var minz = vertices[0].z;
+            var maxz = minz;
+
+            foreach (var v in vertices)
+            {
+                if (v.x > maxz) maxz = v.z;
+                if (v.x < minz) minz = v.z;
+            }
+
+            var p1 = Vector3.zero;
+            p1.x = minz;
+
+            var p2 = Vector3.zero;
+            p2.x = maxz;
+
+            var t = pipe.transform;
+
+            p1 = t.TransformPoint(p1);
+            p2 = t.TransformPoint(p2);
+
+            return Vector3.Distance(p1, p2);
+        }
+        
+        public static float GetExtendsY(GameObject pipe)
+        {
+            // real diameter
+            var mesh = pipe.GetComponent<MeshFilter>().mesh;
+
+            var vertices = mesh.vertices;
+
+            var miny = vertices[0].y;
+            var maxy = miny;
+
+            foreach (var v in vertices)
+            {
+                if (v.x > maxy) maxy = v.y;
+                if (v.x < miny) miny = v.y;
+            }
+
+            var p1 = Vector3.zero;
+            p1.x = miny;
+
+            var p2 = Vector3.zero;
+            p2.x = maxy;
+
+            var t = pipe.transform;
+
+            p1 = t.TransformPoint(p1);
+            p2 = t.TransformPoint(p2);
+
+            return Vector3.Distance(p1, p2);
+        }
+
+        public static Vector3 GetExtendsXYZ(GameObject pipe)
+        {
+            var x = GetExtendsX(pipe);
+            var y = GetExtendsY(pipe);
+            var z = GetExtendsZ(pipe);
+
+            return new Vector3(x, y, z);
+        }
+        
 
         public static (Vector3, Vector3) GetRightMostCenter(GameObject pipe)
         {
