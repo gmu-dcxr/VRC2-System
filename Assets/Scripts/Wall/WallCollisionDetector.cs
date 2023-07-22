@@ -26,6 +26,8 @@ namespace VRC2
         private Vector3 _wallExtends;
 
         private IDictionary<PipeDiameter, float> _pipeDiameters;
+        private IDictionary<int, float> _clampExtendsZ;
+
 
         // Start is called before the first frame update
         void Start()
@@ -60,6 +62,25 @@ namespace VRC2
                     GameObject.Destroy(go);
                 }
             }
+        }
+
+        float GetClampExtendsZ(GameObject clamp)
+        {
+            if (_clampExtendsZ == null)
+            {
+                _clampExtendsZ = new Dictionary<int, float>();
+            }
+
+            var size = clamp.GetComponentInChildren<ClampScaleInitializer>().clampSize;
+            if (_clampExtendsZ.ContainsKey(size))
+            {
+                return _clampExtendsZ[size];
+            }
+
+            var mc = clamp.GetComponentInChildren<BoxCollider>().bounds.extents;
+            _clampExtendsZ.Add(size, mc.z);
+
+            return mc.z;
         }
 
         // Update is called once per frame
@@ -165,9 +186,8 @@ namespace VRC2
                 GameObject.Destroy(rb);
             }
 
-            // get offset
-            var csi = iclamp.GetComponentInChildren<ClampScaleInitializer>();
-            var offset = GlobalConstants.GetClampWallCollisionOffsetBySize(csi.clampSize);
+            // get clamp z
+            var clampz = GetClampExtendsZ(clamp);
 
             var t = iclamp.transform;
             var pos = t.position;
@@ -186,7 +206,7 @@ namespace VRC2
             // update rotation
             iclamp.transform.rotation = Quaternion.Euler(rot);
             // update distance
-            pos.x = wpos.x + offset;
+            pos.x = wpos.x + _wallExtends.x + clampz * 2;
 
             iclamp.transform.position = pos;
         }
