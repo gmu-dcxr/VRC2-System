@@ -23,6 +23,7 @@ namespace VRC2.Scenarios
 
         private string _rawTime;
 
+        private int _id;
         private string _name;
         private string _shortName;
 
@@ -42,6 +43,11 @@ namespace VRC2.Scenarios
             get => GetType().Name;
         }
 
+        public int ID
+        {
+            get => _id;
+        }
+
         public string name
         {
             get => _name;
@@ -55,6 +61,11 @@ namespace VRC2.Scenarios
 
         public void Start()
         {
+        }
+
+        public void OverrideID(int id)
+        {
+            this._id = id;
         }
         
         // The configure file of each scenario is independent, so the start time always is 0.

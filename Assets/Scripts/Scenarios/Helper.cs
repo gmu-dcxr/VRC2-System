@@ -46,12 +46,19 @@ namespace VRC2.Scenarios
                 endInSec = -1;
             }
         }
-        
+
         public static string GetIncidentCallbackName(string name, int incident, ScenarioCallback type)
         {
             var t = Utils.GetDisplayName<ScenarioCallback>(type);
 
             return $"On_{name}_{incident}_{t}";
+        }
+
+        public static string GetScenarioCallbackName(int _id, ScenarioCallback type)
+        {
+            var t = Utils.GetDisplayName<ScenarioCallback>(type);
+
+            return $"On_Scenario_{_id}_{t}";
         }
     }
 }
