@@ -114,6 +114,7 @@ namespace VRC2
         #region Clamp Collision with the Wall
 
         public static string clampObjectTag = "Clamp";
+        public static string ClampPrefabsPath = "Assets/Prefabs/";
 
         #endregion
 
@@ -220,32 +221,6 @@ namespace VRC2
 
             Vector3 value = Vector3.one;
             clampSizeScaleDict.TryGetValue(size, out value);
-            return value;
-        }
-
-        #endregion
-
-        #region Clamp Offset When Colliding with the Wall
-
-        private static IDictionary<int, float> clampWallOffsetDict = null;
-
-        public static float GetClampWallCollisionOffsetBySize(int size)
-        {
-            if (clampWallOffsetDict == null)
-            {
-                clampWallOffsetDict = new Dictionary<int, float>();
-                // 1 inch
-                clampWallOffsetDict.Add(1, 0.17f);
-                // 2 inch
-                clampWallOffsetDict.Add(2, 0.20f);
-                // 3 inch 
-                clampWallOffsetDict.Add(3, 0.23f);
-                // 4 inch
-                clampWallOffsetDict.Add(4, 0.25f);
-            }
-
-            float value = 0.1f;
-            clampWallOffsetDict.TryGetValue(size, out value);
             return value;
         }
 

@@ -335,5 +335,16 @@ namespace VRC2.Pipe
                 DisableRigidBody(interactable);
             }
         }
+
+        public static GameObject GetClampPrefab(int size)
+        {
+            var name = $"InteractableClampS{size}";
+
+            var path = $"{GlobalConstants.ClampPrefabsPath}{name}.prefab";
+
+            GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
+
+            return go;
+        }
     }
 }
