@@ -79,7 +79,7 @@ namespace VRC2.Pipe
 
             return Vector3.Distance(p1, p2);
         }
-        
+
         public static float GetExtendsZ(GameObject pipe)
         {
             // real diameter
@@ -109,7 +109,7 @@ namespace VRC2.Pipe
 
             return Vector3.Distance(p1, p2);
         }
-        
+
         public static float GetExtendsY(GameObject pipe)
         {
             // real diameter
@@ -148,7 +148,7 @@ namespace VRC2.Pipe
 
             return new Vector3(x, y, z);
         }
-        
+
 
         public static (Vector3, Vector3) GetRightMostCenter(GameObject pipe)
         {
@@ -249,15 +249,22 @@ namespace VRC2.Pipe
             return name;
         }
 
-        public static NetworkObject GetPipePrefabRef(PipeParameters para)
+        public static GameObject GetPipePrefab(PipeParameters para)
         {
-            var table = NetworkProjectConfig.Global.PrefabTable;
-
             var name = GetPipePrefabName(para);
 
             var path = $"{GlobalConstants.PipePrefabsPath}{name}.prefab";
 
             GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
+
+            return go;
+        }
+
+        public static NetworkObject GetPipePrefabRef(PipeParameters para)
+        {
+            var table = NetworkProjectConfig.Global.PrefabTable;
+
+            GameObject go = GetPipePrefab(para);
 
             var no = go.GetComponent<NetworkObject>();
             var nid = no.NetworkGuid;
@@ -270,6 +277,15 @@ namespace VRC2.Pipe
             }
 
             return networkObject;
+        }
+
+        public static GameObject GetStraightPipePrefab(PipeDiameter diameter)
+        {
+            var para = new PipeParameters();
+            para.diameter = diameter;
+            para.angle = PipeBendAngles.Angle_0;
+
+            return GetPipePrefab(para);
         }
 
         public static NetworkObject GetStraightPipePrefabRef(PipeDiameter diameter)
@@ -298,7 +314,7 @@ namespace VRC2.Pipe
 
             return networkObject;
         }
-        
+
         public static void DisableRigidBody(GameObject interactable)
         {
             Rigidbody rb = null;

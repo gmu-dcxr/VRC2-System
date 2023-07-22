@@ -6,6 +6,7 @@ using UnityEngine.Serialization;
 using VRC2;
 using VRC2.Events;
 using VRC2.Pipe;
+using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2
 {
@@ -24,10 +25,41 @@ namespace VRC2
 
         private Vector3 _wallExtends;
 
+        private IDictionary<PipeDiameter, float> _pipeDiameters;
+
         // Start is called before the first frame update
         void Start()
         {
             _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
+
+            InitPipeDiameters();
+        }
+
+        void InitPipeDiameters()
+        {
+            if (_pipeDiameters == null)
+            {
+                _pipeDiameters = new Dictionary<PipeDiameter, float>();
+
+                var diameters = new List<PipeDiameter>()
+                {
+                    PipeDiameter.Diameter_1, PipeDiameter.Diameter_2, PipeDiameter.Diameter_3, PipeDiameter.Diameter_4
+                };
+
+                foreach (var diameter in diameters)
+                {
+                    // instantiate with the prefab and then get the diameter
+                    var prefab = PipeHelper.GetStraightPipePrefab(diameter);
+                    var go = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                    var pipe = go.GetComponentInChildren<PipeCollisionDetector>().gameObject;
+                    var z = pipe.GetComponent<MeshCollider>().bounds.extents.z;
+
+                    _pipeDiameters.Add(diameter, z);
+
+                    // destroy it
+                    GameObject.Destroy(go);
+                }
+            }
         }
 
         // Update is called once per frame
@@ -72,8 +104,6 @@ namespace VRC2
 
         void HandlePipeCollision(GameObject pipe)
         {
-            var pipez = pipe.GetComponent<MeshCollider>().bounds.extents.z;
-
             // here the pipe may belong to a pipe container
             // find the root object
             var root = pipe.transform;
@@ -84,6 +114,12 @@ namespace VRC2
             }
 
             var rootObject = root.gameObject;
+
+            // get diameter
+            var diameter = rootObject.GetComponent<PipeManipulation>().diameter;
+
+            // get real diameter
+            var pipez = _pipeDiameters[diameter];
 
             // disable gravity
             var rb = rootObject.GetComponent<Rigidbody>();
