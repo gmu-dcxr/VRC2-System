@@ -18,8 +18,8 @@ namespace VRC2.Scenarios
     {
         [HideInInspector]public List<Incident> incidents = null;
 
-        private int startInSec;
-        private int endInSec;
+        [HideInInspector]public int startInSec;
+        [HideInInspector]public int endInSec;
 
         private string _rawTime;
 
@@ -42,12 +42,28 @@ namespace VRC2.Scenarios
             get => GetType().Name;
         }
 
+        public string name
+        {
+            get => _name;
+            
+            set => _name = value;
+        }
+
         private bool ready = false;
 
         [HideInInspector] public YamlHelper.Scenario scenario;
 
         public void Start()
         {
+        }
+        
+        // The configure file of each scenario is independent, so the start time always is 0.
+        // When scenarios are sequenced, it's necessary to override them
+        public void OverrideStartEnd(int start, int end)
+        {
+            startInSec = start;
+            endInSec = end;
+            print($"OverrideStartEnd for {name}: {startInSec} - {endInSec}");
         }
 
         public void AddIncident(Incident incident)
@@ -74,7 +90,7 @@ namespace VRC2.Scenarios
 
         public void Execute(int timestamp)
         {
-            print($"{ClsName}.Execute()");
+            print($"{ClsName} - {name} Execute()");
             startTimestamp = timestamp;
             ready = true;
             started = false;
