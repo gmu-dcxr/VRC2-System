@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 //using System.Diagnostics;
 using MessageLibrary;
@@ -15,8 +16,7 @@ namespace SimpleWebBrowser
 
         #region General
 
-        [Header("General settings")]
-        public int Width = 1024;
+        [Header("General settings")] public int Width = 1024;
         public int Height = 768;
         public bool AutoFitParent = true;
         public string MemoryFile = "MainSharedMem";
@@ -28,45 +28,38 @@ namespace SimpleWebBrowser
 
         public bool EnableWebRTC = false;
 
-        [Header("Testing")]
-        public bool EnableGPU = false;
+        [Header("Testing")] public bool EnableGPU = false;
 
-        [Multiline]
-        public string JSInitializationCode = "";
+        [Multiline] public string JSInitializationCode = "";
 
         #endregion
 
 
-        [Header("2D setup")]
-        [SerializeField]
-        public RawImage Browser2D = null;
+        [Header("2D setup")] [SerializeField] public RawImage Browser2D = null;
 
 
-        [Header("UI settings")]
-        [SerializeField]
+        [Header("UI settings")] [SerializeField]
         public BrowserUI mainUIPanel;
 
         public bool KeepUIVisible = false;
-		public bool UIEnabled = true;
-        [Header("Dialog settings")]
-        [SerializeField]
+        public bool UIEnabled = true;
+
+        [Header("Dialog settings")] [SerializeField]
         public GameObject DialogPanel;
-        [SerializeField]
-        public Text DialogText;
-        [SerializeField]
-        public Button OkButton;
-        [SerializeField]
-        public Button YesButton;
-        [SerializeField]
-        public Button NoButton;
-        [SerializeField]
-        public InputField DialogPrompt;
+
+        [SerializeField] public Text DialogText;
+        [SerializeField] public Button OkButton;
+        [SerializeField] public Button YesButton;
+        [SerializeField] public Button NoButton;
+        [SerializeField] public InputField DialogPrompt;
 
         //dialog states - threading
         private bool _showDialog = false;
         private string _dialogMessage = "";
         private string _dialogPrompt = "";
+
         private DialogEventType _dialogEventType;
+
         //query - threading
         private bool _startQuery = false;
         private string _jsQueryString = "";
@@ -96,88 +89,103 @@ namespace SimpleWebBrowser
         #region Initialization
 
         //why Unity does not store the links in package?
-        T Search<T>(string name) {
+        T Search<T>(string name)
+        {
             var child = transform.Find(name);
-            if (child) {
+            if (child)
+            {
                 var component = child.gameObject.GetComponent<T>();
                 return component;
             }
+
             return default(T);
         }
 
-        void InitPrefabLinks() {
-            if (mainUIPanel == null) {
+        void InitPrefabLinks()
+        {
+            if (mainUIPanel == null)
+            {
                 mainUIPanel = Search<BrowserUI>("MainUI");
             }
+
             if (Browser2D == null)
                 Browser2D = gameObject.GetComponent<RawImage>();
-            
 
-            if (DialogPanel == null) {
+
+            if (DialogPanel == null)
+            {
                 var messagebox = transform.Find("MessageBox");
-                if(messagebox)
+                if (messagebox)
                     DialogPanel = messagebox.gameObject;
             }
 
             if (DialogText == null)
-                    DialogText = Search<Text>("MessageText");
+                DialogText = Search<Text>("MessageText");
             if (OkButton == null)
-                    OkButton = Search<Button>("OK");
+                OkButton = Search<Button>("OK");
             if (YesButton == null)
-                    YesButton = Search<Button>("Yes");
+                YesButton = Search<Button>("Yes");
             if (NoButton == null)
-                    NoButton = Search<Button>("No");
+                NoButton = Search<Button>("No");
             if (DialogPrompt == null)
-                    DialogPrompt = Search<InputField>("Prompt");
+                DialogPrompt = Search<InputField>("Prompt");
             Debug.Log("Init prefab completed");
         }
 
 
-        
 
 
-        void Start() {
-            
+
+        void Start()
+        {
+
             Debug.Log("Browser2d start");
-            if (AutoFitParent) {
+            if (AutoFitParent)
+            {
                 var pixsource = transform as RectTransform;
                 var rect = pixsource.rect;
                 Width = (int)rect.width;
-                Height=(int)rect.height;
+                Height = (int)rect.height;
                 Debug.LogFormat("Browser2d resize to {0}x{1}", Width, Height);
             }
 
-            _mainEngine = new BrowserEngine {
+            _mainEngine = new BrowserEngine
+            {
                 dynamicRequestHandler = gameObject.GetComponent<IDynamicRequestHandler>()
             };
 
-            if (RandomMemoryFile) {
+            if (RandomMemoryFile)
+            {
                 var memid = Guid.NewGuid();
                 MemoryFile = memid.ToString();
             }
 
-            
+
             //run initialization
             if (JSInitializationCode.Trim() != "")
                 _mainEngine.RunJSOnce(JSInitializationCode);
 
-            if (UIEnabled){
+            if (UIEnabled)
+            {
                 InitPrefabLinks();
-                if(mainUIPanel!=null)
-                mainUIPanel.InitPrefabLinks();
+                if (mainUIPanel != null)
+                    mainUIPanel.InitPrefabLinks();
             }
 
             var parentcanvas = GetComponentInParent<Canvas>();
-            if (parentcanvas != null) {
+            if (parentcanvas != null)
+            {
                 _mainCamera = parentcanvas.worldCamera; //get camera assigned to parent canvas
             }
-            if(_mainCamera==null)  //try to get default but this completely wrong
-            _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
 
-            if (mainUIPanel != null) {
-            mainUIPanel.KeepUIVisible = KeepUIVisible;
-            if (!KeepUIVisible)
-                mainUIPanel.Hide();
+            if (_mainCamera == null) //try to get default but this completely wrong
+                _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+
+            if (mainUIPanel != null)
+            {
+                mainUIPanel.KeepUIVisible = KeepUIVisible;
+                if (!KeepUIVisible)
+                    mainUIPanel.Hide();
             }
 
             //attach dialogs and querys
@@ -187,15 +195,17 @@ namespace SimpleWebBrowser
             _mainEngine.OnTextureObjectUpdated += OnTextureObjectUpdated;
             _mainEngine.StreamingResourceName = StreamingResourceName;
 
-            if(DialogPanel!=null)
-            DialogPanel.SetActive(false);
-            IEnumerator initCoroutine = _mainEngine.InitPlugin(Width, Height, MemoryFile, InitialURL, EnableWebRTC, EnableGPU);
+            if (DialogPanel != null)
+                DialogPanel.SetActive(false);
+            IEnumerator initCoroutine =
+                _mainEngine.InitPlugin(Width, Height, MemoryFile, InitialURL, EnableWebRTC, EnableGPU);
             StartCoroutine(initCoroutine);
 
 
         }
 
-        private void OnTextureObjectUpdated(Texture2D newtexture) {
+        private void OnTextureObjectUpdated(Texture2D newtexture)
+        {
             Debug.Log("start update");
             Browser2D.texture = newtexture;
             Browser2D.uvRect = new Rect(0f, 0f, 1f, -1f);
@@ -272,6 +282,7 @@ namespace SimpleWebBrowser
                     break;
                 }
             }
+
             _showDialog = false;
         }
 
@@ -282,7 +293,7 @@ namespace SimpleWebBrowser
 
         }
 
-       
+
 
         #endregion
 
@@ -290,28 +301,32 @@ namespace SimpleWebBrowser
 
         public void OnNavigate()
         {
-            if(mainUIPanel!=null)
-            _mainEngine.SendNavigateEvent(mainUIPanel.UrlField.text, false, false);
+            if (mainUIPanel != null)
+                _mainEngine.SendNavigateEvent(mainUIPanel.UrlField.text, false, false);
 
         }
 
-        public void Navigate(string url) {
-            if (mainUIPanel != null) {
+        public void Navigate(string url)
+        {
+            if (mainUIPanel != null)
+            {
                 mainUIPanel.UrlField.text = url;
             }
 
-            if (_mainEngine != null) {
-                
+            if (_mainEngine != null)
+            {
+
                 _mainEngine.SendNavigateEvent(url, false, false);
             }
 
             InitialURL = url;
         }
 
- public void RunJavaScript(string js)
+        public void RunJavaScript(string js)
         {
             _mainEngine.SendExecuteJSEvent(js);
         }
+
         public void GoBackForward(bool forward)
         {
             if (forward)
@@ -325,29 +340,29 @@ namespace SimpleWebBrowser
 
 
 
-        #region Events 
+        #region Events
 
         public void OnPointerEnter(PointerEventData data)
         {
             _focused = true;
-			if(UIEnabled && mainUIPanel != null)
-            	mainUIPanel.Show();
+            if (UIEnabled && mainUIPanel != null)
+                mainUIPanel.Show();
             StartCoroutine("TrackPointer");
         }
 
         public void OnPointerExit(PointerEventData data)
         {
             _focused = false;
-			if(UIEnabled && mainUIPanel!=null)
-            	mainUIPanel.Hide();
+            if (UIEnabled && mainUIPanel != null)
+                mainUIPanel.Hide();
             StopCoroutine("TrackPointer");
         }
 
         //tracker
         IEnumerator TrackPointer()
         {
-            var _raycaster = GetComponentInParent<GraphicRaycaster>();
-            var _input = FindObjectOfType<StandaloneInputModule>();
+            var _raycaster = GetComponentInParent<OVRRaycaster>();
+            var _input = FindObjectOfType<OVRInputModule>();
 
             if (_raycaster != null && _input != null && _mainEngine.Initialized)
             {
@@ -355,8 +370,8 @@ namespace SimpleWebBrowser
                 {
                     Vector2 localPos = GetScreenCoords(_raycaster, _input);
 
-                    int px = (int) localPos.x;
-                    int py = (int) localPos.y;
+                    int px = (int)localPos.x;
+                    int py = (int)localPos.y;
 
                     ProcessScrollInput(px, py);
 
@@ -372,9 +387,11 @@ namespace SimpleWebBrowser
                             Button = MouseButton.None
                         };
 
-                        if (Input.GetMouseButton(0))
+                        if (Input.GetMouseButton(0) ||
+                            OVRInput.Get(OVRInput.RawButton.A, OVRInput.Controller.RTouch)) // right controller A
                             msg.Button = MouseButton.Left;
-                        if (Input.GetMouseButton(1))
+                        if (Input.GetMouseButton(1) ||
+                            OVRInput.Get(OVRInput.RawButton.B, OVRInput.Controller.RTouch)) // right controller B
                             msg.Button = MouseButton.Right;
                         if (Input.GetMouseButton(1))
                             msg.Button = MouseButton.Middle;
@@ -396,27 +413,27 @@ namespace SimpleWebBrowser
 
             if (_mainEngine.Initialized)
             {
-                var _raycaster = GetComponentInParent<GraphicRaycaster>();
-                var _input = FindObjectOfType<StandaloneInputModule>();
+                var _raycaster = GetComponentInParent<OVRRaycaster>();
+                var _input = FindObjectOfType<OVRInputModule>();
                 Vector2 pixelUV = GetScreenCoords(_raycaster, _input);
 
                 switch (data.button)
                 {
                     case PointerEventData.InputButton.Left:
                     {
-                        SendMouseButtonEvent((int) pixelUV.x, (int) pixelUV.y, MouseButton.Left,
+                        SendMouseButtonEvent((int)pixelUV.x, (int)pixelUV.y, MouseButton.Left,
                             MouseEventType.ButtonDown);
                         break;
                     }
                     case PointerEventData.InputButton.Right:
                     {
-                        SendMouseButtonEvent((int) pixelUV.x, (int) pixelUV.y, MouseButton.Right,
+                        SendMouseButtonEvent((int)pixelUV.x, (int)pixelUV.y, MouseButton.Right,
                             MouseEventType.ButtonDown);
                         break;
                     }
                     case PointerEventData.InputButton.Middle:
                     {
-                        SendMouseButtonEvent((int) pixelUV.x, (int) pixelUV.y, MouseButton.Middle,
+                        SendMouseButtonEvent((int)pixelUV.x, (int)pixelUV.y, MouseButton.Middle,
                             MouseEventType.ButtonDown);
                         break;
                     }
@@ -435,27 +452,27 @@ namespace SimpleWebBrowser
 
             if (_mainEngine.Initialized)
             {
-                var _raycaster = GetComponentInParent<GraphicRaycaster>();
-                var _input = FindObjectOfType<StandaloneInputModule>();
-
+                var _raycaster = GetComponentInParent<OVRRaycaster>();
+                var _input = FindObjectOfType<OVRInputModule>();
+                
                 Vector2 pixelUV = GetScreenCoords(_raycaster, _input);
 
                 switch (data.button)
                 {
                     case PointerEventData.InputButton.Left:
                     {
-                        SendMouseButtonEvent((int) pixelUV.x, (int) pixelUV.y, MouseButton.Left, MouseEventType.ButtonUp);
+                        SendMouseButtonEvent((int)pixelUV.x, (int)pixelUV.y, MouseButton.Left, MouseEventType.ButtonUp);
                         break;
                     }
                     case PointerEventData.InputButton.Right:
                     {
-                        SendMouseButtonEvent((int) pixelUV.x, (int) pixelUV.y, MouseButton.Right,
+                        SendMouseButtonEvent((int)pixelUV.x, (int)pixelUV.y, MouseButton.Right,
                             MouseEventType.ButtonUp);
                         break;
                     }
                     case PointerEventData.InputButton.Middle:
                     {
-                        SendMouseButtonEvent((int) pixelUV.x, (int) pixelUV.y, MouseButton.Middle,
+                        SendMouseButtonEvent((int)pixelUV.x, (int)pixelUV.y, MouseButton.Middle,
                             MouseEventType.ButtonUp);
                         break;
                     }
@@ -476,11 +493,12 @@ namespace SimpleWebBrowser
         {
             var mousepos = Input.mousePosition;
             var relativeToDisplayPosition = Display.RelativeMouseAt(mousepos);
-            if (relativeToDisplayPosition != Vector3.zero) {
-                if (ray.eventCamera.targetDisplay == (int) relativeToDisplayPosition.z)
+            if (relativeToDisplayPosition != Vector3.zero)
+            {
+                if (ray.eventCamera.targetDisplay == (int)relativeToDisplayPosition.z)
                     mousepos = relativeToDisplayPosition;
-                else 
-                    return new Vector2(-1,-1); //this click not on our display                    
+                else
+                    return new Vector2(-1, -1); //this click not on our display                    
             }
 
             Vector2 localPos; // Mouse position  
@@ -493,11 +511,31 @@ namespace SimpleWebBrowser
             //Debug.Log("x:"+localPos.x+",y:"+localPos.y);
 
             //now recalculate to texture
-            localPos.x = (localPos.x*Width)/trns.rect.width;
-            localPos.y = (localPos.y*Height)/trns.rect.height;
+            localPos.x = (localPos.x * Width) / trns.rect.width;
+            localPos.y = (localPos.y * Height) / trns.rect.height;
 
             return localPos;
 
+        }
+
+        private Vector2 GetScreenCoords(OVRRaycaster ray, OVRInputModule input)
+        {
+            var raypos = RectTransformUtility.WorldToScreenPoint(ray.eventCamera, ray.pointer.transform.position);
+
+            Vector2 localPos; // Mouse position  
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, raypos,
+                ray.eventCamera, out localPos);
+
+            // local pos is the mouse position.
+            RectTransform trns = transform as RectTransform;
+            localPos.y = trns.rect.height - localPos.y;
+            //Debug.Log("x:"+localPos.x+",y:"+localPos.y);
+
+            //now recalculate to texture
+            localPos.x = (localPos.x * Width) / trns.rect.width;
+            localPos.y = (localPos.y * Height) / trns.rect.height;
+
+            return localPos;
         }
 
         private void SendMouseButtonEvent(int x, int y, MouseButton btn, MouseEventType type)
@@ -518,9 +556,9 @@ namespace SimpleWebBrowser
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-            scroll = scroll*_mainEngine.BrowserTexture.height;
+            scroll = scroll * _mainEngine.BrowserTexture.height;
 
-            int scInt = (int) scroll;
+            int scInt = (int)scroll;
 
             if (scInt != 0)
             {
@@ -534,9 +572,11 @@ namespace SimpleWebBrowser
                     Button = MouseButton.None
                 };
 
-                if (Input.GetMouseButton(0))
+                if (Input.GetMouseButton(0) ||
+                    OVRInput.Get(OVRInput.RawButton.A, OVRInput.Controller.RTouch)) // right controller A
                     msg.Button = MouseButton.Left;
-                if (Input.GetMouseButton(1))
+                if (Input.GetMouseButton(1) ||
+                    OVRInput.Get(OVRInput.RawButton.B, OVRInput.Controller.RTouch)) // right controller B
                     msg.Button = MouseButton.Right;
                 if (Input.GetMouseButton(1))
                     msg.Button = MouseButton.Middle;
@@ -546,12 +586,14 @@ namespace SimpleWebBrowser
         }
 
         #endregion
+
         // Update is called once per frame
-        void Update() {
-            
+        void Update()
+        {
+
             if (_mainEngine == null)
                 return;
-            
+
             _mainEngine.UpdateTexture();
 
             #region 2D mouse
@@ -582,28 +624,29 @@ namespace SimpleWebBrowser
             if (_setUrl)
             {
                 _setUrl = false;
-                if(UIEnabled && mainUIPanel!=null)
-                mainUIPanel.UrlField.text = _setUrlString;
+                if (UIEnabled && mainUIPanel != null)
+                    mainUIPanel.UrlField.text = _setUrlString;
 
             }
 
-if (UIEnabled)
+            if (UIEnabled)
             {
-                if (_focused && (mainUIPanel==null || !mainUIPanel.UrlField.isFocused)) //keys
+                if (_focused && (mainUIPanel == null || !mainUIPanel.UrlField.isFocused)) //keys
                 {
                     _mainEngine.ProcessKeyEvents();
                 }
             }
 
-			_mainEngine.CheckMessage();
+            _mainEngine.CheckMessage();
         }
 
-        
+
 
         void OnDisable()
         {
             Debug.Log("browser 2d disable");
-            if (_mainEngine != null) {
+            if (_mainEngine != null)
+            {
                 _mainEngine.Shutdown();
                 _mainEngine = null;
             }
