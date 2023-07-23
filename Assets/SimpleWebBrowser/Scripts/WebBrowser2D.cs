@@ -454,7 +454,7 @@ namespace SimpleWebBrowser
             {
                 var _raycaster = GetComponentInParent<OVRRaycaster>();
                 var _input = FindObjectOfType<OVRInputModule>();
-                
+
                 Vector2 pixelUV = GetScreenCoords(_raycaster, _input);
 
                 switch (data.button)
@@ -651,5 +651,23 @@ namespace SimpleWebBrowser
                 _mainEngine = null;
             }
         }
+
+        #region Input Text from Keyboard in VR
+
+        public void InputText(string text)
+        {
+            foreach (var ch in text)
+            {
+                _mainEngine.SendCharEvent((int)ch, KeyboardEventType.CharKey);
+            }
+        }
+
+        public void ClearSelection()
+        {
+            char ch = ' ';
+            _mainEngine.SendCharEvent((int)ch, KeyboardEventType.CharKey);
+        }
+
+        #endregion
     }
 }
