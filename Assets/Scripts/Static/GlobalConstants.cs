@@ -277,5 +277,11 @@ namespace VRC2
         }
 
         #endregion
+
+        #region SAGAT
+
+        public static string SAGATTag = "SAGAT";
+
+        #endregion
     }
 }

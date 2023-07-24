@@ -172,14 +172,14 @@ namespace SimpleWebBrowser
                     mainUIPanel.InitPrefabLinks();
             }
 
-            var parentcanvas = GetComponentInParent<Canvas>();
-            if (parentcanvas != null)
-            {
-                _mainCamera = parentcanvas.worldCamera; //get camera assigned to parent canvas
-            }
-
-            if (_mainCamera == null) //try to get default but this completely wrong
-                _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+            // var parentcanvas = GetComponentInParent<Canvas>();
+            // if (parentcanvas != null)
+            // {
+            //     _mainCamera = parentcanvas.worldCamera; //get camera assigned to parent canvas
+            // }
+            //
+            // if (_mainCamera == null) //try to get default but this completely wrong
+            //     _mainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
 
             if (mainUIPanel != null)
             {
@@ -200,8 +200,6 @@ namespace SimpleWebBrowser
             IEnumerator initCoroutine =
                 _mainEngine.InitPlugin(Width, Height, MemoryFile, InitialURL, EnableWebRTC, EnableGPU);
             StartCoroutine(initCoroutine);
-
-
         }
 
         private void OnTextureObjectUpdated(Texture2D newtexture)
