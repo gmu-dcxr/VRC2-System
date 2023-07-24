@@ -23,12 +23,18 @@ namespace VRC2
 
         private string format = "f2";
 
+        // ratio = model_length / measured_length
+        private float ratio = 3.25f;
+
         // measure distance only when two controllers' select button (trigger) are pressed.
 
         // Start is called before the first frame update
         void Start()
         {
-
+            var (h, v, d) = GetTouchPointsDistances();
+            print(h.ToString("f5"));
+            print(v.ToString("f5"));
+            print(d.ToString("f5"));
         }
 
         // Update is called once per frame
@@ -97,8 +103,10 @@ namespace VRC2
 
             if (left && right)
             {
-                h = Math.Abs(leftValue.z - rightValue.z);
-                v = Math.Abs(leftValue.y - rightValue.y);
+                // multiply ratio to get the length in model scale 
+                h = Math.Abs(leftValue.z - rightValue.z) * ratio;
+                v = Math.Abs(leftValue.y - rightValue.y) * ratio;
+
                 d = (float)Math.Sqrt(h * h + v * v);
             }
 
