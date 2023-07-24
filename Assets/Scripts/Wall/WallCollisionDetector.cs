@@ -66,6 +66,8 @@ namespace VRC2
                     var go = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                     var pipe = go.GetComponentInChildren<PipeCollisionDetector>().gameObject;
                     var z = pipe.GetComponent<MeshCollider>().bounds.extents.z;
+                    
+                    print($"{diameter} - {z.ToString("f5")}");
 
                     _pipeDiameters.Add(diameter, z);
 
@@ -80,18 +82,33 @@ namespace VRC2
             if (_clampExtendsZ == null)
             {
                 _clampExtendsZ = new Dictionary<int, float>();
+
+                _clampExtendsZ.Add(1, 0.00836f);
+                _clampExtendsZ.Add(2, 0.02786f);
+                _clampExtendsZ.Add(3, 0.03901f);
+                _clampExtendsZ.Add(4, 0.05015f);
             }
+
+            // BUG: Dynamically getting the bounds doesn't work in VR, use the predefined size instead.
 
             var size = clamp.GetComponentInChildren<ClampScaleInitializer>().clampSize;
-            if (_clampExtendsZ.ContainsKey(size))
-            {
-                return _clampExtendsZ[size];
-            }
+            //
+            // float res = 0f;
+            // if (_clampExtendsZ.ContainsKey(size))
+            // {
+            //     res = _clampExtendsZ[size];
+            // }
+            // else
+            // {
+            //     var mc = clamp.GetComponentInChildren<BoxCollider>().bounds.extents;
+            //     _clampExtendsZ.Add(size, mc.z);
+            //
+            //     res = mc.z;
+            // }
+            //
+            // print($"clamp {size} - {res.ToString("F5")}");
 
-            var mc = clamp.GetComponentInChildren<BoxCollider>().bounds.extents;
-            _clampExtendsZ.Add(size, mc.z);
-
-            return mc.z;
+            return _clampExtendsZ[size];
         }
 
         private void OnTriggerEnter(Collider other)
@@ -113,10 +130,8 @@ namespace VRC2
         {
             // get the game object
             var go = other.gameObject;
-            print($"wall collision {go.name}");
             if (go.CompareTag(GlobalConstants.pipeObjectTag))
             {
-                print("wall pipe collision");
                 HandlePipeCollision(go);
             }
             else if (go.CompareTag(GlobalConstants.clampObjectTag))
