@@ -254,7 +254,7 @@ namespace VRC2.Pipe
             var name = GetPipePrefabName(para);
 
             var path = $"{GlobalConstants.PipePrefabsPath}{name}.prefab";
-            
+
             Debug.Log($"GetPipePrefab: {path}");
 
             GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
@@ -264,21 +264,22 @@ namespace VRC2.Pipe
 
         public static NetworkObject GetPipePrefabRef(PipeParameters para)
         {
-            var table = NetworkProjectConfig.Global.PrefabTable;
+            // TODO: PrefabTable is not working, why?
+            // var table = NetworkProjectConfig.Global.PrefabTable;
 
             GameObject go = GetPipePrefab(para);
 
             var no = go.GetComponent<NetworkObject>();
-            var nid = no.NetworkGuid;
+            // var nid = no.NetworkGuid;
 
-            NetworkPrefabId npid;
-            NetworkObject networkObject = null;
-            if (table.TryGetId(nid, out npid))
-            {
-                table.TryGetPrefab(npid, out networkObject);
-            }
+            // NetworkPrefabId npid;
+            // NetworkObject networkObject = null;
+            // if (table.TryGetId(nid, out npid))
+            // {
+            //     table.TryGetPrefab(npid, out networkObject);
+            // }
 
-            return networkObject;
+            return no;
         }
 
         public static GameObject GetStraightPipePrefab(PipeDiameter diameter)
@@ -301,20 +302,21 @@ namespace VRC2.Pipe
 
         public static NetworkObject GetPipeContainerPrefab()
         {
-            var table = NetworkProjectConfig.Global.PrefabTable;
+            // TODO: PrefabTable is not working, why?
+            // var table = NetworkProjectConfig.Global.PrefabTable;
             var container =
                 AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
             var no = container.GetComponent<NetworkObject>();
             var nid = no.NetworkGuid;
 
-            NetworkPrefabId npid;
-            NetworkObject networkObject = null;
-            if (table.TryGetId(nid, out npid))
-            {
-                table.TryGetPrefab(npid, out networkObject);
-            }
+            // NetworkPrefabId npid;
+            // NetworkObject networkObject = null;
+            // if (table.TryGetId(nid, out npid))
+            // {
+            //     table.TryGetPrefab(npid, out networkObject);
+            // }
 
-            return networkObject;
+            return no;
         }
 
         public static void DisableRigidBody(GameObject interactable)
