@@ -9,9 +9,10 @@ namespace VRC2.Events
 
         private void Start()
         {
-            // get scale
-            var scale = GlobalConstants.GetClampScaleBySize(clampSize);
-            gameObject.transform.localScale = scale;
+            // Bug: it's better not to change scale here. Instead, change it in the prefabs.
+            // // get scale
+            // var scale = GlobalConstants.GetClampScaleBySize(clampSize);
+            // gameObject.transform.localScale = scale;
         }
     }
 }
