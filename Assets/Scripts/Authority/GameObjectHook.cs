@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace VRC2.Authority
 {
-    public class AuthoritySettingHook : MonoBehaviour
+    public class AuthoritySettingHook : AuthorityHook
     {
         [Header("Authority")] public bool P1Only;
         public bool P2Only;
@@ -12,6 +12,8 @@ namespace VRC2.Authority
         {
 
         }
+        
+        
 
         private void Update()
         {
