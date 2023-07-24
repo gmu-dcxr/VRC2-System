@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Timers;
 using UnityEngine;
 
@@ -39,6 +40,7 @@ namespace VRC2.Scenarios
         {
             get => _scenario;
         }
+
         public int ID
         {
             get => _id;
@@ -99,25 +101,27 @@ namespace VRC2.Scenarios
                 if (!started)
                 {
                     print($"{Scenario} - Incident #{_id} - Start @ {localts}");
-                    // start it
-                    started = true;
                     if (OnStart != null)
                     {
                         OnStart(_id);
                     }
+
+                    // start it
+                    started = true;
                 }
-                else if(endInSec != -1)
+                else if (endInSec != -1)
                 {
                     // check whether it needs to stop
                     if (localts >= endInSec)
                     {
                         print($"{Scenario} - Incident #{_id} - Finish @ {localts}");
                         // time to stop it
-                        finished = true;
                         if (OnFinish != null)
                         {
                             OnFinish(_id);
                         }
+
+                        finished = true;
                     }
                 }
             }
