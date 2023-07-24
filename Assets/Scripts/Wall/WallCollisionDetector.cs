@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,6 +12,7 @@ using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 namespace VRC2
 {
 
+    [RequireComponent(typeof(MeshCollider))]
     public class WallCollisionDetector : MonoBehaviour
     {
         // pipe's axes are different from wall's 
@@ -27,14 +29,23 @@ namespace VRC2
 
         private IDictionary<PipeDiameter, float> _pipeDiameters;
         private IDictionary<int, float> _clampExtendsZ;
+        
+        private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
 
 
         // Start is called before the first frame update
         void Start()
         {
-            _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
-
             InitPipeDiameters();
+            _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
+        }
+        
+        void Update()
+        {
+            while (_mainThreadWorkQueue.TryDequeue(out Action workload))
+            {
+                workload();
+            }
         }
 
         void InitPipeDiameters()
@@ -83,15 +94,10 @@ namespace VRC2
             return mc.z;
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
         private void OnTriggerEnter(Collider other)
         {
-            OnTriggerEnterAndStay(other);
+            _mainThreadWorkQueue.Enqueue(() => { OnTriggerEnterAndStay(other); });
+
         }
 
         private void OnTriggerExit(Collider other)
@@ -100,15 +106,17 @@ namespace VRC2
 
         private void OnTriggerStay(Collider other)
         {
-            OnTriggerEnterAndStay(other);
+            _mainThreadWorkQueue.Enqueue(() => { OnTriggerEnterAndStay(other); });
         }
 
         void OnTriggerEnterAndStay(Collider other)
         {
             // get the game object
             var go = other.gameObject;
+            print($"wall collision {go.name}");
             if (go.CompareTag(GlobalConstants.pipeObjectTag))
             {
+                print("wall pipe collision");
                 HandlePipeCollision(go);
             }
             else if (go.CompareTag(GlobalConstants.clampObjectTag))
