@@ -162,7 +162,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS1_1_Finish()
         {
-
         }
 
         public void On_BaselineS1_2_Start()
@@ -297,12 +296,14 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS1_9_Start");
             // SAGAT query
+            ShowSAGAT();
         }
 
         public void On_BaselineS1_9_Finish()
         {
             // SAGAT query
             triggered = false;
+            HideSAGAT();
         }
 
         #endregion

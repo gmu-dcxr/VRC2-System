@@ -21,17 +21,17 @@ namespace VRC2
 
         [Header("Browser")] public WebBrowser2D browser2D;
 
+        private Canvas _canvas
+        {
+            get => rootCanvas.GetComponent<Canvas>();
+        }
+
         // Start is called before the first frame update
         void Start()
         {
             confirmButton.onClick.AddListener(OnConfirmed);
             clearButton.onClick.AddListener(OnCleared);
-        }
-
-        private void Browser2DOnOnJSQuery(string query)
-        {
-            Debug.Log("Javascript query:" + query);
-            browser2D.RespondToJSQuery("My response: OK");
+            Hide();
         }
 
         // Update is called once per frame
@@ -42,20 +42,19 @@ namespace VRC2
 
         public void Show()
         {
-            rootCanvas.SetActive(true);
+            _canvas.enabled = true;
             UIHelper.SetActive(true);
         }
 
         public void Hide()
         {
-            rootCanvas.SetActive(false);
+            _canvas.enabled = false;
             UIHelper.SetActive(false);
         }
 
         void OnConfirmed()
         {
             var text = inputField.text;
-            print(text);
             browser2D.InputText(text);
         }
 

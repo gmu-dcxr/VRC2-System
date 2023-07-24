@@ -16,10 +16,10 @@ namespace VRC2.Scenarios
 
     public class Scenario : MonoBehaviour
     {
-        [HideInInspector]public List<Incident> incidents = null;
+        [HideInInspector] public List<Incident> incidents = null;
 
-        [HideInInspector]public int startInSec;
-        [HideInInspector]public int endInSec;
+        [HideInInspector] public int startInSec;
+        [HideInInspector] public int endInSec;
 
         private string _rawTime;
 
@@ -38,6 +38,26 @@ namespace VRC2.Scenarios
         public System.Action<int> IncidentStart;
         public System.Action<int> IncidentFinish;
 
+        // SAGAT survey UI
+        private GameObject SAGATRoot;
+
+        private SurveyController _surveyController;
+
+        [HideInInspector]
+        public SurveyController surveyController
+        {
+            get
+            {
+                if (SAGATRoot == null)
+                {
+                    SAGATRoot = GameObject.FindWithTag(GlobalConstants.SAGATTag);
+                    _surveyController = SAGATRoot.GetComponent<SurveyController>();
+                }
+
+                return _surveyController;
+            }
+        }
+
         public string ClsName
         {
             get => GetType().Name;
@@ -51,7 +71,7 @@ namespace VRC2.Scenarios
         public string name
         {
             get => _name;
-            
+
             set => _name = value;
         }
 
@@ -67,7 +87,7 @@ namespace VRC2.Scenarios
         {
             this._id = id;
         }
-        
+
         // The configure file of each scenario is independent, so the start time always is 0.
         // When scenarios are sequenced, it's necessary to override them
         public void OverrideStartEnd(int start, int end)
@@ -235,6 +255,16 @@ namespace VRC2.Scenarios
             }
 
             Debug.LogWarning($"{ClsName} Check Incidents Callbacks Result: {pass}");
+        }
+
+        public void ShowSAGAT()
+        {
+            surveyController.Show();
+        }
+
+        public void HideSAGAT()
+        {
+            surveyController.Hide();
         }
     }
 }
