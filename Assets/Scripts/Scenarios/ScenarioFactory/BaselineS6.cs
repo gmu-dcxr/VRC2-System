@@ -11,7 +11,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Tooltip("Yml file name")]
         public string filename = "BaselineS6.yml";
 
-        [Header("Accident Configure")] public GameObject pipe; //wasnt sure how to set wind so left pipe in for now
+        [Header("Accident Configure")] public GameObject pipe; //Wasn't sure how to set wind so left pipe in for now
 
         private Transform _pipeParent;
 
