@@ -287,6 +287,9 @@ namespace VRC2.Events
 
             // disable glue hint first
             hintManager.HideHint();
+            
+            // disable other pipe clamp hit
+            otherpipe.GetComponent<ClampHintManager>().Hide();
 
             var cipRoot = gameObject.transform.parent;
 
