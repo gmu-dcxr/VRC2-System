@@ -348,6 +348,12 @@ namespace VRC2.Events
             // // set parent to attach the the left-hand controller
             // parentObject.GetComponent<PipesContainerManager>()
             //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            
+            // update glue hint flags
+            // show left one
+            gameObject.GetComponent<ClampHintManager>().CanShow = true;
+            // hide right one
+            otherpipe.GetComponent<ClampHintManager>().CanShow = false;
 
             connected = true;
         }
