@@ -145,6 +145,21 @@ namespace VRC2
         }
 
         #region Handle Pipe's Collision with the Wall
+
+        bool ShouldPipeFall(GameObject root)
+        {
+            // return false if there is at least one ClampHintManager.Clamped == true
+            var children = Utils.GetChildren<ClampHintManager>(root);
+
+            foreach (var child in children)
+            {
+                var chm = child.GetComponent<ClampHintManager>();
+                if (chm.Clamped) return false;
+            }
+            
+            return true;
+        }
+        
         void HandlePipeCollision(GameObject pipe)
         {
             // here the pipe may belong to a pipe container
