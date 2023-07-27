@@ -91,7 +91,7 @@ namespace VRC2
 
             // BUG: Dynamically getting the bounds doesn't work in VR, use the predefined size instead.
 
-            var size = clamp.GetComponentInParent<ClampScaleInitializer>().clampSize;
+            var size = clamp.GetComponent<ClampScaleInitializer>().clampSize;
             //
             // float res = 0f;
             // if (_clampExtendsZ.ContainsKey(size))
@@ -227,7 +227,7 @@ namespace VRC2
         void HandleClampCollision(GameObject clamp)
         {
             // get the Interactable clamp
-            var iclamp = clamp.transform.parent.parent.gameObject;
+            var iclamp = clamp.transform.parent.gameObject;
 
             // delete its rigid body
             Rigidbody rb = null;
