@@ -25,6 +25,12 @@ namespace VRC2.Events
             {
                 rb.useGravity = false;
             }
+            else
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                rb.useGravity = false;
+            }
         }
 
         private void OnUnselect()

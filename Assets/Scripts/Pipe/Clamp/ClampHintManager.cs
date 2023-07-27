@@ -3,7 +3,7 @@ using UnityEngine;
 
 using VRC2.Pipe;
 
-namespace VRC2.Events
+namespace VRC2.Pipe
 {
     public class ClampHintManager: MonoBehaviour
     {
@@ -15,11 +15,12 @@ namespace VRC2.Events
         [HideInInspector] public bool CanShow = true;
         
         // show it only when it's on the wall
-        [HideInInspector] public bool OnTheWall = false;
+        [HideInInspector] public bool OnTheWall = true;
         
         private void Start()
         {
-            Show();
+            // Show();
+            Hide();
         }
 
         public void Show()
@@ -54,6 +55,8 @@ namespace VRC2.Events
 
             hint.transform.position = cc;
             hint.transform.rotation = rot;
+
+            positioned = true;
         }
     }
 }

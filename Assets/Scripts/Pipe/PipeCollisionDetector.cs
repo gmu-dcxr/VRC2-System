@@ -159,13 +159,15 @@ namespace VRC2.Events
             }
 
             // collision with clamp
-            if (go.CompareTag(GlobalConstants.clampObjectTag))
+            else if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
-                HandleClampCollision(go);
+                // handle it in ClampHintCollisionDetector
+                
+                // HandleClampCollision(go);
             }
-
+            
             // collision with glue
-            if (go.CompareTag(GlobalConstants.glueObjectTag))
+            else if (go.CompareTag(GlobalConstants.glueObjectTag))
             {
                 HandleGlueCollision(go);
             }
@@ -194,8 +196,7 @@ namespace VRC2.Events
                 Debug.Log("Clamp doesn't collide with the wall.");
                 return;
             }
-
-            // remove pipe's rigid boby
+            
             // current interactable pipe
             var cip = gameObject.transform.parent.parent;
 

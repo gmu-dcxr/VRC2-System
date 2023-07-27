@@ -179,7 +179,7 @@ namespace VRC2
 
         public void OnSelect()
         {
-            Debug.Log("Pipe OnSelect");
+            // Debug.Log("Pipe OnSelect");
 
             // if (heldByRightHand())
             // {
@@ -193,7 +193,7 @@ namespace VRC2
 
         public void OnUnselect()
         {
-            Debug.Log("Pipe OnUnselect");
+            // Debug.Log("Pipe OnUnselect");
         }
 
         #endregion
