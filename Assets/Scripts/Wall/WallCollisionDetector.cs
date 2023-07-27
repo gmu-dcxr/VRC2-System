@@ -29,7 +29,7 @@ namespace VRC2
 
         private IDictionary<PipeDiameter, float> _pipeDiameters;
         private IDictionary<int, float> _clampExtendsZ;
-        
+
         private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
 
 
@@ -39,7 +39,7 @@ namespace VRC2
             InitPipeDiameters();
             _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
         }
-        
+
         void Update()
         {
             while (_mainThreadWorkQueue.TryDequeue(out Action workload))
@@ -66,7 +66,7 @@ namespace VRC2
                     var go = Instantiate(prefab, Vector3.zero, Quaternion.identity);
                     var pipe = go.GetComponentInChildren<PipeCollisionDetector>().gameObject;
                     var z = pipe.GetComponent<MeshCollider>().bounds.extents.z;
-                    
+
                     print($"{diameter} - {z.ToString("f5")}");
 
                     _pipeDiameters.Add(diameter, z);
@@ -189,6 +189,20 @@ namespace VRC2
             pos.x = wpos.x + _wallExtends.x + pipez;
 
             rootObject.transform.position = pos;
+
+            ShowAllClampHints(rootObject);
+        }
+
+        void ShowAllClampHints(GameObject rootObject)
+        {
+            var children = Utils.GetChildren<ClampHintManager>(rootObject);
+
+            foreach (var child in children)
+            {
+                var chm = child.GetComponent<ClampHintManager>();
+                chm.OnTheWall = true;
+                chm.Show();
+            }
         }
 
 

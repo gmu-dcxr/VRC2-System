@@ -283,5 +283,11 @@ namespace VRC2
         public static string SAGATTag = "SAGAT";
 
         #endregion
+
+        #region Clamp Hint
+
+        public static string clampHintTag = "clampHintTag";
+
+        #endregion
     }
 }

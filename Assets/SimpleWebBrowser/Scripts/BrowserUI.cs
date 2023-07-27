@@ -84,10 +84,10 @@ namespace SimpleWebBrowser
 
         void Update()
         {
-            if (UrlField.isFocused && !KeepUIVisible)
-            {
-                Show();
-            }
+            // if (UrlField.isFocused && !KeepUIVisible)
+            // {
+            //     Show();
+            // }
         }
 
 
