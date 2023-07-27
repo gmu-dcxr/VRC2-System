@@ -286,7 +286,7 @@ namespace VRC2
 
         #region Clamp Hint
 
-        public static string clampHintTag = "clampHintTag";
+        public static string clampHintTag = "ClampHint";
 
         #endregion
     }
