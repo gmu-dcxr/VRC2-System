@@ -289,5 +289,11 @@ namespace VRC2
         public static string clampHintTag = "ClampHint";
 
         #endregion
+
+        #region Wall
+
+        public static string wallTag = "Wall";
+
+        #endregion
     }
 }

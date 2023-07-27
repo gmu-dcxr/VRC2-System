@@ -143,6 +143,14 @@ namespace VRC2.Events
 
         private void OnTriggerExit(Collider other)
         {
+            var go = other.gameObject;
+            if (go.CompareTag(GlobalConstants.clampObjectTag))
+            {
+                // Enable ClampHintCollisionDetector
+                var chm = gameObject.GetComponent<ClampHintManager>();
+                chm.gameObject.SetActive(true);
+                chm.Clamped = false;
+            }
         }
 
         private void OnTriggerStay(Collider other)
