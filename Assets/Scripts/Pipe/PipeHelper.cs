@@ -350,5 +350,18 @@ namespace VRC2.Pipe
 
             return go;
         }
+
+        public static GameObject GetRoot(GameObject go)
+        {
+            var root = go.transform;
+            while (true)
+            {
+                if (root.parent == null) break;
+
+                root = root.parent;
+            }
+
+            return root.gameObject;
+        }
     }
 }

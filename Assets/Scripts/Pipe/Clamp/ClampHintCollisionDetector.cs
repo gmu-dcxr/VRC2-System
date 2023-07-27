@@ -5,13 +5,11 @@ namespace VRC2.Pipe
 {
     public class ClampHintCollisionDetector : MonoBehaviour
     {
-        private GameObject parent;
         private ClampHintManager _hintManager;
 
         private void Start()
         {
-            parent = gameObject.transform.parent.gameObject;
-            _hintManager = parent.GetComponentInChildren<ClampHintManager>();
+            _hintManager = gameObject.GetComponentInParent<ClampHintManager>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -24,23 +22,37 @@ namespace VRC2.Pipe
             OnTriggerEnterAndStay(other);
         }
 
+        private void OnTriggerExit(Collider other)
+        {
+            var go = other.gameObject;
+            if (go.CompareTag(GlobalConstants.wallTag))
+            {
+                // pipe leaves the wall
+                var root = PipeHelper.GetRoot(gameObject);
+
+                // add rigid body etc.
+                PipeHelper.AfterMove(ref root);
+
+                var children = Utils.GetChildren<ClampHintManager>(root);
+
+                foreach (var child in children)
+                {
+                    var chm = child.GetComponent<ClampHintManager>();
+                    chm.OnTheWall = false;
+                    chm.Clamped = false;
+                }
+            } else if (go.CompareTag(GlobalConstants.clampObjectTag))
+            {
+                _hintManager.Clamped = false;
+            }
+        }
+
         void OnTriggerEnterAndStay(Collider other)
         {
             var go = other.gameObject;
-            if (go.CompareTag(GlobalConstants.clampObjectTag))
+            if (go.CompareTag(GlobalConstants.clampObjectTag) && _hintManager.OnTheWall)
             {
-                // hide self only when it's on the wall
-                if (_hintManager.OnTheWall)
-                {
-                    gameObject.SetActive(false);
-                    // remove clamp rigid body
-                    var iclamp = go.transform.parent.gameObject;
-                    Rigidbody rb = null;
-                    if (iclamp.TryGetComponent<Rigidbody>(out rb))
-                    {
-                        GameObject.Destroy(rb);
-                    }
-                }
+                _hintManager.Clamped = true;
             }
         }
     }

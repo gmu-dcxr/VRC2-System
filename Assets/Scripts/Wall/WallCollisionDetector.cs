@@ -91,7 +91,7 @@ namespace VRC2
 
             // BUG: Dynamically getting the bounds doesn't work in VR, use the predefined size instead.
 
-            var size = clamp.GetComponentInChildren<ClampScaleInitializer>().clampSize;
+            var size = clamp.GetComponentInParent<ClampScaleInitializer>().clampSize;
             //
             // float res = 0f;
             // if (_clampExtendsZ.ContainsKey(size))
@@ -145,7 +145,6 @@ namespace VRC2
         }
 
         #region Handle Pipe's Collision with the Wall
-
         void HandlePipeCollision(GameObject pipe)
         {
             // here the pipe may belong to a pipe container
@@ -189,19 +188,18 @@ namespace VRC2
             pos.x = wpos.x + _wallExtends.x + pipez;
 
             rootObject.transform.position = pos;
-
-            ShowAllClampHints(rootObject);
+            
+            UpdateAllClampHints(rootObject, true);
         }
 
-        void ShowAllClampHints(GameObject rootObject)
+        void UpdateAllClampHints(GameObject rootObject, bool onthewall)
         {
             var children = Utils.GetChildren<ClampHintManager>(rootObject);
 
             foreach (var child in children)
             {
                 var chm = child.GetComponent<ClampHintManager>();
-                chm.OnTheWall = true;
-                chm.Show();
+                chm.OnTheWall = onthewall;
             }
         }
 
@@ -214,15 +212,15 @@ namespace VRC2
         void HandleClampCollision(GameObject clamp)
         {
             // get the Interactable clamp
-            var iclamp = clamp.transform.parent.gameObject;
+            var iclamp = clamp.transform.parent.parent.gameObject;
 
-            // // delete its rigid body
-            // Rigidbody rb = null;
-            // if (iclamp.TryGetComponent<Rigidbody>(out rb))
-            // {
-            //     // GameObject.Destroy(rb);
-            //     rb.useGravity = false;
-            // }
+            // delete its rigid body
+            Rigidbody rb = null;
+            if (iclamp.TryGetComponent<Rigidbody>(out rb))
+            {
+                GameObject.Destroy(rb);
+                // rb.useGravity = false;
+            }
 
             // get clamp z
             var clampz = GetClampExtendsZ(clamp);
