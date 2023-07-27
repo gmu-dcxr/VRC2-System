@@ -408,7 +408,7 @@ namespace SimpleWebBrowser
 
         public void OnPointerDown(PointerEventData data)
         {
-
+            print("OnPointerDown");
             if (_mainEngine.Initialized)
             {
                 var _raycaster = GetComponentInParent<OVRRaycaster>();
@@ -447,7 +447,7 @@ namespace SimpleWebBrowser
 
         public void OnPointerUp(PointerEventData data)
         {
-
+            print("OnPointerUp");
             if (_mainEngine.Initialized)
             {
                 var _raycaster = GetComponentInParent<OVRRaycaster>();

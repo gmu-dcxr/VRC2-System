@@ -10,6 +10,13 @@ namespace VRC2.Events
         public GameObject hint;
 
         private bool positioned = false;
+
+        // whether to show it, the right part of the connected pipe will be set to false
+        [HideInInspector] public bool CanShow = true;
+        
+        // show it only when it's on the wall
+        [HideInInspector] public bool OnTheWall = false;
+        
         private void Start()
         {
             Show();
@@ -17,6 +24,12 @@ namespace VRC2.Events
 
         public void Show()
         {
+            // show only when CanShow is true
+            if (!CanShow) return;
+            
+            // show this only when pipe is on the wall
+            if (!OnTheWall) return;
+            
             if (!positioned)
             {
                 MoveHint();
