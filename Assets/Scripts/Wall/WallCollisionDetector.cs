@@ -171,10 +171,12 @@ namespace VRC2
                 root = root.parent;
             }
 
+            var ipipe = pipe.transform.parent.gameObject;
+
             var rootObject = root.gameObject;
 
             // get diameter
-            var diameter = rootObject.GetComponent<PipeManipulation>().diameter;
+            var diameter = ipipe.GetComponent<PipeManipulation>().diameter;
 
             // get real diameter
             var pipez = _pipeDiameters[diameter];
@@ -203,8 +205,40 @@ namespace VRC2
             pos.x = wpos.x + _wallExtends.x + pipez;
 
             rootObject.transform.position = pos;
+
+            // var localright = transform.InverseTransformDirection(pipe.transform.right);
+            // var localforward = transform.InverseTransformDirection(pipe.transform.forward);
+            //
+            // // rotate around y axis
+            // var up = Vector3.SignedAngle(localright, gameObject.transform.right, Vector3.up);
+            // var right = Vector3.SignedAngle(localforward, -gameObject.transform.forward, Vector3.up);
+            // var forward = Vector3.SignedAngle(root.up, gameObject.transform.up, Vector3.forward);
+            //
+            // print($"up: {up.ToString("f5")}");
+            // print($"right: {right.ToString("f5")}");
+            // print($"forward: {forward.ToString("f5")}");
             
             UpdateAllClampHints(rootObject, true);
+        }
+
+        Vector3 GetPipeRotation(GameObject pipe, GameObject wall)
+        {
+            var root = pipe.transform;
+            while (true)
+            {
+                if (root.parent == null) break;
+                root = root.parent;
+            }
+
+            var rot = pipe.transform.rotation.eulerAngles;
+            var wrot = wall.transform.rotation.eulerAngles;
+
+            rot.x = wrot.x;
+            // set pipe's y rotation to the wall's y rotation
+            rot.y = wrot.y + pipeYRotationOffset;
+            root.transform.rotation = Quaternion.Euler(rot);
+
+            return rot;
         }
 
         void UpdateAllClampHints(GameObject rootObject, bool onthewall)
