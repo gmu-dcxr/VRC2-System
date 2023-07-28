@@ -159,7 +159,7 @@ namespace VRC2
             
             return true;
         }
-        
+
         void HandlePipeCollision(GameObject pipe)
         {
             // here the pipe may belong to a pipe container
@@ -194,30 +194,32 @@ namespace VRC2
             var wpos = wt.position;
             var wrot = wt.rotation.eulerAngles;
 
-            // set pipe's x rotation to the wall's x rotation
-            rot.x = wrot.x;
-            // set pipe's y rotation to the wall's y rotation
-            rot.y = wrot.y + pipeYRotationOffset;
-            // update
-            rootObject.transform.rotation = Quaternion.Euler(rot);
+            // // NOTE: this only works for single pipe
+            // // set pipe's x rotation to the wall's x rotation
+            // rot.x = wrot.x;
+            // // set pipe's y rotation to the wall's y rotation
+            // rot.y = wrot.y + pipeYRotationOffset;
+            // rootObject.transform.rotation = Quaternion.Euler(rot);
 
             // update the pipe's distance to the wall
             pos.x = wpos.x + _wallExtends.x + pipez;
 
             rootObject.transform.position = pos;
 
-            // var localright = transform.InverseTransformDirection(pipe.transform.right);
-            // var localforward = transform.InverseTransformDirection(pipe.transform.forward);
-            //
-            // // rotate around y axis
-            // var up = Vector3.SignedAngle(localright, gameObject.transform.right, Vector3.up);
-            // var right = Vector3.SignedAngle(localforward, -gameObject.transform.forward, Vector3.up);
-            // var forward = Vector3.SignedAngle(root.up, gameObject.transform.up, Vector3.forward);
-            //
-            // print($"up: {up.ToString("f5")}");
-            // print($"right: {right.ToString("f5")}");
-            // print($"forward: {forward.ToString("f5")}");
-            
+            // creat a temp object to get the local right vector
+            var temp = new GameObject();
+            temp.transform.position = pipe.transform.position;
+            temp.transform.rotation = pipe.transform.rotation;
+            temp.transform.Translate(Vector3.right, Space.Self);
+
+            var localRight = (temp.transform.position - pipe.transform.position).normalized;
+
+            var wallRight = gameObject.transform.right;
+            // get the angle
+            var right = Vector3.SignedAngle(localRight, wallRight, Vector3.up);
+            // rotate to make it stick on the wall
+            rootObject.transform.Rotate(0, right + 90, 0, Space.World);
+
             UpdateAllClampHints(rootObject, true);
         }
 
