@@ -46,9 +46,9 @@ public class OpenVirtualKeyboard : MonoBehaviour
         if(virtualKeyboard.activeSelf)
             return;
         
-#if(UNITY_EDITOR)
-        print("OnOpenVirtualKeyboard");
-#endif
+// #if(UNITY_EDITOR)
+//         print("OnOpenVirtualKeyboard");
+// #endif
         
         SetupKeyboardSize();
 
@@ -60,9 +60,9 @@ public class OpenVirtualKeyboard : MonoBehaviour
         if(!virtualKeyboard.activeSelf)
             return;
         
-#if(UNITY_EDITOR)
-        print("OnCloseVirtualKeyboard");
-#endif
+// #if(UNITY_EDITOR)
+//         print("OnCloseVirtualKeyboard");
+// #endif
         
         virtualKeyboard.SetActive(false);
     }
@@ -82,9 +82,9 @@ public class OpenVirtualKeyboard : MonoBehaviour
         float keyboardHeight = 485;
         
         // you can uncomment when testing
-#if(UNITY_EDITOR)
-         print($"interface size is {keyboardWidth} x {keyboardHeight}");
-#endif
+// #if(UNITY_EDITOR)
+//          print($"interface size is {keyboardWidth} x {keyboardHeight}");
+// #endif
         keyboardBackground.sizeDelta = new Vector2(keyboardWidth, keyboardHeight);
     }
 }
