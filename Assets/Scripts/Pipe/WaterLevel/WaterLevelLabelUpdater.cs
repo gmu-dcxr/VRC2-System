@@ -72,7 +72,7 @@ namespace VRC2.Events
                 textMeshPro.text = $"{deg}";
             }
 
-            Debug.LogWarning(message);
+            // Debug.LogWarning(message);
         }
     }
 }

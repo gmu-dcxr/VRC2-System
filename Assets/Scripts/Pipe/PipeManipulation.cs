@@ -46,24 +46,33 @@ namespace VRC2
 
         private NetworkGrabbable _networkGrabbable;
 
-        private Renderer _rendererA;
-        private Renderer _rendererB;
+        private Renderer _rendererA
+        {
+            get => segmentA.GetComponent<Renderer>();
+        }
+
+
+        private Renderer _rendererB
+        {
+            get => segmentB.GetComponent<Renderer>();
+        }
 
         private bool beingSelected;
 
-        private MeshCollider _meshColliderA;
-        private MeshCollider _meshColliderB;
+        private MeshCollider _meshColliderA
+        {
+            get => segmentA.GetComponent<MeshCollider>();
+        }
+
+        private MeshCollider _meshColliderB
+        {
+            get => segmentB.GetComponent<MeshCollider>();
+        }
 
 
         // Start is called before the first frame update
         void Start()
         {
-            _rendererA = segmentA.GetComponent<Renderer>();
-            _rendererB = segmentB.GetComponent<Renderer>();
-
-            _meshColliderA = segmentA.GetComponent<MeshCollider>();
-            _meshColliderB = segmentB.GetComponent<MeshCollider>();
-
             // set length
             SetLength(segmentALength, segmentBLength);
 
