@@ -363,5 +363,82 @@ namespace VRC2.Pipe
 
             return root.gameObject;
         }
+
+        #region Material
+
+        public static string GetPipeMaterialPath(PipeParameters para)
+        {
+
+            var path = "";
+            switch (para.diameter)
+            {
+                case PipeDiameter.Diameter_1:
+                    path += "1 inch/1 ";
+                    break;
+                case PipeDiameter.Diameter_2:
+                    path += "2 inch/2 ";
+                    break;
+                case PipeDiameter.Diameter_3:
+                    path += "3 inch/3 ";
+                    break;
+                case PipeDiameter.Diameter_4:
+                    path += "4 inch/4 ";
+                    break;
+                default:
+                    break;
+            }
+
+            switch (para.type)
+            {
+                case PipeConstants.PipeType.Electrical:
+                    path += "electrical ";
+                    break;
+                case PipeConstants.PipeType.Gas:
+                    path += "gas ";
+                    break;
+                case PipeConstants.PipeType.Water:
+                    path += "water ";
+                    break;
+                case PipeConstants.PipeType.Sewage:
+                    path += "sewage ";
+                    break;
+                default:
+                    break;
+            }
+
+            switch (para.color)
+            {
+                case PipeConstants.PipeColor.Blue:
+                    path += "b";
+                    break;
+                case PipeConstants.PipeColor.Green:
+                    path += "g";
+                    break;
+                case PipeConstants.PipeColor.Magenta:
+                    path += "m";
+                    break;
+                case PipeConstants.PipeColor.Yellow:
+                    path += "y";
+                    break;
+
+                default:
+                    break;
+            }
+
+            var fullpath = $"{GlobalConstants.pipeMaterialPath}{path}.mat";
+
+            return fullpath;
+        }
+
+        public static Material LoadPipeMaterial(PipeParameters para)
+        {
+            var path = GetPipeMaterialPath(para);
+
+            Material mat = AssetDatabase.LoadAssetAtPath(path, typeof(Material)) as Material;
+
+            return mat;
+        }
+
+        #endregion
     }
 }

@@ -87,6 +87,7 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
+            SetMaterial();
             if (beingSelected && !OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch))
             {
                 // pipe was released
@@ -202,8 +203,16 @@ namespace VRC2
 
         Material GetMaterial(PipeDiameter d, PipeType t, PipeColor c)
         {
-            // TODO
-            return null;
+            var para = new PipeParameters();
+            para.diameter = d;
+            para.type = t;
+            para.color = c;
+            return GetMaterial(para);
+        }
+
+        Material GetMaterial(PipeParameters para)
+        {
+            return PipeHelper.LoadPipeMaterial(para);
         }
 
 
