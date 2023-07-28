@@ -18,11 +18,6 @@ namespace VRC2
         [Header("Character Prefab")] public NetworkPrefabRef _playerPrefab;
         public string prefabName;
 
-        [Header("Pipe Prefabs")] public NetworkPrefabRef _pipePrefabDiameter1;
-        public NetworkPrefabRef _pipePrefabDiameter2;
-        public NetworkPrefabRef _pipePrefabDiameter3;
-        public NetworkPrefabRef _pipePrefabDiameter4;
-
         private NetworkRunner _runner;
 
         [Header("Setting")] public bool hideSelf = false;
@@ -38,12 +33,6 @@ namespace VRC2
         {
             _runner = gameObject.GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
-
-            // initialize pipe prefabs
-            GlobalConstants.AddPipeNetworkPrefabRef(1, _pipePrefabDiameter1);
-            GlobalConstants.AddPipeNetworkPrefabRef(2, _pipePrefabDiameter2);
-            GlobalConstants.AddPipeNetworkPrefabRef(3, _pipePrefabDiameter3);
-            GlobalConstants.AddPipeNetworkPrefabRef(4, _pipePrefabDiameter4);
         }
 
         private void OnRequestStartGame(string obj)

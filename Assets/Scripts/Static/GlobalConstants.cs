@@ -61,35 +61,7 @@ namespace VRC2
             get { return !DialogFirstButton; }
         }
 
-        #region Pipe Template
-
-        private static IDictionary<int, NetworkPrefabRef> diameterPipePrefabRefDict;
-
-        public static void AddPipeNetworkPrefabRef(int diameter, NetworkPrefabRef prefabRef)
-        {
-            if (diameterPipePrefabRefDict == null)
-            {
-                diameterPipePrefabRefDict = new Dictionary<int, NetworkPrefabRef>();
-            }
-
-            diameterPipePrefabRefDict.Add(diameter, prefabRef);
-        }
-
-        public static NetworkPrefabRef GetPipeNetworkPrefabRef(int diameter)
-        {
-            NetworkPrefabRef result = NetworkPrefabRef.Empty;
-
-            if (diameterPipePrefabRefDict != null)
-            {
-                if (!diameterPipePrefabRefDict.TryGetValue(diameter, out result))
-                {
-                    Debug.LogWarning($"Failed to get pipe prefer for diameter {diameter}");
-                    result = NetworkPrefabRef.Empty;
-                }
-            }
-
-            return result;
-        }
+        #region Pipe Spawn Template
 
         // This is to spawn networked pipe object
         public static GameObject pipeSpawnTemplate;
