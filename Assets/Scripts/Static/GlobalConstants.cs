@@ -295,5 +295,11 @@ namespace VRC2
         public static string wallTag = "Wall";
 
         #endregion
+
+        #region Dynamical Pipe Material
+
+        public static string pipeMaterialPath = "Assets/Materials/Pipe/";
+
+        #endregion
     }
 }
