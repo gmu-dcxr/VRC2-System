@@ -87,7 +87,6 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
-            SetMaterial();
             if (beingSelected && !OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch))
             {
                 // pipe was released
