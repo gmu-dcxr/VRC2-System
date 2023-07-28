@@ -46,6 +46,21 @@ namespace VRC2
 
         private NetworkGrabbable _networkGrabbable;
 
+        [HideInInspector]
+        public PipeParameters pipeParameters
+        {
+            get
+            {
+                var para = new PipeParameters();
+                para.diameter = diameter;
+                para.type = pipeType;
+                para.angle = angle;
+                para.a = segmentALength;
+                para.b = segmentBLength;
+                return para;
+            }
+        }
+
         private Renderer _rendererA
         {
             get => segmentA.GetComponent<Renderer>();

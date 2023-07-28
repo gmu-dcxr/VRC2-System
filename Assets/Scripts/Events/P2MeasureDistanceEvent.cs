@@ -11,14 +11,16 @@ namespace VRC2.Events
 
     public class P2MeasureDistanceEvent : BaseEvent
     {
-        public GameObject wall;
+        private GameObject wall;
 
         private DistanceMeasurer _distanceMeasurer;
         private RayInteractable _rayInteractable;
 
         void Start()
         {
-            _distanceMeasurer = wall.GetComponent<DistanceMeasurer>();
+            wall = GameObject.Find(GlobalConstants.wallTag);
+            
+            _distanceMeasurer = wall.GetComponentInChildren<DistanceMeasurer>();
             _rayInteractable = wall.GetComponent<RayInteractable>();
 
             // disable at the start

@@ -67,7 +67,7 @@ namespace VRC2.Events
             }
 
             SpawnPipeUsingTemplate();
-            
+
             // update global constant
             GlobalConstants.lastSpawned = spawnedPipe.Id;
 
@@ -82,16 +82,16 @@ namespace VRC2.Events
             var pos = t.position;
             var rot = t.rotation;
             // var scale = t.localScale;
-            
+
             var pm = template.GetComponent<PipeManipulation>();
             var color = pm.pipeColor;
             // var length = pm.pipeLength;
             var diameter = pm.diameter;
-            
+
             // destroy
             GameObject.DestroyImmediate(GlobalConstants.pipeSpawnTemplate);
             GlobalConstants.pipeSpawnTemplate = null;
-            
+
             // update static variables
             pipeColor = color;
             // pipeLength = length;
@@ -103,10 +103,10 @@ namespace VRC2.Events
             // spawn object
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
-            
-            // get prefab by diameter
-            var prefab = GlobalConstants.GetPipeNetworkPrefabRef(((int)diameter + 1));
-            
+
+            // get prefab by parameters
+            var prefab = PipeHelper.GetPipePrefab(pm.pipeParameters);
+
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
             spawned = !spawned;
         }
@@ -141,13 +141,13 @@ namespace VRC2.Events
             if (info.IsInvokeLocal)
             {
                 message = $"P1PickupPipeEvent message ({nid}, {color}, {size})\n";
-                Debug.LogWarning(message);   
+                Debug.LogWarning(message);
             }
             else
             {
                 message = $"P1PickupPipeEvent received message ({nid}, {color}, {size})\n";
                 Debug.LogWarning(message);
-                
+
                 // update spawned object material
                 UpdateRemoteSpawnedPipe(nid, color, size);
             }
