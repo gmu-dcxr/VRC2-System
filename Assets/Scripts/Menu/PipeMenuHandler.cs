@@ -514,6 +514,8 @@ namespace VRC2
             PipeConstants.PipeParameters para = new PipeConstants.PipeParameters();
             para.diameter = PipeConstants.PipeDiameter.Diameter_1;
             para.angle = PipeConstants.PipeBendAngles.Angle_0;
+            para.color = PipeConstants.PipeColor.Blue;
+            para.type = PipeConstants.PipeType.Water;
 
             var runner = GlobalConstants.networkRunner;
             var prefab = PipeHelper.GetPipePrefabRef(para);
