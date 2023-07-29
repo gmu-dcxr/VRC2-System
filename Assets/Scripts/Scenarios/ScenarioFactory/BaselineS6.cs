@@ -11,8 +11,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Tooltip("Yml file name")]
         public string filename = "BaselineS6.yml";
 
-        [Header("Accident Configure")] public GameObject pipe; //Wasn't sure how to set wind so left pipe in for now
-
+        
         private Transform _pipeParent;
 
         private Vector3 _pipeLocalPos;
@@ -22,6 +21,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float yaw;
         public float dolly;
         public float hook;
+
+        private float originalDolly;
+        private float originalHook;
 
         private float randomYawIncrease;
 
@@ -34,6 +36,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         private bool triggered = false;
         private bool backwardsTriggered = false;
 
+        [SerializeField]
+        private float wind1 = 0.1f;
+        private float wind2 = 0.3f;
+        private float wind3 = 0.5f;
+
         private void Start()
         {
             InitFromFile(filename);
@@ -43,8 +50,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             CheckIncidentsCallbacks();
 
-            BackupPipeLocalTransform();
-
             crane = animator.gameObject;
             randomYawIncrease = Random.Range(1, 10);
             // make it rotate at the start
@@ -52,6 +57,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             //Find pipeDolly Object
             pipeDolly = GameObject.Find("Pipes");
+
+            //Wind calculations
+            originalDolly = dolly;
+            originalHook = hook;
         }
 
         private void Update()
@@ -116,26 +125,27 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
         }
 
-        void BackupPipeLocalTransform()
-        {
-            var t = pipe.transform;
-            _pipeLocalPos = t.localPosition;
-            _pipeLocalRot = t.localRotation;
-            _pipeParent = t.parent;
-        }
 
         private void Reset()
         {
-            if (pipe.transform.parent == null)
-            {
-                // reset parent
-                pipe.transform.parent = _pipeParent;
-                // update local position and rotation
-                pipe.transform.localPosition = _pipeLocalPos;
-                pipe.transform.localRotation = _pipeLocalRot;
-            }
+           
         }
 
+        private void Wind(float range)
+        {
+            if (range != 0.0f)
+            {
+                float rand = Random.Range(range, -range);
+                dolly = dolly * (1.0f + rand);
+                hook = hook * (1.0f + rand);
+            }
+            else
+            {
+                dolly = originalDolly;
+                hook = originalHook;
+            }
+
+        }
         void UpdateAnimator(float y, float d, float h)
         {
             if (y >= 0)
@@ -156,106 +166,121 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Accident Events Callbacks
 
-        public void On_BaselineS1_1_Start()
+        public void On_BaselineS6_1_Start()
         {
             triggered = false;
         }
 
-        public void On_BaselineS1_1_Finish()
+        public void On_BaselineS6_1_Finish()
         {
         }
 
-        public void On_BaselineS1_2_Start()
+        public void On_BaselineS6_2_Start()
         {
-            print("On_BaselineS1_2_Start");
+            print("On_BaselineS6_2_Start");
             // A load is passing overhead, and it swings a little bit due to the wind.
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
 
+
+            pipeDolly.SetActive(true);
+            Wind(wind1);
             // get yaw
             yaw = CalculateRawBetweenCranePlayer(crane, player);
             triggered = true;
         }
 
-        public void On_BaselineS1_2_Finish()
+        public void On_BaselineS6_2_Finish()
         {
             // A load is passing overhead, and it swings a little bit due to the wind.
         }
 
-        public void On_BaselineS1_3_Start()
+        public void On_BaselineS6_3_Start()
         {
-            print("On_BaselineS1_3_Start");
+            print("On_BaselineS6_3_Start");
             // The hook without a load is passing in the opposite direction.
             // get incident
             var incident = GetIncident(3);
 
+
+            pipeDolly.SetActive(false);
+            Wind(0.0f);
             triggered = false;
             backwardsTriggered = true;
         }
 
-        public void On_BaselineS1_3_Finish()
+        public void On_BaselineS6_3_Finish()
         {
             // The hook without a load is passing in the opposite direction.
         }
 
-        public void On_BaselineS1_4_Start()
+        public void On_BaselineS6_4_Start()
         {
-            print("On_BaselineS1_4_Start");
+            print("On_BaselineS6_4_Start");
             // Another load is passing overhead, and it swings bigger due to the sudden wind. The load stops until it is static.
             // get incident
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
 
+            pipeDolly.SetActive(true);
+            Wind(wind2);
             backwardsTriggered = false;
             triggered = true;
         }
 
-        public void On_BaselineS1_4_Finish()
+        public void On_BaselineS6_4_Finish()
         {
             // Another load is passing overhead, and it swings bigger due to the sudden wind. The load stops until it is static.
         }
 
-        public void On_BaselineS1_5_Start()
+        public void On_BaselineS6_5_Start()
         {
-            print("On_BaselineS1_5_Start");
+            print("On_BaselineS6_5_Start");
             // The hook without a load is passing in the opposite direction..
             // get incident
             var incident = GetIncident(5);
+
+
+            pipeDolly.SetActive(false);
+            Wind(0.0f);
 
             backwardsTriggered = true;
             triggered = false;
         }
 
-        public void On_BaselineS1_5_Finish()
+        public void On_BaselineS6_5_Finish()
         {
             // The hook without a load is passing in the opposite direction..
         }
 
-        public void On_BaselineS1_6_Start()
+        public void On_BaselineS6_6_Start()
         {
-            print("On_BaselineS1_6_Start");
+            print("On_BaselineS6_6_Start");
             // Another load is passing overhead, it swings even stronger due to the sudden wind, and is about to hit the power line.
             // get incident
             var incident = GetIncident(6);
             var warning = incident.Warning;
+            pipeDolly.SetActive(true);
+            Wind(wind3);
             print(warning);
         }
 
-        public void On_BaselineS1_6_Finish()
+        public void On_BaselineS6_6_Finish()
         {
             // Another load is passing overhead, it swings even stronger due to the sudden wind, and is about to hit the power line.
+            Wind(0.0f);
         }
 
-        public void On_BaselineS1_7_Start()
+        public void On_BaselineS6_7_Start()
         {
-            print("On_BaselineS1_7_Start");
+            print("On_BaselineS6_7_Start");
             //SAGAT query
         }
 
-        public void On_BaselineS1_7_Finish()
+        public void On_BaselineS6_7_Finish()
         {
             
         }
