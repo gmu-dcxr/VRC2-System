@@ -6,7 +6,7 @@ namespace VRC2
 {
     [RequireComponent(typeof(Collider))]
     // [RequireComponent(typeof(Rigidbody))]
-    public class EyeInteractable:MonoBehaviour
+    public class EyeInteractable : MonoBehaviour
     {
         public bool IsHovered { get; set; }
 
@@ -16,6 +16,7 @@ namespace VRC2
         public Material unHoverMaterial;
 
         private MeshRenderer _meshRenderer;
+
         private void Start()
         {
             _meshRenderer = GetComponent<MeshRenderer>();

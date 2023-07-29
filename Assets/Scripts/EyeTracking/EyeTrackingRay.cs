@@ -50,13 +50,11 @@ namespace VRC2
             RaycastHit hit;
             Vector3 rayCastDirection = transform.TransformDirection(Vector3.forward) * rayDistance;
 
-            if (Physics.Raycast(transform.position, rayCastDirection, out hit, Mathf.Infinity))
+            if (Physics.Raycast(transform.position, rayCastDirection, out hit, Mathf.Infinity, layersToInclude))
             {
                 UnSelect();
                 _lineRenderer.startColor = rayColorHoverState;
                 _lineRenderer.endColor = rayColorHoverState;
-
-                print(hit.transform.gameObject.name);
 
                 var go = hit.transform.gameObject;
                 EyeInteractable ei;
