@@ -273,5 +273,11 @@ namespace VRC2
         public static string pipeMaterialPath = "Assets/Materials/Pipe/";
 
         #endregion
+
+        #region EyeTracking
+
+        public static string eyeTrackingLogger = "EyeTrackingLog";
+
+        #endregion
     }
 }

@@ -8,30 +8,45 @@ namespace VRC2
     // [RequireComponent(typeof(Rigidbody))]
     public class EyeInteractable : MonoBehaviour
     {
-        public bool IsHovered { get; set; }
+        [HideInInspector] public bool IsHovered { get; set; }
 
         public UnityEvent<GameObject> OnHover;
 
-        public Material hoverMaterial;
-        public Material unHoverMaterial;
+        [Header("For Debug")] public Material hoverMaterial;
+        public Material unhoverMaterial;
 
         private MeshRenderer _meshRenderer;
+
+        private EyeTrackingLogger _eyeTrackingLogger;
 
         private void Start()
         {
             _meshRenderer = GetComponent<MeshRenderer>();
+
+            _eyeTrackingLogger = FindFirstObjectByType<EyeTrackingLogger>();
         }
 
         private void Update()
         {
             if (IsHovered)
             {
-                _meshRenderer.material = hoverMaterial;
+                if (hoverMaterial != null)
+                {
+                    _meshRenderer.material = hoverMaterial;
+                }
+
                 OnHover?.Invoke(gameObject);
+                if (_eyeTrackingLogger != null)
+                {
+                    _eyeTrackingLogger.WriteLog(gameObject);
+                }
             }
             else
             {
-                _meshRenderer.material = unHoverMaterial;
+                if (unhoverMaterial != null)
+                {
+                    _meshRenderer.material = unhoverMaterial;
+                }
             }
         }
     }
