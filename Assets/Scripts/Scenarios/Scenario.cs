@@ -231,6 +231,8 @@ namespace VRC2.Scenarios
             print($"{_name} #{obj} OnIncidentFinish");
             if (IncidentFinish != null)
             {
+                // hide warning
+                HideWarning();
                 IncidentFinish(obj);
             }
         }
@@ -240,6 +242,9 @@ namespace VRC2.Scenarios
             print($"{_name} #{obj} OnIncidentStart");
             if (IncidentStart != null)
             {
+                // show warning
+                ShowWarning(GetIncident(obj).Warning);
+                
                 IncidentStart(obj);
             }
         }
@@ -285,8 +290,16 @@ namespace VRC2.Scenarios
 
         public void ShowWarning(string msg)
         {
+            if(msg == "") return;
+            
             print($"Show warning: {msg}");
             warningController.Show("Warning", msg);
+        }
+
+        public void HideWarning()
+        {
+            print("Hide warning");
+            warningController.Hide(true);
         }
     }
 }
