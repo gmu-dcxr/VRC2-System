@@ -171,7 +171,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
-            print(warning);
+            
+            // show warning
+            ShowWarning(warning);
+            
             pipe.SetActive(false);
 
             // get yaw

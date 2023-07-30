@@ -26,6 +26,42 @@ namespace VRC2.Conditions
         protected Context _context;
         protected Amount _amount;
 
+        public Existence Existence
+        {
+            get => _existence;
+        }
+
+        public Frequency Frequency
+        {
+            get => _frequency;
+        }
+
+        public Format Format
+        {
+            get => _format;
+        }
+
+        public Quality Quality
+        {
+            get => _quality;
+        }
+
+        public TimeLimits TimeLimits
+        {
+            get => _timeLimits;
+
+        }
+
+        public Context Context
+        {
+            get => _context;
+        }
+
+        public Amount Amount
+        {
+            get => _amount;
+        }
+
         public string name = "";
         public string shortName = "";
 
@@ -186,7 +222,7 @@ namespace VRC2.Conditions
             _amount = Amount.Overload;
         }
     }
-    
+
     public class Condition8 : Baseline
     {
         public Condition8() : base()
