@@ -243,7 +243,7 @@ namespace VRC2.Scenarios
             if (IncidentStart != null)
             {
                 // show warning
-                ShowWarning(GetIncident(obj).Warning);
+                ShowWarning(_name, obj, GetIncident(obj).Warning);
                 
                 IncidentStart(obj);
             }
@@ -288,12 +288,12 @@ namespace VRC2.Scenarios
             surveyController.Hide();
         }
 
-        public void ShowWarning(string msg)
+        public void ShowWarning(string sname, int idx, string msg)
         {
             if(msg == "") return;
             
             print($"Show warning: {msg}");
-            warningController.Show("Warning", msg);
+            warningController.Show("Warning",sname, idx, msg);
         }
 
         public void HideWarning()

@@ -39,10 +39,10 @@ namespace VRC2.Scenarios
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 100, 150, 50), "Test"))
-            {
-                TestScenarioManager();
-            }
+            // if (GUI.Button(new Rect(10, 100, 150, 50), "Test"))
+            // {
+            //     TestScenarioManager();
+            // }
         }
 
 
