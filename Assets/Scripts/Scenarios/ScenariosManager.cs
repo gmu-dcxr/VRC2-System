@@ -19,6 +19,11 @@ namespace VRC2.Scenarios
 
         private Condition _condition;
 
+        public Condition condition
+        {
+            get => _condition;
+        }
+
         private void Start()
         {
             CheckScenariosCallbacks();

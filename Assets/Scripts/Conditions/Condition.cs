@@ -73,6 +73,8 @@ namespace VRC2.Conditions
                     return new Condition6();
                 case 7:
                     return new Condition7();
+                case 8:
+                    return new Condition8();
                 default:
                     Debug.LogWarning($"Not found condition for {idx}");
                     break;
@@ -182,6 +184,17 @@ namespace VRC2.Conditions
             shortName = "C7";
 
             _amount = Amount.Overload;
+        }
+    }
+    
+    public class Condition8 : Baseline
+    {
+        public Condition8() : base()
+        {
+            name = "Condition 8";
+            shortName = "C8";
+
+            _format = Format.Audio;
         }
     }
 }
