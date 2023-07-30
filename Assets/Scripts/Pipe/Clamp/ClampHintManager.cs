@@ -12,12 +12,12 @@ namespace VRC2.Pipe
         private bool positioned = false;
 
         // whether to show it, the right part of the connected pipe will be set to false
-        [HideInInspector] public bool CanShow = true;
+        [HideInInspector]public bool CanShow = true;
         
         // show it only when it's on the wall
-        [HideInInspector] public bool OnTheWall = true;
+        [HideInInspector]public bool OnTheWall = false;
 
-        [HideInInspector] public bool Clamped = false;
+        [HideInInspector]public bool Clamped = false;
         
         private void Start()
         {
