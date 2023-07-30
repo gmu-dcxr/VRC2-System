@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Fusion;
 using Unity.VisualScripting;
+using VRC2.Conditions;
 using YamlDotNet.Serialization;
 
 namespace VRC2.Scenarios
@@ -26,6 +27,9 @@ namespace VRC2.Scenarios
         private int _id;
         private string _name;
         private string _shortName;
+
+        private List<YamlHelper.WarningVariant> _context;
+        private List<YamlHelper.WarningVariant> _amount;
 
         private int startTimestamp { get; set; }
 
@@ -94,6 +98,22 @@ namespace VRC2.Scenarios
         private bool ready = false;
 
         [HideInInspector] public YamlHelper.Scenario scenario;
+
+        private ScenariosManager _scenariosManager;
+
+        [HideInInspector]
+        public ScenariosManager scenariosManager
+        {
+            get
+            {
+                if (_scenariosManager == null)
+                {
+                    _scenariosManager = FindFirstObjectByType<ScenariosManager>();
+                }
+
+                return _scenariosManager;
+            }
+        }
 
         public void Start()
         {
@@ -210,6 +230,26 @@ namespace VRC2.Scenarios
 
             _name = scenario.name;
 
+            if (scenario.context != null)
+            {
+                _context = scenario.context;
+            }
+            else
+            {
+                // to avoid null
+                _context = new List<YamlHelper.WarningVariant>();
+            }
+
+            if (scenario.amount != null)
+            {
+                _amount = scenario.amount;
+            }
+            else
+            {
+                // to avoid null
+                _amount = new List<YamlHelper.WarningVariant>();
+            }
+
             // init _rawtime
             _rawTime = $"{scenario.start}{Helper.timeSep}{scenario.end}";
             // parse time in incidents
@@ -243,8 +283,9 @@ namespace VRC2.Scenarios
             if (IncidentStart != null)
             {
                 // show warning
-                ShowWarning(_name, obj, GetIncident(obj).Warning);
-                
+                var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
+                ShowWarning(_name, obj, msg);
+
                 IncidentStart(obj);
             }
         }
@@ -290,10 +331,10 @@ namespace VRC2.Scenarios
 
         public void ShowWarning(string sname, int idx, string msg)
         {
-            if(msg == "") return;
-            
+            if (msg == "") return;
+
             print($"Show warning: {msg}");
-            warningController.Show("Warning",sname, idx, msg);
+            warningController.Show("Warning", sname, idx, msg);
         }
 
         public void HideWarning()
@@ -301,5 +342,63 @@ namespace VRC2.Scenarios
             print("Hide warning");
             warningController.Hide(true);
         }
+
+        #region Warning Message
+
+        string GetContext(int idx)
+        {
+            foreach (var cont in scenario.context)
+            {
+                if (cont.id == idx) return cont.warning;
+            }
+
+            return null;
+        }
+
+        string GetAmount(int idx)
+        {
+            foreach (var amt in scenario.amount)
+            {
+                if (amt.id == idx) return amt.warning;
+            }
+
+            return null;
+        }
+
+        public string GetRightMessage(int idx, Context context, Amount amount)
+        {
+            // original warning
+            var message = GetIncident(idx).Warning;
+
+            if (context == Context.Irrelevant)
+            {
+                var t = GetContext(idx);
+                if (t == null)
+                {
+                    Debug.LogWarning($"Failed to load irrelevant warning for {_name} - {idx}");
+                }
+                else
+                {
+                    message = t;
+                }
+            }
+
+            if (amount == Amount.Overload)
+            {
+                var t = GetAmount(idx);
+                if (t == null)
+                {
+                    Debug.LogWarning($"Failed to load overload warning for {_name} - {idx}.");
+                }
+                else
+                {
+                    message = t;
+                }
+            }
+
+            return message;
+        }
+
+        #endregion
     }
 }

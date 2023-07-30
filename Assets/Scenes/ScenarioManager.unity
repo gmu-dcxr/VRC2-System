@@ -189,7 +189,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &153712648
 Transform:
   m_ObjectHideFlags: 0
@@ -1168,7 +1168,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &851164756
 Transform:
   m_ObjectHideFlags: 0
@@ -1592,7 +1592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1111079852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1939,6 +1939,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1667340675}
   - component: {fileID: 1667340676}
+  - component: {fileID: 1667340677}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -1967,15 +1968,28 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1667340674}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41030037a6364b558e064a2383191c8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  conditionNumber: 0
   scenarios:
   - {fileID: 851164757}
   - {fileID: 153712649}
   - {fileID: 1111079852}
+--- !u!114 &1667340677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667340674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5877e9dff30f48b0b6ada00bfddf2795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1699556857 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 310722b7be632d045abfc291a5b65a3d, type: 3}
