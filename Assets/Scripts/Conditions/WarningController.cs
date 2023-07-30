@@ -25,6 +25,21 @@ public class WarningController : MonoBehaviour
 
     private ScenariosManager scenariosManager;
 
+    private Transform _cameraTransform;
+
+    private bool showing = false;
+
+    private Timer _timer;
+
+    private AudioSource _audioSource;
+
+    #region Conditions
+
+    private Existence existence
+    {
+        get => scenariosManager.condition.Existence;
+    }
+    
     private Frequency frequency
     {
         get => scenariosManager.condition.Frequency;
@@ -46,13 +61,8 @@ public class WarningController : MonoBehaviour
         get => scenariosManager.condition.Quality;
     }
 
-    private Transform _cameraTransform;
 
-    private bool showing = false;
-
-    private Timer _timer;
-
-    private AudioSource _audioSource;
+    #endregion
 
 
 
@@ -92,6 +102,9 @@ public class WarningController : MonoBehaviour
 
     public void Show(string title, string scenename, int incidentid, string content)
     {
+        // directly return if no warning
+        if (existence == Existence.NoWarning) return;
+        
         this.title.text = title;
         this.content.text = content;
 
