@@ -12,6 +12,7 @@ using VRC2.Pipe;
 public class WarningController : MonoBehaviour
 {
 
+    [Header("Visual")]
     public GameObject dialog;
 
     public TextMeshProUGUI title;
@@ -19,6 +20,8 @@ public class WarningController : MonoBehaviour
     public TextMeshProUGUI content;
 
     public float distance = 0.5f;
+
+    [Header("Noise Simulation")] public AudioSource noise;
 
     private ScenariosManager scenariosManager;
 
@@ -36,6 +39,11 @@ public class WarningController : MonoBehaviour
     private Format format
     {
         get => scenariosManager.condition.Format;
+    }
+
+    private Quality quality
+    {
+        get => scenariosManager.condition.Quality;
     }
 
     private Transform _cameraTransform;
@@ -93,6 +101,12 @@ public class WarningController : MonoBehaviour
             var ac = LoadAudioClip(scenename, incidentid);
             _audioSource.clip = ac;
             _audioSource.Play();
+
+            if (quality == Quality.Bad)
+            {
+                // add noise
+                noise.Play();
+            }
         }
         else
         {
@@ -109,6 +123,11 @@ public class WarningController : MonoBehaviour
             if (format == Format.Audio)
             {
                 _audioSource.Stop();
+                if (quality == Quality.Bad)
+                {
+                    // add noise
+                    noise.Stop();
+                }
             }
             else
             {
