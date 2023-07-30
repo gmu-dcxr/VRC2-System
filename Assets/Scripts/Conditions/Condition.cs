@@ -1,5 +1,21 @@
-﻿namespace VRC2.Conditions
+﻿using System;
+using UnityEngine;
+using VRC2.Scenarios;
+
+namespace VRC2.Conditions
 {
+    public enum ConditionNumber
+    {
+        Baseline = 0,
+        Condition_1 = 1,
+        Condition_2 = 2,
+        Condition_3 = 3,
+        Condition_4 = 4,
+        Condition_5 = 5,
+        Condition_6 = 6,
+        Condition_7 = 7,
+    }
+
     public class Condition
     {
         protected Existence _existence;
@@ -15,11 +31,18 @@
 
         public Condition()
         {
+            _existence = Existence.HasWarning;
+            _frequency = Frequency.OneTime;
+            _format = Format.Audio;
+            _quality = Quality.Good;
+            _timeLimits = TimeLimits.Duration10Sec;
+            _context = Context.Relevant;
+            _amount = Amount.NotOverload;
         }
 
-        public string ToString()
+        public virtual string ToString()
         {
-            return $"Condition: {name}({shortName})\n" +
+            return $"{name}({shortName})\n" +
                    $"Existence: {Utils.GetDisplayName<Existence>(_existence)}\n" +
                    $"Frequency: {Utils.GetDisplayName<Frequency>(_frequency)}\n" +
                    $"Format: {Utils.GetDisplayName<Format>(_format)}\n" +
@@ -27,6 +50,42 @@
                    $"Time limits: {Utils.GetDisplayName<TimeLimits>(_timeLimits)}\n" +
                    $"Context: {Utils.GetDisplayName<Context>(_context)}\n" +
                    $"Amount: {Utils.GetDisplayName<Amount>(_amount)}";
+        }
+
+        public static Condition GetCondition(int idx)
+        {
+            Condition condition = null;
+            switch (idx)
+            {
+                case 0:
+                    return new Condition();
+                case 1:
+                    return new Condition1();
+                case 2:
+                    return new Condition2();
+                case 3:
+                    return new Condition3();
+                case 4:
+                    return new Condition4();
+                case 5:
+                    return new Condition5();
+                case 6:
+                    return new Condition6();
+                case 7:
+                    return new Condition7();
+                default:
+                    Debug.LogWarning($"Not found condition for {idx}");
+                    break;
+            }
+
+            return condition;
+        }
+
+        public static Condition GetCondition(ConditionNumber cn)
+        {
+            var idx = (int)cn;
+            Debug.LogWarning(idx);
+            return GetCondition(idx);
         }
     }
 

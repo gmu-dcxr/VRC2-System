@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 using Fusion;
+using VRC2.Conditions;
 
 namespace VRC2.Scenarios
 {
@@ -10,14 +10,22 @@ namespace VRC2.Scenarios
     {
         private int startTimestamp = -1;
 
+        public ConditionNumber conditionNumber;
+
         public List<Scenario> scenarios = null;
 
         public System.Action OnStart;
         public System.Action OnFinish;
 
+        private Condition _condition;
+
         private void Start()
         {
             CheckScenariosCallbacks();
+            
+            // get condition
+            _condition = Condition.GetCondition(conditionNumber);
+            Debug.LogWarning($"Use Condition: {_condition.ToString()}");
         }
 
         public void Execute()
@@ -111,8 +119,6 @@ namespace VRC2.Scenarios
 
             StartScenarios();
         }
-
-
 
         #endregion
     }
