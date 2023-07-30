@@ -43,6 +43,22 @@ namespace VRC2.Scenarios
 
         private SurveyController _surveyController;
 
+        // warning controller
+        private WarningController _warningController;
+
+        public WarningController warningController
+        {
+            get
+            {
+                if (_warningController == null)
+                {
+                    _warningController = GameObject.FindFirstObjectByType<WarningController>();
+                }
+
+                return _warningController;
+            }
+        }
+
         [HideInInspector]
         public SurveyController surveyController
         {
@@ -265,6 +281,12 @@ namespace VRC2.Scenarios
         public void HideSAGAT()
         {
             surveyController.Hide();
+        }
+
+        public void ShowWarning(string msg)
+        {
+            print($"Show warning: {msg}");
+            warningController.Show("Warning", msg);
         }
     }
 }
