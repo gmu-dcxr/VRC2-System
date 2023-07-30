@@ -14,6 +14,7 @@ namespace VRC2.Conditions
         Condition_5 = 5,
         Condition_6 = 6,
         Condition_7 = 7,
+        Condition_8 = 8,
     }
 
     public class Condition
