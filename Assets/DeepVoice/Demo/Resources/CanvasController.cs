@@ -81,7 +81,7 @@ namespace AiKodexDeepVoice
             audioSource = GetComponent<AudioSource>();
 
         }
-        void Generate()
+        public void Generate()
         {
             if(invoice.text=="")
                 Debug.Log("Please enter your invoice number before proceeding");
@@ -113,7 +113,7 @@ namespace AiKodexDeepVoice
             charcterCounter.text = currentCharacterCount.ToString();
             charcterCounter.color = currentCharacterCount >= 0 ? Color.white : Color.red;
         }
-        void Save()
+        public void Save()
         {
             if (fileName.text != "")
             {
