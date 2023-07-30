@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using VRC2.Conditions;
 using VRC2.Scenarios;
 using UnityTimer;
+using VRC2;
+using VRC2.Pipe;
 
 public class WarningController : MonoBehaviour
 {
@@ -30,11 +33,18 @@ public class WarningController : MonoBehaviour
         get => scenariosManager.condition.TimeLimits;
     }
 
+    private Format format
+    {
+        get => scenariosManager.condition.Format;
+    }
+
     private Transform _cameraTransform;
 
     private bool showing = false;
 
     private Timer _timer;
+
+    private AudioSource _audioSource;
 
 
 
@@ -43,7 +53,12 @@ public class WarningController : MonoBehaviour
     {
         scenariosManager = FindFirstObjectByType<ScenariosManager>();
         _cameraTransform = Camera.main.transform;
-        Hide(true);
+
+        _audioSource = gameObject.GetComponent<AudioSource>();
+        _audioSource.playOnAwake = false;
+
+
+        dialog.SetActive(false);
     }
 
     void StartTimer()
@@ -61,16 +76,28 @@ public class WarningController : MonoBehaviour
 
         bool looped = frequency == Frequency.Repeat;
 
+        _audioSource.loop = looped;
+
         _timer = Timer.Register(interval, () => { Hide(); }, isLooped: looped, useRealTime: true);
 
     }
 
-    public void Show(string title, string content)
+    public void Show(string title, string scenename, int incidentid, string content)
     {
         this.title.text = title;
         this.content.text = content;
 
-        dialog.SetActive(true);
+        if (format == Format.Audio)
+        {
+            // load audio clip
+            var ac = LoadAudioClip(scenename, incidentid);
+            _audioSource.clip = ac;
+            _audioSource.Play();
+        }
+        else
+        {
+            dialog.SetActive(true);
+        }
 
         StartTimer();
     }
@@ -79,7 +106,14 @@ public class WarningController : MonoBehaviour
     {
         if (force || frequency == Frequency.OneTime)
         {
-            dialog.SetActive(false);
+            if (format == Format.Audio)
+            {
+                _audioSource.Stop();
+            }
+            else
+            {
+                dialog.SetActive(false);
+            }
         }
     }
 
@@ -98,5 +132,17 @@ public class WarningController : MonoBehaviour
 
         dialog.transform.rotation = _cameraTransform.rotation;
         dialog.transform.position = _cameraTransform.position + forward * distance;
+    }
+
+    public AudioClip LoadAudioClip(string name, int incident)
+    {
+        var filename = $"{name}_{incident}.wav";
+        var path = $"{GlobalConstants.warningAudioPath}{filename}";
+        
+        print(path);
+
+        AudioClip ac = AssetDatabase.LoadAssetAtPath(path, typeof(AudioClip)) as AudioClip;
+
+        return ac;
     }
 }

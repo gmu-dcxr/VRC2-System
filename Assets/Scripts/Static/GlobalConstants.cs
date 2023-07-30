@@ -279,5 +279,11 @@ namespace VRC2
         public static string eyeTrackingLogger = "EyeTrackingLog";
 
         #endregion
+
+        #region Warning Voice
+
+        public static string warningAudioPath = "Assets/Audio/VRC2/";
+
+        #endregion
     }
 }
