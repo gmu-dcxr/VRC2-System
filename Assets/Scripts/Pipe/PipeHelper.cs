@@ -255,8 +255,6 @@ namespace VRC2.Pipe
 
             var path = $"{GlobalConstants.PipePrefabsPath}{name}.prefab";
 
-            Debug.Log($"GetPipePrefab: {path}");
-
             GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
 
             return go;
