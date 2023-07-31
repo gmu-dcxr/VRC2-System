@@ -194,31 +194,16 @@ namespace VRC2
             var wpos = wt.position;
             var wrot = wt.rotation.eulerAngles;
 
-            // // NOTE: this only works for single pipe
-            // // set pipe's x rotation to the wall's x rotation
-            // rot.x = wrot.x;
-            // // set pipe's y rotation to the wall's y rotation
-            // rot.y = wrot.y + pipeYRotationOffset;
-            // rootObject.transform.rotation = Quaternion.Euler(rot);
+            // set pipe's x rotation to the wall's x rotation
+            rot.x = wrot.x;
+            // set pipe's y rotation to the wall's y rotation
+            rot.y = wrot.y + pipeYRotationOffset;
+            rootObject.transform.rotation = Quaternion.Euler(rot);
 
             // update the pipe's distance to the wall
             pos.x = wpos.x + _wallExtends.x + pipez;
 
             rootObject.transform.position = pos;
-
-            // creat a temp object to get the local right vector
-            var temp = new GameObject();
-            temp.transform.position = pipe.transform.position;
-            temp.transform.rotation = pipe.transform.rotation;
-            temp.transform.Translate(Vector3.right, Space.Self);
-
-            var localRight = (temp.transform.position - pipe.transform.position).normalized;
-
-            var wallRight = gameObject.transform.right;
-            // get the angle
-            var right = Vector3.SignedAngle(localRight, wallRight, Vector3.up);
-            // rotate to make it stick on the wall
-            rootObject.transform.Rotate(0, right + 90, 0, Space.World);
 
             UpdateAllClampHints(rootObject, true);
         }

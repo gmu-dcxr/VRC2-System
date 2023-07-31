@@ -270,7 +270,7 @@ namespace VRC2.Events
 
             if (!IsGlued())
             {
-                Debug.LogWarning("Please glue it first");
+                // Debug.LogWarning("Please glue it first");
                 return;
             }
 
@@ -286,7 +286,7 @@ namespace VRC2.Events
 
             if (d1 != d2)
             {
-                Debug.LogWarning("Different diameters of pipes can not connect");
+                // Debug.LogWarning("Different diameters of pipes can not connect");
                 return;
             }
 
@@ -457,7 +457,9 @@ namespace VRC2.Events
             // get angle
             var angle = oip.GetComponent<PipeManipulation>().angle;
 
-            var rot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+            // var rot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
+
+            var rot = oip.transform.rotation;
 
             var zoffset = 0;
 
