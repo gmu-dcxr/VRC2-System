@@ -12,8 +12,7 @@ using VRC2.Pipe;
 public class WarningController : MonoBehaviour
 {
 
-    [Header("Visual")]
-    public GameObject dialog;
+    [Header("Visual")] public GameObject dialog;
 
     public TextMeshProUGUI title;
 
@@ -39,7 +38,7 @@ public class WarningController : MonoBehaviour
     {
         get => scenariosManager.condition.Existence;
     }
-    
+
     private Frequency frequency
     {
         get => scenariosManager.condition.Frequency;
@@ -59,6 +58,16 @@ public class WarningController : MonoBehaviour
     private Quality quality
     {
         get => scenariosManager.condition.Quality;
+    }
+
+    private Context context
+    {
+        get => scenariosManager.condition.Context;
+    }
+
+    private Amount amount
+    {
+        get => scenariosManager.condition.Amount;
     }
 
 
@@ -104,7 +113,7 @@ public class WarningController : MonoBehaviour
     {
         // directly return if no warning
         if (existence == Existence.NoWarning) return;
-        
+
         this.title.text = title;
         this.content.text = content;
 
@@ -166,11 +175,12 @@ public class WarningController : MonoBehaviour
         dialog.transform.position = _cameraTransform.position + forward * distance;
     }
 
-    public AudioClip LoadAudioClip(string name, int incident)
+    public AudioClip LoadAudioClip(string scenario, int incident)
     {
-        var filename = $"{name}_{incident}.wav";
-        var path = $"{GlobalConstants.warningAudioPath}{filename}";
-        
+        var name = Helper.GetAudioFileName(scenario, incident, context == Context.Irrelevant,
+            amount == Amount.Overload);
+        var path = $"{GlobalConstants.warningAudioPath}{name}";
+
         print(path);
 
         AudioClip ac = AssetDatabase.LoadAssetAtPath(path, typeof(AudioClip)) as AudioClip;
