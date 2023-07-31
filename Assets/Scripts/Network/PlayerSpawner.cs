@@ -16,6 +16,7 @@ namespace VRC2
     public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         [Header("Character Prefab")] public NetworkPrefabRef _playerPrefab;
+
         public string prefabName;
 
         private NetworkRunner _runner;
