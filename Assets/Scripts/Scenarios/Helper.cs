@@ -60,5 +60,18 @@ namespace VRC2.Scenarios
 
             return $"On_Scenario_{_id}_{t}";
         }
+
+        #region Audio File
+
+        public static string GetAudioFileName(string scenario, int incidentid, bool context, bool amount)
+        {
+            var name = $"{scenario}_{incidentid}";
+            if (context) name += "_C";
+            if (amount) name += "_A";
+            name += ".wav";
+            return name;
+        }
+
+        #endregion
     }
 }

@@ -51,29 +51,69 @@ namespace VRC2.Voice
                     var warning = incident.warning;
                     if (warning == "") continue;
 
-                    var output = $"{scenairo.name}_{incident.id}.wav";
-                    // var fullpath = Path.Combine(folder, output);
-                    
-                    print($"{scenairo.name} - {incident.id} - {warning}");
+
+                    var output = Helper.GetAudioFileName(scenairo.name, incident.id, false, false);
 
                     canvasController.text.text = warning;
                     canvasController.fileName.text = output;
-                    
+
                     yield return new WaitForSecondsRealtime(1);
 
                     canvasController.Generate();
 
-                    Debug.Log("Waiting for generating to be done");
                     yield return new WaitUntil(() => canvasController.generate.interactable);
-                    Debug.Log("Generating is done now, save file");
 
                     canvasController.Save();
 
                     //Wait for 2 seconds
                     yield return new WaitForSecondsRealtime(2);
                 }
+
+                if (scenairo.context != null)
+                {
+                    foreach (var cont in scenairo.context)
+                    {
+                        var output = Helper.GetAudioFileName(scenairo.name, cont.id, true, false);
+
+                        canvasController.text.text = cont.warning;
+                        canvasController.fileName.text = output;
+
+                        yield return new WaitForSecondsRealtime(1);
+
+                        canvasController.Generate();
+
+                        yield return new WaitUntil(() => canvasController.generate.interactable);
+
+                        canvasController.Save();
+
+                        //Wait for 2 seconds
+                        yield return new WaitForSecondsRealtime(2);
+                    }
+                }
+
+                if (scenairo.amount != null)
+                {
+                    foreach (var amout in scenairo.amount)
+                    {
+                        var output = Helper.GetAudioFileName(scenairo.name, amout.id, false, true);
+
+                        canvasController.text.text = amout.warning;
+                        canvasController.fileName.text = output;
+
+                        yield return new WaitForSecondsRealtime(1);
+
+                        canvasController.Generate();
+
+                        yield return new WaitUntil(() => canvasController.generate.interactable);
+
+                        canvasController.Save();
+
+                        //Wait for 2 seconds
+                        yield return new WaitForSecondsRealtime(2);
+                    }
+                }
             }
-            
+
             Debug.Log("All Done");
         }
     }

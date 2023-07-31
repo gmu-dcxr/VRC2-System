@@ -21,16 +21,22 @@ namespace VRC2.Scenarios
 
         public Condition condition
         {
-            get => _condition;
+            get
+            {
+                if (_condition == null)
+                {
+                    _condition = Condition.GetCondition(conditionNumber);
+                }
+
+                return _condition;
+            }
         }
 
         private void Start()
         {
             CheckScenariosCallbacks();
             
-            // get condition
-            _condition = Condition.GetCondition(conditionNumber);
-            Debug.LogWarning($"Use Condition: {_condition.ToString()}");
+            Debug.LogWarning($"Use Condition: {condition.ToString()}");
         }
 
         public void Execute()

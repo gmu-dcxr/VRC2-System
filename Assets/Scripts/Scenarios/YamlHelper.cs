@@ -12,6 +12,12 @@ namespace VRC2.Scenarios
             public string warning { get; set; }
         }
 
+        public class WarningVariant
+        {
+            public int id { get; set; }
+            public string warning { get; set; }
+        }
+
         public class Scenario
         {
             public string name { get; set; }
@@ -19,6 +25,8 @@ namespace VRC2.Scenarios
             public string start { get; set; }
             public string end { get; set; }
             public List<Incident> incidents { get; set; }
+            public List<WarningVariant> context { get; set; }
+            public List<WarningVariant> amount { get; set; }
         }
     }
 }
