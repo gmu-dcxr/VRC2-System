@@ -21,7 +21,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Transform Start3;
         private Transform Finish3;
 
-        private GameObject truck;
+        public GameObject truck;
         private float speed = 6f;
 
         private bool backingUp1 = false;
@@ -44,8 +44,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             CheckIncidentsCallbacks();
 
             pipes.SetActive(false);
-
-            truck = GameObject.Find("DumpTruck_01");
 
             //Find positions
             Start1 = GameObject.Find("Start").transform;

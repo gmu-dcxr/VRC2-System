@@ -15,6 +15,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float speed;
         public GameObject endPosition;
 
+        [Header("Player")] public GameObject player;
+
 
         private void Start()
         {

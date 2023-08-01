@@ -19,7 +19,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Transform Start1;
         private Transform Finish1;
 
-        private GameObject craneTruck;
+        public GameObject craneTruck;
         private float speed = 6f;
 
         private bool backingUp = false;
@@ -37,8 +37,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             IncidentFinish += OnIncidentFinish;
 
             CheckIncidentsCallbacks();
-
-            craneTruck = GameObject.Find("DumpTruck_01");
 
             //Find positions
             Start1 = GameObject.Find("Start").transform;
