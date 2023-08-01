@@ -103,13 +103,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS2_3_Start");
             // SAGAT query
-            // get incident
-            var incident = GetIncident(3);
+            ShowSAGAT();
         }
 
         public void On_BaselineS2_3_Finish()
         {
             // SAGAT query.
+            HideSAGAT();
         }
 
 

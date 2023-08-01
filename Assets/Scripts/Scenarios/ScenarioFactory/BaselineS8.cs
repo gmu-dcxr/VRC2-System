@@ -128,12 +128,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS8_4_Start");
             // SAGAT query
+            ShowSAGAT();
         }
 
         public void On_BaselineS8_4_Finish()
         {
             // SAGAT query
-
+            HideSAGAT();
         }
 
         #endregion
