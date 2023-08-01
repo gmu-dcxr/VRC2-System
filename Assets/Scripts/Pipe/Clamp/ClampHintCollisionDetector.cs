@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using VRC2.Events;
 
 namespace VRC2.Pipe
 {
@@ -41,7 +42,8 @@ namespace VRC2.Pipe
                     chm.OnTheWall = false;
                     chm.Clamped = false;
                 }
-            } else if (go.CompareTag(GlobalConstants.clampObjectTag))
+            }
+            else if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
                 _hintManager.Clamped = false;
             }
@@ -50,10 +52,27 @@ namespace VRC2.Pipe
         void OnTriggerEnterAndStay(Collider other)
         {
             var go = other.gameObject;
-            if (go.CompareTag(GlobalConstants.clampObjectTag) && _hintManager.OnTheWall)
+            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && _hintManager.OnTheWall)
             {
                 _hintManager.Clamped = true;
             }
+        }
+
+        bool CheckClampSizeMatch(GameObject clamp)
+        {
+            var csi = clamp.GetComponent<ClampScaleInitializer>();
+            var clampSize = $"{csi.clampSize}";
+
+            // get pipe size
+            var root = PipeHelper.GetRoot(gameObject);
+
+            var pm = root.GetComponent<PipeManipulation>();
+            var size = pm.diameter;
+
+            var name = Utils.GetDisplayName<PipeConstants.PipeDiameter>(size);
+
+            // Diameter_1 matches clamp size 1
+            return name.EndsWith(clampSize);
         }
     }
 }
