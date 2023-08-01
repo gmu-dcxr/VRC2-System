@@ -19,7 +19,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Transform Start3;
         private Transform Finish3;
 
-        private GameObject drone;
+        public GameObject drone;
         private float speed = 6f;
 
         private bool backingUp1 = false;
