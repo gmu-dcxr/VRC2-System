@@ -32,8 +32,8 @@ namespace VRC2.Pipe
             // if game not started, directly return false to let parent handle it
             if (!gameStarted) return false;
 
-            // if game started
-            if (hasInputAuthority)
+            // if game started, scene object or spawned object 
+            if ((IsSceneObject && hasStateAuthority) || (!IsSceneObject && hasInputAuthority))
             {
                 // p1 side, call the parent method
                 return false;
