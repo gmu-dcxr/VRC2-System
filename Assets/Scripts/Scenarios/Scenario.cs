@@ -501,14 +501,22 @@ namespace VRC2.Scenarios
 
         void StartIncident(int obj)
         {
-            if (obj > incidents.Count) return;
+            if (obj > incidents.Count)
+            {
+                Debug.LogWarning($"No incident # {obj} for {ClsName}");
+                return;
+            }
 
             OnIncidentStart(obj);
         }
 
         void EndIncident(int obj)
         {
-            if (obj > incidents.Count) return;
+            if (obj > incidents.Count)
+            {
+                Debug.LogWarning($"No incident # {obj} for {ClsName}");
+                return;
+            }
 
             OnIncidentFinish(obj);
         }
