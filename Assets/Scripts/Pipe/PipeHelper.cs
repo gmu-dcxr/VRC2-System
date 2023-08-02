@@ -25,6 +25,20 @@ namespace VRC2.Pipe
             reticle.gameObject.SetActive(false);
         }
 
+        public static void EnsureRigidBody(ref GameObject obj)
+        {
+            var rb = obj.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                // add new one
+                rb = obj.AddComponent<Rigidbody>();
+            }
+
+            // update detection method
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            rb.useGravity = true;
+        }
+
         public static void AfterMove(ref GameObject interactablePipe)
         {
             // restore rigid body if need
