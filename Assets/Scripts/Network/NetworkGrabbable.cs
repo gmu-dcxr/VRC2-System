@@ -2,6 +2,7 @@
 // Add support for networked object
 
 using System.Collections.Generic;
+using FlowCanvas.Nodes;
 using Fusion;
 using UnityEngine;
 using Oculus.Interaction;
@@ -39,7 +40,7 @@ namespace VRC2.Events
 
         private NetworkObject _networkObject = null;
 
-        private bool isSpawned
+        public bool isSpawned
         {
             get
             {
@@ -52,7 +53,7 @@ namespace VRC2.Events
             }
         }
 
-        private bool gameStarted
+        public bool gameStarted
         {
             get
             {
@@ -65,7 +66,7 @@ namespace VRC2.Events
             }
         }
 
-        private bool hasInputAuthority
+        public bool hasInputAuthority
         {
             get
             {
@@ -75,6 +76,19 @@ namespace VRC2.Events
                 }
 
                 return _networkObject.HasInputAuthority;
+            }
+        }
+
+        public bool hasStateAuthority
+        {
+            get
+            {
+                if (_networkObject == null)
+                {
+                    _networkObject = gameObject.GetComponent<NetworkObject>();
+                }
+
+                return _networkObject.HasStateAuthority;
             }
         }
 
@@ -119,10 +133,19 @@ namespace VRC2.Events
             this.EndStart(ref _started);
         }
 
+        public virtual bool NetworkedPointerEvent(PointerEvent evt)
+        {
+            return false;
+        }
+
+        public void BaseProcessPointerEvent(PointerEvent evt)
+        {
+            base.ProcessPointerEvent(evt);
+        }
+
         public override void ProcessPointerEvent(PointerEvent evt)
         {
-            // if game started and spawned object but no input authority, return
-            if (gameStarted && isSpawned && !hasInputAuthority) return;
+            if(NetworkedPointerEvent(evt)) return;
 
             switch (evt.Type)
             {
@@ -137,7 +160,7 @@ namespace VRC2.Events
                     break;
             }
 
-            base.ProcessPointerEvent(evt);
+            BaseProcessPointerEvent(evt);
 
             switch (evt.Type)
             {
@@ -155,7 +178,7 @@ namespace VRC2.Events
 
         // Whenever we change the number of grab points, we save the
         // current transform data
-        private void BeginTransform()
+        public void BeginTransform()
         {
             // End the transform on any existing transformer before we
             // begin the new one
@@ -188,7 +211,7 @@ namespace VRC2.Events
             _activeTransformer.BeginTransform();
         }
 
-        private void UpdateTransform()
+        public void UpdateTransform()
         {
             if (_activeTransformer == null)
             {
@@ -198,7 +221,7 @@ namespace VRC2.Events
             _activeTransformer.UpdateTransform();
         }
 
-        private void EndTransform()
+        public void EndTransform()
         {
             if (_activeTransformer == null)
             {
