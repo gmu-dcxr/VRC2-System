@@ -115,6 +115,15 @@ namespace VRC2.Scenarios
             }
         }
 
+        public virtual void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, 10, 150, 50), ClsName))
+            {
+                var ts = Helper.SecondNow();
+                Execute(ts);
+            }
+        }
+
         public void Start()
         {
         }
