@@ -1,6 +1,8 @@
 ﻿using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
+using VRC2.Pipe;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
@@ -9,8 +11,6 @@ namespace VRC2.Scenarios.ScenarioFactory
     {
         [Header("Config")] [Tooltip("Yml file name")]
         public string filename = "BaselineS1.yml";
-
-        [Header("Accident Configure")] public GameObject pipe;
 
         private Transform _pipeParent;
 
@@ -27,7 +27,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         private GameObject crane;
 
         [Header("GameObjects")] public GameObject player;
-        public GameObject pipeDolly;
+        [FormerlySerializedAs("pipeDolly")] public GameObject pipeStack;
+        public GameObject unpackedPipe;
 
 
         private bool triggered = false;
@@ -48,6 +49,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             randomYawIncrease = Random.Range(1, 10);
             // make it rotate at the start
             triggered = true;
+            
+            SetActiveness(true, false);
         }
 
         private void Update()
@@ -110,7 +113,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         void BackupPipeLocalTransform()
         {
-            var t = pipe.transform;
+            var t = unpackedPipe.transform;
             _pipeLocalPos = t.localPosition;
             _pipeLocalRot = t.localRotation;
             _pipeParent = t.parent;
@@ -118,13 +121,13 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Reset()
         {
-            if (pipe.transform.parent == null)
+            if (unpackedPipe.transform.parent == null)
             {
                 // reset parent
-                pipe.transform.parent = _pipeParent;
+                unpackedPipe.transform.parent = _pipeParent;
                 // update local position and rotation
-                pipe.transform.localPosition = _pipeLocalPos;
-                pipe.transform.localRotation = _pipeLocalRot;
+                unpackedPipe.transform.localPosition = _pipeLocalPos;
+                unpackedPipe.transform.localRotation = _pipeLocalRot;
             }
         }
 
@@ -146,6 +149,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
         }
 
+        void SetActiveness(bool pipestack, bool unpackedpipe)
+        {
+            pipeStack.SetActive(pipestack);
+            unpackedPipe.SetActive(unpackedpipe);
+        }
+
         #region Accident Events Callbacks
 
         public void On_BaselineS1_1_Start()
@@ -165,7 +174,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
-            pipe.SetActive(false);
+            SetActiveness(true, false);
 
             // get yaw
             yaw = CalculateRawBetweenCranePlayer(crane, player);
@@ -184,8 +193,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
+            SetActiveness(false, false);
+
             yaw = CalculateRawBetweenCranePlayer(crane, player);
-            pipeDolly.SetActive(false);
             triggered = false;
             backwardsTriggered = true;
         }
@@ -204,9 +214,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            SetActiveness(true, true);
+
             yaw = CalculateRawBetweenCranePlayer(crane, player);
-            pipeDolly.SetActive(true);
-            pipe.SetActive(true);
+
             backwardsTriggered = false;
             triggered = true;
         }
@@ -222,9 +233,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(5);
+            SetActiveness(false, false);
 
             yaw = CalculateRawBetweenCranePlayer(crane, player);
-            pipeDolly.SetActive(false);
             backwardsTriggered = true;
             triggered = false;
         }
@@ -243,8 +254,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            SetActiveness(true, true);
+
             yaw = CalculateRawBetweenCranePlayer(crane, player);
-            pipeDolly.SetActive(true);
             backwardsTriggered = false;
             triggered = true;
         }
@@ -261,9 +273,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(7);
 
+            SetActiveness(true, true);
+
             yaw = CalculateRawBetweenCranePlayer(crane, player);
-            pipe.transform.parent = null;
-            pipe.transform.position = player.transform.position + new Vector3(-1, 10, -1);
+            // release it
+            unpackedPipe.transform.parent = null;
+            // add rigid body
+            PipeHelper.EnsureRigidBody(ref unpackedPipe);
+            // it will automatically fall
         }
 
         public void On_BaselineS1_7_Finish()
@@ -278,10 +295,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(8);
 
+            Reset();
+
+            SetActiveness(true, true);
+
             yaw = CalculateRawBetweenCranePlayer(crane, player);
-            pipe.transform.parent = pipeDolly.transform;
-            pipe.transform.position = pipeDolly.transform.position + new Vector3(0, 0.94f, 0);
-            pipe.transform.rotation = pipeDolly.transform.rotation;
             var warning = incident.Warning;
             print(warning);
         }
