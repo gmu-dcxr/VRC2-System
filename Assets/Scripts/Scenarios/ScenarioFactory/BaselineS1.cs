@@ -25,9 +25,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         private float randomYawIncrease;
 
         private GameObject crane;
-        private GameObject pipeDolly;
 
-        [Header("Player")] public GameObject player;
+        [Header("GameObjects")] public GameObject player;
+        public GameObject pipeDolly;
 
 
         private bool triggered = false;
@@ -48,9 +48,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             randomYawIncrease = Random.Range(1, 10);
             // make it rotate at the start
             triggered = true;
-
-            //Find pipeDolly Object
-            pipeDolly = GameObject.Find("Pipes");
         }
 
         private void Update()
@@ -94,7 +91,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
 
             print($"[{ClsName}] Callback: {name}");
-            
+
             Invoke(name, 0);
         }
 
@@ -106,14 +103,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             Invoke(name, 0);
         }
 
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
-            }
-        }
+        // private void OnGUI()
+        // {
+        //     
+        // }
 
         void BackupPipeLocalTransform()
         {
@@ -157,7 +150,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS1_1_Start()
         {
-            triggered = false;
+            triggered = true;
         }
 
         public void On_BaselineS1_1_Finish()
@@ -191,6 +184,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
             pipeDolly.SetActive(false);
             triggered = false;
             backwardsTriggered = true;
@@ -210,6 +204,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
             pipeDolly.SetActive(true);
             pipe.SetActive(true);
             backwardsTriggered = false;
@@ -228,6 +223,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
             pipeDolly.SetActive(false);
             backwardsTriggered = true;
             triggered = false;
@@ -247,6 +243,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
             pipeDolly.SetActive(true);
             backwardsTriggered = false;
             triggered = true;
@@ -264,8 +261,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(7);
 
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
             pipe.transform.parent = null;
-            pipe.transform.position = GameObject.Find("Player").GetComponent<Transform>().position + new Vector3(-6, 0, -4);
+            pipe.transform.position = player.transform.position + new Vector3(-1, 10, -1);
         }
 
         public void On_BaselineS1_7_Finish()
@@ -280,6 +278,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(8);
 
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
             pipe.transform.parent = pipeDolly.transform;
             pipe.transform.position = pipeDolly.transform.position + new Vector3(0, 0.94f, 0);
             pipe.transform.rotation = pipeDolly.transform.rotation;
