@@ -114,10 +114,100 @@ namespace VRC2.Scenarios
 
         public virtual void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 10, 150, 50), ClsName))
+            if (GUI.Button(new Rect(10, 10, 150, 30), $"Start {ClsName}"))
             {
                 var ts = Helper.SecondNow();
                 Execute(ts);
+            }
+
+            if (GUI.Button(new Rect(10, 50, 150, 30), $"Start {1}"))
+            {
+                StartIncident(1);
+            }
+
+            if (GUI.Button(new Rect(10, 100, 150, 30), $"Start {2}"))
+            {
+                StartIncident(2);
+            }
+
+            if (GUI.Button(new Rect(10, 150, 150, 30), $"Start {3}"))
+            {
+                StartIncident(3);
+            }
+
+            if (GUI.Button(new Rect(10, 200, 150, 30), $"Start {4}"))
+            {
+                StartIncident(4);
+            }
+
+            if (GUI.Button(new Rect(10, 250, 150, 30), $"Start {5}"))
+            {
+                StartIncident(5);
+            }
+
+            if (GUI.Button(new Rect(10, 300, 150, 30), $"Start {6}"))
+            {
+                StartIncident(6);
+            }
+
+            if (GUI.Button(new Rect(10, 350, 150, 30), $"Start {7}"))
+            {
+                StartIncident(7);
+            }
+
+            if (GUI.Button(new Rect(10, 400, 150, 30), $"Start {8}"))
+            {
+                StartIncident(8);
+            }
+
+            if (GUI.Button(new Rect(10, 450, 150, 30), $"Start {9}"))
+            {
+                StartIncident(9);
+            }
+
+            if (GUI.Button(new Rect(200, 50, 150, 30), $"End {1}"))
+            {
+                EndIncident(1);
+            }
+
+            if (GUI.Button(new Rect(200, 100, 150, 30), $"End {2}"))
+            {
+                EndIncident(2);
+            }
+
+            if (GUI.Button(new Rect(200, 150, 150, 30), $"End {3}"))
+            {
+                EndIncident(3);
+            }
+
+            if (GUI.Button(new Rect(200, 200, 150, 30), $"End {4}"))
+            {
+                EndIncident(4);
+            }
+
+            if (GUI.Button(new Rect(200, 250, 150, 30), $"End {5}"))
+            {
+                EndIncident(5);
+            }
+
+            if (GUI.Button(new Rect(200, 300, 150, 30), $"End {6}"))
+            {
+                EndIncident(6);
+            }
+
+            if (GUI.Button(new Rect(200, 350, 150, 30), $"End {7}"))
+            {
+                EndIncident(7);
+            }
+
+            if (GUI.Button(new Rect(200, 400, 150, 30), $"End {8}"))
+            {
+                EndIncident(8);
+            }
+
+            if (GUI.Button(new Rect(200, 450, 150, 30), $"End {9}"))
+            {
+                EndIncident(9);
             }
         }
 
@@ -153,7 +243,7 @@ namespace VRC2.Scenarios
 
         public Incident GetIncident(int idx)
         {
-            if (incidents == null || idx >= incidents.Count) return null;
+            if (incidents == null || idx > incidents.Count) return null;
 
             foreach (var incident in incidents)
             {
@@ -403,6 +493,24 @@ namespace VRC2.Scenarios
             }
 
             return message;
+        }
+
+        #endregion
+
+        #region Simulation
+
+        void StartIncident(int obj)
+        {
+            if (obj > incidents.Count) return;
+
+            OnIncidentStart(obj);
+        }
+
+        void EndIncident(int obj)
+        {
+            if (obj > incidents.Count) return;
+
+            OnIncidentFinish(obj);
         }
 
         #endregion
