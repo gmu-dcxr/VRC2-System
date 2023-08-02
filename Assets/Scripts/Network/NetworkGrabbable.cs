@@ -39,8 +39,8 @@ namespace VRC2.Events
         [HideInInspector]public ITransformer TwoGrabTransformer;
 
         private NetworkObject _networkObject = null;
-
-        public bool isSpawned
+        
+        public bool IsSceneObject
         {
             get
             {
@@ -49,7 +49,7 @@ namespace VRC2.Events
                     _networkObject = gameObject.GetComponent<NetworkObject>();
                 }
 
-                return !_networkObject.IsSceneObject;
+                return _networkObject.IsSceneObject;
             }
         }
 
