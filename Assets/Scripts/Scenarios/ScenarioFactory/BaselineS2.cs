@@ -13,11 +13,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [Header("Player")] public GameObject player;
 
-
-        private void Start()
-        {
-        }
-
         private void Update()
         {
             droneMove();
