@@ -8,59 +8,19 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS7 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS7.yml";
-
-
         [Header("Player")] public GameObject player;
 
 
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
-
-
+            base.Start();
         }
 
         private void Update()
         {
 
         }
-
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
-            }
-        }
-
 
         #region Accident Events Callbacks
 
@@ -115,7 +75,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-  
+
         }
 
         public void On_BaselineS7_4_Finish()

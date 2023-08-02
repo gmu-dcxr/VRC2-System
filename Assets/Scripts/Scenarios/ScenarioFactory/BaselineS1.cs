@@ -9,9 +9,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS1 : Scenario
     {
-        [Header("Config")] [Tooltip("Yml file name")]
-        public string filename = "BaselineS1.yml";
-
         private Transform _pipeParent;
 
         private Vector3 _pipeLocalPos;
@@ -36,20 +33,15 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
-
+            base.Start();
+            
             BackupPipeLocalTransform();
 
             crane = animator.gameObject;
             randomYawIncrease = Random.Range(1, 10);
             // make it rotate at the start
             triggered = true;
-            
+
             SetActiveness(true, false);
         }
 
@@ -88,28 +80,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             return angle;
         }
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        // private void OnGUI()
-        // {
-        //     
-        // }
 
         void BackupPipeLocalTransform()
         {

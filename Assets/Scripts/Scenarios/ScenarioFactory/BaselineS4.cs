@@ -7,12 +7,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS4 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS4.yml";
-
-        [Header("TruckPositions")]
-        private Transform Start1;
+        [Header("TruckPositions")] private Transform Start1;
         private Transform Finish1;
         private Transform Start2;
         private Transform Finish2;
@@ -34,13 +29,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
-
+            base.Start();
             drone = GameObject.Find("_Drone");
 
             //Find positions
@@ -56,50 +45,32 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             if (backingUp1)
             {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish1.transform.position, speed * Time.deltaTime);
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish1.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (movingForward1)
             {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Start1.transform.position, speed * Time.deltaTime);
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Start1.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (backingUp2)
             {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish2.transform.position, speed * Time.deltaTime);
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish2.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (movingForward2)
             {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Start2.transform.position, speed * Time.deltaTime);
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Start2.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (backingUp3)
             {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish3.transform.position, speed * Time.deltaTime);
-            }
-        }
-
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish3.transform.position,
+                    speed * Time.deltaTime);
             }
         }
 
@@ -160,7 +131,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             movingForward1 = false;
-            drone.transform.position = new Vector3(Start2.transform.position.x, Start2.transform.position.y, Start2.transform.position.z);
+            drone.transform.position = new Vector3(Start2.transform.position.x, Start2.transform.position.y,
+                Start2.transform.position.z);
             backingUp2 = true;
         }
 
@@ -175,7 +147,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The drone leaves.
             // get incident
             var incident = GetIncident(5);
-            
+
 
             backingUp2 = false;
             movingForward2 = true;
@@ -197,7 +169,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             movingForward2 = false;
-            drone.transform.position = new Vector3(Start3.transform.position.x, Start3.transform.position.y, Start3.transform.position.z);  
+            drone.transform.position = new Vector3(Start3.transform.position.x, Start3.transform.position.y,
+                Start3.transform.position.z);
             backingUp3 = true;
         }
 

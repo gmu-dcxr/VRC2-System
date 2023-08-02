@@ -8,15 +8,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS5 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS5.yml";
-
         [Header("Accident Configure")] public GameObject glass;
         public GameObject unloadedGlass;
 
-        [Header("TruckPositions")]
-        private Transform Start1;
+        [Header("TruckPositions")] private Transform Start1;
         private Transform Finish1;
 
         public GameObject craneTruck;
@@ -31,12 +26,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
+            base.Start();
 
             //Find positions
             Start1 = GameObject.Find("Start").transform;
@@ -44,45 +34,21 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             unloadedGlass.SetActive(false);
 
-            
+
         }
 
         private void Update()
         {
             if (backingUp)
             {
-                craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position, Finish1.transform.position, speed * Time.deltaTime);
+                craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position,
+                    Finish1.transform.position, speed * Time.deltaTime);
             }
+
             if (movingForward)
             {
-                craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position, Start1.transform.position, speed * Time.deltaTime);
-            }
-        }
-
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
+                craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position,
+                    Start1.transform.position, speed * Time.deltaTime);
             }
         }
 
@@ -90,9 +56,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("StartedCoroutine");
             yield return new WaitForSeconds(15f);
-            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x, craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 30);
+            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
+                craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 30);
             yield return new WaitForSeconds(15f);
-            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x, craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z - 30);
+            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
+                craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z - 30);
             yield break;
         }
 
@@ -100,7 +68,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("StartedCoroutine");
             yield return new WaitForSeconds(15f);
-            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x, craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 90);
+            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
+                craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 90);
             glass.SetActive(false);
             unloadedGlass.SetActive(true);
             yield break;
@@ -111,7 +80,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS5_1_Start()
         {
-            
+
         }
 
         public void On_BaselineS5_1_Finish()
@@ -127,7 +96,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-          
+
         }
 
         public void On_BaselineS5_2_Finish()
@@ -142,7 +111,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-         
+
             movingForward = true;
             glass.SetActive(false);
             unloadedGlass.SetActive(true);
