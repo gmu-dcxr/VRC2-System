@@ -31,7 +31,7 @@ namespace VRC2
         {
             confirmButton.onClick.AddListener(OnConfirmed);
             clearButton.onClick.AddListener(OnCleared);
-            // Hide();
+            Hide();
         }
 
         // Update is called once per frame
