@@ -47,6 +47,16 @@ namespace VRC2
 
         private NetworkGrabbable _networkGrabbable;
 
+        public bool IsStraight
+        {
+            get => angle == PipeBendAngles.Angle_0;
+        }
+
+        public bool NotBeingCut // original length
+        {
+            get => segmentA.transform.localScale.x == 1.0 && segmentB.transform.localScale.x == 1.0;
+        }
+
         [HideInInspector]
         public PipeParameters pipeParameters
         {
