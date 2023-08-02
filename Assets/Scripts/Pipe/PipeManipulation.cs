@@ -23,6 +23,7 @@ namespace VRC2
     {
         [Header("Segments")] [SerializeField] private GameObject segmentA;
         [SerializeField] private GameObject segmentB;
+        [SerializeField] private GameObject segmentMid;
 
         // [Header("Materials")] [SerializeField] private Material _magentaMaterial;
         // [SerializeField] private Material _blueMaterial;
@@ -70,6 +71,15 @@ namespace VRC2
         private Renderer _rendererB
         {
             get => segmentB.GetComponent<Renderer>();
+        }
+
+        private Renderer _renderMid
+        {
+            get
+            {
+                if (segmentMid == null) return null;
+                return segmentMid.GetComponent<Renderer>();
+            }
         }
 
         private bool beingSelected;
@@ -137,6 +147,10 @@ namespace VRC2
 
             _rendererA.material = m;
             _rendererB.material = m;
+            if (_renderMid != null)
+            {
+                _renderMid.material = m;
+            }
         }
 
         public void SetMaterial(PipeDiameter d, PipeType t, PipeColor c)
