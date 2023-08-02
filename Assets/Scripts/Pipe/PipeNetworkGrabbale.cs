@@ -38,10 +38,16 @@ namespace VRC2.Pipe
                 // p1 side, call the parent method
                 return false;
             }
+
+            // p2 can only manipulate straight non-cut pipe
+            var pm = gameObject.GetComponent<PipeManipulation>();
+
+            // if it is bent or cut, directly return
+            if (!pm.IsStraight || !pm.NotBeingCut) return false;
+
             // p2 side
             // in order to make p2 can manipulate the pipe, it should disable networkTransform component
             // when it is select action; and enable networkTransform component when it is unselect action;
-
             var nt = gameObject.GetComponent<NetworkTransform>();
 
             switch (evt.Type)
