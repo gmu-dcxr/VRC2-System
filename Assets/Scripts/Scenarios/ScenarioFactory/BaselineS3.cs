@@ -7,14 +7,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS3 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS3.yml";
-
         [Header("Accident Configure")] public GameObject pipes;
 
-        [Header("TruckPositions")]
-        private Transform Start1;
+        [Header("TruckPositions")] private Transform Start1;
         private Transform Finish1;
         private Transform Start2;
         private Transform Finish2;
@@ -36,12 +31,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
+            base.Start();
 
             pipes.SetActive(false);
 
@@ -58,59 +48,40 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             if (backingUp1)
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish1.transform.position, speed * Time.deltaTime);
+                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish1.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (movingForward1)
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Start1.transform.position, speed * Time.deltaTime);
+                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Start1.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (backingUp2)
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish2.transform.position, speed * Time.deltaTime);
+                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish2.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (movingForward2)
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Start2.transform.position, speed * Time.deltaTime);
+                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Start2.transform.position,
+                    speed * Time.deltaTime);
             }
+
             if (backingUp3)
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish3.transform.position, speed * Time.deltaTime);
+                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish3.transform.position,
+                    speed * Time.deltaTime);
             }
         }
-
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
-            }
-        }
-
 
         #region Accident Events Callbacks
 
         public void On_BaselineS3_1_Start()
         {
-        
+
         }
 
         public void On_BaselineS3_1_Finish()
@@ -150,7 +121,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_3_Finish()
         {
             // The loaded truck is passing nearby.
-            
+
         }
 
         public void On_BaselineS3_4_Start()
@@ -163,7 +134,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             movingForward1 = false;
-            truck.transform.position = new Vector3(Start2.transform.position.x, Start2.transform.position.y, Start2.transform.position.z);
+            truck.transform.position = new Vector3(Start2.transform.position.x, Start2.transform.position.y,
+                Start2.transform.position.z);
             pipes.SetActive(false);
             backingUp2 = true;
         }
@@ -188,7 +160,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_5_Finish()
         {
             // The loaded truck is passing nearby.
-            
+
         }
 
         public void On_BaselineS3_6_Start()
@@ -199,7 +171,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(6);
 
             movingForward2 = false;
-            truck.transform.position = new Vector3(Start3.transform.position.x, Start3.transform.position.y, Start3.transform.position.z);
+            truck.transform.position = new Vector3(Start3.transform.position.x, Start3.transform.position.y,
+                Start3.transform.position.z);
             pipes.SetActive(false);
             backingUp3 = true;
         }
@@ -219,7 +192,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_7_Finish()
         {
             // SAGAT query
-          HideSAGAT();
+            HideSAGAT();
         }
 
         #endregion

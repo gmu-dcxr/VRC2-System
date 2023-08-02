@@ -7,11 +7,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS6 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS6.yml";
-
-        
         private Transform _pipeParent;
 
         private Vector3 _pipeLocalPos;
@@ -36,20 +31,14 @@ namespace VRC2.Scenarios.ScenarioFactory
         private bool triggered = false;
         private bool backwardsTriggered = false;
 
-        [SerializeField]
-        private float wind1 = 0.1f;
+        [SerializeField] private float wind1 = 0.1f;
         private float wind2 = 0.3f;
         private float wind3 = 0.5f;
 
         private void Start()
         {
-            InitFromFile(filename);
 
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
-
+            base.Start();
             crane = animator.gameObject;
             randomYawIncrease = Random.Range(1, 10);
             // make it rotate at the start
@@ -99,36 +88,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             return angle;
         }
 
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
-            }
-        }
-
-
         private void Reset()
         {
-           
+
         }
 
         private void Wind(float range)
@@ -146,6 +108,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
         }
+
         void UpdateAnimator(float y, float d, float h)
         {
             if (y >= 0)

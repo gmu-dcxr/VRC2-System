@@ -7,10 +7,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS2 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS2.yml";
-
         [Header("Drone")] public GameObject drone;
         public float speed;
         public GameObject endPosition;
@@ -20,49 +16,17 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
-
         }
 
         private void Update()
         {
             droneMove();
         }
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);              
-            }
-        }
-
+        
         public void droneMove()
         {
-            drone.transform.position = Vector3.MoveTowards(drone.transform.position, endPosition.transform.position, speed * Time.deltaTime);
+            drone.transform.position = Vector3.MoveTowards(drone.transform.position, endPosition.transform.position,
+                speed * Time.deltaTime);
         }
 
 
@@ -72,7 +36,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS2_1_Start");
 
-            drone.transform.position = Vector3.MoveTowards(drone.transform.position, endPosition.transform.position, speed * Time.deltaTime);
+            drone.transform.position = Vector3.MoveTowards(drone.transform.position, endPosition.transform.position,
+                speed * Time.deltaTime);
         }
 
         public void On_BaselineS2_1_Finish()
@@ -90,7 +55,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident;
             print(warning);
 
-            drone.transform.position = Vector3.MoveTowards(drone.transform.position, endPosition.transform.position, speed * Time.deltaTime);
+            drone.transform.position = Vector3.MoveTowards(drone.transform.position, endPosition.transform.position,
+                speed * Time.deltaTime);
 
         }
 

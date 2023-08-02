@@ -9,12 +9,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS8 : Scenario
     {
-        [Header("Config")]
-        [Tooltip("Yml file name")]
-        public string filename = "BaselineS8.yml";
-
-        [Header("TruckPositions")]
-        private Transform Start1;
+        [Header("TruckPositions")] private Transform Start1;
         private Transform Finish1;
 
         public GameObject Truck;
@@ -29,52 +24,18 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            InitFromFile(filename);
-
-            IncidentStart += OnIncidentStart;
-            IncidentFinish += OnIncidentFinish;
-
-            CheckIncidentsCallbacks();
-
+            base.Start();
             //Find positions
             Start1 = GameObject.Find("Start").transform;
             Finish1 = GameObject.Find("Finish").transform;
-
-
         }
 
         private void Update()
         {
             if (backingUp)
             {
-                Truck.transform.position = Vector3.MoveTowards(Truck.transform.position, Finish1.transform.position, speed * Time.deltaTime);
-            }
-        }
-
-
-        private void OnIncidentFinish(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-
-            print($"[{ClsName}] Callback: {name}");
-
-            Invoke(name, 0);
-        }
-
-        private void OnIncidentStart(int obj)
-        {
-            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-
-            print($"[{ClsName}] Callback: {name}");
-            Invoke(name, 0);
-        }
-
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
-            {
-                var ts = Helper.SecondNow();
-                Execute(ts);
+                Truck.transform.position = Vector3.MoveTowards(Truck.transform.position, Finish1.transform.position,
+                    speed * Time.deltaTime);
             }
         }
 
@@ -97,7 +58,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A truck backs up to carry the mud and leaves, and the water leaks along the path the truck goes.Repeat this multiple times, so the water stain on the ground grows bigger and it is approaching the wire on the ground.
             // get incident
             var incident = GetIncident(2);
-            
+
             backingUp = true;
 
         }

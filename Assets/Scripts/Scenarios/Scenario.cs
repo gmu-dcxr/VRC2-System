@@ -39,9 +39,6 @@ namespace VRC2.Scenarios
         public System.Action ScenarioStart;
         public System.Action ScenarioFinish;
 
-        public System.Action<int> IncidentStart;
-        public System.Action<int> IncidentFinish;
-
         // SAGAT survey UI
         private GameObject SAGATRoot;
 
@@ -126,6 +123,8 @@ namespace VRC2.Scenarios
 
         public void Start()
         {
+            InitFromFile();
+            CheckIncidentsCallbacks();
         }
 
         public void OverrideID(int id)
@@ -230,8 +229,9 @@ namespace VRC2.Scenarios
             }
         }
 
-        public void InitFromFile(string filename)
+        public virtual void InitFromFile()
         {
+            var filename = $"{ClsName}.yml";
             var path = Helper.GetConfigureFile(Application.dataPath, filename);
             var text = System.IO.File.ReadAllText(path);
             var deser = new DeserializerBuilder().Build();
@@ -275,31 +275,28 @@ namespace VRC2.Scenarios
             }
         }
 
-        private void OnIncidentFinish(int obj)
+        public virtual void OnIncidentFinish(int obj)
         {
-            print($"{_name} #{obj} OnIncidentFinish");
-            if (IncidentFinish != null)
-            {
-                // hide warning
-                HideWarning();
-                IncidentFinish(obj);
-            }
+            // hide warning
+            HideWarning();
+
+            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
+            print($"{_name} #{obj} {name}");
+            Invoke(name, 0);
         }
 
-        private void OnIncidentStart(int obj)
+        public virtual void OnIncidentStart(int obj)
         {
-            print($"{_name} #{obj} OnIncidentStart");
-            if (IncidentStart != null)
-            {
-                // show warning
-                var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
-                ShowWarning(_name, obj, msg);
-
-                IncidentStart(obj);
-            }
+            print($"");
+            // show warning
+            var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
+            ShowWarning(_name, obj, msg);
+            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
+            print($"{_name} #{obj} {name}");
+            Invoke(name, 0);
         }
 
-        public void CheckIncidentsCallbacks()
+        public virtual void CheckIncidentsCallbacks()
         {
             bool pass = true;
 
