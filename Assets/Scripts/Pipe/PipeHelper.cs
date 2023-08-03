@@ -39,6 +39,15 @@ namespace VRC2.Pipe
             rb.useGravity = true;
         }
 
+        public static void EnsureNoRigidBody(ref GameObject obj)
+        {
+            var rb = obj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                GameObject.Destroy(rb);
+            }
+        }
+
         public static void AfterMove(ref GameObject interactablePipe)
         {
             // restore rigid body if need

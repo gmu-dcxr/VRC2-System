@@ -19,12 +19,17 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float dolly;
         public float hook;
 
+        public float yawOffset = 10;
+
         private float randomYawIncrease;
 
         private GameObject crane;
 
-        [Header("GameObjects")] public GameObject player;
-        [FormerlySerializedAs("pipeDolly")] public GameObject pipeStack;
+        private GameObject player; // local player
+
+        [Header("GameObjects")] [FormerlySerializedAs("pipeDolly")]
+        public GameObject pipeStack;
+
         public GameObject unpackedPipe;
 
 
@@ -34,11 +39,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         private void Start()
         {
             base.Start();
-            
+
+            player = localPlayer;
+
             BackupPipeLocalTransform();
 
             crane = animator.gameObject;
-            randomYawIncrease = Random.Range(1, 10);
+            randomYawIncrease = 5; //Random.Range(1, 10);
             // make it rotate at the start
             triggered = true;
 
@@ -73,6 +80,15 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             var angle = Vector3.SignedAngle(dir, forward, Vector3.up);
 
+            if (backwardsTriggered)
+            {
+                angle += yawOffset;
+            }
+            else
+            {
+                angle += -yawOffset;
+            }
+
             if (angle < 0)
             {
                 angle += 360;
@@ -93,6 +109,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             if (unpackedPipe.transform.parent == null)
             {
+                PipeHelper.EnsureNoRigidBody(ref unpackedPipe);
+
                 // reset parent
                 unpackedPipe.transform.parent = _pipeParent;
                 // update local position and rotation
@@ -165,9 +183,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             SetActiveness(false, false);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
             triggered = false;
             backwardsTriggered = true;
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_3_Finish()
@@ -186,10 +204,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             SetActiveness(true, true);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
-
             backwardsTriggered = false;
             triggered = true;
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -205,9 +222,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(5);
             SetActiveness(false, false);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
             backwardsTriggered = true;
             triggered = false;
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_5_Finish()
@@ -224,11 +241,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            Reset();
             SetActiveness(true, true);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
             backwardsTriggered = false;
             triggered = true;
+            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_6_Finish()
@@ -242,10 +260,17 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The unpacked pipe drops next to the participants. And the load is still passing overhead.
             // get incident
             var incident = GetIncident(7);
-
+            Reset();
             SetActiveness(true, true);
 
             yaw = CalculateRawBetweenCranePlayer(crane, player);
+
+            // update pipe position so it'll drop from the player's head
+            var pos = player.transform.position;
+            pos.y = unpackedPipe.transform.position.y;
+
+            unpackedPipe.transform.position = pos;
+
             // release it
             unpackedPipe.transform.parent = null;
             // add rigid body
