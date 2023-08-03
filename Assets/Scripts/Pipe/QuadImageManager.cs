@@ -32,8 +32,15 @@ namespace VRC2
             print($"set image texture: {name}");
             _texture = Resources.Load<Texture2D>(name);
             _texture.alphaIsTransparency = true;
-            Debug.Log(_texture.dimension);
             gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = _texture;
+            
+            SetTexture(_texture);
+            
+        }
+
+        public void SetTexture(Texture2D texture2D)
+        {
+            gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = texture2D;
         }
     }
 }

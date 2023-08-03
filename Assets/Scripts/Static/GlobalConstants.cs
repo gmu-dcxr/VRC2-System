@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 using Fusion;
@@ -201,10 +202,13 @@ namespace VRC2
         #endregion
 
         #region Pipe Connecting Pipe Parent Prefab
+
         // connect two pipes into one pipe, this would be the parent object of two connected pipes
         public static string pipePipeConnectorPrefabPath = "Assets/Prefabs/InteractablePipeContainer.prefab";
+
         // for collision detection
         public static string interactablePipeContainer = "InteractablePipeContainer";
+
         #endregion
 
         #region Pipe Bend/Cut Manipulation
@@ -283,6 +287,36 @@ namespace VRC2
         #region Warning Voice
 
         public static string warningAudioPath = "Assets/Audio/VRC2/";
+
+        #endregion
+
+        #region Instruction
+
+        // private static string instructionImagesResource = "Assets/Resources/Task/";
+        public static string instructionImagesResource = "Task";
+
+        public static string instructionTag = "Instruction";
+
+        public static Texture2D loadTaskInstruction(int start, int end)
+        {
+            var filename = $"T-{start}-{end}";
+            return loadTaskInstruction(filename);
+        }
+
+        public static Texture2D loadTaskInstruction(string filename)
+        {
+            var name = $"{instructionImagesResource}/{filename}";
+            Debug.Log(name);
+            Texture2D texture = Resources.Load<Texture2D>(name);
+            texture.alphaIsTransparency = true;
+            return texture;
+        }
+
+        public static Texture2D loadTrainingInstruction()
+        {
+            var filename = "Training";
+            return loadTaskInstruction(filename);
+        }
 
         #endregion
     }
