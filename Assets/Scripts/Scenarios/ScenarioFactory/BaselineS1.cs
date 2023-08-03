@@ -25,8 +25,11 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private GameObject crane;
 
-        [Header("GameObjects")] public GameObject player;
-        [FormerlySerializedAs("pipeDolly")] public GameObject pipeStack;
+        private GameObject player; // local player
+
+        [Header("GameObjects")] [FormerlySerializedAs("pipeDolly")]
+        public GameObject pipeStack;
+
         public GameObject unpackedPipe;
 
 
@@ -36,6 +39,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         private void Start()
         {
             base.Start();
+
+            player = localPlayer;
 
             BackupPipeLocalTransform();
 

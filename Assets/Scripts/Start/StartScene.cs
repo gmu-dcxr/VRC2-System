@@ -15,6 +15,10 @@ public class StartScene : MonoBehaviour
     private NetworkRunner _runner;
     private bool gameStarted = false;
     // Start is called before the first frame update
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
     void Start()
     {
         
@@ -30,20 +34,20 @@ public class StartScene : MonoBehaviour
     {
         if (!gameStarted)
         {
+            SceneManager.LoadScene(sceneToGoTo);
             GlobalConstants.GameStarted = true;
             GlobalConstants.Checker = false; // P1
             StartGame(GameMode.Host);
-            SceneManager.LoadScene(sceneToGoTo);
         }
     }
     public void JoinButton()
     {
         if (!gameStarted)
         {
+            SceneManager.LoadScene(sceneToGoTo);
             GlobalConstants.GameStarted = true;
             GlobalConstants.Checker = true; // P2
             StartGame(GameMode.Client);
-            SceneManager.LoadScene(sceneToGoTo);
         }
     }
     public async void StartGame(GameMode mode)
