@@ -11,7 +11,14 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float speed;
         public GameObject endPosition;
 
-        [Header("Player")] public GameObject player;
+        private GameObject player;
+
+        void Start()
+        {
+            base.Start();
+
+            player = localPlayer;
+        }
 
         private void Update()
         {

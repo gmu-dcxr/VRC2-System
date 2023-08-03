@@ -27,6 +27,8 @@ namespace VRC2.Scenarios
         private int _id;
         private string _name;
         private string _shortName;
+        private int _taskStart;
+        private int _taskEnd;
 
         private List<YamlHelper.WarningVariant> _context;
         private List<YamlHelper.WarningVariant> _amount;
@@ -293,6 +295,19 @@ namespace VRC2.Scenarios
         {
             InitFromFile();
             CheckIncidentsCallbacks();
+
+            this.ScenarioStart += OnScenarioStart;
+            this.ScenarioFinish += OnScenarioFinish;
+        }
+
+        public virtual void OnScenarioStart()
+        {
+            UpdateInstruction();
+        }
+
+        public virtual void OnScenarioFinish()
+        {
+
         }
 
         public void OverrideID(int id)
@@ -406,6 +421,8 @@ namespace VRC2.Scenarios
             scenario = deser.Deserialize<YamlHelper.Scenario>(text);
 
             _name = scenario.name;
+            _taskStart = scenario.taskStart;
+            _taskEnd = scenario.taskEnd;
 
             if (scenario.context != null)
             {
@@ -598,6 +615,16 @@ namespace VRC2.Scenarios
 
             OnIncidentFinish(obj);
         }
+
+        #endregion
+
+        #region Task Instruction
+
+        public virtual void UpdateInstruction()
+        {
+            scenariosManager.UpdateInstruction(_taskStart, _taskEnd);
+        }
+
 
         #endregion
     }

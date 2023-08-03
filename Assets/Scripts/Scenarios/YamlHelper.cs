@@ -24,6 +24,8 @@ namespace VRC2.Scenarios
             public string desc { get; set; }
             public string start { get; set; }
             public string end { get; set; }
+            public int taskStart { get; set; }
+            public int taskEnd { get; set; }
             public List<Incident> incidents { get; set; }
             public List<WarningVariant> context { get; set; }
             public List<WarningVariant> amount { get; set; }

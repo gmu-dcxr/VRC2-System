@@ -10,6 +10,8 @@ namespace VRC2.Scenarios
     {
         private int startTimestamp = -1;
 
+        public bool isTraining = true;
+
         public ConditionNumber conditionNumber;
 
         public List<Scenario> scenarios = null;
@@ -35,7 +37,7 @@ namespace VRC2.Scenarios
         private void Start()
         {
             CheckScenariosCallbacks();
-            
+
             Debug.LogWarning($"Use Condition: {condition.ToString()}");
         }
 
@@ -129,6 +131,40 @@ namespace VRC2.Scenarios
             scenarios.Add(s3);
 
             StartScenarios();
+        }
+
+        #endregion
+
+        #region Update Instruction
+
+        public void UpdateInstruction(int start, int end)
+        {
+            print("UpdateInstruction");
+            var s = start;
+            var e = end;
+
+            // use mapping
+            s = Math.Min(s, e);
+
+            // 1-5, 2-6, 3-7, 4-8
+            e = s + 4;
+
+
+            var qim = GameObject.FindWithTag(GlobalConstants.instructionTag).GetComponent<QuadImageManager>();
+
+            Texture2D texture = null;
+
+
+            if (isTraining)
+            {
+                texture = GlobalConstants.loadTrainingInstruction();
+            }
+            else
+            {
+                texture = GlobalConstants.loadTaskInstruction(s, e);
+            }
+
+            qim.SetTexture(texture);
         }
 
         #endregion
