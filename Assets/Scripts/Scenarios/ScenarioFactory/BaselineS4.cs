@@ -30,7 +30,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private void Start()
         {
             base.Start();
-            drone = GameObject.Find("_Drone");
+            drone = GameObject.Find("_Drone [BumbleBee]");
 
             //Find positions
             Start1 = GameObject.Find("Start").transform;
