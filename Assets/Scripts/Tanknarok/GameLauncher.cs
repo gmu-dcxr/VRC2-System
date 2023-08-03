@@ -27,7 +27,7 @@ namespace FusionExamples.Tanknarok
 		
 		private void Awake()
 		{
-			DontDestroyOnLoad(this);
+			//DontDestroyOnLoad(this);
 		}
 
 		private void Start()

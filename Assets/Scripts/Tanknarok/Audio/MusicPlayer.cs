@@ -27,7 +27,7 @@ namespace FusionExamples.Tanknarok
 		{
 			if (instance == null)
 			{
-				DontDestroyOnLoad(this);
+				//DontDestroyOnLoad(this);
 				instance = this;
 
 				Initialize();
