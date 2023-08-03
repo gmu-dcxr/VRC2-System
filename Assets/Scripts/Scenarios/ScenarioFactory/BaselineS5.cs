@@ -68,8 +68,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("StartedCoroutine");
             yield return new WaitForSeconds(15f);
+            backingUp = false;
             craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
                 craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 90);
+            craneTruck.transform.position = new Vector3(craneTruck.transform.position.x,
+               craneTruck.transform.position.y + 1, craneTruck.transform.position.z);
             glass.SetActive(false);
             unloadedGlass.SetActive(true);
             yield break;
@@ -96,6 +99,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
+            craneTruck.transform.position = new Vector3(Finish1.transform.position.x, Finish1.transform.position.y,
+                Finish1.transform.position.z);
 
         }
 
