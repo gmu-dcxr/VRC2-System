@@ -149,6 +149,8 @@ namespace VRC2.Scenarios
             // 1-5, 2-6, 3-7, 4-8
             e = s + 4;
 
+            UpdateWallBoxes(s, e);
+
             Texture2D texture = null;
 
 
@@ -175,6 +177,33 @@ namespace VRC2.Scenarios
         {
             var qim = GameObject.FindWithTag(GlobalConstants.wallTag).GetComponent<QuadImageManager>();
             qim.SetTexture(texture);
+        }
+
+        void UpdateWallBoxes(int s, int e)
+        {
+            var boxes = GameObject.FindWithTag(GlobalConstants.wallBoxesTag);
+
+            var count = boxes.transform.childCount;
+
+            if (isTraining)
+            {
+                // load E0 only
+                s = 0;
+                e = 0;
+            }
+
+            for (var i = 0; i < count; i++)
+            {
+                if (i == s || i == e)
+                {
+                    // enable it
+                    boxes.transform.GetChild(i).gameObject.SetActive(true);
+                }
+                else
+                {
+                    boxes.transform.GetChild(i).gameObject.SetActive(false);
+                }
+            }
         }
 
         #endregion
