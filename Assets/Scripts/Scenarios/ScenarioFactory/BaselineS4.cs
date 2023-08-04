@@ -7,71 +7,61 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS4 : Scenario
     {
-        [Header("TruckPositions")] private Transform Start1;
-        private Transform Finish1;
-        private Transform Start2;
-        private Transform Finish2;
-        private Transform Start3;
-        private Transform Finish3;
-
         public GameObject drone;
+
         private float speed = 6f;
 
-        private bool backingUp1 = false;
-        private bool backingUp2 = false;
-        private bool backingUp3 = false;
-        private bool movingForward1 = false;
-        private bool movingForward2 = false;
+        private GameObject player;
 
-        [Header("Player")] public GameObject player;
+        private bool approaching = false;
+
+        private Vector3 droneInitPosition;
+
+        [Header("Height Offset")]
+        [Tooltip("Off the ground")]
+        public float lowerHeight = 5.0f;
+
+        [Tooltip("Off the ground")]
+        public float collidingHeight = 0.5f;
+
+        private Vector3 destination;
+
+        private bool moving = false;
 
 
 
         private void Start()
         {
             base.Start();
-            drone = GameObject.Find("_Drone [BumbleBee]");
 
-            //Find positions
-            Start1 = GameObject.Find("Start").transform;
-            Finish1 = GameObject.Find("Finish").transform;
-            Start2 = GameObject.Find("Start2").transform;
-            Finish2 = GameObject.Find("Finish2").transform;
-            Start3 = GameObject.Find("Start3").transform;
-            Finish3 = GameObject.Find("Finish3").transform;
+            droneInitPosition = drone.transform.position;
+            
+            player = localPlayer;
+            approaching = false;
         }
 
         private void Update()
         {
-            if (backingUp1)
+            if(!moving) return;
+            
+            if (approaching)
             {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish1.transform.position,
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, destination,
                     speed * Time.deltaTime);
             }
+            else
+            {
+                drone.transform.position = Vector3.MoveTowards(drone.transform.position, droneInitPosition,
+                    speed * Time.deltaTime);
+            }
+        }
 
-            if (movingForward1)
-            {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Start1.transform.position,
-                    speed * Time.deltaTime);
-            }
+        void UpdateDestination(float heightoffset)
+        {
+            var pos = player.transform.position;
+            pos.y += heightoffset;
 
-            if (backingUp2)
-            {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish2.transform.position,
-                    speed * Time.deltaTime);
-            }
-
-            if (movingForward2)
-            {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Start2.transform.position,
-                    speed * Time.deltaTime);
-            }
-
-            if (backingUp3)
-            {
-                drone.transform.position = Vector3.MoveTowards(drone.transform.position, Finish3.transform.position,
-                    speed * Time.deltaTime);
-            }
+            destination = pos;
         }
 
 
@@ -96,7 +86,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            backingUp1 = true;
+            var offset = drone.transform.position.y - player.transform.position.y;
+            UpdateDestination(offset);
+
+            moving = true;
+            approaching = true;
         }
 
         public void On_BaselineS4_2_Finish()
@@ -111,8 +105,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            backingUp1 = false;
-            movingForward1 = true;
+            moving = true;
+            approaching = false;
         }
 
         public void On_BaselineS4_3_Finish()
@@ -128,12 +122,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(4);
             var warning = incident.Warning;
-            print(warning);
 
-            movingForward1 = false;
-            drone.transform.position = new Vector3(Start2.transform.position.x, Start2.transform.position.y,
-                Start2.transform.position.z);
-            backingUp2 = true;
+            UpdateDestination(lowerHeight);
+            
+            moving = true;
+            approaching = true;
         }
 
         public void On_BaselineS4_4_Finish()
@@ -148,9 +141,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-
-            backingUp2 = false;
-            movingForward2 = true;
+            moving = true;
+            approaching = false;
         }
 
         public void On_BaselineS4_5_Finish()
@@ -168,10 +160,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            movingForward2 = false;
-            drone.transform.position = new Vector3(Start3.transform.position.x, Start3.transform.position.y,
-                Start3.transform.position.z);
-            backingUp3 = true;
+            UpdateDestination(collidingHeight);
+            moving = true;
+            approaching = true;
         }
 
         public void On_BaselineS4_6_Finish()
@@ -181,6 +172,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS4_7_Start()
         {
+            // make drone runaway
+            moving = true;
+            approaching = false;
+            
             print("On_BaselineS4_7_Start");
             // SAGAT query
             ShowSAGAT();
