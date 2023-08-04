@@ -266,9 +266,10 @@ namespace VRC2
 
         #endregion
 
-        #region Wall
+        #region Wall / Boxes
 
         public static string wallTag = "Wall";
+        public static string wallBoxesTag = "Boxes";
 
         #endregion
 
