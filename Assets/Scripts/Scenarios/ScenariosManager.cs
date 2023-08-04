@@ -149,9 +149,6 @@ namespace VRC2.Scenarios
             // 1-5, 2-6, 3-7, 4-8
             e = s + 4;
 
-
-            var qim = GameObject.FindWithTag(GlobalConstants.instructionTag).GetComponent<QuadImageManager>();
-
             Texture2D texture = null;
 
 
@@ -164,6 +161,19 @@ namespace VRC2.Scenarios
                 texture = GlobalConstants.loadTaskInstruction(s, e);
             }
 
+            UpdateInstructionPanel(texture);
+            UpdateWallBackground(texture);
+        }
+
+        void UpdateInstructionPanel(Texture2D texture)
+        {
+            var qim = GameObject.FindWithTag(GlobalConstants.instructionTag).GetComponent<QuadImageManager>();
+            qim.SetTexture(texture);
+        }
+
+        void UpdateWallBackground(Texture2D texture)
+        {
+            var qim = GameObject.FindWithTag(GlobalConstants.wallTag).GetComponent<QuadImageManager>();
             qim.SetTexture(texture);
         }
 
