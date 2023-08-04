@@ -19,6 +19,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private Timer _timer;
 
+        private AudioSource _audioSource;
+
         private Vector3 targetPosition
         {
             get
@@ -42,6 +44,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             goBack = false;
 
             drone.SetActive(false);
+
+            _audioSource = GetComponent<AudioSource>();
+
+            _audioSource.playOnAwake = false;
+            _audioSource.loop = false;
         }
 
         void StartTimer(int second)
@@ -101,6 +108,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         void UpdateInstruction()
         {
             Debug.LogWarning("The plan of installment order changed");
+            _audioSource.Play();
         }
 
         public void On_BaselineS2_1_Start()
