@@ -14,8 +14,12 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Header("TruckPositions")] private Transform Start1;
         private Transform Finish1;
 
+        private Vector3 targetDirection;
+        private Vector3 newDirection;
+
         public GameObject craneTruck;
-        private float speed = 6f;
+        private float speed = 3.5f;
+        private float rotationSpeed = 0.5f;
 
         private bool backingUp = false;
         private bool movingForward = false;
@@ -29,7 +33,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             base.Start();
 
             //Find positions
-            Start1 = GameObject.Find("Start").transform;
+            Start1 = GameObject.Find("Start").transform;  
             Finish1 = GameObject.Find("Finish").transform;
 
             unloadedGlass.SetActive(false);
@@ -41,15 +45,35 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             if (backingUp)
             {
+                targetDirection = Finish1.transform.position - craneTruck.transform.position;
+                newDirection = Vector3.RotateTowards(craneTruck.transform.forward, targetDirection,
+                    speed * Time.deltaTime, rotationSpeed);
+
+                craneTruck.transform.rotation = Quaternion.LookRotation(newDirection);
+
                 craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position,
                     Finish1.transform.position, speed * Time.deltaTime);
             }
 
             if (movingForward)
             {
+                targetDirection = Start1.transform.position - craneTruck.transform.position;
+                newDirection = Vector3.RotateTowards(craneTruck.transform.forward, targetDirection,
+                    speed * Time.deltaTime, rotationSpeed);
+
+                craneTruck.transform.rotation = Quaternion.LookRotation(newDirection);
+
                 craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position,
                     Start1.transform.position, speed * Time.deltaTime);
             }
+
+            if (craneTruck.transform.position.x == Start1.transform.position.x) 
+            {
+                movingForward = false;
+            }
+
+            if (craneTruck.transform.position.x == Finish1.transform.position.x) 
+            { backingUp = false; }
         }
 
         IEnumerator partialTipTruck()
@@ -101,6 +125,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
             craneTruck.transform.position = new Vector3(Finish1.transform.position.x, Finish1.transform.position.y,
                 Finish1.transform.position.z);
+            
 
         }
 
