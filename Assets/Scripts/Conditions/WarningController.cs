@@ -26,7 +26,10 @@ public class WarningController : MonoBehaviour
 
     private Transform _cameraTransform;
 
-    private bool showing = false;
+    public bool showing
+    {
+        get { return (dialog.activeSelf || _audioSource.isPlaying); }
+    }
 
     private Timer _timer;
 
