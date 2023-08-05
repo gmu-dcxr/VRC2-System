@@ -1,81 +1,118 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS3 : Scenario
     {
-        [Header("Accident Configure")] public GameObject pipes;
+        [Header("Truck")] public GameObject truck;
+        public GameObject truckLoad;
 
-        [Header("TruckPositions")] private Transform Start1;
-        private Transform Finish1;
-        private Transform Start2;
-        private Transform Finish2;
-        private Transform Start3;
-        private Transform Finish3;
+        // truck destination
+        [Header("Markers")] public GameObject destination;
 
-        public GameObject truck;
-        private float speed = 6f;
+        public GameObject closerStart;
+        public GameObject collisionStart;
 
-        private bool backingUp1 = false;
-        private bool backingUp2 = false;
-        private bool backingUp3 = false;
-        private bool movingForward1 = false;
-        private bool movingForward2 = false;
+        private Vector3 startPos;
+        private Vector3 destinationPos;
+        private GameObject player;
 
-        [Header("Player")] public GameObject player;
+        private float distanceThreshold = 5.0f;
 
+        private WSMVehicleController _vehicleController;
 
+        private bool moving = false;
+        private bool back = false;
 
         private void Start()
         {
             base.Start();
 
-            pipes.SetActive(false);
+            startPos = truck.transform.position;
+            destinationPos = destination.transform.position;
 
-            //Find positions
-            Start1 = GameObject.Find("Start").transform;
-            Finish1 = GameObject.Find("Finish").transform;
-            Start2 = GameObject.Find("Start2").transform;
-            Finish2 = GameObject.Find("Finish2").transform;
-            Start3 = GameObject.Find("Start3").transform;
-            Finish3 = GameObject.Find("Finish3").transform;
+            _vehicleController = truck.GetComponent<WSMVehicleController>();
         }
 
         private void Update()
         {
-            if (backingUp1)
+            if (!moving)
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish1.transform.position,
-                    speed * Time.deltaTime);
+                StopVehicle();
             }
-
-            if (movingForward1)
+            else
             {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Start1.transform.position,
-                    speed * Time.deltaTime);
-            }
-
-            if (backingUp2)
-            {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish2.transform.position,
-                    speed * Time.deltaTime);
-            }
-
-            if (movingForward2)
-            {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Start2.transform.position,
-                    speed * Time.deltaTime);
-            }
-
-            if (backingUp3)
-            {
-                truck.transform.position = Vector3.MoveTowards(truck.transform.position, Finish3.transform.position,
-                    speed * Time.deltaTime);
+                MoveForward(!back);
             }
         }
+
+        #region Truck Control
+
+        bool ReachDestination(bool forward)
+        {
+            var d = destinationPos; // backward
+            if (forward)
+            {
+                d = startPos;
+            }
+
+            // ignore y distance
+            var t = truck.transform.position;
+            d.y = t.y;
+            var distance = Vector3.Distance(t, d);
+
+            print(distance);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        void ShowLoad(bool flag)
+        {
+            truckLoad.SetActive(flag);
+        }
+
+        void StopVehicle()
+        {
+            _vehicleController.BrakesInput = 1;
+            _vehicleController.HandBrakeInput = 1;
+            _vehicleController.ClutchInput = 1;
+        }
+
+        void StartVehicle()
+        {
+            _vehicleController.BrakesInput = 0;
+            _vehicleController.HandBrakeInput = 0;
+            _vehicleController.ClutchInput = 0;
+        }
+
+        void MoveForward(bool forward)
+        {
+            if (ReachDestination(forward))
+            {
+                print("Truck reach destination");
+                moving = false;
+                return;
+            }
+
+            var _acceleration = 1.0f;
+            if (!forward)
+            {
+                _acceleration = -1.0f;
+            }
+
+            _vehicleController.AccelerationInput = _acceleration;
+        }
+
+        #endregion
 
         #region Accident Events Callbacks
 
@@ -98,7 +135,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            backingUp1 = true;
+            ShowLoad(false);
+
+            moving = true;
+            back = true;
+
+            StartVehicle();
         }
 
         public void On_BaselineS3_2_Finish()
@@ -113,9 +155,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            backingUp1 = false;
-            movingForward1 = true;
-            pipes.SetActive(true);
+            ShowLoad(true);
+
+            moving = true;
+            back = false;
+
+            StartVehicle();
         }
 
         public void On_BaselineS3_3_Finish()
@@ -133,11 +178,19 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            movingForward1 = false;
-            truck.transform.position = new Vector3(Start2.transform.position.x, Start2.transform.position.y,
-                Start2.transform.position.z);
-            pipes.SetActive(false);
-            backingUp2 = true;
+            // update truck pos & rot
+            truck.transform.position = closerStart.transform.position;
+            truck.transform.rotation = closerStart.transform.rotation;
+
+            // overwrite start point
+            startPos = closerStart.transform.position;
+
+            ShowLoad(false);
+
+            moving = true;
+            back = true;
+
+            StartVehicle();
         }
 
         public void On_BaselineS3_4_Finish()
@@ -152,9 +205,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            backingUp2 = false;
-            movingForward2 = true;
-            pipes.SetActive(true);
+            ShowLoad(true);
+
+            moving = true;
+            back = false;
+
+            StartVehicle();
         }
 
         public void On_BaselineS3_5_Finish()
@@ -170,11 +226,19 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(6);
 
-            movingForward2 = false;
-            truck.transform.position = new Vector3(Start3.transform.position.x, Start3.transform.position.y,
-                Start3.transform.position.z);
-            pipes.SetActive(false);
-            backingUp3 = true;
+            // update truck pos & rot
+            truck.transform.position = collisionStart.transform.position;
+            truck.transform.rotation = collisionStart.transform.rotation;
+
+            // overwrite start point
+            startPos = collisionStart.transform.position;
+
+            ShowLoad(false);
+
+            moving = true;
+            back = true;
+
+            StartVehicle();
         }
 
         public void On_BaselineS3_6_Finish()
@@ -185,6 +249,10 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_7_Start()
         {
             print("On_BaselineS3_7_Start");
+
+            // hide truck
+            truck.SetActive(false);
+
             // SAGAT query
             ShowSAGAT();
         }
