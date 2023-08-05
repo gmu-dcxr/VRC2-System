@@ -3,16 +3,24 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS8 : Scenario
     {
-        [Header("TruckPositions")] private Transform Start1;
-        private Transform Finish1;
+        public GameObject truck;
+        public GameObject muds;
 
-        public GameObject Truck;
+        public GameObject destination;
+
+        public GameObject warningPosition;
+
+        private Vector3 startPos;
+        private Quaternion startRotation;
+        private Vector3 destinationPos;
+
         public GameObject waterLeak;
         public GameObject liveWire;
         private float speed = 6f;
@@ -23,72 +31,195 @@ namespace VRC2.Scenarios.ScenarioFactory
         private int maxTrips = 5;
 
 
-        [Header("Player")] public GameObject player;
+        private GameObject player;
+
+        private WSMVehicleController _vehicleController;
+
+        private bool started = false;
+        private bool moving = false;
+        private bool back = false;
+
+        private float distanceThreshold = 5.0f;
+        private float leakWaterThreshold = 5.0f;
+        private float warningThreshold = 2.0f;
 
 
 
         private void Start()
         {
             base.Start();
-            //Find positions
-            Start1 = GameObject.Find("Start").transform;
-            Finish1 = GameObject.Find("Finish").transform;
+
+            player = localPlayer;
+
+            startPos = truck.transform.position;
+            startRotation = truck.transform.rotation;
+
+            destinationPos = destination.transform.position;
+
+            _vehicleController = truck.GetComponent<WSMVehicleController>();
+
+
             waterLeak.SetActive(false);
         }
 
         private void Update()
         {
-            if (trips < maxTrips)
-            {
-                if (backingUp)
-                {
-                    //back up until each finish, then move foward, waterLeak increases each time    
-                    if (Truck.transform.position.z != (Finish1.position.z))
-                    {
-                        Truck.transform.position = Vector3.MoveTowards(Truck.transform.position, Finish1.transform.position,
-                            speed * Time.deltaTime);
-                    }
-                    if (Truck.transform.position.z == (Finish1.position.z))
-                    {
-                        backingUp = false;
-                        moveFoward = true;
-                        //leakWater(waterLeak);
-                    }
-                }
+            // player approch warning
+            PlayerApproachingWarning();
 
-                if (moveFoward)
+            if (!started) return;
+
+            if (!moving)
+            {
+                StopVehicle();
+                // if stopped
+                if (TruckStopped())
                 {
-                    if (Truck.transform.position.z != Start1.position.z)
+                    // change direction
+                    moving = true;
+
+                    if (!back)
                     {
-                        Truck.transform.position = Vector3.MoveTowards(Truck.transform.position, Start1.transform.position,
-                            speed * Time.deltaTime);
+                        // forward to the start point
+                        // reset truck postion and rotation
+                        truck.transform.position = startPos;
+                        truck.transform.rotation = startRotation;
+
+                        // increase leak water
+                        IncreaseLeakWater();
                     }
-                    if (Truck.transform.position.z == (Start1.position.z))
-                    {
-                        moveFoward = false;
-                        backingUp = true;
-                        leakWater(waterLeak);
-                        trips++;
-                    }
+
+                    // change direction
+                    back = !back;
+
+                    // only active when moving forward
+                    muds.SetActive(!back);
+                }
+            }
+            else
+            {
+                MoveForward(!back);
+            }
+        }
+
+        #region Warning Detection
+
+        void PlayerApproachingWarning()
+        {
+            var t = player.transform.position;
+            var w = warningPosition.transform.position;
+
+            // ignore y distance
+            t.y = 0;
+            w.y = 0;
+
+            if (Vector3.Distance(t, w) < warningThreshold)
+            {
+                var msg = GetRightMessage(3, scenariosManager.condition.Context, scenariosManager.condition.Amount);
+                if (!warningShowing)
+                {
+                    ShowWarning(ClsName, 3, msg);
+                }
+            }
+            else
+            {
+                if (warningShowing)
+                {
+                    // hide warning
+                    HideWarning();
                 }
             }
         }
-        //runs every time the truck reaches a position (simple)
-        private void leakWater(GameObject waterLeak)
+
+
+
+        #endregion
+
+        #region Truck Control
+
+        bool TruckStopped()
         {
-            float yValue = waterLeak.transform.localScale.y;
+            return _vehicleController.CurrentSpeed < 0.1f;
+        }
+
+        bool ReachDestination(bool forward)
+        {
+            var d = destinationPos; // backward
+            if (forward)
+            {
+                d = startPos;
+            }
+
+            // ignore y distance
+            var t = truck.transform.position;
+            d.y = t.y;
+            var distance = Vector3.Distance(t, d);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        void ShowLoad(bool flag)
+        {
+            muds.SetActive(flag);
+        }
+
+        void StopVehicle()
+        {
+            _vehicleController.BrakesInput = 1;
+            _vehicleController.HandBrakeInput = 1;
+            _vehicleController.ClutchInput = 1;
+        }
+
+        void StartVehicle()
+        {
+            _vehicleController.BrakesInput = 0;
+            _vehicleController.HandBrakeInput = 0;
+            _vehicleController.ClutchInput = 0;
+        }
+
+        void MoveForward(bool forward)
+        {
+            if (ReachDestination(forward))
+            {
+                print("Truck reach destination");
+                moving = false;
+                return;
+            }
+
+            var _acceleration = 1.0f;
+            if (!forward)
+            {
+                _acceleration = -1.0f;
+            }
+
+            _vehicleController.AccelerationInput = _acceleration;
+        }
+
+        #endregion
+
+        //runs every time the truck reaches a position (simple)
+        void IncreaseLeakWater()
+        {
+            if (waterLeak.transform.localScale.x > leakWaterThreshold) return;
+
             Renderer r = waterLeak.GetComponent<Renderer>();
             Material m = r.material;
 
-            if (!waterLeak.activeSelf) 
-            { 
-                waterLeak.SetActive(true); 
+            if (!waterLeak.activeSelf)
+            {
+                waterLeak.SetActive(true);
             }
             // increase waterLeak size and scale texture
-            else 
+            else
             {
                 waterLeak.transform.localScale += new Vector3(1.0f, 0.0f, 0.0f);
-                m.SetTextureScale("_MainTex", new Vector2(waterLeak.transform.localScale.x, waterLeak.transform.localScale.y));
+                m.SetTextureScale("_MainTex",
+                    new Vector2(waterLeak.transform.localScale.x, waterLeak.transform.localScale.y));
             }
         }
 
@@ -112,8 +243,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
 
-            backingUp = true;
+            ShowLoad(false);
 
+            started = true;
+            moving = true;
+            back = true;
         }
 
         public void On_BaselineS8_2_Finish()
@@ -141,6 +275,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS8_4_Start()
         {
             print("On_BaselineS8_4_Start");
+
+            // hide truck
+            started = false;
+            truck.SetActive(false);
+
             // SAGAT query
             ShowSAGAT();
         }
@@ -149,6 +288,21 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             // SAGAT query
             HideSAGAT();
+        }
+
+        #endregion
+
+        #region Warning Override
+
+        public override void OnIncidentStart(int obj)
+        {
+            print($"");
+            // not show warning in this scenario
+            // var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
+            // ShowWarning(ClsName, obj, msg);
+            var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
+            print($"{ClsName} #{obj} {name}");
+            Invoke(name, 0);
         }
 
         #endregion

@@ -114,6 +114,12 @@ namespace VRC2.Scenarios
             }
         }
 
+        [HideInInspector]
+        public bool warningShowing
+        {
+            get { return warningController.showing; }
+        }
+
         #region Player
 
         private NetworkRunner _networkRunner;
