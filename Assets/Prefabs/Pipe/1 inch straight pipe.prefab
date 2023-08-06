@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 652238057582616173}
   - component: {fileID: 652238057582616162}
   - component: {fileID: 652238057582616163}
+  - component: {fileID: 6692628055554178165}
   m_Layer: 0
   m_Name: 1 inch straight pipe
   m_TagString: Untagged
@@ -184,6 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentA: {fileID: 8261832725492234190}
   segmentB: {fileID: 4009090273829893753}
+  segmentMid: {fileID: 0}
   pipeColor: 2
   pipeType: 0
   angle: 0
@@ -235,6 +237,20 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
+--- !u!114 &6692628055554178165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652238057582616167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995c501e440444898eeaf77d00a32a6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 1
+  P2Only: 0
 --- !u!1 &4009090273829893753
 GameObject:
   m_ObjectHideFlags: 0
