@@ -14,7 +14,8 @@ public class StartScene : MonoBehaviour
     public string sceneToGoTo = "WIP";
     private NetworkRunner _runner;
     private bool gameStarted = false;
-    // Start is called before the first frame update
+    private bool host = false;
+    private bool join = false;
     private void Awake()
     {
         DontDestroyOnLoad(this);
@@ -24,30 +25,38 @@ public class StartScene : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (host)
+        {
+            GlobalConstants.GameStarted = true;
+            GlobalConstants.Checker = false; // P1
+            StartGame(GameMode.Host);
+            host = false;
+        }
+        else if (join)
+        {
+            GlobalConstants.GameStarted = true;
+            GlobalConstants.Checker = true; // P2
+            StartGame(GameMode.Client);
+            join = false;
+        }
     }
 
     public void HostButton()
     {
         if (!gameStarted)
         {
+            host = true;
             SceneManager.LoadScene(sceneToGoTo);
-            GlobalConstants.GameStarted = true;
-            GlobalConstants.Checker = false; // P1
-            StartGame(GameMode.Host);
         }
     }
     public void JoinButton()
     {
         if (!gameStarted)
         {
+            join = true;
             SceneManager.LoadScene(sceneToGoTo);
-            GlobalConstants.GameStarted = true;
-            GlobalConstants.Checker = true; // P2
-            StartGame(GameMode.Client);
         }
     }
     public async void StartGame(GameMode mode)
