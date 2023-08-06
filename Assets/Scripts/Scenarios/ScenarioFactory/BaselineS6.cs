@@ -3,6 +3,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+using UnityTimer;
+using Timer = UnityTimer.Timer;
+
 namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS6 : Scenario
@@ -17,6 +20,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float dolly;
         public float hook;
 
+        [Header("GameObjects")] public GameObject pipeStack;
+
+        public GameObject unpackedPipe;
+
+
         private float originalDolly;
         private float originalHook;
 
@@ -25,44 +33,71 @@ namespace VRC2.Scenarios.ScenarioFactory
         private GameObject crane;
         private GameObject pipeDolly;
 
-        [Header("Player")] public GameObject player;
+        private GameObject player;
 
 
         private bool triggered = false;
-        private bool backwardsTriggered = false;
+        private bool backward = false;
 
-        [SerializeField] private float wind1 = 0.1f;
-        private float wind2 = 0.3f;
-        private float wind3 = 0.5f;
+        private float wind1 = 1.0f;
+        private float wind2 = 5.0f;
+        private float wind3 = 10.0f;
+
+        private float yawOffset = 20;
+
+        private float currentWind = 0;
+        private Timer _timer;
+        private float swingFreq = 0.3f; // every 0.1 second
+
+        private float initYaw = 0f; // yaw of incident start
+        private float initDolly = 0f;
 
         private void Start()
         {
 
             base.Start();
+
+            player = localPlayer;
+
             crane = animator.gameObject;
-            randomYawIncrease = Random.Range(1, 10);
+            randomYawIncrease = 5; // Random.Range(1, 10);
             // make it rotate at the start
             triggered = true;
+            backward = false;
 
-            //Find pipeDolly Object
-            pipeDolly = GameObject.Find("Pipes");
+            initYaw = CalculateRawBetweenCranePlayer(crane, player);
+            initDolly = dolly;
 
-            //Wind calculations
-            originalDolly = dolly;
-            originalHook = hook;
+
+            unpackedPipe.SetActive(false);
+        }
+
+        void StartTimer()
+        {
+            CancelTimer();
+
+            _timer = Timer.Register(swingFreq, () => { SwingDolly(currentWind); }, isLooped: true, useRealTime: true);
+        }
+
+        void CancelTimer()
+        {
+            if (_timer != null)
+            {
+                Timer.Cancel(_timer);
+            }
         }
 
         private void Update()
         {
             if (triggered)
             {
-                yaw += Time.deltaTime * randomYawIncrease;
-                UpdateAnimator(yaw, dolly, hook);
-            }
+                var v = randomYawIncrease;
+                if (backward)
+                {
+                    v *= -1;
+                }
 
-            if (backwardsTriggered)
-            {
-                yaw += Time.deltaTime * -randomYawIncrease;
+                yaw += Time.deltaTime * v;
                 UpdateAnimator(yaw, dolly, hook);
             }
         }
@@ -80,6 +115,15 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             var angle = Vector3.SignedAngle(dir, forward, Vector3.up);
 
+            if (backward)
+            {
+                angle += yawOffset;
+            }
+            else
+            {
+                angle += -yawOffset;
+            }
+
             if (angle < 0)
             {
                 angle += 360;
@@ -88,25 +132,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             return angle;
         }
 
-        private void Reset()
+
+        void SwingDolly(float value)
         {
+            var r = Random.Range(0, value);
 
-        }
-
-        private void Wind(float range)
-        {
-            if (range != 0.0f)
-            {
-                float rand = Random.Range(range, -range);
-                dolly = dolly * (1.0f + rand);
-                hook = hook * (1.0f + rand);
-            }
-            else
-            {
-                dolly = originalDolly;
-                hook = originalHook;
-            }
-
+            dolly = initDolly + r;
         }
 
         void UpdateAnimator(float y, float d, float h)
@@ -129,9 +160,23 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Accident Events Callbacks
 
+        void TriggerEvent(float wind, bool hasload, bool back)
+        {
+            yaw = initYaw;
+
+            currentWind = wind;
+
+            pipeStack.SetActive(hasload);
+
+            triggered = true;
+            backward = back;
+
+            StartTimer();
+        }
+
         public void On_BaselineS6_1_Start()
         {
-            triggered = false;
+
         }
 
         public void On_BaselineS6_1_Finish()
@@ -147,12 +192,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-
-            pipeDolly.SetActive(true);
-            Wind(wind1);
-            // get yaw
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
-            triggered = true;
+            TriggerEvent(wind1, true, false);
         }
 
         public void On_BaselineS6_2_Finish()
@@ -167,11 +207,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-
-            pipeDolly.SetActive(false);
-            Wind(0.0f);
-            triggered = false;
-            backwardsTriggered = true;
+            TriggerEvent(wind1, false, true);
         }
 
         public void On_BaselineS6_3_Finish()
@@ -188,10 +224,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            pipeDolly.SetActive(true);
-            Wind(wind2);
-            backwardsTriggered = false;
-            triggered = true;
+            TriggerEvent(wind2, true, false);
         }
 
         public void On_BaselineS6_4_Finish()
@@ -206,12 +239,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-
-            pipeDolly.SetActive(false);
-            Wind(0.0f);
-
-            backwardsTriggered = true;
-            triggered = false;
+            TriggerEvent(wind2, false, true);
         }
 
         public void On_BaselineS6_5_Finish()
@@ -226,20 +254,23 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(6);
             var warning = incident.Warning;
-            pipeDolly.SetActive(true);
-            Wind(wind3);
-            print(warning);
+
+            TriggerEvent(wind3, true, false);
         }
 
         public void On_BaselineS6_6_Finish()
         {
             // Another load is passing overhead, it swings even stronger due to the sudden wind, and is about to hit the power line.
-            Wind(0.0f);
         }
 
         public void On_BaselineS6_7_Start()
         {
             print("On_BaselineS6_7_Start");
+
+            CancelTimer();
+            // stop
+            triggered = false;
+
             //SAGAT query
             ShowSAGAT();
         }
