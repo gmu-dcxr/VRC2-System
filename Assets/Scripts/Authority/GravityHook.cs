@@ -23,12 +23,12 @@ namespace VRC2.Authority
         
         public override void DisableP1()
         {
-            _rigidbody.useGravity = false;
+            rigidbody.useGravity = false;
         }
 
         public override void DisableP2()
         {
-            _rigidbody.useGravity = false;
+            rigidbody.useGravity = false;
         }
     }
 }
