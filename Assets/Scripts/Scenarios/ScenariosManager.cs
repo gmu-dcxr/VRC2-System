@@ -6,7 +6,7 @@ using VRC2.Conditions;
 
 namespace VRC2.Scenarios
 {
-    public class ScenariosManager : MonoBehaviour
+    public class ScenariosManager : NetworkBehaviour
     {
         private int startTimestamp = -1;
 
@@ -47,11 +47,43 @@ namespace VRC2.Scenarios
 
         private void OnGUI()
         {
-            // if (GUI.Button(new Rect(10, 100, 150, 50), "Test"))
-            // {
-            //     TestScenarioManager();
-            // }
+            var runner = GameObject.FindObjectOfType<NetworkRunner>();
+            if (runner != null && runner.IsRunning)
+            {
+                var no = gameObject.GetComponent<NetworkObject>();
+                if (no.HasStateAuthority)
+                {
+                    // host, show GUI
+                    if (GUI.Button(new Rect(500, 10, 150, 50), "Start"))
+                    {
+                        RPC_SendMessage();
+                    }
+                }
+            }
         }
+
+        #region Start at the same time
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SendMessage(RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+            {
+                StartScenarios();
+            }
+            else
+            {
+                StartScenarios();
+            }
+
+            Debug.LogWarning(message);
+        }
+
+
+
+        #endregion
 
 
         void StartScenarios()
