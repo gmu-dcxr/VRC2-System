@@ -19,7 +19,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float dolly;
         public float hook;
 
-        public float yawOffset = 10;
+        private float yawOffset = 20;
 
         private float randomYawIncrease;
 
@@ -27,7 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private GameObject player; // local player
 
-        [Header("GameObjects")] [FormerlySerializedAs("pipeDolly")]
+        [Header("GameObjects")]
         public GameObject pipeStack;
 
         public GameObject unpackedPipe;
