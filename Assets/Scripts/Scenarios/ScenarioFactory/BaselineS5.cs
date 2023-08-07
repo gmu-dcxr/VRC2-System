@@ -15,8 +15,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [Header("TruckPositions")]
 
-        private float waitTime = 10f;
-
         public GameObject destination;
         private Vector3 destinationPos;
         
@@ -31,9 +29,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool started = false;
         private bool movingForward = false;
-        private bool rotating = false;
         private bool moving = false;
-        
+
+        public Animator animator;
 
         private float distanceThreshold = 4.0f;
 
@@ -51,7 +49,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             destinationPos = destination.transform.position;
 
             _vehicleController = craneTruck.GetComponent<WSMVehicleController>();
-
+            animator.enabled = false;
 
             unloadedGlass.SetActive(false);
         }
@@ -65,6 +63,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             if (!moving)
             {
                 print("Not moving");
+                //StopVehicle();
             }
             else
             {
@@ -76,24 +75,24 @@ namespace VRC2.Scenarios.ScenarioFactory
         IEnumerator partialTipTruck()
         {
             print("StartedCoroutine");
-            yield return new WaitForSeconds(waitTime);
-            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
-                craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 30);
-            yield return new WaitForSeconds(waitTime);
-            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
-                craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z - 30);
+            yield return new WaitForSeconds(5f);
+            animator.enabled = true;
+            animator.SetBool("woble", true);
+            yield return new WaitForSeconds(2f);
+            animator.SetBool("woble", false);
+            animator.enabled = false;
             yield break;
         }
 
         IEnumerator tipTruck()
         {
             print("StartedCoroutine");
-            yield return new WaitForSeconds(waitTime);
-           // backingUp = false;
-            craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
-                craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 90);
-            craneTruck.transform.position = new Vector3(craneTruck.transform.position.x,
-               craneTruck.transform.position.y + 1, craneTruck.transform.position.z);
+            yield return new WaitForSeconds(5f);
+            animator.enabled = true;
+            animator.SetBool("tipOver", true);
+            StopVehicle();
+            _vehicleController.StopEngine();
+            yield return new WaitForSeconds(2.5f);
             glass.SetActive(false);
             unloadedGlass.SetActive(true);
             yield break;
@@ -275,9 +274,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             craneTruck.transform.position = destinationPos;
             craneTruck.transform.rotation = startRotation;
+           // glass.transform.position = destinationPos - new Vector3(2f, 0f, 0f);
+            glass.SetActive(true);
             movingForward = false;
             moving = true;
-            glass.SetActive(true);
             unloadedGlass.SetActive(false);
             StartCoroutine(partialTipTruck());
         }
