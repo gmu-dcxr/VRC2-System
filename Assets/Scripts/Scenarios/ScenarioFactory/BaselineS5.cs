@@ -2,27 +2,40 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS5 : Scenario
     {
-        [Header("Accident Configure")] public GameObject glass;
+        [Header("Accident Configure")] 
+        public GameObject glass;
         public GameObject unloadedGlass;
 
-        [Header("TruckPositions")] private Transform Start1;
-        private Transform Finish1;
+        [Header("TruckPositions")]
 
-        private Vector3 targetDirection;
-        private Vector3 newDirection;
+        private float waitTime = 10f;
+
+        public GameObject destination;
+        private Vector3 destinationPos;
+        
 
         public GameObject craneTruck;
-        private float speed = 3.5f;
-        private float rotationSpeed = 0.5f;
+        private Vector3 startPos;
+        private Quaternion startRotation;
+        private WSMVehicleController _vehicleController;
 
-        private bool backingUp = false;
+        private float speed = 6f;
+        private float rotationSpeed = 0f;
+
+        private bool started = false;
         private bool movingForward = false;
+        private bool rotating = false;
+        private bool moving = false;
+        
+
+        private float distanceThreshold = 4.0f;
 
         [Header("Player")] public GameObject player;
 
@@ -33,56 +46,40 @@ namespace VRC2.Scenarios.ScenarioFactory
             base.Start();
 
             //Find positions
-            Start1 = GameObject.Find("Start").transform;  
-            Finish1 = GameObject.Find("Finish").transform;
+            startPos = craneTruck.transform.position;
+            startRotation = craneTruck.transform.rotation;
+            destinationPos = destination.transform.position;
+
+            _vehicleController = craneTruck.GetComponent<WSMVehicleController>();
+
 
             unloadedGlass.SetActive(false);
-
-
         }
 
         private void Update()
         {
-            if (backingUp)
+
+            if (!started) return;
+
+
+            if (!moving)
             {
-                targetDirection = Finish1.transform.position - craneTruck.transform.position;
-                newDirection = Vector3.RotateTowards(craneTruck.transform.forward, targetDirection,
-                    speed * Time.deltaTime, rotationSpeed);
-
-                craneTruck.transform.rotation = Quaternion.LookRotation(newDirection);
-
-                craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position,
-                    Finish1.transform.position, speed * Time.deltaTime);
+                print("Not moving");
             }
-
-            if (movingForward)
+            else
             {
-                targetDirection = Start1.transform.position - craneTruck.transform.position;
-                newDirection = Vector3.RotateTowards(craneTruck.transform.forward, targetDirection,
-                    speed * Time.deltaTime, rotationSpeed);
-
-                craneTruck.transform.rotation = Quaternion.LookRotation(newDirection);
-
-                craneTruck.transform.position = Vector3.MoveTowards(craneTruck.transform.position,
-                    Start1.transform.position, speed * Time.deltaTime);
+                MoveForward(movingForward);
+                
             }
-
-            if (craneTruck.transform.position.x == Start1.transform.position.x) 
-            {
-                movingForward = false;
-            }
-
-            if (craneTruck.transform.position.x == Finish1.transform.position.x) 
-            { backingUp = false; }
         }
 
         IEnumerator partialTipTruck()
         {
             print("StartedCoroutine");
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(waitTime);
             craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
                 craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 30);
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(waitTime);
             craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
                 craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z - 30);
             yield break;
@@ -91,8 +88,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         IEnumerator tipTruck()
         {
             print("StartedCoroutine");
-            yield return new WaitForSeconds(15f);
-            backingUp = false;
+            yield return new WaitForSeconds(waitTime);
+           // backingUp = false;
             craneTruck.transform.eulerAngles = new Vector3(craneTruck.transform.eulerAngles.x,
                 craneTruck.transform.eulerAngles.y, craneTruck.transform.eulerAngles.z + 90);
             craneTruck.transform.position = new Vector3(craneTruck.transform.position.x,
@@ -101,6 +98,114 @@ namespace VRC2.Scenarios.ScenarioFactory
             unloadedGlass.SetActive(true);
             yield break;
         }
+
+        #region craneTruck control
+
+        bool craneTruckStopped() {
+            return _vehicleController.CurrentSpeed < 0.1f;
+        }
+
+        bool ReachedDestination(bool forward) {
+            var d = destinationPos; // foward
+            if (!forward)
+            {
+                d = startPos; // back
+            }
+
+            // ignore y distance
+            var t = craneTruck.transform.position;
+            d.y = t.y;
+            var distance = Vector3.Distance(t, d);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+       /* bool ReachedPivot(bool forward)
+        {
+            var d = destinationPos; // backward
+            if (forward)
+            {
+                d = startPos;
+            }
+            // ignore y distance
+            var t = craneTruck.transform.position;
+            d.y = t.y;
+            
+            if (forward) { // want to compare x values
+                d.z = t.z; 
+            }
+            else { // want to compare z values
+                d.x = t.x; 
+            }
+            var distance = Vector3.Distance(t, d);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+            return false;
+        }*/
+
+        void StopVehicle()
+        {
+            _vehicleController.BrakesInput = 1;
+            _vehicleController.HandBrakeInput = 1;
+            _vehicleController.ClutchInput = 1;
+        }
+
+        void StartVehicle()
+        {
+            _vehicleController.BrakesInput = 0;
+            _vehicleController.HandBrakeInput = 0;
+            _vehicleController.ClutchInput = 0;
+        }
+
+        void MoveForward(bool forward)
+        {
+            if (ReachedDestination(forward))
+            {
+                print("Crane Truck reached destination");
+                moving = false;
+                return;
+            }
+
+           /* if (ReachedPivot(forward)) 
+            {
+                print("Crane Truck reched pivot");
+                movingForward = false;
+                rotating = true;
+            }*/
+
+            var _acceleration = 1.0f;
+            if (!forward)
+            {
+                _acceleration = -1.0f;
+            }
+
+            _vehicleController.AccelerationInput = _acceleration;
+        }
+
+       /* void Rotate() 
+        {
+            var targetDirection = startPos - craneTruck.transform.position;
+            if (movingForward)
+            {
+                targetDirection = destinationPos - craneTruck.transform.position;
+            }
+
+            var newDirection = Vector3.RotateTowards(craneTruck.transform.forward, targetDirection,
+                   speed * Time.deltaTime, rotationSpeed);
+
+            craneTruck.transform.rotation = Quaternion.LookRotation(newDirection);
+            if(startRotation.y - 180f <= craneTruck.transform.rotation.y) { rotating = false; }
+        }*/
+        #endregion
+
 
 
         #region Accident Events Callbacks
@@ -123,8 +228,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-            craneTruck.transform.position = new Vector3(Finish1.transform.position.x, Finish1.transform.position.y,
-                Finish1.transform.position.z);
+
+            moving = false;
+            started = true;
+            glass.SetActive(true);
+           // craneTruck.transform.position = new Vector3(Finish1.transform.position.x, Finish1.transform.position.y,
+               // Finish1.transform.position.z);
             
 
         }
@@ -143,6 +252,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
 
             movingForward = true;
+            moving = true;
             glass.SetActive(false);
             unloadedGlass.SetActive(true);
         }
@@ -163,8 +273,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            craneTruck.transform.position = destinationPos;
+            craneTruck.transform.rotation = startRotation;
             movingForward = false;
-            backingUp = true;
+            moving = true;
             glass.SetActive(true);
             unloadedGlass.SetActive(false);
             StartCoroutine(partialTipTruck());
@@ -183,9 +295,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
+            craneTruck.transform.position = startPos;
+            craneTruck.transform.rotation = startRotation;
 
-            backingUp = false;
+            // backingUp = false;
             movingForward = true;
+            moving = true;
             glass.SetActive(false);
             unloadedGlass.SetActive(true);
         }
@@ -206,8 +321,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            craneTruck.transform.position = destinationPos;
+            craneTruck.transform.rotation = startRotation;
+
             movingForward = false;
-            backingUp = true;
+            moving = true;
             glass.SetActive(true);
             unloadedGlass.SetActive(false);
             StartCoroutine(tipTruck());
