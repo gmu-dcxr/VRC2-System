@@ -13,7 +13,12 @@ namespace VRC2.Scenarios.ScenarioFactory
     {
         public GameObject excavator;
 
+        public GameObject destination;
+
         private BackhoeController _backhoeController;
+        private WSMVehicleController _vehicleController;
+
+        private Vector3 destinationPos;
 
         private bool extendBoom = false;
         private bool extendArm = false;
@@ -26,16 +31,37 @@ namespace VRC2.Scenarios.ScenarioFactory
         private bool rotateBoom = false;
         private bool centerBoom = false;
 
+        private bool lowerStabilizers = false;
+
+        private bool moving = false;
+
+        private float distanceThreshold = 5.0f;
+
         private void Start()
         {
             base.Start();
 
-            _backhoeController = excavator.GetComponent<BackhoeController>(); 
+            _backhoeController = excavator.GetComponent<BackhoeController>();
+
+            destinationPos = destination.transform.position;
+
+            _vehicleController = excavator.GetComponent<WSMVehicleController>();
         }
 
         private void Update()
         {
-            _backhoeController.MoveStabilizerLegs(-1);
+
+            if (lowerStabilizers) { _backhoeController.MoveStabilizerLegs(-1); }
+
+            if (moving)
+            {
+                StartVehicle();
+                MoveBackward();
+            }
+            else
+            {
+                StopVehicle();
+            }
 
             if (extendBoom) { ExtendBoom(); }
             if (extendArm) { ExtendArm(); }
@@ -51,6 +77,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         IEnumerator ExcavatorDig()
         {
             print("StartedCoroutine");
+            lowerStabilizers = true;
+            yield return new WaitForSeconds(3f);
             extendArm = true;
             yield return new WaitForSeconds(3f);
             extendArm = false;
@@ -139,11 +167,59 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #endregion
 
+        #region Driving Control
+
+        bool ReachDestination()
+        {
+            var d = destinationPos;
+
+            // ignore y distance
+            var e = excavator.transform.position;
+            d.y = e.y;
+            var distance = Vector3.Distance(e, d);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        void StopVehicle()
+        {
+            _vehicleController.BrakesInput = 1;
+            _vehicleController.HandBrakeInput = 1;
+            _vehicleController.ClutchInput = 1;
+        }
+
+        void StartVehicle()
+        {
+            _vehicleController.BrakesInput = 0;
+            _vehicleController.HandBrakeInput = 0;
+            _vehicleController.ClutchInput = 0;
+        }
+
+        void MoveBackward()
+        {
+            _vehicleController.AccelerationInput = -1.0f;
+
+            if (ReachDestination())
+            {
+                print("Truck reach destination");
+                moving = false;
+                return;
+            }
+        }
+
+        #endregion
+
         #region Accident Events Callbacks
 
         public void On_BaselineS7_1_Start()
         {
-            
+            moving = true;
         }
 
         public void On_BaselineS7_1_Finish()
