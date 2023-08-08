@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,63 +9,51 @@ public class TowerControllerCrane : MonoBehaviour
     private SwitchingBetweenVehicles scriptSwitch;
     private TowerPlatformInstallation scriptTPL;
     public Material lineMaterial;
-    [HideInInspector]
-    public int blockController_Int = 0;
+
+    [HideInInspector] public int blockController_Int = 0;
+
     //__________Boom Cart_____________________
     public Transform boomCart;
     public KeyCode forwardBoomCart = KeyCode.Q;
     public KeyCode backBoomCart = KeyCode.E;
     public float speedBoomCart = 0.75f;
+
     [Space(30)]
     //__________Rotation Crane________________
     public Transform rotationElementCrane;
+
     public KeyCode leftCrane = KeyCode.A;
     public KeyCode rightCrane = KeyCode.D;
     public float speedRotationCrane = 4.5f;
     public float smoothRotationCrane = 1.6f;
     private float floatRotCabin = 0;
-    [Space(30)]
-    private AudioSource soundCrane;
+    [Space(30)] private AudioSource soundCrane;
     public AudioClip motorCrane;
     public AudioClip startMotorCrane;
     public AudioClip stopMotorCrane;
     public AudioClip detaliClip;
     private bool blockPlayOneShot_RotationCrane = true;
     private bool blockPlayOneShot_BoomCart = true;
-    [HideInInspector]
-    public Transform pointMovingForward;
-    [HideInInspector]
-    public Transform pointMovingBack;
-    [HideInInspector]
-    public Transform pointLineArrow_BoomCart;
-    [HideInInspector]
-    public Transform boomCart_Detal0;
-    [HideInInspector]
-    public Transform pointLineHook0;
-    [HideInInspector]
-    public Transform pointLineHook1;
-    [HideInInspector]
-    public Transform pointLineHook2;
-    [HideInInspector]
-    public Transform pointLineHook3;
-    [HideInInspector]
-    public Transform pointLineHook4;
+    [HideInInspector] public Transform pointMovingForward;
+    [HideInInspector] public Transform pointMovingBack;
+    [HideInInspector] public Transform pointLineArrow_BoomCart;
+    [HideInInspector] public Transform boomCart_Detal0;
+    [HideInInspector] public Transform pointLineHook0;
+    [HideInInspector] public Transform pointLineHook1;
+    [HideInInspector] public Transform pointLineHook2;
+    [HideInInspector] public Transform pointLineHook3;
+    [HideInInspector] public Transform pointLineHook4;
     private LineRenderer lineRenHook_1;
     private LineRenderer lineRenHook_2;
     private LineRenderer lineRenHook_3;
     private bool onLineCableHook = false;
     private Vector3 minMovingBoomCart;
     private Vector3 maxMovingBoomCart;
-    [HideInInspector]
-    public bool blockControllerCrane = false;
-    [Space(30)]
-    [Header("SettingsHook")]
-    public KeyCode upMovingHook = KeyCode.W;
+    [HideInInspector] public bool blockControllerCrane = false;
+    [Space(30)] [Header("SettingsHook")] public KeyCode upMovingHook = KeyCode.W;
     public KeyCode downMovingHook = KeyCode.S;
     public KeyCode seizeTheCargo = KeyCode.C;
-    [Space(20)]
-    [Header("Rotation Cargo")]
-    public KeyCode rotationCargo_Press = KeyCode.LeftShift;
+    [Space(20)] [Header("Rotation Cargo")] public KeyCode rotationCargo_Press = KeyCode.LeftShift;
     public KeyCode leftRotationCargo = KeyCode.Mouse0;
     public KeyCode rightRotation = KeyCode.Mouse1;
     private float offsetRotationHook = 0;
@@ -83,39 +72,43 @@ public class TowerControllerCrane : MonoBehaviour
     public float massHook = 50;
     private Transform pointHook;
     private Transform pointRayDecay;
-    [Tooltip("Limits hook lift. If the hook position is equal to this value, then the hook will stop at the top point.")]
+
+    [Tooltip(
+        "Limits hook lift. If the hook position is equal to this value, then the hook will stop at the top point.")]
     public float minUpHook = 0.3f;
-    [Tooltip("Limits the descent of the hook. If the hook position is equal to this value, then the hook will stop at the lowest point.")]
+
+    [Tooltip(
+        "Limits the descent of the hook. If the hook position is equal to this value, then the hook will stop at the lowest point.")]
     public float minDownHook = 0.05f;
+
     private float maxOffset = 0;
     private float offsetAnchor = 0;
     private bool addPhysicsHook_Bool = true;
     private ConfigurableJoint jointHook;
-    [HideInInspector]
-    public GameObject _cargo;
-    [HideInInspector]
-    public bool connectedCargo_Bool = true;
+    [HideInInspector] public GameObject _cargo;
+    [HideInInspector] public bool connectedCargo_Bool = true;
     private float distanceCargo = 0f;
     private Transform pointLineCargo_1;
     private Transform pointLineCargo_2;
     private Transform pointLineCargo_3;
     private Transform pointLineCargo_4;
-    [HideInInspector]
-    public Transform pointCheckDistanceUI;
-    [Space(30)]
-    [Header("Settings UI Panel")]
+    [HideInInspector] public Transform pointCheckDistanceUI;
+
+    [Space(30)] [Header("Settings UI Panel")]
     public Text distanceCartUI;
+
     public Text hookCargoMassUI;
     public Text distanceHookUI;
     public Text rotationCraneUI;
     public Text counterweightUI;
     public Image rotationCrane_DUI;
     private RectTransform rotationCrane_D;
-    [HideInInspector]
-    public int counterweightUI_Int = 0;
+    [HideInInspector] public int counterweightUI_Int = 0;
     private bool blockSound_A = true;
     private bool blockSound_B = true;
+
     private bool blockSound_C = true;
+
     // Stabilization Cargo If Connection Hook
     private bool blockStabilizationCargo = true;
     private float checkRotationCrane;
@@ -123,7 +116,7 @@ public class TowerControllerCrane : MonoBehaviour
     private Vector3 checkMoveCart;
     private RaycastHit hit;
 
-    void Start()
+    public void Start()
     {
         scriptTPL = this.gameObject.GetComponent<TowerPlatformInstallation>();
         scriptSwitch = this.gameObject.GetComponent<SwitchingBetweenVehicles>();
@@ -146,7 +139,8 @@ public class TowerControllerCrane : MonoBehaviour
         // hack here
         CreateCableHook();
     }
-    void Update()
+
+    public void Update()
     {
         if (blockController_Int == 3 && scriptTPL.blockArrowIfBoomCartActive == false && blockControllerCrane == true)
         {
@@ -155,12 +149,14 @@ public class TowerControllerCrane : MonoBehaviour
             MovingHook();
             CheckCargo();
         }
+
         if (connectedCargo_Bool == false)
         {
             LineCargo();
         }
     }
-    void FixedUpdate()
+
+    public void FixedUpdate()
     {
         if (connectedCargo_Bool == false)
         {
@@ -178,13 +174,17 @@ public class TowerControllerCrane : MonoBehaviour
                 _cargo.GetComponent<HingeJoint>().useMotor = false;
             }
         }
+
         StabilizationCargoConnection();
     }
+
     public void RotationDecayCargo()
     {
         var decayRot = Quaternion.AngleAxis(offsetRotDecay, Vector3.forward);
-        rotationCargo_B.localRotation = Quaternion.Lerp(rotationCargo_B.localRotation, decayRot, Time.deltaTime * speedDecay_RotationCargo / 1f);
+        rotationCargo_B.localRotation = Quaternion.Lerp(rotationCargo_B.localRotation, decayRot,
+            Time.deltaTime * speedDecay_RotationCargo / 1f);
     }
+
     public void StabilizationCargoConnection()
     {
         if (connectedCargo_Bool == false)
@@ -194,12 +194,14 @@ public class TowerControllerCrane : MonoBehaviour
             _cargo.GetComponent<HingeJoint>().axis = new Vector3(rotX, 1, rotZ);
             if (blockStabilizationCargo == true)
             {
-                if (checkRotationCrane != floatRotCabin || checkMoveCart != boomCart.localPosition || moveHook != offsetAnchor)
+                if (checkRotationCrane != floatRotCabin || checkMoveCart != boomCart.localPosition ||
+                    moveHook != offsetAnchor)
                 {
                     _cargo.GetComponent<Rigidbody>().isKinematic = false;
                     blockStabilizationCargo = false;
                 }
             }
+
             if (rotPlatformBool == true)
             {
                 rotationCargo_A.gameObject.SetActive(true);
@@ -208,7 +210,8 @@ public class TowerControllerCrane : MonoBehaviour
             }
         }
     }
-    void LateUpdate()
+
+    public void LateUpdate()
     {
         if (onLineCableHook == true)
         {
@@ -232,9 +235,10 @@ public class TowerControllerCrane : MonoBehaviour
             lineRenHook_3.SetPositions(line3);
         }
     }
+
     private void AnimationBoomCart()
     {
-        if (Input.GetKey(forwardBoomCart))
+        if (Input.GetKey(forwardBoomCart) || isForwardBoomCart())
         {
             blockSound_A = false;
             if (!soundCrane.isPlaying)
@@ -245,23 +249,27 @@ public class TowerControllerCrane : MonoBehaviour
             }
             else
             {
-                boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, maxMovingBoomCart, speedBoomCart * Time.deltaTime);
+                boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, maxMovingBoomCart,
+                    speedBoomCart * Time.deltaTime);
             }
+
             if (boomCart.localPosition == maxMovingBoomCart)
             {
                 if (blockSound_C == true && blockSound_B == true)
                 {
                     soundCrane.Stop();
                 }
+
                 if (blockPlayOneShot_BoomCart == true)
                 {
-                    soundCrane.PlayOneShot(detaliClip,0.45f);
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
                     blockPlayOneShot_BoomCart = false;
                 }
             }
+
             UIPanelCrane();
         }
-        else if (Input.GetKeyUp(forwardBoomCart))
+        else if (Input.GetKeyUp(forwardBoomCart) || isForwardBoomCartUp())
         {
             if (blockSound_B == true && blockSound_C == true)
             {
@@ -269,10 +277,12 @@ public class TowerControllerCrane : MonoBehaviour
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
+
             blockPlayOneShot_BoomCart = true;
-           blockSound_A = true;
+            blockSound_A = true;
         }
-        if (Input.GetKey(backBoomCart))
+
+        if (Input.GetKey(backBoomCart) || isBackBoomCart())
         {
             blockSound_A = false;
             if (!soundCrane.isPlaying)
@@ -283,23 +293,27 @@ public class TowerControllerCrane : MonoBehaviour
             }
             else
             {
-                boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, minMovingBoomCart, speedBoomCart * Time.deltaTime);
+                boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, minMovingBoomCart,
+                    speedBoomCart * Time.deltaTime);
             }
+
             if (boomCart.localPosition == minMovingBoomCart)
             {
                 if (blockSound_C == true && blockSound_B == true)
                 {
                     soundCrane.Stop();
                 }
+
                 if (blockPlayOneShot_BoomCart == true)
                 {
-                    soundCrane.PlayOneShot(detaliClip,0.45f);
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
                     blockPlayOneShot_BoomCart = false;
                 }
             }
+
             UIPanelCrane();
         }
-        else if (Input.GetKeyUp(backBoomCart))
+        else if (Input.GetKeyUp(backBoomCart) || isBackBoomCartUp())
         {
             if (blockSound_B == true && blockSound_C == true)
             {
@@ -307,13 +321,15 @@ public class TowerControllerCrane : MonoBehaviour
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
+
             blockPlayOneShot_BoomCart = true;
             blockSound_A = true;
         }
     }
+
     public void MovingHook()
     {
-        if (Input.GetKey(upMovingHook))
+        if (Input.GetKey(upMovingHook) || isUpMovingHook())
         {
             if (offsetAnchor > minUpHook)
             {
@@ -328,14 +344,16 @@ public class TowerControllerCrane : MonoBehaviour
                 {
                     offsetAnchor -= speedMovingHook * Time.deltaTime;
                 }
-                if(soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
+
+                if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
                 {
                     soundCrane.pitch += Time.deltaTime * 0.35f;
                 }
             }
+
             UIPanelCrane();
         }
-        else if (Input.GetKeyUp(upMovingHook))
+        else if (Input.GetKeyUp(upMovingHook) || isUpMovingHookUp())
         {
             if (blockSound_A == true && blockSound_B == true)
             {
@@ -343,9 +361,11 @@ public class TowerControllerCrane : MonoBehaviour
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
+
             blockSound_C = true;
         }
-        if (Input.GetKey(downMovingHook))
+
+        if (Input.GetKey(downMovingHook) || isDownMovingHook())
         {
             if (minDownHook < maxOffset)
             {
@@ -360,14 +380,16 @@ public class TowerControllerCrane : MonoBehaviour
                 {
                     offsetAnchor += speedMovingHook * Time.deltaTime;
                 }
+
                 if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
                 {
                     soundCrane.pitch += Time.deltaTime * 0.35f;
                 }
             }
+
             UIPanelCrane();
         }
-        else if (Input.GetKeyUp(downMovingHook))
+        else if (Input.GetKeyUp(downMovingHook) || isDownMovingHookUp())
         {
             if (blockSound_A == true && blockSound_B == true)
             {
@@ -375,35 +397,41 @@ public class TowerControllerCrane : MonoBehaviour
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
+
             blockSound_C = true;
         }
+
         jointHook.anchor = new Vector3(0, offsetAnchor, 0);
-        if (Input.GetKey(rotationCargo_Press) && Input.GetKey(leftRotationCargo))
+        if ((Input.GetKey(rotationCargo_Press) && Input.GetKey(leftRotationCargo)) || isLeftRotationCargo())
         {
             rotPlatformBool = true;
             offsetRotationHook = +targetVelosityPlatform;
             offsetRotDecay -= Time.deltaTime * speedDecay_RotationCargo;
         }
-        else if (Input.GetKey(rotationCargo_Press) && Input.GetKey(rightRotation))
+        else if ((Input.GetKey(rotationCargo_Press) && Input.GetKey(rightRotation)) || isRightRotationCargo())
         {
             rotPlatformBool = true;
             offsetRotationHook = -targetVelosityPlatform;
             offsetRotDecay += Time.deltaTime * speedDecay_RotationCargo;
         }
-        if (Input.GetKeyUp(rotationCargo_Press) || Input.GetKeyUp(leftRotationCargo) || Input.GetKeyUp(rightRotation))
+
+        if (Input.GetKeyUp(rotationCargo_Press) || Input.GetKeyUp(leftRotationCargo) || Input.GetKeyUp(rightRotation) ||
+            isLeftRotationCargoUp() || isRightRotationCargoUp())
         {
             rotPlatformBool = false;
             rotationCargo_A.gameObject.SetActive(false);
         }
-        if(soundCrane.pitch > 1 && blockSound_C == true)
+
+        if (soundCrane.pitch > 1 && blockSound_C == true)
         {
             soundCrane.pitch -= Time.deltaTime * 0.85f;
 
         }
     }
+
     private void RotationCrane()
     {
-        if (Input.GetKey(leftCrane))
+        if (Input.GetKey(leftCrane) || isLeftCrane())
         {
             blockSound_B = false;
             if (!soundCrane.isPlaying)
@@ -416,18 +444,20 @@ public class TowerControllerCrane : MonoBehaviour
             {
                 floatRotCabin -= Time.deltaTime * speedRotationCrane;
             }
-            if(soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
+
+            if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
             {
                 if (blockPlayOneShot_RotationCrane == true)
                 {
-                    soundCrane.PlayOneShot(detaliClip,0.45f);
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
                     blockPlayOneShot_RotationCrane = false;
                 }
             }
+
             UIPanelCrane();
         }
 //______________________________________________________________________________________________________________________________________
-        else if (Input.GetKeyUp(leftCrane))
+        else if (Input.GetKeyUp(leftCrane) || isLeftCraneUp())
         {
             if (blockSound_A == true && blockSound_C == true)
             {
@@ -435,10 +465,12 @@ public class TowerControllerCrane : MonoBehaviour
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
+
             blockPlayOneShot_RotationCrane = true;
             blockSound_B = true;
         }
-        if (Input.GetKey(rightCrane))
+
+        if (Input.GetKey(rightCrane) || isRightCrane())
         {
             blockSound_B = false;
             if (!soundCrane.isPlaying)
@@ -451,18 +483,20 @@ public class TowerControllerCrane : MonoBehaviour
             {
                 floatRotCabin += Time.deltaTime * speedRotationCrane;
             }
+
             if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
             {
                 if (blockPlayOneShot_RotationCrane == true)
                 {
-                    soundCrane.PlayOneShot(detaliClip,0.45f);
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
                     blockPlayOneShot_RotationCrane = false;
                 }
             }
+
             UIPanelCrane();
         }
 //______________________________________________________________________________________________________________________________________
-        else if (Input.GetKeyUp(rightCrane))
+        else if (Input.GetKeyUp(rightCrane) || isRightCraneUp())
         {
             if (blockSound_A == true && blockSound_C == true)
             {
@@ -470,14 +504,19 @@ public class TowerControllerCrane : MonoBehaviour
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
+
             blockSound_B = true;
             blockPlayOneShot_RotationCrane = true;
         }
-            var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
-            rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane, Time.deltaTime * speedRotationCrane / smoothRotationCrane);
-            var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
-            rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel, Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+
+        var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+        rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+            Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+        var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
+        rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel,
+            Time.deltaTime * speedRotationCrane / smoothRotationCrane);
     }
+
     public void CreateCableHook()
     {
         // Line Renderer 1___________________________________________________
@@ -511,29 +550,36 @@ public class TowerControllerCrane : MonoBehaviour
             lineRenHook_3.enabled = false;
             boomCart_Detal0.localRotation = Quaternion.Euler(0, 0, 0);
         }
-        if(scriptTPL.numberArrowCenter_Int == 0)
+
+        if (scriptTPL.numberArrowCenter_Int == 0)
         {
             maxMovingBoomCart = new Vector3(-15.761f, boomCart.localPosition.y, boomCart.localPosition.z);
         }
+
         if (scriptTPL.numberArrowCenter_Int == 1)
         {
             maxMovingBoomCart = new Vector3(-23.779f, boomCart.localPosition.y, boomCart.localPosition.z);
         }
+
         if (scriptTPL.numberArrowCenter_Int == 2)
         {
             maxMovingBoomCart = new Vector3(-31.755f, boomCart.localPosition.y, boomCart.localPosition.z);
         }
+
         if (scriptTPL.numberArrowCenter_Int == 3)
         {
             maxMovingBoomCart = new Vector3(-39.576f, boomCart.localPosition.y, boomCart.localPosition.z);
         }
+
         if (scriptTPL.numberArrowCenter_Int == 4)
         {
             maxMovingBoomCart = new Vector3(-47.497f, boomCart.localPosition.y, boomCart.localPosition.z);
         }
+
         minMovingBoomCart = new Vector3(-2.783f, boomCart.localPosition.y, boomCart.localPosition.z);
         AddPhysicsHook();
     }
+
     public void AddPhysicsHook()
     {
         if (addPhysicsHook_Bool == true)
@@ -558,7 +604,7 @@ public class TowerControllerCrane : MonoBehaviour
             decayHookPoint.gameObject.SetActive(true);
             addPhysicsHook_Bool = false;
         }
-        else if(addPhysicsHook_Bool == false)
+        else if (addPhysicsHook_Bool == false)
         {
             DestroyImmediate(hook.GetComponent<ConfigurableJoint>());
             DestroyImmediate(hook.GetComponent<ConstantForce>());
@@ -572,9 +618,10 @@ public class TowerControllerCrane : MonoBehaviour
             addPhysicsHook_Bool = true;
         }
     }
+
     public void CheckCargo()
     {
-        if(addPhysicsHook_Bool == false)
+        if (addPhysicsHook_Bool == false)
         {
             Ray ray = new Ray(pointRayDecay.position, -Vector3.up);
             int layerCargo = (1 << 10);
@@ -584,12 +631,15 @@ public class TowerControllerCrane : MonoBehaviour
                 decayHookPoint.position = hit.point + hit.normal * 0.01f;
                 decayHookPoint.rotation = Quaternion.LookRotation(-hit.normal);
             }
+
             if (Physics.Raycast(ray, out hit, 100))
             {
                 maxOffset = hit.distance;
             }
+
             RaycastHit hitCargo;
-            if (Physics.Raycast(ray, out hitCargo, distanceCargoToHook, layerCargo) && maxOffset > 1.7f && connectedCargo_Bool == true)
+            if (Physics.Raycast(ray, out hitCargo, distanceCargoToHook, layerCargo) && maxOffset > 1.7f &&
+                connectedCargo_Bool == true)
             {
                 decayHookOn.gameObject.SetActive(true);
                 _cargo = hitCargo.collider.gameObject;
@@ -602,13 +652,15 @@ public class TowerControllerCrane : MonoBehaviour
                 decayHookOn.gameObject.SetActive(false);
                 distanceCargo = 0;
             }
-            if (Input.GetKeyDown(seizeTheCargo)) // Connected Cargo
+
+            if (Input.GetKeyDown(seizeTheCargo) || isSeizeTheCargo()) // Connected Cargo
             {
-                if(connectedCargo_Bool == true)
+                if (connectedCargo_Bool == true)
                 {
                     ConnectedCargo();
                     connectedCargo_Bool = false;
-                }else if (connectedCargo_Bool == false)
+                }
+                else if (connectedCargo_Bool == false)
                 {
                     ConnectedCargo();
                     connectedCargo_Bool = true;
@@ -616,6 +668,7 @@ public class TowerControllerCrane : MonoBehaviour
             }
         }
     }
+
     public void ConnectedCargo()
     {
         if (connectedCargo_Bool == true)
@@ -624,10 +677,12 @@ public class TowerControllerCrane : MonoBehaviour
             {
                 DestroyImmediate(_cargo.GetComponent<ConstantForce>());
             }
-            if(_cargo.GetComponent<Rigidbody>() == null)
+
+            if (_cargo.GetComponent<Rigidbody>() == null)
             {
                 _cargo.AddComponent<Rigidbody>();
             }
+
             _cargo.GetComponent<Rigidbody>().drag = 1.18f;
             _cargo.GetComponent<Rigidbody>().mass = _cargo.GetComponent<CargoCrane_L>().mass;
             _cargo.AddComponent<HingeJoint>();
@@ -665,9 +720,10 @@ public class TowerControllerCrane : MonoBehaviour
             pointLineCargo_4 = null;
             _cargo.GetComponent<CargoCrane_L>().StartCoroutine("DestroyComponent");
             _cargo = null;
-            hookCargoMassUI.text = "0"+"kg";
+            hookCargoMassUI.text = "0" + "kg";
         }
     }
+
     public void UIPanelCrane()
     {
         // Boom Cart
@@ -677,6 +733,7 @@ public class TowerControllerCrane : MonoBehaviour
         // Rotation Crane
         rotationCraneUI.text = Mathf.RoundToInt(rotationElementCrane.localEulerAngles.y).ToString();
     }
+
     private void LineCargo()
     {
         Vector3[] lineCargo = new Vector3[8];
@@ -692,4 +749,148 @@ public class TowerControllerCrane : MonoBehaviour
         pointRayDecay.GetComponent<LineRenderer>().SetPositions(lineCargo);
     }
 
+    #region VR Hack
+
+    // left controller: forward/backward - left/right
+    // right controller: up/down - rotation: index trigger: seize/release
+
+    public Vector2 GetLeftThumbstick()
+    {
+        var t = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+        // get the primary direction
+        if (Math.Abs(t.x) < Math.Abs(t.y))
+        {
+            t.x = 0;
+        }
+        else
+        {
+            t.y = 0;
+        }
+
+        return t;
+    }
+
+    public Vector2 GetRightThumbstick()
+    {
+        var t = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+        // get the primary direction
+        if (Math.Abs(t.x) < Math.Abs(t.y))
+        {
+            t.x = 0;
+        }
+        else
+        {
+            t.y = 0;
+        }
+
+        return t;
+    }
+
+
+
+    public virtual bool isForwardBoomCart()
+    {
+        var t = GetLeftThumbstick();
+        return t.y > 0;
+    }
+
+    public virtual bool isForwardBoomCartUp()
+    {
+        var t = GetLeftThumbstick();
+        return t.y == 0;
+    }
+
+    public virtual bool isBackBoomCart()
+    {
+        var t = GetLeftThumbstick();
+        return t.y < 0;
+    }
+
+    public virtual bool isBackBoomCartUp()
+    {
+        var t = GetLeftThumbstick();
+        return t.y == 0;
+    }
+
+    public virtual bool isLeftCrane()
+    {
+        var t = GetLeftThumbstick();
+        return t.x < 0;
+    }
+
+    public virtual bool isLeftCraneUp()
+    {
+        var t = GetLeftThumbstick();
+        return t.x == 0;
+    }
+
+    public virtual bool isRightCrane()
+    {
+        var t = GetLeftThumbstick();
+        return t.x > 0;
+    }
+
+    public virtual bool isRightCraneUp()
+    {
+        var t = GetLeftThumbstick();
+        return t.x == 0;
+    }
+
+    public virtual bool isUpMovingHook()
+    {
+        var t = GetRightThumbstick();
+        print(t);
+        return t.y > 0;
+    }
+
+    public virtual bool isUpMovingHookUp()
+    {
+        var t = GetRightThumbstick();
+        return t.y == 0;
+    }
+
+    public virtual bool isDownMovingHook()
+    {
+        var t = GetRightThumbstick();
+        return t.y < 0;
+    }
+
+    public virtual bool isDownMovingHookUp()
+    {
+        var t = GetRightThumbstick();
+        return t.y == 0;
+    }
+
+    public virtual bool isLeftRotationCargo()
+    {
+        var t = GetRightThumbstick();
+        return t.x < 0;
+    }
+
+    public virtual bool isLeftRotationCargoUp()
+    {
+        var t = GetRightThumbstick();
+
+        return t.x == 0;
+    }
+
+    public virtual bool isRightRotationCargo()
+    {
+        var t = GetRightThumbstick();
+        return t.x > 0;
+    }
+
+    public virtual bool isRightRotationCargoUp()
+    {
+        var t = GetRightThumbstick();
+        return t.x == 0;
+    }
+
+    public virtual bool isSeizeTheCargo()
+    {
+        // right hand index trigger
+        return OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
+    }
+
+    #endregion
 }
