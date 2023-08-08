@@ -523,14 +523,9 @@ namespace VRC2
             runner.Spawn(prefab);
         }
 
-        public void Simulate_RobotBendCut()
+        public void Simulate_RobotBendCut(GameObject pipe)
         {
             // set global select pipe
-
-            var pipes = GameObject.Find("Pipes");
-
-            var pipe = pipes.transform.GetChild(0).gameObject;
-
             GlobalConstants.selectedPipe = pipe;
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
             var rbc = go.GetComponent<RobotBendCut>();
