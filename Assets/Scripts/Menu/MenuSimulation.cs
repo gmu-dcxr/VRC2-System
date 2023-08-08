@@ -7,6 +7,7 @@ namespace VRC2.Menu
     {
         [SerializeField] private PipeMenuHandler _handler;
 
+        [Header("Robot Bend/Cut")] public GameObject pipe;
         private void Start()
         {
         }
@@ -62,7 +63,7 @@ namespace VRC2.Menu
 
                 if (Input.GetKeyUp(KeyCode.Keypad3))
                 {
-                    _handler.Simulate_RobotBendCut();
+                    _handler.Simulate_RobotBendCut(pipe);
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad4))
