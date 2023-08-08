@@ -889,7 +889,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isSeizeTheCargo()
     {
         // right hand index trigger
-        return OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
+        return OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger);
     }
 
     #endregion
