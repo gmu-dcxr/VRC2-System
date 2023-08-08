@@ -839,7 +839,6 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isUpMovingHook()
     {
         var t = GetRightThumbstick();
-        print(t);
         return t.y > 0;
     }
 
