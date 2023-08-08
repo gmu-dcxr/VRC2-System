@@ -142,6 +142,9 @@ public class TowerControllerCrane : MonoBehaviour
         soundCrane = rotationElementCrane.GetComponent<AudioSource>();
         rotationCargo_A.localRotation = Quaternion.Euler(90, 0, 0);
         rotationCargo_A.localScale = new Vector3(1.8f, 1.8f, 1.25f);
+
+        // hack here
+        CreateCableHook();
     }
     void Update()
     {
