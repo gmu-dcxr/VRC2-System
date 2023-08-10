@@ -35,7 +35,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private WSMVehicleController _vehicleController;
 
-        private bool started = false;
+        private bool isStarted = false;
         private bool moving = false;
         private bool back = false;
 
@@ -67,7 +67,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // player approch warning
             PlayerApproachingWarning();
 
-            if (!started) return;
+            if (!isStarted) return;
 
             if (!moving)
             {
@@ -245,7 +245,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             ShowLoad(false);
 
-            started = true;
+            isStarted = true;
             moving = true;
             back = true;
         }
@@ -277,7 +277,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print("On_BaselineS8_4_Start");
 
             // hide truck
-            started = false;
+            isStarted = false;
             truck.SetActive(false);
 
             // SAGAT query
