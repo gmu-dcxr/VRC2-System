@@ -21,6 +21,11 @@ namespace VRC2.Authority
         {
 
         }
+
+        public virtual void Default()
+        {
+            // where this is no network
+        }
         
 
         private void Update()
@@ -31,8 +36,13 @@ namespace VRC2.Authority
             {
                 _runner = FindObjectOfType<NetworkRunner>();
             }
-            
-            if(_runner == null || !_runner.IsRunning) return;
+
+            if (_runner == null || !_runner.IsRunning)
+            {
+                _authorityUpdated = true;
+                Default();
+                return;
+            }
 
             // enable on both sides
             if (!P1Only && !P2Only) return;

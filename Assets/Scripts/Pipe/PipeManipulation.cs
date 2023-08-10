@@ -104,6 +104,11 @@ namespace VRC2
             get => segmentB.GetComponent<MeshCollider>();
         }
 
+        private Rigidbody _rigidbody
+        {
+            get => GetComponent<Rigidbody>();
+        }
+
 
         // Start is called before the first frame update
         void Start()
@@ -263,11 +268,17 @@ namespace VRC2
 
             // update current select pipe
             GlobalConstants.selectedPipe = gameObject;
+            
+            // enable kinematic
+            _rigidbody.isKinematic = true;
         }
 
         public void OnUnselect()
         {
             // Debug.Log("Pipe OnUnselect");
+            
+            // disable kinematic to let it drop
+            _rigidbody.isKinematic = false;
         }
 
         #endregion
