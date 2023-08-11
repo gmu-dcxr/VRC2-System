@@ -39,7 +39,6 @@ namespace VRC2.Authority
 
             if (_runner == null || !_runner.IsRunning)
             {
-                _authorityUpdated = true;
                 Default();
                 return;
             }
