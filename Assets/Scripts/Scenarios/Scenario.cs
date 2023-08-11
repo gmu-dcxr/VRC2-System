@@ -24,7 +24,7 @@ namespace VRC2.Scenarios
 
         private string _rawTime;
 
-        private int _id;
+        private int _id = -1;
         private string _name;
         private string _shortName;
         private int _taskStart;
@@ -84,7 +84,24 @@ namespace VRC2.Scenarios
 
         public int ID
         {
-            get => _id;
+            get
+            {
+                if (_id < 0)
+                {
+                    _id = 0;
+                    var ch = ClsName[ClsName.Length - 1];
+                    try
+                    {
+                        _id = int.Parse($"{ch}");
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning($"Failed to parse ID for {ClsName}");
+                    }
+                }
+
+                return _id;
+            }
         }
 
         public string name
@@ -202,8 +219,8 @@ namespace VRC2.Scenarios
         {
             // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
             var runner = GameObject.FindObjectOfType<NetworkRunner>();
-            if(runner.IsRunning && scenariosManager.scenarios != null && scenariosManager.scenarios.Count > 0) return;
-            
+            if (runner.IsRunning && scenariosManager.scenarios != null && scenariosManager.scenarios.Count > 0) return;
+
             if (GUI.Button(new Rect(10, 10, 150, 30), $"Start {ClsName}"))
             {
                 var ts = Helper.SecondNow();
@@ -320,11 +337,6 @@ namespace VRC2.Scenarios
 
         }
 
-        public void OverrideID(int id)
-        {
-            this._id = id;
-        }
-
         // The configure file of each scenario is independent, so the start time always is 0.
         // When scenarios are sequenced, it's necessary to override them
         public void OverrideStartEnd(int start, int end)
@@ -358,7 +370,6 @@ namespace VRC2.Scenarios
 
         public void Execute(int timestamp)
         {
-            print($"{ClsName} - {name} Execute()");
             startTimestamp = timestamp;
             ready = true;
             started = false;
@@ -391,7 +402,8 @@ namespace VRC2.Scenarios
                 else
                 {
                     // check whether it needs to stop this scenario
-                    if (localts >= endInSec)
+                    // it never ends when startInSec == endInSec. Useful for Background incidents
+                    if (endInSec > startInSec && localts >= endInSec)
                     {
                         print($"Scenario {_name} Finish @ {localts}");
                         // time to stop it
@@ -482,7 +494,6 @@ namespace VRC2.Scenarios
 
         public virtual void OnIncidentStart(int obj)
         {
-            print($"");
             // show warning
             var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
             ShowWarning(_name, obj, msg);
@@ -632,7 +643,10 @@ namespace VRC2.Scenarios
 
         public virtual void UpdateInstruction()
         {
-            scenariosManager.UpdateInstruction(_taskStart, _taskEnd);
+            if (_taskStart > 0 && _taskEnd > 0)
+            {
+                scenariosManager.UpdateInstruction(_taskStart, _taskEnd);
+            }
         }
 
 
