@@ -127,6 +127,7 @@ namespace VRC2
             _wrapper.WhenSelect.AddListener(OnUnselect);
             _wrapper.WhenMove.AddListener(OnMove);
             _wrapper.WhenCancel.AddListener(OnCancel);
+            _wrapper.WhenRelease.AddListener(OnRelease);
             // _wrapper.WhenHover.AddListener(OnHover);
             // _wrapper.WhenUnhover.AddListener(OnUnhover);
 
@@ -253,7 +254,7 @@ namespace VRC2
 
         void OnCancel()
         {
-            Debug.Log("Pipe Cancel");
+            // Debug.Log("Pipe Cancel");
         }
 
         public void OnSelect()
@@ -267,8 +268,8 @@ namespace VRC2
             // }
 
             // update current select pipe
-            GlobalConstants.selectedPipe = gameObject;
-            
+            // GlobalConstants.selectedPipe = gameObject;
+
             // enable kinematic
             _rigidbody.isKinematic = true;
         }
@@ -276,7 +277,11 @@ namespace VRC2
         public void OnUnselect()
         {
             // Debug.Log("Pipe OnUnselect");
-            
+        }
+
+        public void OnRelease()
+        {
+            // print("Pipe OnRelease");
             // disable kinematic to let it drop
             _rigidbody.isKinematic = false;
         }
