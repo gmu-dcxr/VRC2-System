@@ -164,7 +164,7 @@ namespace VRC2.Scenarios
             {
                 if (_localPlayer == null)
                 {
-                    var players = GameObject.FindObjectsOfType<OVRCustomSkeleton>();
+                    var players = GameObject.FindObjectsOfType<OVRCustomSkeleton>(includeInactive: true);
 
                     if (networkRunner == null || !networkRunner.IsRunning)
                     {
@@ -270,6 +270,11 @@ namespace VRC2.Scenarios
             if (GUI.Button(new Rect(10, 450, 150, 30), $"Start {9}"))
             {
                 StartIncident(9);
+            }
+            
+            if (GUI.Button(new Rect(10, 500, 150, 30), $"Normal"))
+            {
+                StartNormalIncident();
             }
 
             if (GUI.Button(new Rect(200, 50, 150, 30), $"End {1}"))
