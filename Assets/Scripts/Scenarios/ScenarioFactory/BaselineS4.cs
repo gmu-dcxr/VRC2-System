@@ -1,4 +1,5 @@
 using System;
+using PathCreation.Examples;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -28,6 +29,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool moving = false;
 
+        private PathFollower _pathFollower;
 
 
         private void Start()
@@ -38,6 +40,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             
             player = localPlayer;
             approaching = false;
+            
+            _pathFollower = drone.GetComponent<PathFollower>();
+            
+            // disable at the beginning
+            _pathFollower.enabled = false;
         }
 
         private void Update()
@@ -71,6 +78,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S4");
+            
+            _pathFollower.enabled = true;
         }
         
         public void On_BaselineS4_1_Start()
@@ -91,6 +100,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
+            
+            // disable it
+            _pathFollower.enabled = false;
 
             var offset = drone.transform.position.y - player.transform.position.y;
             UpdateDestination(offset);
