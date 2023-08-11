@@ -41,11 +41,15 @@ namespace VRC2
 
         public void OnSelect()
         {
+            if (_rigidbody == null) return;
+            
             _rigidbody.isKinematic = true;
         }
 
         public void OnRelease()
         {
+            if (_rigidbody == null) return;
+            
             _rigidbody.isKinematic = false;
         }
 
