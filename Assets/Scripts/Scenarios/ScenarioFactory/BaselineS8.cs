@@ -230,6 +230,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S8");
+            liveWire.SetActive(false);
+            
+            ShowLoad(false);
+
+            isStarted = true;
+            moving = true;
+            back = true;
         }
 
         public void On_BaselineS8_1_Start()
@@ -248,6 +255,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A truck backs up to carry the mud and leaves, and the water leaks along the path the truck goes.Repeat this multiple times, so the water stain on the ground grows bigger and it is approaching the wire on the ground.
             // get incident
             var incident = GetIncident(2);
+            
+            liveWire.SetActive(true);
 
             ShowLoad(false);
 
