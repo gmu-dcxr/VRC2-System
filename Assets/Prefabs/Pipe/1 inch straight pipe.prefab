@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 652238057582616173}
   - component: {fileID: 652238057582616162}
   - component: {fileID: 652238057582616163}
-  - component: {fileID: 6692628055554178165}
+  - component: {fileID: 130055070}
   m_Layer: 0
   m_Name: 1 inch straight pipe
   m_TagString: Untagged
@@ -57,10 +57,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!114 &652238057582616160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,7 +237,7 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
---- !u!114 &6692628055554178165
+--- !u!114 &130055070
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -246,11 +246,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 652238057582616167}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 995c501e440444898eeaf77d00a32a6c, type: 3}
+  m_Script: {fileID: 11500000, guid: e92660a30326b684eb3ad9d3380d2fbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  P1Only: 1
-  P2Only: 0
+  P1Only: 0
+  P2Only: 1
 --- !u!1 &4009090273829893753
 GameObject:
   m_ObjectHideFlags: 0
