@@ -53,8 +53,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private WorkStage _stage;
 
-        private Vector3 loadRelPos;
-
         private float liftHeightThreshold = 0.5f;
 
         private bool moving = false;
