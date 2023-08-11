@@ -12,7 +12,8 @@ namespace VRC2.Authority
         private bool _authorityUpdated = false;
 
         private NetworkRunner _runner = null;
-        public virtual void DisableP2()
+
+        public virtual void EnableP1()
         {
 
         }
@@ -22,16 +23,26 @@ namespace VRC2.Authority
 
         }
 
+        public virtual void EnableP2()
+        {
+
+        }
+
+        public virtual void DisableP2()
+        {
+
+        }
+
         public virtual void Default()
         {
             // where this is no network
         }
-        
+
 
         private void Update()
         {
-            if(_authorityUpdated) return;
-            
+            if (_authorityUpdated) return;
+
             if (_runner == null)
             {
                 _runner = FindObjectOfType<NetworkRunner>();
@@ -44,20 +55,47 @@ namespace VRC2.Authority
             }
 
             // enable on both sides
-            if (!P1Only && !P2Only) return;
-
-            // disable P2 side
-            if (P1Only && _runner.IsClient)
+            if (!P1Only && !P2Only)
             {
+                if (_runner.IsServer)
+                {
+                    EnableP1();
+                }
+                else
+                {
+                    EnableP2();
+                }
+
                 _authorityUpdated = true;
-                DisableP2();
+                return;
             }
 
-            // disable P1 side
-            if (P2Only &&  _runner.IsServer)
+            // disable P2 side
+            if (P1Only)
             {
+                if (_runner.IsServer)
+                {
+                    EnableP1();
+                }
+                else
+                {
+                    DisableP2();
+                }
+
                 _authorityUpdated = true;
-                DisableP1();
+            }
+            else if (P2Only)
+            {
+                if (_runner.IsServer)
+                {
+                    DisableP1();
+                }
+                else
+                {
+                    EnableP2();
+                }
+
+                _authorityUpdated = true;
             }
         }
     }

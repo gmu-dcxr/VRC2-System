@@ -32,6 +32,12 @@ namespace VRC2.Authority
             rigidbody.isKinematic = false;
         }
 
+        public override void EnableP2()
+        {
+            // because default is false, it is needed to enable again
+            rigidbody.isKinematic = true;
+        }
+
         public override void Default()
         {
             // disable it under no-network circumstance
