@@ -7,13 +7,46 @@ using VRC2.Pipe;
 
 namespace VRC2
 {
+    [RequireComponent(typeof(PointableUnityEventWrapper))]
     public class PipesContainerManager : MonoBehaviour
     {
         private GameObject _controller;
 
+        private PointableUnityEventWrapper _wrapper;
+
+        private PointableUnityEventWrapper wrapper
+        {
+            get
+            {
+                if (_wrapper == null)
+                {
+                    _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
+                }
+
+                return _wrapper;
+            }
+        }
+
+        private Rigidbody _rigidbody
+        {
+            get => GetComponent<Rigidbody>();
+        }
+
         // Start is called before the first frame update
         void Start()
         {
+            wrapper.WhenSelect.AddListener(OnSelect);
+            wrapper.WhenRelease.AddListener(OnRelease);
+        }
+
+        public void OnSelect()
+        {
+            _rigidbody.isKinematic = true;
+        }
+
+        public void OnRelease()
+        {
+            _rigidbody.isKinematic = false;
         }
 
         public void AttachToController(GameObject controller)
@@ -32,6 +65,13 @@ namespace VRC2
             _controller = null;
         }
 
+        // enable it can free drop
+        void DisableKinematic()
+        {
+            gameObject.GetComponent<Rigidbody>().isKinematic = false;
+        }
+
+
         // Update is called once per frame
         void Update()
         {
@@ -43,12 +83,11 @@ namespace VRC2
                 {
                     Debug.Log("Released from the left hand controller.");
                     _controller = null;
-                    // add rigid body and enable interactability
-                    var go = gameObject;
-                    PipeHelper.AfterMove(ref go);
+
+                    DisableKinematic();
                     return;
                 }
-                
+
                 // synchronize transform of the parent
                 var t = _controller.transform;
                 transform.position = t.position;
