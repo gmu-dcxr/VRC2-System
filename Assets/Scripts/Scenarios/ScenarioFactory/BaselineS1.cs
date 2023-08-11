@@ -152,6 +152,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         }
 
         #region Accident Events Callbacks
+        
+        // TODO: When scenario ends, start the normal event
 
         // normal event
         public override void StartNormalIncident()
