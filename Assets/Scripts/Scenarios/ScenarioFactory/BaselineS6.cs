@@ -61,8 +61,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             crane = animator.gameObject;
             randomYawIncrease = 5; // Random.Range(1, 10);
-            // make it rotate at the start
-            triggered = true;
+
+            triggered = false;
             backward = false;
 
             initYaw = CalculateRawBetweenCranePlayer(crane, player);
@@ -164,6 +164,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S6");
+            
+            TriggerEvent(0, true, false);
         }
 
         void TriggerEvent(float wind, bool hasload, bool back)
