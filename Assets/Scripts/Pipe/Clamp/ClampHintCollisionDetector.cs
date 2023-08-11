@@ -52,7 +52,6 @@ namespace VRC2.Pipe
         void OnTriggerEnterAndStay(Collider other)
         {
             var go = other.gameObject;
-            print($"OnTriggerEnterAndStay: {go.name} - {go.tag} - {_hintManager.OnTheWall}");
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && _hintManager.OnTheWall)
             {
                 print($"{CheckClampSizeMatch(go)}");

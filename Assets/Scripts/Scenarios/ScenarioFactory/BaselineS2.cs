@@ -110,6 +110,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             Debug.LogWarning("The plan of installment order changed");
             _audioSource.Play();
         }
+        
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S2");
+        }
 
         public void On_BaselineS2_1_Start()
         {

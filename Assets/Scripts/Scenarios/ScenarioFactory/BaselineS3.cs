@@ -116,6 +116,12 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Accident Events Callbacks
 
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S3");
+        }
+        
         public void On_BaselineS3_1_Start()
         {
 

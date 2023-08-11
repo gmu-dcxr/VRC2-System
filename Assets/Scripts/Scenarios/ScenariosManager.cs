@@ -126,13 +126,13 @@ namespace VRC2.Scenarios
                 if (myClassType.GetMethod(name1) == null)
                 {
                     pass = false;
-                    Debug.LogError($"[{ClsName}] missing method: {name1}");
+                    Debug.LogWarning($"[{ClsName}] missing method: {name1}");
                 }
 
                 if (myClassType.GetMethod(name2) == null)
                 {
                     pass = false;
-                    Debug.LogError($"[{ClsName}] missing method: {name2}");
+                    Debug.LogWarning($"[{ClsName}] missing method: {name2}");
                 }
             }
 

@@ -27,8 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private GameObject player; // local player
 
-        [Header("GameObjects")]
-        public GameObject pipeStack;
+        [Header("GameObjects")] public GameObject pipeStack;
 
         public GameObject unpackedPipe;
 
@@ -145,9 +144,14 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Accident Events Callbacks
 
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S1");
+        }
+
         public void On_BaselineS1_1_Start()
         {
-            triggered = true;
         }
 
         public void On_BaselineS1_1_Finish()
