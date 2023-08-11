@@ -7,8 +7,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Header("Excavator")] public ExcavatorController excavatorController;
 
         [Header("Forklift")] public CustomForkLiftController customForkLiftController;
-        
 
+
+        [Header("Hammer")] public HammerController hammerController;
         
         private void Start()
         {
@@ -39,7 +40,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_Background_3_Start()
         {
-
+            hammerController.Animate();
         }
 
         public void On_Background_3_Finish()

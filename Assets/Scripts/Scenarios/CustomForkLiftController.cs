@@ -57,6 +57,7 @@ namespace VRC2.Scenarios
             switch (_stage)
             {
                 case WorkStage.Stop:
+                    StopVehicle();
                     break;
                 case WorkStage.UpLift:
                     if (ReachedLiftHeight(true))
@@ -72,8 +73,8 @@ namespace VRC2.Scenarios
                 case WorkStage.Forward:
                     if (ReachedDestination(true))
                     {
-                        // reset
-                        ResetStatus();
+                        // stop
+                        _stage = WorkStage.Stop;
                     }
                     else
                     {
@@ -88,9 +89,26 @@ namespace VRC2.Scenarios
                     break;
             }
         }
+        
+        void StopVehicle()
+        {
+            _vehicleController.BrakesInput = 1;
+            _vehicleController.HandBrakeInput = 1;
+            _vehicleController.ClutchInput = 1;
+
+            print(_vehicleController.CurrentSpeed.ToString("f5"));
+            if (_vehicleController.CurrentSpeed < 0.1)
+            {
+                // change stage
+                ResetStatus();
+            }
+        }
 
         private void ResetStatus()
         {
+            _forkliftController.forks.ResetToMin();
+            _forkliftController.ForksVertical = 0;
+            
             forklift.transform.position = startPos;
             forklift.transform.rotation = startRotation;
 
@@ -104,6 +122,7 @@ namespace VRC2.Scenarios
         {
             var value = -1;
             if (up) value = 1;
+            // make it still
             _forkliftController.MoveForksVertically(value);
         }
 
@@ -163,7 +182,10 @@ namespace VRC2.Scenarios
             {
                 _acceleration = -1.0f;
             }
-
+            _vehicleController.BrakesInput = 0;
+            _vehicleController.HandBrakeInput = 0;
+            _vehicleController.ClutchInput = 0;
+            
             _vehicleController.AccelerationInput = _acceleration;
         }
 
