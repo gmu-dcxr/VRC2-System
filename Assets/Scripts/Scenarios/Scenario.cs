@@ -374,6 +374,8 @@ namespace VRC2.Scenarios
             ready = true;
             started = false;
             finished = false;
+
+            StartNormalIncident();
         }
 
         void FixedUpdate()
@@ -480,6 +482,11 @@ namespace VRC2.Scenarios
                 incident.OnFinish += OnIncidentFinish;
                 AddIncident(incident);
             }
+        }
+        
+        public virtual void StartNormalIncident()
+        {
+            
         }
 
         public virtual void OnIncidentFinish(int obj)
