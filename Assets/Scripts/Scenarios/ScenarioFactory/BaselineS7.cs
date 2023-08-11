@@ -12,17 +12,23 @@ namespace VRC2.Scenarios.ScenarioFactory
     public class BaselineS7 : Scenario
     {
         public GameObject backHoe;
-        public GameObject rocks;
-        public GameObject dumpster;
-        [Header("BackhoeController")] public Transform BackhoeController2;
+
+        [Header("BackhoeController")] public Transform BackhoeController1;
+        public Transform BackhoeController2;
         public Transform BackhoeController3;
 
-        [Header("Dumpster")] public GameObject dumpster2;
+        [Header("Dumpster")] public GameObject dumpster1;
+        public GameObject dumpster2;
         public GameObject dumpster3;
 
 
-        [Header("Rock")] public GameObject rock2;
+        [Header("Rock")] public GameObject rock1;
+        public GameObject rock2;
         public GameObject rock3;
+
+        [Header("Normal")] public Transform normalBackhoe;
+        public GameObject normalDumpster;
+        public GameObject normalRock;
 
         // public GameObject excavator;
 
@@ -52,6 +58,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private BackhoeController _backhoeController;
 
         private WSMVehicleController _vehicleController;
+
         private void Start()
         {
             base.Start();
@@ -134,22 +141,34 @@ namespace VRC2.Scenarios.ScenarioFactory
             ds.SetActive(true);
         }
 
-        void EnableSetting(bool two, bool three)
+        void EnableSetting(int idx)
         {
-            rocks.SetActive(false);
-            dumpster.SetActive(false);
+            normalRock.SetActive(false);
+            normalDumpster.SetActive(false);
+            rock1.SetActive(false);
+            dumpster1.SetActive(false);
+            rock2.SetActive(false);
+            dumpster2.SetActive(false);
+            rock3.SetActive(false);
+            dumpster3.SetActive(false);
 
-            if (two)
+            switch (idx)
             {
-                UpdateTransforms(BackhoeController2, rock2, dumpster2);
-                rock3.SetActive(false);
-                dumpster3.SetActive(false);
-            }
-            else if (three)
-            {
-                UpdateTransforms(BackhoeController3, rock3, dumpster3);
-                rock2.SetActive(false);
-                dumpster2.SetActive(false);
+                case 0:
+                    UpdateTransforms(normalBackhoe, normalRock, normalDumpster);
+                    break;
+                case 1:
+                    UpdateTransforms(BackhoeController1, rock1, dumpster1);
+                    break;
+                case 2:
+                    UpdateTransforms(BackhoeController2, rock2, dumpster2);
+                    break;
+                case 3:
+                    UpdateTransforms(BackhoeController3, rock3, dumpster3);
+                    break;
+
+                default:
+                    break;
             }
 
             // reset
@@ -310,11 +329,17 @@ namespace VRC2.Scenarios.ScenarioFactory
         #endregion
 
         #region Accident Events Callbacks
-        
+
         // normal event
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S7");
+            
+            StopAllCoroutines();
+
+            EnableSetting(0);
+
+            StartCoroutine(ExcavatorDig());
         }
 
         public void On_BaselineS7_1_Start()
@@ -338,6 +363,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             StopAllCoroutines();
 
+            EnableSetting(1);
+
             StartCoroutine(ExcavatorDig());
         }
 
@@ -357,7 +384,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             StopAllCoroutines();
-            EnableSetting(true, false);
+            EnableSetting(2);
 
             StartCoroutine(ExcavatorDig());
         }
@@ -379,7 +406,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             StopAllCoroutines();
 
-            EnableSetting(false, true);
+            EnableSetting(3);
 
             StartCoroutine(ExcavatorDig());
         }
