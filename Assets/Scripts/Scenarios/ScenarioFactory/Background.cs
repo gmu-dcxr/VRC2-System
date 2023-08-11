@@ -1,7 +1,12 @@
-﻿namespace VRC2.Scenarios.ScenarioFactory
+﻿using UnityEngine;
+
+namespace VRC2.Scenarios.ScenarioFactory
 {
     public class Background : Scenario
     {
+        [Header("Excavator")] public ExcavatorController excavatorController; 
+        
+        
         private void Start()
         {
             base.Start();
@@ -11,7 +16,7 @@
 
         public void On_Background_1_Start()
         {
-
+            excavatorController.Animate();
         }
 
         public void On_Background_1_Finish()
