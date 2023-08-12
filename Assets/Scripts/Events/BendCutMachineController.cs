@@ -19,15 +19,14 @@ namespace VRC2.Events
         public AudioSource audioSource;
 
         [Header("Executor")] public RobotBendCut robotBendCut;
-
+        public float duration = 5.0f;
+        
         [Header("Error")] public bool enableError = false;
 
         // target angle
         private PipeBendAngles _angle;
 
         private Timer _timer;
-        // for input to output 
-        private float duration = 3.0f;
 
         private void Start()
         {
@@ -36,6 +35,8 @@ namespace VRC2.Events
 
         private void OnReadyToOperate(PipeBendAngles angle)
         {
+            _angle = angle;
+            
             // play noise 
             audioSource.Play();
 
@@ -76,7 +77,7 @@ namespace VRC2.Events
             // start a new timer to let robot deliver
             SetTimer(() =>
             {
-                robotBendCut.Deliver();
+                robotBendCut.PickupResult(pipeOutput.position);
             });
         }
 

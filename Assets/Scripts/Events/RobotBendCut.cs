@@ -22,13 +22,16 @@ namespace VRC2
 
         // waiting for operation
         Waiting = 4,
+
+        // get result
+        GetResult = 5,
     }
 
     public class RobotBendCut : BaseEvent
     {
         [Header("Robot Setting")] public GameObject robot;
-        public GameObject robotBase;
-        public GameObject robotHand;
+        public Transform robotBase;
+        public Transform robotHand;
 
         [Header("Grab Offset")] public Vector3 positionOffset = Vector3.zero;
         public Vector3 rotationOffset = Vector3.zero;
@@ -141,11 +144,14 @@ namespace VRC2
                 case RobotRoutine.BendCut:
                     BendCutHandler();
                     break;
-                case RobotRoutine.DropOff:
-                    DropoffHandler();
+                case RobotRoutine.GetResult:
+                    GetResultHandler();
+                    break;
+                case RobotRoutine.Waiting:
                     break;
 
-                case RobotRoutine.Waiting:
+                case RobotRoutine.DropOff:
+                    DropoffHandler();
                     break;
             }
         }
@@ -189,22 +195,12 @@ namespace VRC2
             return spawnedPipe;
         }
 
-        public void Deliver()
+        public void PickupResult(Vector3 des)
         {
-            var go = spawnedPipe.gameObject;
-            PipeHelper.BeforeMove(ref go);
-
-            // parent object to robot hand
-            spawnedPipe.transform.parent = robotHand.transform;
-
-            spawnedPipe.transform.localPosition = positionOffset;
-            spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
-
-            // move to workspace
-            _routine = RobotRoutine.DropOff;
-            _agent.SetDestination(destination);
+            // move to pick result
+            _routine = RobotRoutine.GetResult;
+            _agent.SetDestination(des);
         }
-
 
         #region Handlers
 
@@ -216,7 +212,7 @@ namespace VRC2
                 // save for future delivery
                 destination = currentPipe.transform.position;
                 // set pipe parent to robot hand
-                currentPipe.transform.parent = robotHand.transform;
+                currentPipe.transform.parent = robotHand;
                 // update local position and rotation
                 currentPipe.transform.localPosition = positionOffset;
                 currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
@@ -227,7 +223,7 @@ namespace VRC2
 
                 // move to robot base
                 _routine = RobotRoutine.BendCut;
-                _agent.SetDestination(robotBase.transform.position);
+                _agent.SetDestination(robotBase.position);
             }
         }
 
@@ -255,7 +251,26 @@ namespace VRC2
 
                 // return to base
                 _routine = RobotRoutine.Default;
-                _agent.SetDestination(robotBase.transform.position);
+                _agent.SetDestination(robotBase.position);
+            }
+        }
+
+        void GetResultHandler()
+        {
+            if (AgentHelper.ReachDestination(_agent))
+            {
+                var go = spawnedPipe.gameObject;
+                PipeHelper.BeforeMove(ref go);
+
+                // parent object to robot hand
+                spawnedPipe.transform.parent = robotHand;
+
+                spawnedPipe.transform.localPosition = positionOffset;
+                spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+
+                // move to workspace
+                _routine = RobotRoutine.DropOff;
+                _agent.SetDestination(destination);
             }
         }
 
