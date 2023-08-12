@@ -1077,8 +1077,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2731175143772856856}
   - component: {fileID: 6469038532617592597}
-  - component: {fileID: 4840415351336829826}
   - component: {fileID: 2400404252405470520}
+  - component: {fileID: 1131742325}
   m_Layer: 0
   m_Name: GrabInteractable
   m_TagString: Untagged
@@ -1121,8 +1121,8 @@ MonoBehaviour:
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
-  _movementProvider: {fileID: 0}
---- !u!114 &4840415351336829826
+  _movementProvider: {fileID: 1131742325}
+--- !u!114 &2400404252405470520
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1131,7 +1131,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 7724447402095076773}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c6cba82e9f3c84f80041e0d2741ef6, type: 3}
+  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 0}
+  _customIcon: {fileID: 0}
+  _snappiness: 0.8
+--- !u!114 &1131742325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7724447402095076773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3906d48c19bb044995eeb166bf144f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _travellingData:
@@ -1162,21 +1177,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   _pointableElement: {fileID: 1072437718386431718}
---- !u!114 &2400404252405470520
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7724447402095076773}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _renderer: {fileID: 0}
-  _customIcon: {fileID: 0}
-  _snappiness: 0.8
+  maxDistance: 0.2
 --- !u!1 &8817545323716569407
 GameObject:
   m_ObjectHideFlags: 0
