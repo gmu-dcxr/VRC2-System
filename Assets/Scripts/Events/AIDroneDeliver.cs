@@ -48,10 +48,8 @@ namespace VRC2.Events
             pm.SetMaterial(para);
         }
 
-        void SpawnPipeUsingSelected(PipeType type, PipeDiameter diameter)
+        void SpawnPipeUsingSelected(PipeDiameter diameter)
         {
-            // TODO: spawn different pipe according to different pipes
-
             // spawn object
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
@@ -63,6 +61,10 @@ namespace VRC2.Events
 
             spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
 
+            // update global lastspawned pipe
+
+            GlobalConstants.lastSpawnedPipe = spawnedPipe.gameObject;
+            
             UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
 
             RPC_SendMessage(spawnedPipe.Id, parameters);
@@ -147,7 +149,7 @@ namespace VRC2.Events
             var type = parameters.type;
             var color = parameters.color;
             var diameter = parameters.diameter;
-            SpawnPipeUsingSelected(type, diameter);
+            SpawnPipeUsingSelected(diameter);
         }
 
         public void InitParameters(PipeParameters para)

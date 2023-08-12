@@ -28,7 +28,7 @@ namespace VRC2
 
         private GameObject currentPipe
         {
-            get => GlobalConstants.selectedPipe;
+            get => GlobalConstants.lastSpawnedPipe;
         }
 
         private PipeParameters parameters;
@@ -80,7 +80,7 @@ namespace VRC2
 
             // destroy
             GameObject.DestroyImmediate(currentPipe);
-            GlobalConstants.selectedPipe = null;
+            GlobalConstants.lastSpawnedPipe = null;
 
 
             // spawn object
