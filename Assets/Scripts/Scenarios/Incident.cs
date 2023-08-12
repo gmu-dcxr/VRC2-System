@@ -79,7 +79,6 @@ namespace VRC2.Scenarios
 
         public void Execute(int timestamp)
         {
-            print($"{Scenario} - Incident #{_id} - Execute()");
             startTimestamp = timestamp;
             ready = true;
             started = false;

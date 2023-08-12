@@ -42,5 +42,11 @@ namespace VRC2
         {
             gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = texture2D;
         }
+
+        public void UpdateFilename(string fn)
+        {
+            filename = fn;
+            SetImageAsTexture();
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private GameObject player; // local player
 
-        [Header("GameObjects")]
+        [Header("GameObjects")] public GameObject playerIndicator;
         public GameObject pipeStack;
 
         public GameObject unpackedPipe;
@@ -40,14 +40,22 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             base.Start();
 
-            player = localPlayer;
+            if (localPlayer != null)
+            {
+                player = localPlayer;   
+            }
+            else
+            {
+                player = playerIndicator;
+            }
 
             BackupPipeLocalTransform();
 
             crane = animator.gameObject;
             randomYawIncrease = 5; //Random.Range(1, 10);
-            // make it rotate at the start
-            triggered = true;
+            
+            triggered = false;
+            backwardsTriggered = false;
 
             SetActiveness(true, false);
         }
@@ -144,10 +152,18 @@ namespace VRC2.Scenarios.ScenarioFactory
         }
 
         #region Accident Events Callbacks
+        
+        // TODO: When scenario ends, start the normal event
+
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S1");
+            triggered = true;
+        }
 
         public void On_BaselineS1_1_Start()
         {
-            triggered = true;
         }
 
         public void On_BaselineS1_1_Finish()

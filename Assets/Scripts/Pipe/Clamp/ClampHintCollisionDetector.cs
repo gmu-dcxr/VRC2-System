@@ -54,8 +54,17 @@ namespace VRC2.Pipe
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && _hintManager.OnTheWall)
             {
+                print($"{CheckClampSizeMatch(go)}");
                 _hintManager.Clamped = true;
             }
+        }
+
+        GameObject GetPipeRoot()
+        {
+            // clamp hint - 1 45 1 - 1 inch 45 deg pipe
+            var t = gameObject.transform;
+            var go = t.parent.parent.gameObject;
+            return go;
         }
 
         bool CheckClampSizeMatch(GameObject clamp)
@@ -64,7 +73,7 @@ namespace VRC2.Pipe
             var clampSize = $"{csi.clampSize}";
 
             // get pipe size
-            var root = PipeHelper.GetRoot(gameObject);
+            var root = GetPipeRoot();
 
             var pm = root.GetComponent<PipeManipulation>();
             var size = pm.diameter;

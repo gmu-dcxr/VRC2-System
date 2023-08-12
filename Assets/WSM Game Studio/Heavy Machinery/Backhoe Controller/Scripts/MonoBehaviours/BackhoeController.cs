@@ -6,8 +6,8 @@ namespace WSMGameStudio.HeavyMachinery
     public class BackhoeController : MonoBehaviour
     {
         #region VARIABLES
-        [SerializeField]
-        public LevelingMode levelingMode;
+
+        [SerializeField] public LevelingMode levelingMode;
         public float loaderFrameSpeed = 0.5f;
         public float frontBucketSpeed = 0.3f;
         public float loaderSelfLevelingSpeed = 0.22f;
@@ -19,7 +19,9 @@ namespace WSMGameStudio.HeavyMachinery
 
         //Loader
         private float _loaderFrameLeverAngle = 0f;
+
         private float _frontBucketLeverAngle = 0f;
+
         //Backhoe
         private float _swingFrameLeverAngle = 0;
         private float _boomLeverAngle = 0;
@@ -49,25 +51,63 @@ namespace WSMGameStudio.HeavyMachinery
         //Loader
         [Range(0f, 1f)] private float _loaderFrameTilt;
         [Range(0f, 1f)] private float _frontBucketTilt;
+
         [Range(0f, 1f)] private float _bellCrankTilt;
+
         //Backhoe
         [Range(0f, 1f)] private float _swingFrameTilt;
         [Range(0f, 1f)] private float _boomTilt;
         [Range(0f, 1f)] private float _armTilt;
         [Range(0f, 1f)] private float _rearBucketTilt;
         [Range(0f, 1f)] private float _stabilizerLegsTilt;
+
         #endregion
 
         #region PROPERTIES
+
         //Loader
-        public float LoaderFrameTilt { get { return _loaderFrameTilt; } set { _loaderFrameTilt = value; } }
-        public float FrontBucketTilt { get { return _frontBucketTilt; } set { _frontBucketTilt = value; } }
+        public float LoaderFrameTilt
+        {
+            get { return _loaderFrameTilt; }
+            set { _loaderFrameTilt = value; }
+        }
+
+        public float FrontBucketTilt
+        {
+            get { return _frontBucketTilt; }
+            set { _frontBucketTilt = value; }
+        }
+
         //Backhoe
-        public float SwingFrameTilt { get { return _swingFrameTilt; } set { _swingFrameTilt = value; } }
-        public float BoomTilt { get { return _boomTilt; } set { _boomTilt = value; } }
-        public float ArmTilt { get { return _armTilt; } set { _armTilt = value; } }
-        public float RearBucketTilt { get { return _rearBucketTilt; } set { _rearBucketTilt = value; } }
-        public float StabilizerLegsTilt { get { return _stabilizerLegsTilt; } set { _stabilizerLegsTilt = value; } }
+        public float SwingFrameTilt
+        {
+            get { return _swingFrameTilt; }
+            set { _swingFrameTilt = value; }
+        }
+
+        public float BoomTilt
+        {
+            get { return _boomTilt; }
+            set { _boomTilt = value; }
+        }
+
+        public float ArmTilt
+        {
+            get { return _armTilt; }
+            set { _armTilt = value; }
+        }
+
+        public float RearBucketTilt
+        {
+            get { return _rearBucketTilt; }
+            set { _rearBucketTilt = value; }
+        }
+
+        public float StabilizerLegsTilt
+        {
+            get { return _stabilizerLegsTilt; }
+            set { _stabilizerLegsTilt = value; }
+        }
 
         public bool IsEngineOn
         {
@@ -80,6 +120,7 @@ namespace WSMGameStudio.HeavyMachinery
                     StopEngine();
             }
         }
+
         #endregion
 
         #region UNITY METHODS
@@ -117,8 +158,8 @@ namespace WSMGameStudio.HeavyMachinery
                     (boom == null ? false : boom.IsMoving) ||
                     (arm == null ? false : arm.IsMoving) ||
                     (rearBucket == null ? false : rearBucket.IsMoving) ||
-                    (leftStabilizerLeg == null? false : leftStabilizerLeg.IsMoving) ||
-                    (rightStabilizerLeg == null? false : rightStabilizerLeg.IsMoving);
+                    (leftStabilizerLeg == null ? false : leftStabilizerLeg.IsMoving) ||
+                    (rightStabilizerLeg == null ? false : rightStabilizerLeg.IsMoving);
                 MechanicalMovementSFX(isMoving); //Should be called on late update to track SFX correctly
             }
         }
@@ -126,6 +167,7 @@ namespace WSMGameStudio.HeavyMachinery
         #endregion
 
         #region METHODS
+
         /// <summary>
         /// Starts vehicle engine
         /// </summary>
@@ -261,23 +303,32 @@ namespace WSMGameStudio.HeavyMachinery
         /// <param name="boomInput"></param>
         /// <param name="armInput"></param>
         /// <param name="rearBucketInput"></param>
-        public void UpdateLevers(int frameInput, int frontBucketInput, int swingFrameInput, int boomInput, int armInput, int rearBucketInput)
+        public void UpdateLevers(int frameInput, int frontBucketInput, int swingFrameInput, int boomInput, int armInput,
+            int rearBucketInput)
         {
             if (_isEngineOn)
             {
-                _loaderFrameLeverAngle = Mathf.MoveTowards(_loaderFrameLeverAngle, frameInput * -15f, 80f * Time.deltaTime);
-                _frontBucketLeverAngle = Mathf.MoveTowards(_frontBucketLeverAngle, frontBucketInput * -15f, 80f * Time.deltaTime);
-                _swingFrameLeverAngle = Mathf.MoveTowards(_swingFrameLeverAngle, swingFrameInput * -10f, 80f * Time.deltaTime);
+                _loaderFrameLeverAngle =
+                    Mathf.MoveTowards(_loaderFrameLeverAngle, frameInput * -15f, 80f * Time.deltaTime);
+                _frontBucketLeverAngle =
+                    Mathf.MoveTowards(_frontBucketLeverAngle, frontBucketInput * -15f, 80f * Time.deltaTime);
+                _swingFrameLeverAngle =
+                    Mathf.MoveTowards(_swingFrameLeverAngle, swingFrameInput * -10f, 80f * Time.deltaTime);
                 _boomLeverAngle = Mathf.MoveTowards(_boomLeverAngle, boomInput * -10f, 80f * Time.deltaTime);
                 _armLeverAngle = Mathf.MoveTowards(_armLeverAngle, armInput * -10f, 80f * Time.deltaTime);
-                _rearBucketLeverAngle = Mathf.MoveTowards(_rearBucketLeverAngle, rearBucketInput * -10f, 80f * Time.deltaTime);
+                _rearBucketLeverAngle =
+                    Mathf.MoveTowards(_rearBucketLeverAngle, rearBucketInput * -10f, 80f * Time.deltaTime);
 
-                if (loaderFrameLever != null) loaderFrameLever.localEulerAngles = new Vector3(_loaderFrameLeverAngle, 0f, 0f);
-                if (frontBucketLever != null) frontBucketLever.localEulerAngles = new Vector3(_frontBucketLeverAngle, 0f, 0f);
-                if (swingFrameLever != null) swingFrameLever.localEulerAngles = new Vector3(_swingFrameLeverAngle, 0f, 0f);
+                if (loaderFrameLever != null)
+                    loaderFrameLever.localEulerAngles = new Vector3(_loaderFrameLeverAngle, 0f, 0f);
+                if (frontBucketLever != null)
+                    frontBucketLever.localEulerAngles = new Vector3(_frontBucketLeverAngle, 0f, 0f);
+                if (swingFrameLever != null)
+                    swingFrameLever.localEulerAngles = new Vector3(_swingFrameLeverAngle, 0f, 0f);
                 if (boomLever != null) boomLever.localEulerAngles = new Vector3(_boomLeverAngle, 0f, 0f);
                 if (armLever != null) armLever.localEulerAngles = new Vector3(_armLeverAngle, 0f, 0f);
-                if (rearBucketLever != null) rearBucketLever.localEulerAngles = new Vector3(_rearBucketLeverAngle, 0f, 0f);
+                if (rearBucketLever != null)
+                    rearBucketLever.localEulerAngles = new Vector3(_rearBucketLeverAngle, 0f, 0f);
             }
         }
 
@@ -305,6 +356,26 @@ namespace WSMGameStudio.HeavyMachinery
                 }
             }
         }
+
+        #endregion
+
+        #region HACK - Reset
+
+
+        public void ResetBackhoe()
+        {
+            if (loaderFrameLever != null) loaderFrameLever.localEulerAngles = new Vector3(0, 0f, 0f);
+            if (frontBucketLever != null) frontBucketLever.localEulerAngles = new Vector3(0, 0f, 0f);
+            if (swingFrameLever != null) swingFrameLever.localEulerAngles = new Vector3(0, 0f, 0f);
+            if (boomLever != null) boomLever.localEulerAngles = new Vector3(0, 0f, 0f);
+            if (armLever != null) armLever.localEulerAngles = new Vector3(0, 0f, 0f);
+            if (rearBucketLever != null) rearBucketLever.localEulerAngles = new Vector3(0, 0f, 0f);
+
+            if (leftStabilizerLeg != null) leftStabilizerLeg.ResetToMin();
+            if (rightStabilizerLeg != null) rightStabilizerLeg.ResetToMin();
+        }
+
+
         #endregion
     }
 }

@@ -40,6 +40,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             base.Start();
 
+<<<<<<< HEAD
             player = localPlayer;
 
             scriptTCC = crane.GetComponent<TowerControllerCrane>();
@@ -52,6 +53,19 @@ namespace VRC2.Scenarios.ScenarioFactory
             boomCart.localPosition += new Vector3(boomCartOffset, 0f, 0f);
             boomCartPositionX = boomCart.localPosition.x;
             craneSwivel = scriptTCC.rotationElementCrane.transform;           
+=======
+            player = localPlayer;
+
+            crane = animator.gameObject;
+            randomYawIncrease = 5; // Random.Range(1, 10);
+
+            triggered = false;
+            backward = false;
+
+            initYaw = CalculateRawBetweenCranePlayer(crane, player);
+            initDolly = dolly;
+
+>>>>>>> 6becc7af647e7eb821336d502009163db2213757
 
             unpackedPipe.SetActive(false);
         }
@@ -80,6 +94,14 @@ namespace VRC2.Scenarios.ScenarioFactory
 
 
         #region Accident Events Callbacks
+        
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S6");
+            
+            TriggerEvent(0, true, false);
+        }
 
         public void On_BaselineS6_1_Start()
         {

@@ -1,4 +1,5 @@
 ﻿using Assets.OVR.Scripts;
+using PathCreation.Examples;
 using TMPro;
 using UnityEngine;
 using UnityTimer;
@@ -20,6 +21,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Timer _timer;
 
         private AudioSource _audioSource;
+
+        private PathFollower _pathFollower;
 
         private Vector3 targetPosition
         {
@@ -43,7 +46,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             moving = false;
             goBack = false;
 
-            drone.SetActive(false);
+            drone.SetActive(true);
+
+            _pathFollower = drone.GetComponent<PathFollower>();
+            
+            // disable at the beginning
+            _pathFollower.enabled = false;
 
             _audioSource = GetComponent<AudioSource>();
 
@@ -110,6 +118,13 @@ namespace VRC2.Scenarios.ScenarioFactory
             Debug.LogWarning("The plan of installment order changed");
             _audioSource.Play();
         }
+        
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S2");
+            _pathFollower.enabled = true;
+        }
 
         public void On_BaselineS2_1_Start()
         {
@@ -126,6 +141,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             print("On_BaselineS2_2_Start");
             // A supervising drone approaches the participants, and informs the second participant of a plan of installment change order. Gives the second participant a new sheet of requirements.
 
+            // disable it
+            _pathFollower.enabled = false;
+            
             // get incident
             var incident = GetIncident(2);
             var warning = incident;

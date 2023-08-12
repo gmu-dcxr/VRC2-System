@@ -35,7 +35,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private WSMVehicleController _vehicleController;
 
-        private bool started = false;
+        private bool isStarted = false;
         private bool moving = false;
         private bool back = false;
 
@@ -67,7 +67,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // player approch warning
             PlayerApproachingWarning();
 
-            if (!started) return;
+            if (!isStarted) return;
 
             if (!moving)
             {
@@ -225,6 +225,19 @@ namespace VRC2.Scenarios.ScenarioFactory
 
 
         #region Accident Events Callbacks
+        
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S8");
+            liveWire.SetActive(false);
+            
+            ShowLoad(false);
+
+            isStarted = true;
+            moving = true;
+            back = true;
+        }
 
         public void On_BaselineS8_1_Start()
         {
@@ -242,10 +255,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A truck backs up to carry the mud and leaves, and the water leaks along the path the truck goes.Repeat this multiple times, so the water stain on the ground grows bigger and it is approaching the wire on the ground.
             // get incident
             var incident = GetIncident(2);
+            
+            liveWire.SetActive(true);
 
             ShowLoad(false);
 
-            started = true;
+            isStarted = true;
             moving = true;
             back = true;
         }
@@ -277,7 +292,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print("On_BaselineS8_4_Start");
 
             // hide truck
-            started = false;
+            isStarted = false;
             truck.SetActive(false);
 
             // SAGAT query

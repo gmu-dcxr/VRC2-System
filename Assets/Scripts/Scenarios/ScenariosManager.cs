@@ -92,10 +92,12 @@ namespace VRC2.Scenarios
 
             for (int i = 1; i < count; i++)
             {
-                var s0 = scenarios[i - 1];
                 var s = scenarios[i];
-                s.OverrideID(i);
-                s.OverrideStartEnd(s.startInSec + s0.endInSec, s.endInSec + s0.endInSec);
+                if (i > 0)
+                {
+                    var s0 = scenarios[i - 1];
+                    s.OverrideStartEnd(s.startInSec + s0.endInSec, s.endInSec + s0.endInSec);
+                }
             }
 
             startTimestamp = Helper.SecondNow();
@@ -124,13 +126,13 @@ namespace VRC2.Scenarios
                 if (myClassType.GetMethod(name1) == null)
                 {
                     pass = false;
-                    Debug.LogError($"[{ClsName}] missing method: {name1}");
+                    Debug.LogWarning($"[{ClsName}] missing method: {name1}");
                 }
 
                 if (myClassType.GetMethod(name2) == null)
                 {
                     pass = false;
-                    Debug.LogError($"[{ClsName}] missing method: {name2}");
+                    Debug.LogWarning($"[{ClsName}] missing method: {name2}");
                 }
             }
 

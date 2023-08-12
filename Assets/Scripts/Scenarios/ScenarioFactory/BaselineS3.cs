@@ -1,8 +1,8 @@
 using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
+using UnityTimer;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
@@ -17,6 +17,10 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject closerStart;
         public GameObject collisionStart;
 
+        [Header("Normal/Abnormal")] public Transform normalStart;
+        public Transform abnormalStart;
+        public Transform normalEnd;
+
         private Vector3 startPos;
         private Vector3 destinationPos;
         private GameObject player;
@@ -25,8 +29,12 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private WSMVehicleController _vehicleController;
 
+        private Timer _timer;
+
         private bool moving = false;
         private bool back = false;
+
+        private bool loop = false;
 
         private void Start()
         {
@@ -46,7 +54,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
             else
             {
-                MoveForward(!back);
+                MoveForward(!back, loop);
             }
         }
 
@@ -94,13 +102,21 @@ namespace VRC2.Scenarios.ScenarioFactory
             _vehicleController.ClutchInput = 0;
         }
 
-        void MoveForward(bool forward)
+        void MoveForward(bool forward, bool autoloop = false)
         {
             if (ReachDestination(forward))
             {
                 print("Truck reach destination");
-                moving = false;
-                return;
+                if (autoloop)
+                {
+                    back = !back;
+                    forward = !forward;
+                }
+                else
+                {
+                    moving = false;
+                    return;
+                }
             }
 
             var _acceleration = 1.0f;
@@ -116,6 +132,25 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Accident Events Callbacks
 
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S3");
+
+            truck.transform.position = normalStart.position;
+            truck.transform.rotation = normalStart.rotation;
+
+            startPos = normalEnd.position;
+            destinationPos = normalStart.position;
+
+            moving = true;
+            back = false;
+
+            loop = true;
+
+            StartVehicle();
+        }
+
         public void On_BaselineS3_1_Start()
         {
 
@@ -124,6 +159,16 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_1_Finish()
         {
 
+        }
+
+        void StartTimer(float duration, Action oncomplete)
+        {
+            if (_timer != null)
+            {
+                Timer.Cancel(_timer);
+            }
+
+            _timer = Timer.Register(duration, oncomplete, isLooped: false, useRealTime: true);
         }
 
         public void On_BaselineS3_2_Start()
@@ -135,12 +180,27 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            ShowLoad(false);
+            moving = false;
 
-            moving = true;
-            back = true;
+            // need some time to make truck fully stop and then change its position
+            StartTimer(3.0f, () =>
+            {
+                // reset 
+                truck.transform.position = abnormalStart.position;
+                truck.transform.rotation = abnormalStart.rotation;
 
-            StartVehicle();
+                startPos = truck.transform.position;
+                destinationPos = destination.transform.position;
+
+                ShowLoad(false);
+
+                loop = false;
+
+                moving = true;
+                back = true;
+
+                StartVehicle();
+            });
         }
 
         public void On_BaselineS3_2_Finish()
