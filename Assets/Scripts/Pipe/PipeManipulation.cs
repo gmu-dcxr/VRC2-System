@@ -25,11 +25,6 @@ namespace VRC2
         [SerializeField] private GameObject segmentB;
         [SerializeField] private GameObject segmentMid;
 
-        // [Header("Materials")] [SerializeField] private Material _magentaMaterial;
-        // [SerializeField] private Material _blueMaterial;
-        // [SerializeField] private Material _yellowMaterial;
-        // [SerializeField] private Material _greenMaterial;
-
         [Header("Pipe Settings")]
         // current color
         public PipeColor pipeColor = PipeColor.Green;
