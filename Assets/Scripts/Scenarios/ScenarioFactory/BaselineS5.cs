@@ -2,46 +2,85 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using WSMGameStudio.HeavyMachinery;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
+using UnityTimer;
+using Timer = UnityTimer.Timer;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
+    public enum WorkStage
+    {
+        Stop = 0,
+        UpLift = 1,
+        Forward = 2,
+        DownLift = 3,
+        Back = 4,
+    }
+
     public class BaselineS5 : Scenario
     {
-        [Header("Accident Configure")] 
-        public GameObject glass;
-        public GameObject unloadedGlass;
+        public GameObject craneTruck;
+        
+        [Header("Loads")]
+        public GameObject normalGood;
+        public GameObject heavierGood;
+        public GameObject heaviestGood;
 
-        [Header("TruckPositions")]
+        [Header("Positions")] public GameObject destination;
 
-        public GameObject destination;
+        [Header("Tilt")] public Transform titleTransform;
+
+        public Transform overturnTransfrom;
+        
         private Vector3 destinationPos;
         
-
-        public GameObject craneTruck;
         private Vector3 startPos;
         private Quaternion startRotation;
+
         private WSMVehicleController _vehicleController;
+        private ForkliftController _forkliftController;
 
         private float speed = 6f;
         private float rotationSpeed = 0f;
 
-        private bool started = false;
-        private bool movingForward = false;
-        private bool moving = false;
-
-        public Animator animator;
-
         private float distanceThreshold = 4.0f;
 
-        [Header("Player")] public GameObject player;
+        private GameObject player;
 
+        private Timer _timer;
+
+        private WorkStage _stage;
+
+        private float liftHeightThreshold = 0.5f;
+
+        private bool moving = false;
+
+        private GameObject load
+        {
+            get
+            {
+                if (normalGood.activeSelf) return normalGood;
+                if (heavierGood.activeSelf) return heavierGood;
+                if (heaviestGood.activeSelf) return heaviestGood;
+                return null;
+            }
+        }
 
 
         private void Start()
         {
             base.Start();
+
+            player = localPlayer;
+
+            _stage = WorkStage.Stop;
+
+            moving = false;
+
+            EnableGoods(true, false, false);
+
 
             //Find positions
             startPos = craneTruck.transform.position;
@@ -49,64 +88,110 @@ namespace VRC2.Scenarios.ScenarioFactory
             destinationPos = destination.transform.position;
 
             _vehicleController = craneTruck.GetComponent<WSMVehicleController>();
-            animator.enabled = false;
-
-            unloadedGlass.SetActive(false);
+            _forkliftController = craneTruck.GetComponent<ForkliftController>();
         }
 
         private void Update()
         {
+            if (!moving) return;
 
-            if (!started) return;
-
-
-            if (!moving)
+            switch (_stage)
             {
-                print("Not moving");
-                //StopVehicle();
-            }
-            else
-            {
-                MoveForward(movingForward);
-                
+                case WorkStage.Stop:
+                    StopVehicle();
+                    break;
+                case WorkStage.UpLift:
+                    if (ReachedLiftHeight(true))
+                    {
+                        _stage = WorkStage.Forward;
+                    }
+                    else
+                    {
+                        LiftLoad(true);
+                    }
+
+                    break;
+                case WorkStage.Forward:
+                    if (ReachedDestination(true))
+                    {
+                        // stop
+                        _stage = WorkStage.Stop;
+                    }
+                    else
+                    {
+                        MoveForward(true);
+                    }
+
+                    break;
+                case WorkStage.Back:
+
+                    if (ReachedDestination(false))
+                    {
+                        // stop
+                        _stage = WorkStage.Stop;
+                    }
+                    else
+                    {
+                        MoveForward(false);
+                    }
+
+                    break;
+                case WorkStage.DownLift:
+                    if (ReachedLiftHeight(false))
+                    {
+                        // fix a bug that sometimes the load can not be unloaded.
+
+                        load.GetComponent<Rigidbody>().useGravity = false;
+                        load.transform.Translate(0f, 0.1f, 0f, Space.Self);
+                        StartTimer(1, () => { load.GetComponent<Rigidbody>().useGravity = true; });
+
+                        _stage = WorkStage.Back;
+                    }
+                    else
+                    {
+                        LiftLoad(false);
+                    }
+
+                    break;
             }
         }
 
-        IEnumerator partialTipTruck()
+        void ResetTruck()
         {
-            print("StartedCoroutine");
-            yield return new WaitForSeconds(5f);
-            animator.enabled = true;
-            animator.SetBool("woble", true);
-            yield return new WaitForSeconds(2f);
-            animator.SetBool("woble", false);
-            animator.enabled = false;
-            yield break;
+            craneTruck.transform.position = startPos;
+            craneTruck.transform.rotation = startRotation;
         }
 
-        IEnumerator tipTruck()
+        void EnableGoods(bool normal, bool heavier, bool heaviest)
         {
-            print("StartedCoroutine");
-            yield return new WaitForSeconds(5f);
-            animator.enabled = true;
-            animator.SetBool("tipOver", true);
-            StopVehicle();
-            _vehicleController.StopEngine();
-            yield return new WaitForSeconds(2.5f);
-            glass.SetActive(false);
-            unloadedGlass.SetActive(true);
-            yield break;
+            normalGood.SetActive(normal);
+            heavierGood.SetActive(heavier);
+            heaviestGood.SetActive(heaviest);
+        }
+
+        void LiftLoad(bool up)
+        {
+            var value = -1;
+            if (up) value = 1;
+            _forkliftController.MoveForksVertically(value);
+        }
+
+        void StartTimer(int second, Action oncomplete)
+        {
+            if (_timer != null)
+            {
+                Timer.Cancel(_timer);
+            }
+
+            _timer = Timer.Register(second, oncomplete, isLooped: false, useRealTime: true);
         }
 
         #region craneTruck control
 
-        bool craneTruckStopped() {
-            return _vehicleController.CurrentSpeed < 0.1f;
-        }
-
-        bool ReachedDestination(bool forward) {
-            var d = destinationPos; // foward
-            if (!forward)
+        bool ReachedDestination(bool _forward)
+        {
+            var d = destinationPos; // forward
+            if (!_forward)
             {
                 d = startPos; // back
             }
@@ -124,31 +209,34 @@ namespace VRC2.Scenarios.ScenarioFactory
             return false;
         }
 
-       /* bool ReachedPivot(bool forward)
+        bool ReachedLiftHeight(bool up)
         {
-            var d = destinationPos; // backward
-            if (forward)
+            if (up)
             {
-                d = startPos;
+                if (_forkliftController.ForksVertical > liftHeightThreshold)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            // ignore y distance
-            var t = craneTruck.transform.position;
-            d.y = t.y;
-            
-            if (forward) { // want to compare x values
-                d.z = t.z; 
-            }
-            else { // want to compare z values
-                d.x = t.x; 
-            }
-            var distance = Vector3.Distance(t, d);
+            else
+            {
 
-            if (distance < distanceThreshold)
-            {
-                return true;
+                if (_forkliftController.ForksVertical <= 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            return false;
-        }*/
+
+        }
+
 
         void StopVehicle()
         {
@@ -166,20 +254,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         void MoveForward(bool forward)
         {
-            if (ReachedDestination(forward))
-            {
-                print("Crane Truck reached destination");
-                moving = false;
-                return;
-            }
-
-           /* if (ReachedPivot(forward)) 
-            {
-                print("Crane Truck reched pivot");
-                movingForward = false;
-                rotating = true;
-            }*/
-
             var _acceleration = 1.0f;
             if (!forward)
             {
@@ -189,26 +263,18 @@ namespace VRC2.Scenarios.ScenarioFactory
             _vehicleController.AccelerationInput = _acceleration;
         }
 
-       /* void Rotate() 
-        {
-            var targetDirection = startPos - craneTruck.transform.position;
-            if (movingForward)
-            {
-                targetDirection = destinationPos - craneTruck.transform.position;
-            }
-
-            var newDirection = Vector3.RotateTowards(craneTruck.transform.forward, targetDirection,
-                   speed * Time.deltaTime, rotationSpeed);
-
-            craneTruck.transform.rotation = Quaternion.LookRotation(newDirection);
-            if(startRotation.y - 180f <= craneTruck.transform.rotation.y) { rotating = false; }
-        }*/
         #endregion
 
 
 
         #region Accident Events Callbacks
-
+        
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S5");
+        }
+        
         public void On_BaselineS5_1_Start()
         {
 
@@ -227,14 +293,13 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-
-            moving = false;
-            started = true;
-            glass.SetActive(true);
-           // craneTruck.transform.position = new Vector3(Finish1.transform.position.x, Finish1.transform.position.y,
-               // Finish1.transform.position.z);
             
+            ResetTruck();
 
+            EnableGoods(true, false, false);
+
+            _stage = WorkStage.UpLift;
+            moving = true;
         }
 
         public void On_BaselineS5_2_Finish()
@@ -249,11 +314,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-
-            movingForward = true;
+            _stage = WorkStage.DownLift;
             moving = true;
-            glass.SetActive(false);
-            unloadedGlass.SetActive(true);
         }
 
         public void On_BaselineS5_3_Finish()
@@ -271,15 +333,15 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
+            
+            ResetTruck();
 
-            craneTruck.transform.position = destinationPos;
-            craneTruck.transform.rotation = startRotation;
-           // glass.transform.position = destinationPos - new Vector3(2f, 0f, 0f);
-            glass.SetActive(true);
-            movingForward = false;
+            craneTruck.transform.rotation = titleTransform.rotation;
+
+            EnableGoods(false, true, false);
+
+            _stage = WorkStage.UpLift;
             moving = true;
-            unloadedGlass.SetActive(false);
-            StartCoroutine(partialTipTruck());
         }
 
         public void On_BaselineS5_4_Finish()
@@ -295,14 +357,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            craneTruck.transform.position = startPos;
-            craneTruck.transform.rotation = startRotation;
-
-            // backingUp = false;
-            movingForward = true;
+            _stage = WorkStage.DownLift;
             moving = true;
-            glass.SetActive(false);
-            unloadedGlass.SetActive(true);
         }
 
         public void On_BaselineS5_5_Finish()
@@ -321,15 +377,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            craneTruck.transform.position = destinationPos;
-            craneTruck.transform.rotation = startRotation;
+            ResetTruck();
+            
+            craneTruck.transform.rotation = overturnTransfrom.rotation;
+            
+            EnableGoods(false, false, true);
 
-            movingForward = false;
+            _stage = WorkStage.UpLift;
             moving = true;
-            glass.SetActive(true);
-            unloadedGlass.SetActive(false);
-            StartCoroutine(tipTruck());
-
         }
 
         public void On_BaselineS5_6_Finish()
@@ -341,6 +396,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS5_7_Start()
         {
             print("On_BaselineS5_7_Start");
+
+            moving = false;
+
             // SAGAT query
             ShowSAGAT();
         }

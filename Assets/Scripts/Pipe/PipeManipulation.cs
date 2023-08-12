@@ -25,11 +25,6 @@ namespace VRC2
         [SerializeField] private GameObject segmentB;
         [SerializeField] private GameObject segmentMid;
 
-        // [Header("Materials")] [SerializeField] private Material _magentaMaterial;
-        // [SerializeField] private Material _blueMaterial;
-        // [SerializeField] private Material _yellowMaterial;
-        // [SerializeField] private Material _greenMaterial;
-
         [Header("Pipe Settings")]
         // current color
         public PipeColor pipeColor = PipeColor.Green;
@@ -104,6 +99,11 @@ namespace VRC2
             get => segmentB.GetComponent<MeshCollider>();
         }
 
+        private Rigidbody _rigidbody
+        {
+            get => GetComponent<Rigidbody>();
+        }
+
 
         // Start is called before the first frame update
         void Start()
@@ -122,6 +122,7 @@ namespace VRC2
             _wrapper.WhenSelect.AddListener(OnUnselect);
             _wrapper.WhenMove.AddListener(OnMove);
             _wrapper.WhenCancel.AddListener(OnCancel);
+            _wrapper.WhenRelease.AddListener(OnRelease);
             // _wrapper.WhenHover.AddListener(OnHover);
             // _wrapper.WhenUnhover.AddListener(OnUnhover);
 
@@ -248,7 +249,7 @@ namespace VRC2
 
         void OnCancel()
         {
-            Debug.Log("Pipe Cancel");
+            // Debug.Log("Pipe Cancel");
         }
 
         public void OnSelect()
@@ -262,12 +263,22 @@ namespace VRC2
             // }
 
             // update current select pipe
-            GlobalConstants.selectedPipe = gameObject;
+            // GlobalConstants.selectedPipe = gameObject;
+
+            // enable kinematic
+            _rigidbody.isKinematic = true;
         }
 
         public void OnUnselect()
         {
             // Debug.Log("Pipe OnUnselect");
+        }
+
+        public void OnRelease()
+        {
+            // print("Pipe OnRelease");
+            // disable kinematic to let it drop
+            _rigidbody.isKinematic = false;
         }
 
         #endregion

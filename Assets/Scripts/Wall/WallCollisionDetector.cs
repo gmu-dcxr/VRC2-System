@@ -250,12 +250,11 @@ namespace VRC2
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
 
-            // delete its rigid body
+            // enable kinematic to make it not fall
             Rigidbody rb = null;
             if (iclamp.TryGetComponent<Rigidbody>(out rb))
             {
-                GameObject.Destroy(rb);
-                // rb.useGravity = false;
+                rb.isKinematic = true;
             }
 
             // get clamp z

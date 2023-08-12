@@ -9,38 +9,39 @@ namespace VRC2.Events
     {
         private PointableUnityEventWrapper _wrapper;
 
+        private Rigidbody _rigidbody;
+
+        private Rigidbody rigidbody
+        {
+            get
+            {
+                if (_rigidbody == null)
+                {
+                    _rigidbody = gameObject.GetComponent<Rigidbody>();
+                }
+
+                return _rigidbody;
+            }
+        }
+
         private void Start()
         {
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
 
             _wrapper.WhenSelect.AddListener(OnSelect);
-            _wrapper.WhenUnselect.AddListener(OnUnselect);
+            _wrapper.WhenRelease.AddListener(OnRelease);
         }
 
         private void OnSelect()
         {
-            Rigidbody rb = null;
-
-            if (gameObject.TryGetComponent<Rigidbody>(out rb))
-            {
-                rb.useGravity = false;
-            }
-            else
-            {
-                rb = gameObject.AddComponent<Rigidbody>();
-                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                rb.useGravity = false;
-            }
+            // enable
+            rigidbody.isKinematic = true;
         }
 
-        private void OnUnselect()
+        private void OnRelease()
         {
-            Rigidbody rb = null;
-
-            if (gameObject.TryGetComponent<Rigidbody>(out rb))
-            {
-                rb.useGravity = true;
-            }
+            // disable
+            rigidbody.isKinematic = false;
         }
     }
 }

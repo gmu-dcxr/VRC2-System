@@ -11,12 +11,28 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS7 : Scenario
     {
-        public GameObject excavator;
+        public GameObject backHoe;
 
-        public GameObject destination;
+        [Header("BackhoeController")] public Transform BackhoeController1;
+        public Transform BackhoeController2;
+        public Transform BackhoeController3;
 
-        private BackhoeController _backhoeController;
-        private WSMVehicleController _vehicleController;
+        [Header("Dumpster")] public GameObject dumpster1;
+        public GameObject dumpster2;
+        public GameObject dumpster3;
+
+
+        [Header("Rock")] public GameObject rock1;
+        public GameObject rock2;
+        public GameObject rock3;
+
+        [Header("Normal")] public Transform normalBackhoe;
+        public GameObject normalDumpster;
+        public GameObject normalRock;
+
+        // public GameObject excavator;
+
+        // public GameObject destination;
 
         private Vector3 destinationPos;
 
@@ -37,21 +53,29 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private float distanceThreshold = 5.0f;
 
+        private GameObject activeSetting;
+
+        private BackhoeController _backhoeController;
+
+        private WSMVehicleController _vehicleController;
+
         private void Start()
         {
             base.Start();
 
-            _backhoeController = excavator.GetComponent<BackhoeController>();
+            // destinationPos = destination.transform.position;
 
-            destinationPos = destination.transform.position;
-
-            _vehicleController = excavator.GetComponent<WSMVehicleController>();
+            _backhoeController = backHoe.GetComponent<BackhoeController>();
+            _vehicleController = backHoe.GetComponent<WSMVehicleController>();
         }
 
         private void Update()
         {
 
-            if (lowerStabilizers) { _backhoeController.MoveStabilizerLegs(-1); }
+            if (lowerStabilizers)
+            {
+                _backhoeController.MoveStabilizerLegs(-1);
+            }
 
             if (moving)
             {
@@ -63,22 +87,111 @@ namespace VRC2.Scenarios.ScenarioFactory
                 StopVehicle();
             }
 
-            if (extendBoom) { ExtendBoom(); }
-            if (extendArm) { ExtendArm(); }
-            if (extendRearBucket) { ExtendRearBucket(); }
-            if (retractBoom) { RetractBoom(); }
-            if (retractArm) { RetractArm(); }
-            if (retractRearBucket) { RetractRearBucket(); }
-            if (rotateBoom) { RotateBoom(); }
-            if (centerBoom) { CenterBoom(); }
+            if (extendBoom)
+            {
+                ExtendBoom();
+            }
 
+            if (extendArm)
+            {
+                ExtendArm();
+            }
+
+            if (extendRearBucket)
+            {
+                ExtendRearBucket();
+            }
+
+            if (retractBoom)
+            {
+                RetractBoom();
+            }
+
+            if (retractArm)
+            {
+                RetractArm();
+            }
+
+            if (retractRearBucket)
+            {
+                RetractRearBucket();
+            }
+
+            if (rotateBoom)
+            {
+                RotateBoom();
+            }
+
+            if (centerBoom)
+            {
+                CenterBoom();
+            }
+
+        }
+
+        void UpdateTransforms(Transform bc, GameObject rk, GameObject ds)
+        {
+            // backHoe.SetActive(false);
+            backHoe.transform.position = bc.position;
+            backHoe.transform.rotation = bc.rotation;
+
+            // backHoe.SetActive(true);
+
+            rk.SetActive(true);
+            ds.SetActive(true);
+        }
+
+        void EnableSetting(int idx)
+        {
+            normalRock.SetActive(false);
+            normalDumpster.SetActive(false);
+            rock1.SetActive(false);
+            dumpster1.SetActive(false);
+            rock2.SetActive(false);
+            dumpster2.SetActive(false);
+            rock3.SetActive(false);
+            dumpster3.SetActive(false);
+
+            switch (idx)
+            {
+                case 0:
+                    UpdateTransforms(normalBackhoe, normalRock, normalDumpster);
+                    break;
+                case 1:
+                    UpdateTransforms(BackhoeController1, rock1, dumpster1);
+                    break;
+                case 2:
+                    UpdateTransforms(BackhoeController2, rock2, dumpster2);
+                    break;
+                case 3:
+                    UpdateTransforms(BackhoeController3, rock3, dumpster3);
+                    break;
+
+                default:
+                    break;
+            }
+
+            // reset
+            extendBoom = false;
+            extendArm = false;
+            extendRearBucket = false;
+            retractBoom = false;
+            retractArm = false;
+            retractRearBucket = false;
+            rotateBoom = false;
+            centerBoom = false;
+            lowerStabilizers = false;
+            moving = false;
+
+
+            _backhoeController.ResetBackhoe();
         }
 
         IEnumerator ExcavatorDig()
         {
             print("StartedCoroutine");
             lowerStabilizers = true;
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2f);
             extendArm = true;
             yield return new WaitForSeconds(3f);
             extendArm = false;
@@ -125,7 +238,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         #region Excavator Control
 
         void ExtendBoom()
-        { 
+        {
             _backhoeController.MoveBoom(1);
         }
 
@@ -174,7 +287,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var d = destinationPos;
 
             // ignore y distance
-            var e = excavator.transform.position;
+            var e = _backhoeController.gameObject.transform.position;
             d.y = e.y;
             var distance = Vector3.Distance(e, d);
 
@@ -217,6 +330,18 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Accident Events Callbacks
 
+        // normal event
+        public override void StartNormalIncident()
+        {
+            print("Start Normal Incident Baseline S7");
+            
+            StopAllCoroutines();
+
+            EnableSetting(0);
+
+            StartCoroutine(ExcavatorDig());
+        }
+
         public void On_BaselineS7_1_Start()
         {
             moving = true;
@@ -236,8 +361,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCoroutine(ExcavatorDig());
+            StopAllCoroutines();
 
+            EnableSetting(1);
+
+            StartCoroutine(ExcavatorDig());
         }
 
         public void On_BaselineS7_2_Finish()
@@ -254,6 +382,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(3);
             var warning = incident.Warning;
             print(warning);
+
+            StopAllCoroutines();
+            EnableSetting(2);
 
             StartCoroutine(ExcavatorDig());
         }
@@ -272,6 +403,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
+
+            StopAllCoroutines();
+
+            EnableSetting(3);
 
             StartCoroutine(ExcavatorDig());
         }
