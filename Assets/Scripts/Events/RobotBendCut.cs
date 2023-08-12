@@ -19,6 +19,9 @@ namespace VRC2
         PickUp = 1,
         BendCut = 2,
         DropOff = 3,
+
+        // waiting for operation
+        Waiting = 4,
     }
 
     public class RobotBendCut : BaseEvent
@@ -44,6 +47,8 @@ namespace VRC2
         private RobotRoutine _routine;
 
         private Vector3 destination;
+
+        public System.Action<PipeBendAngles> ReadyToOperate;
 
 
         void UpdateLocalSpawnedPipe(GameObject go)
@@ -128,65 +133,20 @@ namespace VRC2
 
         private void Update()
         {
-            if (_routine == RobotRoutine.PickUp)
+            switch (_routine)
             {
-                // reach to the workspace
-                if (AgentHelper.ReachDestination(_agent))
-                {
-                    // save for future delivery
-                    destination = currentPipe.transform.position;
-                    // set pipe parent to robot hand
-                    currentPipe.transform.parent = robotHand.transform;
-                    // update local position and rotation
-                    currentPipe.transform.localPosition = positionOffset;
-                    currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+                case RobotRoutine.PickUp:
+                    PickupHandler();
+                    break;
+                case RobotRoutine.BendCut:
+                    BendCutHandler();
+                    break;
+                case RobotRoutine.DropOff:
+                    DropoffHandler();
+                    break;
 
-                    var go = currentPipe;
-
-                    PipeHelper.BeforeMove(ref go);
-
-                    // move to robot base
-                    _routine = RobotRoutine.BendCut;
-                    _agent.SetDestination(robotBase.transform.position);
-                }
-            }
-            else if (_routine == RobotRoutine.BendCut)
-            {
-                if (AgentHelper.ReachDestination(_agent))
-                {
-                    // start bend/cut
-                    SpawnPipeUsingSelected();
-                    UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
-                    // update remote object
-                    RPC_SendMessage(spawnedPipe.Id, parameters.type, parameters.color, parameters.a, parameters.b);
-
-                    var go = spawnedPipe.gameObject;
-                    PipeHelper.BeforeMove(ref go);
-
-                    // parent object to robot hand
-                    spawnedPipe.transform.parent = robotHand.transform;
-
-                    spawnedPipe.transform.localPosition = positionOffset;
-                    spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
-
-                    // move to workspace
-                    _routine = RobotRoutine.DropOff;
-                    _agent.SetDestination(destination);
-                }
-            }
-            else if (_routine == RobotRoutine.DropOff)
-            {
-                if (AgentHelper.ReachDestination(_agent))
-                {
-                    spawnedPipe.transform.parent = null;
-
-                    var go = spawnedPipe.gameObject;
-                    PipeHelper.AfterMove(ref go);
-
-                    // return to base
-                    _routine = RobotRoutine.Default;
-                    _agent.SetDestination(robotBase.transform.position);
-                }
+                case RobotRoutine.Waiting:
+                    break;
             }
         }
 
@@ -218,5 +178,87 @@ namespace VRC2
         {
             PickUp();
         }
+
+        public NetworkObject SpawnPipe()
+        {
+            // start bend/cut
+            SpawnPipeUsingSelected();
+            UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
+            // update remote object
+            RPC_SendMessage(spawnedPipe.Id, parameters.type, parameters.color, parameters.a, parameters.b);
+            return spawnedPipe;
+        }
+
+        public void Deliver()
+        {
+            var go = spawnedPipe.gameObject;
+            PipeHelper.BeforeMove(ref go);
+
+            // parent object to robot hand
+            spawnedPipe.transform.parent = robotHand.transform;
+
+            spawnedPipe.transform.localPosition = positionOffset;
+            spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+
+            // move to workspace
+            _routine = RobotRoutine.DropOff;
+            _agent.SetDestination(destination);
+        }
+
+
+        #region Handlers
+
+        void PickupHandler()
+        {
+            // reach to the workspace
+            if (AgentHelper.ReachDestination(_agent))
+            {
+                // save for future delivery
+                destination = currentPipe.transform.position;
+                // set pipe parent to robot hand
+                currentPipe.transform.parent = robotHand.transform;
+                // update local position and rotation
+                currentPipe.transform.localPosition = positionOffset;
+                currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+
+                var go = currentPipe;
+
+                PipeHelper.BeforeMove(ref go);
+
+                // move to robot base
+                _routine = RobotRoutine.BendCut;
+                _agent.SetDestination(robotBase.transform.position);
+            }
+        }
+
+        void BendCutHandler()
+        {
+            if (AgentHelper.ReachDestination(_agent))
+            {
+                if (ReadyToOperate != null)
+                {
+                    ReadyToOperate(parameters.angle);
+                }
+
+                _routine = RobotRoutine.Waiting;
+            }
+        }
+
+        void DropoffHandler()
+        {
+            if (AgentHelper.ReachDestination(_agent))
+            {
+                spawnedPipe.transform.parent = null;
+
+                var go = spawnedPipe.gameObject;
+                PipeHelper.AfterMove(ref go);
+
+                // return to base
+                _routine = RobotRoutine.Default;
+                _agent.SetDestination(robotBase.transform.position);
+            }
+        }
+
+        #endregion
     }
 }
