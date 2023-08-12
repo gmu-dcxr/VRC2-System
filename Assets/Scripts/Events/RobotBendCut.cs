@@ -25,6 +25,10 @@ namespace VRC2
     {
         [Header("Robot Setting")] public GameObject robot;
         public GameObject robotBase;
+        public GameObject robotHand;
+
+        [Header("Grab Offset")] public Vector3 positionOffset = Vector3.zero;
+        public Vector3 rotationOffset = Vector3.zero;
 
         private GameObject currentPipe
         {
@@ -131,11 +135,11 @@ namespace VRC2
                 {
                     // save for future delivery
                     destination = currentPipe.transform.position;
-                    // set pipe parent
-                    currentPipe.transform.parent = robot.transform;
-                    currentPipe.transform.rotation = Quaternion.identity;
-                    // make a bit higher
-                    currentPipe.transform.localPosition = new Vector3(0, 1f, 0);
+                    // set pipe parent to robot hand
+                    currentPipe.transform.parent = robotHand.transform;
+                    // update local position and rotation
+                    currentPipe.transform.localPosition = positionOffset;
+                    currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
 
                     var go = currentPipe;
 
@@ -159,10 +163,11 @@ namespace VRC2
                     var go = spawnedPipe.gameObject;
                     PipeHelper.BeforeMove(ref go);
 
-                    // parent object
-                    spawnedPipe.transform.parent = robot.transform;
-                    spawnedPipe.transform.localPosition = new Vector3(0, 1f, 0);
-                    spawnedPipe.transform.rotation = Quaternion.identity;
+                    // parent object to robot hand
+                    spawnedPipe.transform.parent = robotHand.transform;
+
+                    spawnedPipe.transform.localPosition = positionOffset;
+                    spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
 
                     // move to workspace
                     _routine = RobotRoutine.DropOff;
