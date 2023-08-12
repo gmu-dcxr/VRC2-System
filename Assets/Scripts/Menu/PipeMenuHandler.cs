@@ -526,7 +526,7 @@ namespace VRC2
         public void Simulate_RobotBendCut(GameObject pipe)
         {
             // set global select pipe
-            GlobalConstants.selectedPipe = pipe;
+            GlobalConstants.lastSpawnedPipe = pipe;
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
             var rbc = go.GetComponent<RobotBendCut>();
             rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);

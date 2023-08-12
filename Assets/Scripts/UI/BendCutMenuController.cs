@@ -39,12 +39,12 @@ namespace VRC2
         {
             get
             {
-                if (GlobalConstants.selectedPipe == null)
+                if (GlobalConstants.lastSpawnedPipe == null)
                 {
                     return PipeConstants.PipeColor.Default;
                 }
 
-                var pipe = GlobalConstants.selectedPipe;
+                var pipe = GlobalConstants.lastSpawnedPipe;
                 return pipe.GetComponent<PipeManipulation>().pipeColor;
             }
         }
@@ -53,12 +53,12 @@ namespace VRC2
         {
             get
             {
-                if (GlobalConstants.selectedPipe == null)
+                if (GlobalConstants.lastSpawnedPipe == null)
                 {
                     return PipeType.Default;
                 }
 
-                var pipe = GlobalConstants.selectedPipe;
+                var pipe = GlobalConstants.lastSpawnedPipe;
                 return pipe.GetComponent<PipeManipulation>().pipeType;
             }
         }
