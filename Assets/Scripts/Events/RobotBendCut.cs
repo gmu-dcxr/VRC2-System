@@ -185,8 +185,11 @@ namespace VRC2
             PickUp();
         }
 
-        public NetworkObject SpawnPipe()
+        public NetworkObject SpawnPipe(PipeBendAngles angle)
         {
+            // update angle
+            parameters.angle = angle;
+            
             // start bend/cut
             SpawnPipeUsingSelected();
             UpdateLocalSpawnedPipe(spawnedPipe.gameObject);

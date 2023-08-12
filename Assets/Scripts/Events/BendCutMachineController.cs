@@ -1,10 +1,11 @@
 ﻿using System;
+using Fusion;
 using UnityEngine;
-
-using UnityTimer;
 using VRC2.Pipe;
 
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
+using Random = System.Random;
+using Timer = UnityTimer.Timer;
 
 namespace VRC2.Events
 {
@@ -23,20 +24,29 @@ namespace VRC2.Events
         
         [Header("Error")] public bool enableError = false;
 
-        // target angle
         private PipeBendAngles _angle;
-
+        
         private Timer _timer;
+
+        // for generating wrong pipe (angle only)
+        private Random random;
 
         private void Start()
         {
+            random = new Random();
             robotBendCut.ReadyToOperate += OnReadyToOperate;
         }
 
         private void OnReadyToOperate(PipeBendAngles angle)
         {
             _angle = angle;
-            
+
+            if (enableError)
+            {
+                _angle = GetRandomAngle();
+                Debug.LogWarning($"Use random angle: {Utils.GetDisplayName<PipeBendAngles>(_angle)}");
+            }
+
             // play noise 
             audioSource.Play();
 
@@ -46,8 +56,7 @@ namespace VRC2.Events
             pipe.transform.rotation = pipeInput.rotation;
             pipe.transform.parent = null;
 
-            // update image
-            imageManager.UpdateFilename(GetImageName());
+            RPC_SendMessage(_angle);
             
             // start timer
             SetTimer(SpawnPipe);
@@ -69,7 +78,7 @@ namespace VRC2.Events
             audioSource.Stop();
             
             // spawn pipe
-            var no = robotBendCut.SpawnPipe();
+            var no = robotBendCut.SpawnPipe(_angle);
             // update spawned pipe transform
             no.transform.position = pipeOutput.transform.position;
             no.transform.rotation = pipeOutput.transform.rotation;
@@ -86,10 +95,39 @@ namespace VRC2.Events
 
         }
 
-        string GetImageName()
+        PipeBendAngles GetRandomAngle()
         {
-            var s = Utils.GetDisplayName<PipeBendAngles>(_angle);
+            var i = random.Next(0, 4);
+            var src = (int)_angle;
+            while (i == src)
+            {
+                i = random.Next(0, 4);
+            }
+
+            return (PipeBendAngles)i;
+        }
+
+        string GetImageName(PipeBendAngles angle)
+        {
+            var s = Utils.GetDisplayName<PipeBendAngles>(angle);
             return s.Split('_')[1];
+        }
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SendMessage(PipeBendAngles angle, RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+            {
+                // load side
+                imageManager.UpdateFilename(GetImageName(angle));
+            }
+            else
+            {
+                // remote side
+                imageManager.UpdateFilename(GetImageName(angle));
+            }
         }
     }
 }
