@@ -520,13 +520,18 @@ namespace VRC2
             var runner = GlobalConstants.networkRunner;
             var prefab = PipeHelper.GetPipePrefabRef(para);
 
-            runner.Spawn(prefab);
+            var no = runner.Spawn(prefab);
+            // set global select pipe
+            GlobalConstants.lastSpawnedPipe = no.gameObject;
         }
 
-        public void Simulate_RobotBendCut(GameObject pipe)
+        public void Simulate_RobotBendCut()
         {
-            // set global select pipe
-            GlobalConstants.lastSpawnedPipe = pipe;
+            if (GlobalConstants.lastSpawnedPipe == null)
+            {
+                Debug.LogError("Last spawned pipe is null, can not bend/cut");
+                return;
+            }
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
             var rbc = go.GetComponent<RobotBendCut>();
             rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);
