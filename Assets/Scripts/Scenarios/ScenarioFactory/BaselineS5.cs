@@ -39,8 +39,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Vector3 startPos;
         private Quaternion startRotation;
 
-        private WSMVehicleController _vehicleController;
-        private ForkliftController _forkliftController;
+        private ControllerTruck _vehicleController;
 
         private float speed = 6f;
         private float rotationSpeed = 0f;
@@ -87,8 +86,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             startRotation = craneTruck.transform.rotation;
             destinationPos = destination.transform.position;
 
-            _vehicleController = craneTruck.GetComponent<WSMVehicleController>();
-            _forkliftController = craneTruck.GetComponent<ForkliftController>();
+            _vehicleController = craneTruck.GetComponent<ControllerTruck>();
         }
 
         private void Update()
@@ -101,6 +99,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     StopVehicle();
                     break;
                 case WorkStage.UpLift:
+                    /*
                     if (ReachedLiftHeight(true))
                     {
                         _stage = WorkStage.Forward;
@@ -109,6 +108,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     {
                         LiftLoad(true);
                     }
+                    */
 
                     break;
                 case WorkStage.Forward:
@@ -137,6 +137,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
                     break;
                 case WorkStage.DownLift:
+                    /*
                     if (ReachedLiftHeight(false))
                     {
                         // fix a bug that sometimes the load can not be unloaded.
@@ -151,6 +152,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     {
                         LiftLoad(false);
                     }
+                    */
 
                     break;
             }
@@ -173,7 +175,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             var value = -1;
             if (up) value = 1;
-            _forkliftController.MoveForksVertically(value);
         }
 
         void StartTimer(int second, Action oncomplete)
@@ -209,11 +210,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             return false;
         }
 
+        /*
         bool ReachedLiftHeight(bool up)
         {
             if (up)
             {
-                if (_forkliftController.ForksVertical > liftHeightThreshold)
+                if (_vehicleController. > liftHeightThreshold)
                 {
                     return true;
                 }
@@ -225,7 +227,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             else
             {
 
-                if (_forkliftController.ForksVertical <= 0)
+                if (_vehicleController. <= 0)
                 {
                     return true;
                 }
@@ -236,20 +238,17 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
         }
+        */
 
 
         void StopVehicle()
         {
-            _vehicleController.BrakesInput = 1;
-            _vehicleController.HandBrakeInput = 1;
-            _vehicleController.ClutchInput = 1;
+            _vehicleController.Brake();
         }
 
         void StartVehicle()
         {
-            _vehicleController.BrakesInput = 0;
-            _vehicleController.HandBrakeInput = 0;
-            _vehicleController.ClutchInput = 0;
+            
         }
 
         void MoveForward(bool forward)
@@ -260,7 +259,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                 _acceleration = -1.0f;
             }
 
-            _vehicleController.AccelerationInput = _acceleration;
+            _vehicleController.speedEngine = _acceleration;
         }
 
         #endregion
