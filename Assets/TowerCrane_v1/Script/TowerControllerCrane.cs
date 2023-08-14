@@ -38,11 +38,11 @@ public class TowerControllerCrane : MonoBehaviour
     [HideInInspector] public Transform pointMovingBack;
     [HideInInspector] public Transform pointLineArrow_BoomCart;
     [HideInInspector] public Transform boomCart_Detal0;
-    [HideInInspector] public Transform pointLineHook0;
-    [HideInInspector] public Transform pointLineHook1;
-    [HideInInspector] public Transform pointLineHook2;
-    [HideInInspector] public Transform pointLineHook3;
-    [HideInInspector] public Transform pointLineHook4;
+    public Transform pointLineHook0;
+    public Transform pointLineHook1;
+    public Transform pointLineHook2;
+    public Transform pointLineHook3;
+    public Transform pointLineHook4;
     private LineRenderer lineRenHook_1;
     private LineRenderer lineRenHook_2;
     private LineRenderer lineRenHook_3;
@@ -115,6 +115,9 @@ public class TowerControllerCrane : MonoBehaviour
     private float moveHook;
     private Vector3 checkMoveCart;
     private RaycastHit hit;
+
+    //Will needing to animate for S6 bool
+    public bool animating = false;
 
     public void Start()
     {
@@ -577,7 +580,11 @@ public class TowerControllerCrane : MonoBehaviour
         }
 
         minMovingBoomCart = new Vector3(-2.783f, boomCart.localPosition.y, boomCart.localPosition.z);
-        AddPhysicsHook();
+
+        if (animating == false)
+        {
+            AddPhysicsHook();
+        }
     }
 
     public void AddPhysicsHook()

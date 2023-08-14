@@ -42,6 +42,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             player = localPlayer;
 
             scriptTCC = crane.GetComponent<TowerControllerCrane>();
+            scriptTCC.CreateCableHook();       
             scriptWind = windZone.GetComponent<wind>();
             jointHook = hook.GetComponent<ConfigurableJoint>();
             boomCart = scriptTCC.boomCart;
@@ -76,7 +77,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                         rotationSpeed * Time.deltaTime);
                 }
             }
-            jointHook.anchor = new Vector3(0, hookOffset, 0);           
+            jointHook.anchor = new Vector3(0, hookOffset, 0);
+            
         }
 
 
