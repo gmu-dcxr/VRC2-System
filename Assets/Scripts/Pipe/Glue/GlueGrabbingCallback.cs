@@ -1,6 +1,7 @@
 ﻿using System;
 using Oculus.Interaction;
 using UnityEngine;
+using VRC2.Hack;
 
 namespace VRC2.Events
 {
@@ -12,24 +13,44 @@ namespace VRC2.Events
 
 
         private PointableUnityEventWrapper _wrapper;
+        
+        private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
+
+        [HideInInspector]
+        public DistanceLimitedAutoMoveTowardsTargetProvider provider
+        {
+            get
+            {
+                if (_provider == null)
+                {
+                    _provider = gameObject.GetComponentInChildren<DistanceLimitedAutoMoveTowardsTargetProvider>();
+                }
+
+                return _provider;
+            }
+        }
 
         void Start()
         {
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
 
             _wrapper.WhenSelect.AddListener(OnSelect);
-            _wrapper.WhenUnselect.AddListener(OnUnselect);
+            _wrapper.WhenRelease.AddListener(OnRelease);
         }
 
         void OnSelect()
         {
+            if(provider == null || !provider.IsValid) return;
+            
             // enable horizontal object and disable vertical object to make it look real
             horizontalGameObject.SetActive(true);
             verticalGameObject.SetActive(false);
         }
 
-        public void OnUnselect()
+        public void OnRelease()
         {
+            if(provider == null || !provider.IsValid) return;
+            
             // restore it
             horizontalGameObject.SetActive(false);
             verticalGameObject.SetActive(true);
