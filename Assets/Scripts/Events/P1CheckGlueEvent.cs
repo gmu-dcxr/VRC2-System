@@ -13,29 +13,22 @@ namespace VRC2.Events
         public GameObject gluebox; // glue box to store the glue
 
         [Header("Animation")] public string animationString = "Walking";
-
+        public Animator animator;
+        
         private ExperimenterRoutine _routine = ExperimenterRoutine.Default;
 
-        private Animator _animator;
+        
 
         void Start()
         {
-            // clampSizeDict = new Dictionary<int, NetworkPrefabRef>();
-            //
-            // for (int i = 0; i < clampsTemplate.Count; i++)
-            // {
-            //     var prefab = clampsTemplate[i];
-            //     clampSizeDict.Add(i + 1, prefab);
-            // }
-
             experimenter.stoppingDistance = 0.5f;
-            var animator = experimenter.gameObject.GetComponent<Animator>();
             animator.SetBool(animationString, true);
         }
 
         void MoveToGlueBox()
         {
             Debug.Log("MoveToGlueBox");
+            animator.SetBool(animationString, true);
             _routine = ExperimenterRoutine.Go;
             experimenter.SetDestination(gluebox.transform.position);
         }
