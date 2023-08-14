@@ -102,6 +102,18 @@ namespace VRC2.Scenarios.ScenarioFactory
             _vehicleController.ClutchInput = 0;
         }
 
+        void Disappear()
+        {
+            truckLoad.SetActive(false);
+            truck.SetActive(false);
+        }
+
+        void Appear()
+        {
+            truck.SetActive(true);
+            truckLoad.SetActive(true);
+        }
+
         void MoveForward(bool forward, bool autoloop = false)
         {
             if (ReachDestination(forward))
@@ -114,6 +126,11 @@ namespace VRC2.Scenarios.ScenarioFactory
                 }
                 else
                 {
+                    if (forward)
+                    {
+                        // make truck disappear, simulating out-of-site
+                        Disappear();   
+                    }
                     moving = false;
                     return;
                 }
@@ -179,6 +196,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
+            
+            Appear();
 
             moving = false;
 
@@ -237,6 +256,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
+            
+            Appear();
 
             // update truck pos & rot
             truck.transform.position = closerStart.transform.position;
@@ -285,6 +306,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // Another truck is backing up nearby, and it is going to collide with the participants.
             // get incident
             var incident = GetIncident(6);
+            
+            Appear();
 
             // update truck pos & rot
             truck.transform.position = collisionStart.transform.position;
@@ -309,9 +332,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_7_Start()
         {
             print("On_BaselineS3_7_Start");
-
-            // hide truck
-            truck.SetActive(false);
+            
+            Disappear();
 
             // SAGAT query
             ShowSAGAT();
