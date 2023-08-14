@@ -12,15 +12,14 @@ namespace VRC2
     {
         [Header("Root canvas")] public GameObject rootCanvas;
 
-        [Header("UIHelper")] public GameObject UIHelper;
+        // [Header("UIHelper")] public GameObject UIHelper;
 
         [Header("Reticles")] public GameObject reticleLeft;
         public GameObject reticleRight;
-        
+
         [Header("Angle Buttons")] public List<Button> buttons;
 
-        [Header("Confirm/Reset")]
-        public Button confirmButton;
+        [Header("Confirm/Reset")] public Button confirmButton;
 
         public Button resetButton;
 
@@ -29,9 +28,10 @@ namespace VRC2
         public InputField bInputField;
 
         private PipeBendAngles _bendAngles = PipeBendAngles.Default;
+
         // action
         public System.Action OnConfirmed;
-        
+
         // result
         private PipeConstants.PipeParameters _parameters;
 
@@ -72,7 +72,7 @@ namespace VRC2
         {
             get => rootCanvas.activeSelf;
         }
-        
+
         // Start is called before the first frame update
         void Start()
         {
@@ -85,7 +85,7 @@ namespace VRC2
             _parameters.b = 0;
             _parameters.type = PipeType.Default;
             _parameters.color = PipeConstants.PipeColor.Default;
-            
+
             // hide on start
             Hide();
         }
@@ -100,9 +100,9 @@ namespace VRC2
         {
             // reset 
             OnReset();
-            
+
             rootCanvas.SetActive(true);
-            UIHelper.SetActive(true);
+            GlobalConstants.SetLaserPointer(true);
             reticleLeft.SetActive(false);
             reticleRight.SetActive(false);
         }
@@ -110,7 +110,7 @@ namespace VRC2
         public void Hide()
         {
             rootCanvas.SetActive(false);
-            UIHelper.SetActive(false);
+            GlobalConstants.SetLaserPointer(false);
             reticleLeft.SetActive(true);
             reticleRight.SetActive(true);
         }

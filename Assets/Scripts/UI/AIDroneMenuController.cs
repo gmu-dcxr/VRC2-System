@@ -15,7 +15,7 @@ namespace VRC2
     {
         [Header("Root canvas")] public GameObject rootCanvas;
 
-        [Header("UIHelper")] public GameObject UIHelper;
+        // [Header("UIHelper")] public GameObject UIHelper;
 
         [Header("Reticles")] public GameObject reticleLeft;
         public GameObject reticleRight;
@@ -106,7 +106,7 @@ namespace VRC2
             OnReset();
 
             rootCanvas.SetActive(true);
-            UIHelper.SetActive(true);
+            GlobalConstants.SetLaserPointer(true);
             reticleLeft.SetActive(false);
             reticleRight.SetActive(false);
         }
@@ -114,7 +114,7 @@ namespace VRC2
         public void Hide()
         {
             rootCanvas.SetActive(false);
-            UIHelper.SetActive(false);
+            GlobalConstants.SetLaserPointer(false);
             reticleLeft.SetActive(true);
             reticleRight.SetActive(true);
         }
