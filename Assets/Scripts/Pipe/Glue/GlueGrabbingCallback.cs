@@ -10,8 +10,9 @@ namespace VRC2.Events
     {
         public GameObject horizontalGameObject;
         public GameObject verticalGameObject;
-
-
+        
+        private Rigidbody _rigidbody;
+        
         private PointableUnityEventWrapper _wrapper;
         
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
@@ -32,6 +33,8 @@ namespace VRC2.Events
 
         void Start()
         {
+            _rigidbody = gameObject.GetComponent<Rigidbody>();
+            
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
 
             _wrapper.WhenSelect.AddListener(OnSelect);
@@ -45,6 +48,8 @@ namespace VRC2.Events
             // enable horizontal object and disable vertical object to make it look real
             horizontalGameObject.SetActive(true);
             verticalGameObject.SetActive(false);
+
+            _rigidbody.isKinematic = true;
         }
 
         public void OnRelease()
@@ -55,6 +60,9 @@ namespace VRC2.Events
             horizontalGameObject.SetActive(false);
             verticalGameObject.SetActive(true);
 
+            // make it drop
+            _rigidbody.isKinematic = false;
+            
             UseGlue();
         }
 
