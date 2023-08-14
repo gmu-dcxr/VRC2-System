@@ -320,5 +320,30 @@ namespace VRC2
         }
 
         #endregion
+
+        #region UIHelpers
+
+        private static string LaserPointerName = "LaserPointer";
+        private static UnityEngine.GameObject _LaserPointer;
+
+        private static UnityEngine.GameObject LaserPointer
+        {
+            get
+            {
+                if (_LaserPointer == null)
+                {
+                    _LaserPointer = GameObject.Find(LaserPointerName);
+                }
+
+                return _LaserPointer;
+            }
+        }
+
+        public static void SetLaserPointer(bool enable)
+        {
+            LaserPointer.SetActive(enable);
+        }
+
+        #endregion
     }
 }

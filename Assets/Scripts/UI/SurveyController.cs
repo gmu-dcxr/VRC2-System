@@ -10,7 +10,7 @@ namespace VRC2
     {
         [Header("Root canvas")] public GameObject rootCanvas;
 
-        [Header("UIHelper")] public GameObject UIHelper;
+        // [Header("UIHelper")] public GameObject UIHelper;
 
 
         [Header("Confirm/Clear")] public Button confirmButton;
@@ -43,13 +43,13 @@ namespace VRC2
         public void Show()
         {
             _canvas.enabled = true;
-            UIHelper.SetActive(true);
+            GlobalConstants.SetLaserPointer(true);
         }
 
         public void Hide()
         {
             _canvas.enabled = false;
-            UIHelper.SetActive(false);
+            GlobalConstants.SetLaserPointer(false);
         }
 
         void OnConfirmed()
