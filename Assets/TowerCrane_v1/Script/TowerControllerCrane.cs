@@ -116,8 +116,8 @@ public class TowerControllerCrane : MonoBehaviour
     private Vector3 checkMoveCart;
     private RaycastHit hit;
 
-    //Will needing to animate for S6 bool
-    public bool animating = false;
+    [Space(30)] [Header("Hack")]
+    public bool enableVROperating = false;
 
     public void Start()
     {
@@ -581,10 +581,7 @@ public class TowerControllerCrane : MonoBehaviour
 
         minMovingBoomCart = new Vector3(-2.783f, boomCart.localPosition.y, boomCart.localPosition.z);
 
-        if (animating == false)
-        {
-            AddPhysicsHook();
-        }
+        AddPhysicsHook();
     }
 
     public void AddPhysicsHook()
@@ -797,103 +794,135 @@ public class TowerControllerCrane : MonoBehaviour
 
     public virtual bool isForwardBoomCart()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.y > 0;
     }
 
     public virtual bool isForwardBoomCartUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.y == 0;
     }
 
     public virtual bool isBackBoomCart()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.y < 0;
     }
 
     public virtual bool isBackBoomCartUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.y == 0;
     }
 
     public virtual bool isLeftCrane()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.x < 0;
     }
 
     public virtual bool isLeftCraneUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.x == 0;
     }
 
     public virtual bool isRightCrane()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.x > 0;
     }
 
     public virtual bool isRightCraneUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetLeftThumbstick();
         return t.x == 0;
     }
 
     public virtual bool isUpMovingHook()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.y > 0;
     }
 
     public virtual bool isUpMovingHookUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.y == 0;
     }
 
     public virtual bool isDownMovingHook()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.y < 0;
     }
 
     public virtual bool isDownMovingHookUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.y == 0;
     }
 
     public virtual bool isLeftRotationCargo()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.x < 0;
     }
 
     public virtual bool isLeftRotationCargoUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
-
         return t.x == 0;
     }
 
     public virtual bool isRightRotationCargo()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.x > 0;
     }
 
     public virtual bool isRightRotationCargoUp()
     {
+        if (!enableVROperating) return false;
+        
         var t = GetRightThumbstick();
         return t.x == 0;
     }
 
     public virtual bool isSeizeTheCargo()
     {
+        if (!enableVROperating) return false;
         // right hand index trigger
         return OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger);
     }
