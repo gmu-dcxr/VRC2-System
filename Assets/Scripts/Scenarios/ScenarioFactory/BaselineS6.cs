@@ -13,53 +13,65 @@ namespace VRC2.Scenarios.ScenarioFactory
     {
 
         //Actaully Using
-        public GameObject unpackedPipe;
+        public GameObject pipes;
         public GameObject crane;
         public GameObject hook;
-        public GameObject windZone;
-        private ConfigurableJoint jointHook;
+        public Wind scriptWind;
+        private ConfigurableJoint _jointHook;
+
+        private ConfigurableJoint jointHook
+        {
+            get
+            {
+                if (_jointHook == null)
+                {
+                    _jointHook = hook.GetComponent<ConfigurableJoint>();
+                }
+
+                return _jointHook;
+            }
+        }
+
         private TowerControllerCrane scriptTCC;
-        private wind scriptWind;
         public Transform startingRotation;
         public Transform endingRotation;
-        private Transform craneSwivel;
         private Transform boomCart;
         private bool clockWise; //From above
         private bool canRotate;
         public float rotationSpeed = 60f;
         public float hookOffset = 5f;
-        public float boomCartOffset = -8f;
         public float windSpeed = 1f;
         private float boomCartPositionX;
         //end Actually Using        
 
         private GameObject player;
 
+        private Transform _craneSwivel;
+
+        private Transform craneSwivel
+        {
+            get
+            {
+                if (_craneSwivel == null)
+                {
+                    _craneSwivel = crane.GetComponent<TowerControllerCrane>().rotationElementCrane;
+                }
+
+                return _craneSwivel;
+            }
+        }
+
         private void Start()
         {
 
             base.Start();
             player = localPlayer;
-
-            scriptTCC = crane.GetComponent<TowerControllerCrane>();
-            scriptTCC.CreateCableHook();       
-            scriptWind = windZone.GetComponent<wind>();
-            jointHook = hook.GetComponent<ConfigurableJoint>();
-            boomCart = scriptTCC.boomCart;
             clockWise = true;
             canRotate = true;
-            jointHook.anchor = new Vector3(0, hookOffset, 0);
-            boomCart.localPosition += new Vector3(boomCartOffset, 0f, 0f);
-            boomCartPositionX = boomCart.localPosition.x;
-            craneSwivel = scriptTCC.rotationElementCrane.transform;           
-
-            player = localPlayer;
-
-            unpackedPipe.SetActive(false);
         }
 
         private void Update()
-        {                         
+        {
             // Handle Roatating Crane
             if (canRotate)
             {
@@ -67,28 +79,29 @@ namespace VRC2.Scenarios.ScenarioFactory
                 if (clockWise)
                 {
                     print("clockWise");
-                    craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, endingRotation.rotation, 
+                    craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, endingRotation.rotation,
                         rotationSpeed * Time.deltaTime);
                 }
                 else
                 {
                     print("!clockWise");
-                    craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, startingRotation.rotation, 
+                    craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, startingRotation.rotation,
                         rotationSpeed * Time.deltaTime);
                 }
             }
+
             jointHook.anchor = new Vector3(0, hookOffset, 0);
-            
+
         }
 
 
         #region Accident Events Callbacks
-        
+
         // normal event
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S6");
-            
+
         }
 
         public void On_BaselineS6_1_Start()
@@ -113,7 +126,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             clockWise = false;
             canRotate = true;
             scriptWind.windForce = 100f;
-            unpackedPipe.SetActive(true);
+            pipes.SetActive(true);
         }
 
         public void On_BaselineS6_2_Finish()
@@ -130,7 +143,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             //TriggerEvent(wind1, false, true);
             clockWise = true;
-            unpackedPipe.SetActive(false);
+            pipes.SetActive(false);
         }
 
         public void On_BaselineS6_3_Finish()
@@ -149,7 +162,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             //TriggerEvent(wind2, true, false);
             clockWise = false;
-            unpackedPipe.SetActive(true);
+            pipes.SetActive(true);
             scriptWind.windForce = 1000f;
         }
 
@@ -167,7 +180,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             //TriggerEvent(wind2, false, true);
             clockWise = true;
-            unpackedPipe.SetActive(false);
+            pipes.SetActive(false);
         }
 
         public void On_BaselineS6_5_Finish()
@@ -185,7 +198,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             //TriggerEvent(wind3, true, false);
             clockWise = false;
-            unpackedPipe.SetActive(true);
+            pipes.SetActive(true);
             scriptWind.windForce = 10000f;
         }
 

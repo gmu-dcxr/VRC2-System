@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class wind : MonoBehaviour
+public class Wind : MonoBehaviour
 {
 
     public float windForce = 0f;
