@@ -25,7 +25,7 @@ namespace VRC2
 
         public float boxDistanceOffset = 0.25f;
 
-        private Vector3 _wallExtends;
+        [HideInInspector] public Vector3 _wallExtends;
 
         private IDictionary<PipeDiameter, float> _pipeDiameters;
         private IDictionary<int, float> _clampExtendsZ;
@@ -156,56 +156,64 @@ namespace VRC2
                 var chm = child.GetComponent<ClampHintManager>();
                 if (chm.Clamped) return false;
             }
-            
+
             return true;
+        }
+
+        public float GetPipeZByDiameter(PipeDiameter diameter)
+        {
+            return _pipeDiameters[diameter];
         }
 
         void HandlePipeCollision(GameObject pipe)
         {
             // here the pipe may belong to a pipe container
             // find the root object
-            var root = pipe.transform;
-            while (true)
-            {
-                if (root.parent == null) break;
-                root = root.parent;
-            }
+            var rootObject = PipeHelper.GetRoot(pipe);
 
             var ipipe = pipe.transform.parent.gameObject;
 
-            var rootObject = root.gameObject;
+            var pm = ipipe.GetComponent<PipeManipulation>();
 
-            // get diameter
-            var diameter = ipipe.GetComponent<PipeManipulation>().diameter;
+            pm.collidingWall = true;
 
-            // get real diameter
-            var pipez = _pipeDiameters[diameter];
+            // do nothing if the pipe is held by controller
+            if (pm.heldByController)
+            {
+                UpdateAllClampHints(rootObject, true);
+            }
 
-            // disable gravity
-            var rb = rootObject.GetComponent<Rigidbody>();
-            GameObject.Destroy(rb);
-
-            var t = rootObject.transform;
-            var pos = t.position;
-            var rot = t.rotation.eulerAngles;
-
-            // get the wall transform
-            var wt = gameObject.transform;
-            var wpos = wt.position;
-            var wrot = wt.rotation.eulerAngles;
-
-            // set pipe's x rotation to the wall's x rotation
-            rot.x = wrot.x;
-            // set pipe's y rotation to the wall's y rotation
-            rot.y = wrot.y + pipeYRotationOffset;
-            rootObject.transform.rotation = Quaternion.Euler(rot);
-
-            // update the pipe's distance to the wall
-            pos.x = wpos.x + _wallExtends.x + pipez;
-
-            rootObject.transform.position = pos;
-
-            UpdateAllClampHints(rootObject, true);
+            // // get diameter
+            // var diameter = pm.diameter;
+            //
+            // // get real diameter
+            // var pipez = _pipeDiameters[diameter];
+            //
+            // // disable gravity
+            // var rb = rootObject.GetComponent<Rigidbody>();
+            // GameObject.Destroy(rb);
+            //
+            // var t = rootObject.transform;
+            // var pos = t.position;
+            // var rot = t.rotation.eulerAngles;
+            //
+            // // get the wall transform
+            // var wt = gameObject.transform;
+            // var wpos = wt.position;
+            // var wrot = wt.rotation.eulerAngles;
+            //
+            // // set pipe's x rotation to the wall's x rotation
+            // rot.x = wrot.x;
+            // // set pipe's y rotation to the wall's y rotation
+            // rot.y = wrot.y + pipeYRotationOffset;
+            // rootObject.transform.rotation = Quaternion.Euler(rot);
+            //
+            // // update the pipe's distance to the wall
+            // pos.x = wpos.x + _wallExtends.x + pipez;
+            //
+            // rootObject.transform.position = pos;
+            //
+            // UpdateAllClampHints(rootObject, true);
         }
 
         Vector3 GetPipeRotation(GameObject pipe, GameObject wall)
