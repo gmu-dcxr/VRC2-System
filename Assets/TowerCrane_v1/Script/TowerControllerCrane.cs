@@ -978,4 +978,96 @@ public class TowerControllerCrane : MonoBehaviour
     }
 
     #endregion
+
+    #region Crane Rotation
+
+    public void RotateCrane(bool left, bool leftup, bool right, bool rightup)
+    {
+        if (left)
+        {
+            blockSound_B = false;
+            if (!soundCrane.isPlaying)
+            {
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(startMotorCrane);
+                soundCrane.Play();
+            }
+            else
+            {
+                floatRotCabin -= Time.deltaTime * speedRotationCrane;
+            }
+
+            if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
+            {
+                if (blockPlayOneShot_RotationCrane == true)
+                {
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
+                    blockPlayOneShot_RotationCrane = false;
+                }
+            }
+
+            UIPanelCrane();
+        }
+//______________________________________________________________________________________________________________________________________
+        else if (leftup)
+        {
+            if (blockSound_A == true && blockSound_C == true)
+            {
+                soundCrane.Stop();
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(stopMotorCrane);
+            }
+
+            blockPlayOneShot_RotationCrane = true;
+            blockSound_B = true;
+        }
+
+        if (right)
+        {
+            blockSound_B = false;
+            if (!soundCrane.isPlaying)
+            {
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(startMotorCrane);
+                soundCrane.Play();
+            }
+            else
+            {
+                floatRotCabin += Time.deltaTime * speedRotationCrane;
+            }
+
+            if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
+            {
+                if (blockPlayOneShot_RotationCrane == true)
+                {
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
+                    blockPlayOneShot_RotationCrane = false;
+                }
+            }
+
+            UIPanelCrane();
+        }
+//______________________________________________________________________________________________________________________________________
+        else if (rightup)
+        {
+            if (blockSound_A == true && blockSound_C == true)
+            {
+                soundCrane.Stop();
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(stopMotorCrane);
+            }
+
+            blockSound_B = true;
+            blockPlayOneShot_RotationCrane = true;
+        }
+
+        var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+        rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+            Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+        var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
+        rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel,
+            Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+    }
+
+    #endregion
 }
