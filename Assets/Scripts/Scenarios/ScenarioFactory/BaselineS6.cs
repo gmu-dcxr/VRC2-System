@@ -16,6 +16,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject pipes;
         public GameObject crane;
         public GameObject hook;
+        public GameObject decayHookOn;
         public Wind scriptWind;
         private ConfigurableJoint _jointHook;
 
@@ -48,6 +49,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private Transform _craneSwivel;
 
+        // distance between the cargo and the hook to make the cargo grabbable
+        private float cargoOffset = 3.5f; // to make Decay Hook On visible
+        private bool _connected = false;
+
         private Transform craneSwivel
         {
             get
@@ -66,33 +71,64 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             base.Start();
             player = localPlayer;
+
+            scriptTCC = crane.GetComponent<TowerControllerCrane>();
+            
             clockWise = true;
             canRotate = true;
         }
 
         private void Update()
         {
-            // Handle Roatating Crane
-            if (canRotate)
+            if (!_connected)
             {
-                print("can rotate");
-                if (clockWise)
-                {
-                    print("clockWise");
-                    craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, endingRotation.rotation,
-                        rotationSpeed * Time.deltaTime);
-                }
-                else
-                {
-                    print("!clockWise");
-                    craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, startingRotation.rotation,
-                        rotationSpeed * Time.deltaTime);
-                }
+                ConnectCargo(pipes);   
             }
-
-            jointHook.anchor = new Vector3(0, hookOffset, 0);
+            
+            // // Handle Roatating Crane
+            // if (canRotate)
+            // {
+            //     print("can rotate");
+            //     if (clockWise)
+            //     {
+            //         print("clockWise");
+            //         craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, endingRotation.rotation,
+            //             rotationSpeed * Time.deltaTime);
+            //     }
+            //     else
+            //     {
+            //         print("!clockWise");
+            //         craneSwivel.rotation = Quaternion.RotateTowards(craneSwivel.rotation, startingRotation.rotation,
+            //             rotationSpeed * Time.deltaTime);
+            //     }
+            // }
+            //
+            // jointHook.anchor = new Vector3(0, hookOffset, 0);
 
         }
+
+        #region Connect Cargo
+
+        void ConnectCargo(GameObject cargo)
+        {
+            print("connect cargo");
+            
+            // move the cargo under the hook
+            var pos = hook.transform.position;
+            var upward = hook.transform.up;
+
+            cargo.transform.position = pos + upward * -cargoOffset;
+
+            if (decayHookOn.activeSelf)
+            {
+                scriptTCC.ManuallyConnectCargo();
+                _connected = true;
+            }
+        }
+
+        
+
+        #endregion
 
 
         #region Accident Events Callbacks

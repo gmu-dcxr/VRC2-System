@@ -116,8 +116,7 @@ public class TowerControllerCrane : MonoBehaviour
     private Vector3 checkMoveCart;
     private RaycastHit hit;
 
-    [Space(30)] [Header("Hack")]
-    public bool enableVROperating = false;
+    [Space(30)] [Header("Hack")] public bool enableVROperating = false;
 
     public void Start()
     {
@@ -795,7 +794,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isForwardBoomCart()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.y > 0;
     }
@@ -803,7 +802,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isForwardBoomCartUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.y == 0;
     }
@@ -811,7 +810,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isBackBoomCart()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.y < 0;
     }
@@ -819,7 +818,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isBackBoomCartUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.y == 0;
     }
@@ -827,7 +826,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isLeftCrane()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.x < 0;
     }
@@ -835,7 +834,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isLeftCraneUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.x == 0;
     }
@@ -843,7 +842,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isRightCrane()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.x > 0;
     }
@@ -851,7 +850,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isRightCraneUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetLeftThumbstick();
         return t.x == 0;
     }
@@ -859,7 +858,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isUpMovingHook()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.y > 0;
     }
@@ -867,7 +866,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isUpMovingHookUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.y == 0;
     }
@@ -875,7 +874,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isDownMovingHook()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.y < 0;
     }
@@ -883,7 +882,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isDownMovingHookUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.y == 0;
     }
@@ -891,7 +890,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isLeftRotationCargo()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.x < 0;
     }
@@ -899,7 +898,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isLeftRotationCargoUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.x == 0;
     }
@@ -907,7 +906,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isRightRotationCargo()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.x > 0;
     }
@@ -915,7 +914,7 @@ public class TowerControllerCrane : MonoBehaviour
     public virtual bool isRightRotationCargoUp()
     {
         if (!enableVROperating) return false;
-        
+
         var t = GetRightThumbstick();
         return t.x == 0;
     }
@@ -925,6 +924,57 @@ public class TowerControllerCrane : MonoBehaviour
         if (!enableVROperating) return false;
         // right hand index trigger
         return OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger);
+    }
+
+    #endregion
+
+    #region Connect Cargo Hardcode
+
+    public void ManuallyConnectCargo()
+    {
+        if (addPhysicsHook_Bool == false)
+        {
+            Ray ray = new Ray(pointRayDecay.position, -Vector3.up);
+            int layerCargo = (1 << 10);
+            int layerIgnore = ~(1 << 2);
+            if (Physics.Raycast(ray, out hit, 1000, layerIgnore))
+            {
+                decayHookPoint.position = hit.point + hit.normal * 0.01f;
+                decayHookPoint.rotation = Quaternion.LookRotation(-hit.normal);
+            }
+
+            if (Physics.Raycast(ray, out hit, 100))
+            {
+                maxOffset = hit.distance;
+            }
+
+            RaycastHit hitCargo;
+            if (Physics.Raycast(ray, out hitCargo, distanceCargoToHook, layerCargo) && maxOffset > 1.7f &&
+                connectedCargo_Bool == true)
+            {
+                decayHookOn.gameObject.SetActive(true);
+                _cargo = hitCargo.collider.gameObject;
+                distanceCargo = hitCargo.distance;
+                Vector3 decayOn = scriptSwitch.towerCrane.transform.position - transform.position;
+                decayHookOn.rotation = Quaternion.LookRotation(-decayOn, Vector3.up);
+            }
+            else
+            {
+                decayHookOn.gameObject.SetActive(false);
+                distanceCargo = 0;
+            }
+
+            if (connectedCargo_Bool == true)
+            {
+                ConnectedCargo();
+                connectedCargo_Bool = false;
+            }
+            else if (connectedCargo_Bool == false)
+            {
+                ConnectedCargo();
+                connectedCargo_Bool = true;
+            }
+        }
     }
 
     #endregion
