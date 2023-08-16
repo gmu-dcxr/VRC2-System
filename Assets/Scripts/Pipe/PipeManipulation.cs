@@ -42,6 +42,16 @@ namespace VRC2
 
         private NetworkGrabbable _networkGrabbable;
 
+        // pipe is held by controller
+        [HideInInspector] public bool heldByController = false;
+
+        [HideInInspector]
+        public bool collidingWall
+        {
+            get;
+            set;
+        }
+
         public bool IsStraight
         {
             get => angle == PipeBendAngles.Angle_0;
@@ -265,6 +275,7 @@ namespace VRC2
             // update current select pipe
             // GlobalConstants.selectedPipe = gameObject;
 
+            heldByController = true;
             // enable kinematic
             _rigidbody.isKinematic = true;
         }
@@ -277,6 +288,7 @@ namespace VRC2
         public void OnRelease()
         {
             // print("Pipe OnRelease");
+            heldByController = false;
             // disable kinematic to let it drop
             _rigidbody.isKinematic = false;
         }
