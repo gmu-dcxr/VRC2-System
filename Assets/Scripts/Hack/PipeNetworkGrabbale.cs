@@ -39,6 +39,10 @@ namespace VRC2.Pipe
                 // p1 side, call the parent method
                 return false;
             }
+            
+            // return false if it is not a basic pipe
+            var root = PipeHelper.GetRoot(gameObject);
+            if (root != gameObject) return false;
 
             // p2 can only manipulate straight non-cut pipe
             var pm = gameObject.GetComponent<PipeManipulation>();

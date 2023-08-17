@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 2649282594678678698}
   - component: {fileID: 7338638701623026070}
   - component: {fileID: 7232877588704799845}
-  - component: {fileID: 6075783067480007567}
   - component: {fileID: 5608847506769983691}
   - component: {fileID: 5835886917005753850}
   - component: {fileID: 6572316060700969025}
+  - component: {fileID: 8122503542699750889}
   m_Layer: 0
   m_Name: InteractablePipeContainer
   m_TagString: Untagged
@@ -55,7 +55,7 @@ MonoBehaviour:
   _candidateTiebreaker: {fileID: 0}
   _maxIterationsPerFrame: 3
   _data: {fileID: 0}
-  _pointableElement: {fileID: 6075783067480007567}
+  _pointableElement: {fileID: 0}
   _rigidbody: {fileID: 5835886917005753850}
   _distanceThreshold: 0.01
   _snapPoseTransform: {fileID: 0}
@@ -112,25 +112,6 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 7338638701623026070}
   SimulationBehaviours: []
---- !u!114 &6075783067480007567
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4041305961238715309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5582b44f0cf8498b95319fe7bb4127b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _transferOnSecondSelection: 0
-  _addNewPointsToFront: 0
-  _forwardElement: {fileID: 0}
-  _oneGrabTransformer: {fileID: 0}
-  _twoGrabTransformer: {fileID: 0}
-  _targetTransform: {fileID: 0}
-  _maxGrabPoints: -1
 --- !u!114 &5608847506769983691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointable: {fileID: 6075783067480007567}
+  _pointable: {fileID: 0}
   _whenRelease:
     m_PersistentCalls:
       m_Calls: []
@@ -193,6 +174,25 @@ MonoBehaviour:
   _whenCancel:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8122503542699750889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4041305961238715309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f60dee99365f423984d469e72c7a8abd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _transferOnSecondSelection: 0
+  _addNewPointsToFront: 0
+  _forwardElement: {fileID: 0}
+  _oneGrabTransformer: {fileID: 0}
+  _twoGrabTransformer: {fileID: 0}
+  _targetTransform: {fileID: 0}
+  _maxGrabPoints: -1
 --- !u!1 &7353636159068763334
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,8 +203,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3666780475832947831}
   - component: {fileID: 5195097504754371578}
-  - component: {fileID: 7717486705584126993}
   - component: {fileID: 3845102919864501801}
+  - component: {fileID: 7305779973105959839}
   m_Layer: 0
   m_Name: GrabInteractable
   m_TagString: Untagged
@@ -242,13 +242,13 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 6075783067480007567}
+  _pointableElement: {fileID: 8122503542699750889}
   _rigidbody: {fileID: 5835886917005753850}
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
-  _movementProvider: {fileID: 7717486705584126993}
---- !u!114 &7717486705584126993
+  _movementProvider: {fileID: 7305779973105959839}
+--- !u!114 &3845102919864501801
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -257,11 +257,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 7353636159068763334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c6cba82e9f3c84f80041e0d2741ef6, type: 3}
+  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 0}
+  _customIcon: {fileID: 0}
+  _snappiness: 0.8
+--- !u!114 &7305779973105959839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7353636159068763334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3906d48c19bb044995eeb166bf144f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _travellingData:
-    _travelSpeed: 10
+    _travelSpeed: 1
     _useFixedTravelTime: 0
     _travelCurve:
       serializedVersion: 2
@@ -287,19 +302,5 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  _pointableElement: {fileID: 6075783067480007567}
---- !u!114 &3845102919864501801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7353636159068763334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _renderer: {fileID: 0}
-  _customIcon: {fileID: 0}
-  _snappiness: 0.8
+  _pointableElement: {fileID: 8122503542699750889}
+  maxDistance: 0.2
