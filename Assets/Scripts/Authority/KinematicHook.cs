@@ -50,6 +50,7 @@ namespace VRC2.Authority
             if (rigidbody == null) return;
             
             rigidbody.isKinematic = false;
+            _authorityUpdated = true;
         }
     }
 }

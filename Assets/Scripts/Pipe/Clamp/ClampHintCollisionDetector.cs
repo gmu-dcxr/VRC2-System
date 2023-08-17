@@ -54,7 +54,6 @@ namespace VRC2.Pipe
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && _hintManager.OnTheWall)
             {
-                print($"{CheckClampSizeMatch(go)}");
                 _hintManager.Clamped = true;
             }
         }

@@ -97,8 +97,6 @@ namespace VRC2
             }
         }
 
-        private bool beingSelected;
-
         private MeshCollider _meshColliderA
         {
             get => segmentA.GetComponent<MeshCollider>();
@@ -114,6 +112,32 @@ namespace VRC2
             get => GetComponent<Rigidbody>();
         }
 
+        #region Hint Managers
+
+        private List<ClampHintManager> _hintManagers;
+
+        private List<ClampHintManager> hintManagers
+        {
+            get
+            {
+                if (_hintManagers == null)
+                {
+                    _hintManagers = new List<ClampHintManager>();
+                    var children = Utils.GetChildren<ClampHintManager>(gameObject);
+
+                    foreach (var child in children)
+                    {
+                        var chm = child.GetComponent<ClampHintManager>();
+                        _hintManagers.Add(chm);
+                    }
+                }
+
+                return _hintManagers;
+            }
+        }
+
+        #endregion
+
 
         // Start is called before the first frame update
         void Start()
@@ -123,8 +147,6 @@ namespace VRC2
 
             // set materials
             SetMaterial();
-
-            beingSelected = false;
 
             // bind event
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
@@ -142,12 +164,15 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
-            if (beingSelected && !OVRInput.Get(OVRInput.RawButton.RHandTrigger, OVRInput.Controller.RTouch))
+        }
+
+        bool ShouldFall()
+        {
+            foreach (var chm in hintManagers)
             {
-                // pipe was released
-                beingSelected = false;
-                // SetTriggers(true);
+                if (chm.Clamped) return false;
             }
+            return true;
         }
 
         public void SetTriggers(bool flag)
@@ -264,17 +289,6 @@ namespace VRC2
 
         public void OnSelect()
         {
-            // Debug.Log("Pipe OnSelect");
-
-            // if (heldByRightHand())
-            // {
-            //     beingSelected = true;
-            //     SetTriggers(false);
-            // }
-
-            // update current select pipe
-            // GlobalConstants.selectedPipe = gameObject;
-
             heldByController = true;
             // enable kinematic
             _rigidbody.isKinematic = true;
@@ -287,10 +301,26 @@ namespace VRC2
 
         public void OnRelease()
         {
-            // print("Pipe OnRelease");
             heldByController = false;
-            // disable kinematic to let it drop
-            _rigidbody.isKinematic = false;
+            
+            if (collidingWall)
+            {
+                // pipe is on the wall
+                if (ShouldFall())
+                {
+                    // disable kinematic to let it drop
+                    _rigidbody.isKinematic = false;      
+                }
+                else
+                {
+                    _rigidbody.isKinematic = true;
+                }
+            }
+            else
+            {
+                // pipe is not on the wall
+                _rigidbody.isKinematic = false;
+            }
         }
 
         #endregion
