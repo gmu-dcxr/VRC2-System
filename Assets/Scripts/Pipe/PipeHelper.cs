@@ -461,5 +461,24 @@ namespace VRC2.Pipe
         }
 
         #endregion
+
+        #region Pipe Fall Logic
+        
+        // return true only if all clamps are visible
+        public static bool ShouldPipeFall(GameObject root)
+        {
+            // return false if there is at least one ClampHintManager.Clamped == true
+            var children = Utils.GetChildren<ClampHintManager>(root);
+
+            foreach (var child in children)
+            {
+                var chm = child.GetComponent<ClampHintManager>();
+                if (chm.Clamped) return false;
+            }
+
+            return true;
+        }
+
+        #endregion
     }
 }

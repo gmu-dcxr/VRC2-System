@@ -9,7 +9,7 @@ namespace VRC2.Authority
         [Header("Authority")] public bool P1Only;
         public bool P2Only;
 
-        private bool _authorityUpdated = false;
+        [HideInInspector]public bool _authorityUpdated = false;
 
         private NetworkRunner _runner = null;
 
