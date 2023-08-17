@@ -32,6 +32,11 @@ namespace VRC2
             get => GetComponent<Rigidbody>();
         }
 
+        [HideInInspector]
+        public bool collidingWall { get; set; }
+        
+        [HideInInspector] public bool heldByController = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -41,6 +46,8 @@ namespace VRC2
 
         public void OnSelect()
         {
+            heldByController = true;
+            
             if (_rigidbody == null) return;
             
             _rigidbody.isKinematic = true;
@@ -48,6 +55,8 @@ namespace VRC2
 
         public void OnRelease()
         {
+            heldByController = false;
+            
             if (_rigidbody == null) return;
             
             _rigidbody.isKinematic = false;

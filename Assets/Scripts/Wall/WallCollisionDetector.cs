@@ -155,18 +155,33 @@ namespace VRC2
         {
             // here the pipe may belong to a pipe container
             // find the root object
-            var rootObject = PipeHelper.GetRoot(pipe);
+            var root = PipeHelper.GetRoot(pipe);
 
             var ipipe = pipe.transform.parent.gameObject;
 
-            var pm = ipipe.GetComponent<PipeManipulation>();
-
-            pm.collidingWall = true;
-
-            // do nothing if the pipe is held by controller
-            if (pm.heldByController)
+            if (root != ipipe)
             {
-                UpdateAllClampHints(rootObject, true);
+                // root is a pipe container
+                var pcm = root.GetComponent<PipesContainerManager>();
+                pcm.collidingWall = true;
+
+                if (pcm.heldByController)
+                {
+                    UpdateAllClampHints(root, true);
+                }
+
+            }
+            else
+            {
+                // it's a simple pipe
+                var pm = ipipe.GetComponent<PipeManipulation>();
+                pm.collidingWall = true;
+
+                // do nothing if the pipe is held by controller
+                if (pm.heldByController)
+                {
+                    UpdateAllClampHints(root, true);
+                }
             }
 
             // // get diameter
