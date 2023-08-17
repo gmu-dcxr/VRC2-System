@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace VRC2.Authority
 {
@@ -20,19 +21,27 @@ namespace VRC2.Authority
             }
         }
 
+        private void Start()
+        {
+            // disable it under no-network circumstance
+            if (rigidbody == null) return;
+
+            rigidbody.isKinematic = false;
+        }
+
         public override void DisableP1()
         {
             // disable on P1 side, so the object can drop because of gravity
             // and the transform will synchronize to P2 side.
             if (rigidbody == null) return;
-            
+
             rigidbody.isKinematic = false;
         }
 
         public override void DisableP2()
         {
             if (rigidbody == null) return;
-            
+
             rigidbody.isKinematic = false;
         }
 
@@ -40,17 +49,12 @@ namespace VRC2.Authority
         {
             // because default is false, it is needed to enable again
             if (rigidbody == null) return;
-            
+
             rigidbody.isKinematic = true;
         }
 
         public override void Default()
         {
-            // disable it under no-network circumstance
-            if (rigidbody == null) return;
-            
-            rigidbody.isKinematic = false;
-            _authorityUpdated = true;
         }
     }
 }
