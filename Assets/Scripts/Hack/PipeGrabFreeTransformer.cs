@@ -153,7 +153,17 @@ namespace VRC2.Hack
             if (collidingWall)
             {
                 // print("Colliding Wall. Apply compensation.");
-                (pos, rotation) = Compensate(targetTransform, pos, rotation);
+                var (newPos, newRot) = Compensate(targetTransform, pos, rotation);
+
+                var dir = (newPos - pos).normalized;
+                var angle = Vector3.Angle(dir, _wall.transform.right);
+
+                // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
+                if (angle < 180)
+                {
+                    rotation = newRot;
+                    pos = newPos;
+                }
             }
 
             targetTransform.rotation = Quaternion.Euler(rotation);
@@ -178,11 +188,6 @@ namespace VRC2.Hack
             var pipez = _wallCollisionDetector.GetPipeZByDiameter(diameter);
 
             var wallExtends = _wallCollisionDetector._wallExtends;
-
-            // var rootObject = target.gameObject;
-            // var t = rootObject.transform;
-            // var pos = t.position;
-            // var rot = t.rotation.eulerAngles;
 
             // get the wall transform
             var wt = _wall.transform;
