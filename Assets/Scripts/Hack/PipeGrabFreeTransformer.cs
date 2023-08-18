@@ -21,8 +21,6 @@ namespace VRC2.Hack
 
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
 
-        private WallCollisionDetector _wallCollisionDetector;
-
         [HideInInspector]
         public DistanceLimitedAutoMoveTowardsTargetProvider provider
         {
@@ -119,6 +117,7 @@ namespace VRC2.Hack
             }
         }
 
+        private WallCollisionDetector _wallCollisionDetector;
         private WallCollisionDetector wallCollisionDetector
         {
             get
