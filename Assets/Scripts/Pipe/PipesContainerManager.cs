@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Oculus.Interaction;
 using UnityEngine;
+using VRC2.Hack;
 using VRC2.Pipe;
 
 
@@ -29,12 +30,14 @@ namespace VRC2
 
         private Rigidbody _rigidbody
         {
-            get => GetComponent<Rigidbody>();
+            get => gameObject.GetComponent<Rigidbody>();
         }
 
-        [HideInInspector]
-        public bool collidingWall { get; set; }
-        
+        [HideInInspector] public bool collidingWall { get; set; }
+
+        // store the diameter of the children objects
+        [HideInInspector] public PipeConstants.PipeDiameter diameter;
+
         [HideInInspector] public bool heldByController = false;
 
         // Start is called before the first frame update
@@ -47,24 +50,29 @@ namespace VRC2
         public void OnSelect()
         {
             heldByController = true;
-            
+
             if (_rigidbody == null) return;
-            
+
             _rigidbody.isKinematic = true;
         }
 
         public void OnRelease()
         {
             heldByController = false;
-            
+
             if (_rigidbody == null) return;
-            
+
             _rigidbody.isKinematic = false;
         }
 
         public void AttachToController(GameObject controller)
         {
             _controller = controller;
+        }
+
+        public void UpdateDiameter(PipeConstants.PipeDiameter d)
+        {
+            diameter = d;
         }
 
         public bool AttachedToController()
@@ -78,33 +86,38 @@ namespace VRC2
             _controller = null;
         }
 
-        // enable it can free drop
-        void DisableKinematic()
-        {
-            gameObject.GetComponent<Rigidbody>().isKinematic = false;
-        }
-
-
         // Update is called once per frame
         void Update()
         {
             // check the left controller trigger released event
             if (_controller != null)
             {
+                // This only works when the pipe is first connected
                 var pressed = OVRInput.Get(OVRInput.RawButton.LHandTrigger, OVRInput.Controller.LTouch);
                 if (!pressed)
                 {
                     Debug.Log("Released from the left hand controller.");
                     _controller = null;
 
-                    DisableKinematic();
+                    // make it able to fall
+                    _rigidbody.isKinematic = false;
                     return;
                 }
 
-                // synchronize transform of the parent
                 var t = _controller.transform;
-                transform.position = t.position;
-                transform.rotation = t.rotation;
+                var pos = t.position;
+                var rot = t.rotation;
+                if (collidingWall)
+                {
+                    // enable Compensate
+                    var target = gameObject.GetComponentInChildren<PipeManipulation>().gameObject.transform;
+                    var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                    (pos, rot) = pgft.CompensateWithDirection(pos, rot.eulerAngles);
+                }
+
+                // synchronize transform of the parent
+                transform.position = pos;
+                transform.rotation = rot;
             }
         }
     }

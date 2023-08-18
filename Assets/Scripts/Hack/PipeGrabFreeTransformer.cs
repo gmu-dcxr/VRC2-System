@@ -16,6 +16,7 @@ namespace VRC2.Hack
         private float _zOffset = 0;
 
         private PipeManipulation _pipeManipulation;
+        private PipesContainerManager _pipesContainerManager;
 
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
 
@@ -35,8 +36,31 @@ namespace VRC2.Hack
             }
         }
 
+        #region Gameobject Type Check
+
+        private bool pipeTypeChecked = false;
+
+        private bool _isSimplePipe;
+
         [HideInInspector]
-        public bool collidingWall
+        public bool isSimplePipe
+        {
+            get
+            {
+                if (!pipeTypeChecked)
+                {
+                    // simple pipe owns PipeManipulation component, while pipe container doesn't
+                    _isSimplePipe = gameObject.GetComponent<PipeManipulation>() != null;
+                    pipeTypeChecked = true;
+                }
+
+                return _isSimplePipe;
+            }
+        }
+
+        #endregion
+
+        private PipeManipulation pipeManipulation
         {
             get
             {
@@ -45,37 +69,68 @@ namespace VRC2.Hack
                     _pipeManipulation = gameObject.GetComponent<PipeManipulation>();
                 }
 
-                return _pipeManipulation.collidingWall;
+                return _pipeManipulation;
+            }
+        }
+
+        private PipesContainerManager pipesContainerManager
+        {
+            get
+            {
+                if (_pipesContainerManager == null)
+                {
+                    _pipesContainerManager = gameObject.GetComponent<PipesContainerManager>();
+                }
+
+                return _pipesContainerManager;
+            }
+        }
+
+        [HideInInspector]
+        public bool collidingWall
+        {
+            get
+            {
+                if (isSimplePipe)
+                {
+                    return pipeManipulation.collidingWall;
+                }
+                else
+                {
+                    return pipesContainerManager.collidingWall;
+                }
             }
         }
 
         private GameObject _wall;
 
-        // private GameObject wall
-        // {
-        //     get
-        //     {
-        //         if (_wall == null)
-        //         {
-        //             _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
-        //         }
-        //
-        //         return wall;
-        //     }
-        // }
+        private GameObject wall
+        {
+            get
+            {
+                if (_wall == null)
+                {
+                    print("_wall is set");
+                    _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
+                }
 
-        // private WallCollisionDetector wallCollisionDetector
-        // {
-        //     get
-        //     {
-        //         if (_wallCollisionDetector == null)
-        //         {
-        //             _wallCollisionDetector = wall.GetComponent<WallCollisionDetector>();
-        //         }
-        //
-        //         return _wallCollisionDetector;
-        //     }
-        // }
+                return _wall;
+            }
+        }
+
+        private WallCollisionDetector wallCollisionDetector
+        {
+            get
+            {
+                if (_wallCollisionDetector == null)
+                {
+                    print("_wallCollisionDetector is set");
+                    _wallCollisionDetector = wall.GetComponent<WallCollisionDetector>();
+                }
+
+                return _wallCollisionDetector;
+            }
+        }
 
 
         private float zOffset
@@ -85,6 +140,13 @@ namespace VRC2.Hack
                 if (!offsetSet)
                 {
                     var pm = gameObject.GetComponent<PipeManipulation>();
+
+                    if (pm == null)
+                    {
+                        // this will happen in connected pipe mode
+                        return _zOffset = 0;
+                    }
+
                     var angle = pm.angle;
                     switch (angle)
                     {
@@ -110,11 +172,6 @@ namespace VRC2.Hack
 
         private void Start()
         {
-            _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
-            _wallCollisionDetector = _wall.GetComponent<WallCollisionDetector>();
-
-            print("_wall is set");
-            print("_wallCollisionDetector is set");
         }
 
         public void Initialize(IGrabbable grabbable)
@@ -153,20 +210,10 @@ namespace VRC2.Hack
             if (collidingWall)
             {
                 // print("Colliding Wall. Apply compensation.");
-                var (newPos, newRot) = Compensate(targetTransform, pos, rotation);
-
-                var dir = (newPos - pos).normalized;
-                var angle = Vector3.Angle(dir, _wall.transform.right);
-
-                // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
-                if (angle < 180)
-                {
-                    rotation = newRot;
-                    pos = newPos;
-                }
+                (pos, rot) = CompensateWithDirection(pos, rotation);
             }
 
-            targetTransform.rotation = Quaternion.Euler(rotation);
+            targetTransform.rotation = rot;
             targetTransform.position = pos;
 
         }
@@ -177,20 +224,31 @@ namespace VRC2.Hack
 
         #region Pipe Wall Compensation
 
-        (Vector3, Vector3) Compensate(Transform target, Vector3 pos, Vector3 rot)
+        public PipeConstants.PipeDiameter GetDiameter()
         {
-            var pm = target.gameObject.GetComponent<PipeManipulation>();
+            if (isSimplePipe)
+            {
+                return pipeManipulation.diameter;
+            }
+            else
+            {
+                return pipesContainerManager.diameter;
+            }
+        }
+
+        public (Vector3, Vector3) Compensate(Vector3 pos, Vector3 rot)
+        {
             // get diameter
-            var diameter = pm.diameter;
+            var diameter = GetDiameter();
 
-            var pipeYRotationOffset = _wallCollisionDetector.pipeYRotationOffset;
+            var pipeYRotationOffset = wallCollisionDetector.pipeYRotationOffset;
             // get real diameter
-            var pipez = _wallCollisionDetector.GetPipeZByDiameter(diameter);
+            var pipez = wallCollisionDetector.GetPipeZByDiameter(diameter);
 
-            var wallExtends = _wallCollisionDetector._wallExtends;
+            var wallExtends = wallCollisionDetector._wallExtends;
 
             // get the wall transform
-            var wt = _wall.transform;
+            var wt = wall.transform;
             var wpos = wt.position;
             var wrot = wt.rotation.eulerAngles;
 
@@ -203,6 +261,24 @@ namespace VRC2.Hack
             pos.x = wpos.x + wallExtends.x + pipez;
 
             return (pos, rot);
+        }
+
+        public (Vector3, Quaternion) CompensateWithDirection(Vector3 pos, Vector3 rot)
+        {
+            // print("Colliding Wall. Apply compensation.");
+            var (newPos, newRot) = Compensate(pos, rot);
+
+            var dir = (newPos - pos).normalized;
+            var angle = Vector3.Angle(dir, wall.transform.right);
+
+            // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
+            if (angle < 180)
+            {
+                rot = newRot;
+                pos = newPos;
+            }
+
+            return (pos, Quaternion.Euler(rot));
         }
 
 

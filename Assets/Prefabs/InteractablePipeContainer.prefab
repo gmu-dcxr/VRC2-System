@@ -55,7 +55,7 @@ MonoBehaviour:
   _candidateTiebreaker: {fileID: 0}
   _maxIterationsPerFrame: 3
   _data: {fileID: 0}
-  _pointableElement: {fileID: 0}
+  _pointableElement: {fileID: 8122503542699750889}
   _rigidbody: {fileID: 5835886917005753850}
   _distanceThreshold: 0.01
   _snapPoseTransform: {fileID: 0}
@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e2e6a9b018505944990cc41c911446c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heldByController: 0
 --- !u!54 &5835886917005753850
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -152,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2f8f6e9e6f3e114b9bf9a57c2160615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointable: {fileID: 0}
+  _pointable: {fileID: 8122503542699750889}
   _whenRelease:
     m_PersistentCalls:
       m_Calls: []
@@ -303,4 +304,4 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   _pointableElement: {fileID: 8122503542699750889}
-  maxDistance: 0.2
+  maxDistance: -1
