@@ -7,6 +7,7 @@ using UnityEngine.Serialization;
 using VRC2;
 using VRC2.Events;
 using VRC2.Pipe;
+using VRC2.Pipe.Clamp;
 using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2
@@ -77,40 +78,6 @@ namespace VRC2
             }
         }
 
-        float GetClampExtendsZ(GameObject clamp)
-        {
-            if (_clampExtendsZ == null)
-            {
-                _clampExtendsZ = new Dictionary<int, float>();
-
-                _clampExtendsZ.Add(1, 0.00836f);
-                _clampExtendsZ.Add(2, 0.02786f);
-                _clampExtendsZ.Add(3, 0.03901f);
-                _clampExtendsZ.Add(4, 0.05015f);
-            }
-
-            // BUG: Dynamically getting the bounds doesn't work in VR, use the predefined size instead.
-
-            var size = clamp.GetComponent<ClampScaleInitializer>().clampSize;
-            //
-            // float res = 0f;
-            // if (_clampExtendsZ.ContainsKey(size))
-            // {
-            //     res = _clampExtendsZ[size];
-            // }
-            // else
-            // {
-            //     var mc = clamp.GetComponentInChildren<BoxCollider>().bounds.extents;
-            //     _clampExtendsZ.Add(size, mc.z);
-            //
-            //     res = mc.z;
-            // }
-            //
-            // print($"clamp {size} - {res.ToString("F5")}");
-
-            return _clampExtendsZ[size];
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             _mainThreadWorkQueue.Enqueue(() => { OnTriggerEnterAndStay(other); });
@@ -176,58 +143,6 @@ namespace VRC2
                 var pm = ipipe.GetComponent<PipeManipulation>();
                 pm.collidingWall = enter;
             }
-
-            // // get diameter
-            // var diameter = pm.diameter;
-            //
-            // // get real diameter
-            // var pipez = _pipeDiameters[diameter];
-            //
-            // // disable gravity
-            // var rb = rootObject.GetComponent<Rigidbody>();
-            // GameObject.Destroy(rb);
-            //
-            // var t = rootObject.transform;
-            // var pos = t.position;
-            // var rot = t.rotation.eulerAngles;
-            //
-            // // get the wall transform
-            // var wt = gameObject.transform;
-            // var wpos = wt.position;
-            // var wrot = wt.rotation.eulerAngles;
-            //
-            // // set pipe's x rotation to the wall's x rotation
-            // rot.x = wrot.x;
-            // // set pipe's y rotation to the wall's y rotation
-            // rot.y = wrot.y + pipeYRotationOffset;
-            // rootObject.transform.rotation = Quaternion.Euler(rot);
-            //
-            // // update the pipe's distance to the wall
-            // pos.x = wpos.x + _wallExtends.x + pipez;
-            //
-            // rootObject.transform.position = pos;
-            //
-            // UpdateAllClampHints(rootObject, true);
-        }
-
-        Vector3 GetPipeRotation(GameObject pipe, GameObject wall)
-        {
-            var root = pipe.transform;
-            while (true)
-            {
-                if (root.parent == null) break;
-                root = root.parent;
-            }
-
-            var rot = pipe.transform.rotation.eulerAngles;
-            var wrot = wall.transform.rotation.eulerAngles;
-
-            rot.x = wrot.x;
-            // set pipe's y rotation to the wall's y rotation
-            rot.y = wrot.y + pipeYRotationOffset;
-            root.transform.rotation = Quaternion.Euler(rot);
-
-            return rot;
         }
 
 
@@ -240,6 +155,9 @@ namespace VRC2
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
 
+            var cm = iclamp.GetComponent<ClampManipulation>();
+            cm.collidingWall = true;
+
             // enable kinematic to make it not fall
             Rigidbody rb = null;
             if (iclamp.TryGetComponent<Rigidbody>(out rb))
@@ -247,29 +165,29 @@ namespace VRC2
                 rb.isKinematic = true;
             }
 
-            // get clamp z
-            var clampz = GetClampExtendsZ(clamp);
-
-            var t = iclamp.transform;
-            var pos = t.position;
-            var rot = t.rotation.eulerAngles;
-
-            // get the wall transform
-            var wt = gameObject.transform;
-            var wpos = wt.position;
-            var wrot = wt.rotation.eulerAngles;
-
-            // clamp has the same x rotation with the wall
-            // rot.x = wrot.x;
-            rot.y = wrot.y + clampYRotationOffset;
-            rot.z = wrot.z + clampZRotationOffset;
-
-            // update rotation
-            iclamp.transform.rotation = Quaternion.Euler(rot);
-            // update distance
-            pos.x = wpos.x + _wallExtends.x + clampz * 2;
-
-            iclamp.transform.position = pos;
+            // // get clamp z
+            // var clampz = GetClampExtendsZ(clamp);
+            //
+            // var t = iclamp.transform;
+            // var pos = t.position;
+            // var rot = t.rotation.eulerAngles;
+            //
+            // // get the wall transform
+            // var wt = gameObject.transform;
+            // var wpos = wt.position;
+            // var wrot = wt.rotation.eulerAngles;
+            //
+            // // clamp has the same x rotation with the wall
+            // // rot.x = wrot.x;
+            // rot.y = wrot.y + clampYRotationOffset;
+            // rot.z = wrot.z + clampZRotationOffset;
+            //
+            // // update rotation
+            // iclamp.transform.rotation = Quaternion.Euler(rot);
+            // // update distance
+            // pos.x = wpos.x + _wallExtends.x + clampz * 2;
+            //
+            // iclamp.transform.position = pos;
         }
 
 
