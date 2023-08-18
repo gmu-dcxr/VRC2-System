@@ -618,7 +618,7 @@ namespace VRC2.Events
                 cip.transform.parent = parentObject.transform;
 
                 // update diameter
-                var diameter = cip.GetComponent<PipeManipulation>().diameter;
+                var diameter = oip.GetComponent<PipeManipulation>().diameter;
                 parentObject.GetComponent<PipesContainerManager>().UpdateDiameter(diameter);
                 
                 // set parent to attach the the left-hand controller

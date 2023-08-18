@@ -137,17 +137,13 @@ namespace VRC2.Hack
         {
             get
             {
-                if (!offsetSet)
+                if (isSimplePipe && !offsetSet)
                 {
-                    var pm = gameObject.GetComponent<PipeManipulation>();
+                    // this will happen in connected pipe mode
+                    var angle = pipeManipulation.angle;
 
-                    if (pm == null)
-                    {
-                        // this will happen in connected pipe mode
-                        return _zOffset = 0;
-                    }
-
-                    var angle = pm.angle;
+                    print($"Get zOffset for pipe angle: {angle}");
+                    _zOffset = 0;
                     switch (angle)
                     {
                         case PipeConstants.PipeBendAngles.Angle_0:
@@ -164,6 +160,8 @@ namespace VRC2.Hack
                         default:
                             break;
                     }
+
+                    offsetSet = true;
                 }
 
                 return _zOffset;
@@ -199,21 +197,20 @@ namespace VRC2.Hack
 
             var rot = grabPoint.rotation * _grabDeltaInLocalSpace.rotation;
 
+            // add offset
             var rotation = rot.eulerAngles;
-
             rotation.z += zOffset;
-
-            // enable compensating when a single pipe collides the wall
 
             var pos = grabPoint.position - targetTransform.TransformVector(_grabDeltaInLocalSpace.position);
 
+            // enable compensating when a single pipe collides the wall
             if (collidingWall)
             {
                 // print("Colliding Wall. Apply compensation.");
-                (pos, rot) = CompensateWithDirection(pos, rotation);
+                (pos, rotation) = CompensateWithDirection(pos, rotation);
             }
 
-            targetTransform.rotation = rot;
+            targetTransform.rotation = Quaternion.Euler(rotation);
             targetTransform.position = pos;
 
         }
@@ -263,7 +260,7 @@ namespace VRC2.Hack
             return (pos, rot);
         }
 
-        public (Vector3, Quaternion) CompensateWithDirection(Vector3 pos, Vector3 rot)
+        public (Vector3, Vector3) CompensateWithDirection(Vector3 pos, Vector3 rot)
         {
             // print("Colliding Wall. Apply compensation.");
             var (newPos, newRot) = Compensate(pos, rot);
@@ -278,7 +275,7 @@ namespace VRC2.Hack
                 pos = newPos;
             }
 
-            return (pos, Quaternion.Euler(rot));
+            return (pos, rot);
         }
 
 
