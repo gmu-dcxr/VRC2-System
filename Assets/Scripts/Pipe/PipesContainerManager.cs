@@ -106,18 +106,17 @@ namespace VRC2
 
                 var t = _controller.transform;
                 var pos = t.position;
-                var rot = t.rotation;
+                var rot = t.rotation.eulerAngles;
                 if (collidingWall)
                 {
                     // enable Compensate
-                    var target = gameObject.GetComponentInChildren<PipeManipulation>().gameObject.transform;
                     var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
-                    (pos, rot) = pgft.CompensateWithDirection(pos, rot.eulerAngles);
+                    (pos, rot) = pgft.CompensateWithDirection(pos, rot);
                 }
 
                 // synchronize transform of the parent
                 transform.position = pos;
-                transform.rotation = rot;
+                transform.rotation = Quaternion.Euler(rot);
             }
         }
     }
