@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Oculus.Interaction;
 using VRC2.Hack;
@@ -132,6 +133,29 @@ namespace VRC2.Hack
             }
         }
 
+        #region Clamp Hints Managers
+
+        private List<ClampHintManager> _clampHintManagers;
+
+        private List<ClampHintManager> clampHintManagers
+        {
+            get
+            {
+                if (isSimplePipe)
+                {
+                    return pipeManipulation.clampHintsManagers;
+                }
+                else
+                {
+                    return pipesContainerManager.clampHintsManagers;
+                }
+            }
+        }
+
+
+
+        #endregion
+
 
         private float zOffset
         {
@@ -142,7 +166,6 @@ namespace VRC2.Hack
                     // this will happen in connected pipe mode
                     var angle = pipeManipulation.angle;
 
-                    print($"Get zOffset for pipe angle: {angle}");
                     _zOffset = 0;
                     switch (angle)
                     {
@@ -208,6 +231,18 @@ namespace VRC2.Hack
             {
                 // print("Colliding Wall. Apply compensation.");
                 (pos, rotation) = CompensateWithDirection(pos, rotation);
+
+                foreach (var chm in clampHintManagers)
+                {
+                    chm.OnTheWall = true;
+                }
+            }
+            else
+            {
+                foreach (var chm in clampHintManagers)
+                {
+                    chm.OnTheWall = false;
+                }
             }
 
             targetTransform.rotation = Quaternion.Euler(rotation);

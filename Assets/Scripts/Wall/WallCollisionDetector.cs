@@ -119,6 +119,11 @@ namespace VRC2
 
         private void OnTriggerExit(Collider other)
         {
+            var go = other.gameObject;
+            if (go.CompareTag(GlobalConstants.pipeObjectTag))
+            {
+                HandlePipeCollision(go, false);
+            }
         }
 
         private void OnTriggerStay(Collider other)
@@ -132,7 +137,7 @@ namespace VRC2
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.pipeObjectTag))
             {
-                HandlePipeCollision(go);
+                HandlePipeCollision(go, true);
             }
             else if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
@@ -151,7 +156,7 @@ namespace VRC2
             return _pipeDiameters[diameter];
         }
 
-        void HandlePipeCollision(GameObject pipe)
+        void HandlePipeCollision(GameObject pipe, bool enter)
         {
             // here the pipe may belong to a pipe container
             // find the root object
@@ -163,25 +168,13 @@ namespace VRC2
             {
                 // root is a pipe container
                 var pcm = root.GetComponent<PipesContainerManager>();
-                pcm.collidingWall = true;
-
-                if (pcm.heldByController)
-                {
-                    UpdateAllClampHints(root, true);
-                }
-
+                pcm.collidingWall = enter;
             }
             else
             {
                 // it's a simple pipe
                 var pm = ipipe.GetComponent<PipeManipulation>();
-                pm.collidingWall = true;
-
-                // do nothing if the pipe is held by controller
-                if (pm.heldByController)
-                {
-                    UpdateAllClampHints(root, true);
-                }
+                pm.collidingWall = enter;
             }
 
             // // get diameter
@@ -236,18 +229,6 @@ namespace VRC2
 
             return rot;
         }
-
-        void UpdateAllClampHints(GameObject rootObject, bool onthewall)
-        {
-            var children = Utils.GetChildren<ClampHintManager>(rootObject);
-
-            foreach (var child in children)
-            {
-                var chm = child.GetComponent<ClampHintManager>();
-                chm.OnTheWall = onthewall;
-            }
-        }
-
 
 
         #endregion

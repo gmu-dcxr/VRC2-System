@@ -40,6 +40,34 @@ namespace VRC2
 
         [HideInInspector] public bool heldByController = false;
 
+        #region Clamp Hints
+
+        private List<ClampHintManager> _clampHintsManagers;
+
+        [HideInInspector]
+        public List<ClampHintManager> clampHintsManagers
+        {
+            get
+            {
+                if (_clampHintsManagers == null)
+                {
+                    _clampHintsManagers = new List<ClampHintManager>();
+
+                    var children = Utils.GetChildren<ClampHintManager>(gameObject);
+
+                    foreach (var child in children)
+                    {
+                        var chm = child.GetComponent<ClampHintManager>();
+                        _clampHintsManagers.Add(chm);
+                    }
+                }
+
+                return _clampHintsManagers;
+            }
+        }
+
+        #endregion
+
         // Start is called before the first frame update
         void Start()
         {
@@ -112,6 +140,19 @@ namespace VRC2
                     // enable Compensate
                     var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
                     (pos, rot) = pgft.CompensateWithDirection(pos, rot);
+                    
+                    // update CHM flag
+                    foreach (var chm in clampHintsManagers)
+                    {
+                        chm.OnTheWall = true;
+                    }
+                }
+                else
+                {
+                    foreach (var chm in clampHintsManagers)
+                    {
+                        chm.OnTheWall = false;
+                    }
                 }
 
                 // synchronize transform of the parent
