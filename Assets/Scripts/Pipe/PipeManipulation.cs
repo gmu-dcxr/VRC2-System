@@ -114,25 +114,25 @@ namespace VRC2
 
         #region Hint Managers
 
-        private List<ClampHintManager> _hintManagers;
+        private List<ClampHintManager> _clampHintsManagers;
 
-        private List<ClampHintManager> hintManagers
+        [HideInInspector]public List<ClampHintManager> clampHintsManagers
         {
             get
             {
-                if (_hintManagers == null)
+                if (_clampHintsManagers == null)
                 {
-                    _hintManagers = new List<ClampHintManager>();
+                    _clampHintsManagers = new List<ClampHintManager>();
                     var children = Utils.GetChildren<ClampHintManager>(gameObject);
 
                     foreach (var child in children)
                     {
                         var chm = child.GetComponent<ClampHintManager>();
-                        _hintManagers.Add(chm);
+                        _clampHintsManagers.Add(chm);
                     }
                 }
 
-                return _hintManagers;
+                return _clampHintsManagers;
             }
         }
 
@@ -168,7 +168,7 @@ namespace VRC2
 
         bool ShouldFall()
         {
-            foreach (var chm in hintManagers)
+            foreach (var chm in clampHintsManagers)
             {
                 if (chm.Clamped) return false;
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VRC2.Events;
 
@@ -8,9 +9,24 @@ namespace VRC2.Pipe
     {
         private ClampHintManager _hintManager;
 
+        private ClampHintManager hintManager
+        {
+            get
+            {
+                if (_hintManager == null)
+                {
+                    _hintManager = gameObject.GetComponentInParent<ClampHintManager>();
+                }
+
+                return _hintManager;
+            }
+        }
+
+        // under current simple pipe
+        private List<ClampHintManager> clampHintManagers;
+
         private void Start()
         {
-            _hintManager = gameObject.GetComponentInParent<ClampHintManager>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -26,35 +42,19 @@ namespace VRC2.Pipe
         private void OnTriggerExit(Collider other)
         {
             var go = other.gameObject;
-            if (go.CompareTag(GlobalConstants.wallTag))
+            // update Clamped flag 
+            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
-                // pipe leaves the wall
-                var root = PipeHelper.GetRoot(gameObject);
-
-                // add rigid body etc.
-                PipeHelper.AfterMove(ref root);
-
-                var children = Utils.GetChildren<ClampHintManager>(root);
-
-                foreach (var child in children)
-                {
-                    var chm = child.GetComponent<ClampHintManager>();
-                    chm.OnTheWall = false;
-                    chm.Clamped = false;
-                }
-            }
-            else if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
-            {
-                _hintManager.Clamped = false;
+                hintManager.Clamped = false;
             }
         }
 
         void OnTriggerEnterAndStay(Collider other)
         {
             var go = other.gameObject;
-            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && _hintManager.OnTheWall)
+            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
-                _hintManager.Clamped = true;
+                hintManager.Clamped = true;
             }
         }
 
