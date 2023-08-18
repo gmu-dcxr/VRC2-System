@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Fusion;
 using NodeCanvas.Tasks.Actions;
+using Oculus.Interaction;
 using Oculus.Interaction.DistanceReticles;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -38,6 +39,7 @@ namespace VRC2.Events
         private int glued = 0;
 
         #region RPC Messages
+
         private bool requiredUpdated = false;
         private bool requiredUpdatedDone = false;
 
@@ -170,10 +172,10 @@ namespace VRC2.Events
             else if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
                 // handle it in ClampHintCollisionDetector
-                
+
                 // HandleClampCollision(go);
             }
-            
+
             // collision with glue
             else if (go.CompareTag(GlobalConstants.glueObjectTag))
             {
@@ -204,7 +206,7 @@ namespace VRC2.Events
                 Debug.Log("Clamp doesn't collide with the wall.");
                 return;
             }
-            
+
             // current interactable pipe
             var cip = gameObject.transform.parent.parent;
 
@@ -260,7 +262,7 @@ namespace VRC2.Events
         {
             // other pipe must be a simple pipe
             var parent = otherpipe.transform.parent;
-            
+
             return parent.parent == null;
         }
 
@@ -275,8 +277,8 @@ namespace VRC2.Events
             }
 
             if (!RightHandHoldRightPipe(otherpipe)) return;
-            
-            if(!CheckOtherPipe(otherpipe)) return;
+
+            if (!CheckOtherPipe(otherpipe)) return;
 
             var cip = gameObject.transform.parent;
             var oip = otherpipe.transform.parent.gameObject; // other interactable pipe
@@ -296,7 +298,7 @@ namespace VRC2.Events
 
             // disable glue hint first
             hintManager.HideHint();
-            
+
             // disable other pipe clamp hit
             otherpipe.GetComponent<ClampHintManager>().Hide();
 
@@ -357,7 +359,7 @@ namespace VRC2.Events
             // // set parent to attach the the left-hand controller
             // parentObject.GetComponent<PipesContainerManager>()
             //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
-            
+
             // update glue hint flags
             // show left one
             gameObject.GetComponent<ClampHintManager>().CanShow = true;
@@ -514,7 +516,7 @@ namespace VRC2.Events
                 _cLocalRot = clocalrot;
                 _oLocalPos = olocalpos;
                 _oLocalRot = olocalrot;
-                
+
                 requiredUpdated = true;
             }
 
@@ -540,9 +542,9 @@ namespace VRC2.Events
             var cip = runner.FindObject(_cid).gameObject;
             var oip = runner.FindObject(_oid).gameObject;
             var parentObj = runner.FindObject(_pid).gameObject;
-            
+
             print("UpdateOnClient");
-            
+
             print(cip.name);
             print(oip.name);
             print(parentObj.name);
@@ -615,6 +617,10 @@ namespace VRC2.Events
                 oip.transform.parent = parentObject.transform;
                 cip.transform.parent = parentObject.transform;
 
+                // update diameter
+                var diameter = cip.GetComponent<PipeManipulation>().diameter;
+                parentObject.GetComponent<PipesContainerManager>().UpdateDiameter(diameter);
+                
                 // set parent to attach the the left-hand controller
                 parentObject.GetComponent<PipesContainerManager>()
                     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
