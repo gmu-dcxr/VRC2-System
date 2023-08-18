@@ -98,7 +98,7 @@ namespace Hack
 
         public void UpdateTransform()
         {
-            if (provider == null || !provider.IsValid) return;
+            if (provider == null || !provider.IsValid || clampManipulation.compensated) return;
 
             Pose grabPoint = _grabbable.GrabPoints[0];
             var targetTransform = _grabbable.Transform;
@@ -115,11 +115,10 @@ namespace Hack
                 // print("Colliding Wall. Apply compensation.");
                 (pos, rotation) = CompensateWithDirection(pos, rotation);
 
-                clampManipulation.collidingWall = true;
-            }
-            else
-            {
-                clampManipulation.collidingWall = false;
+                // make it not fall
+                clampManipulation.SetKinematic(true);
+                // update flag
+                clampManipulation.compensated = true;
             }
 
             targetTransform.rotation = Quaternion.Euler(rotation);
@@ -136,10 +135,6 @@ namespace Hack
             // get clamp z
             var clampz = clampManipulation.GetClampExtendsZ();
 
-            // var t = iclamp.transform;
-            // var pos = t.position;
-            // var rot = t.rotation.eulerAngles;
-
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
@@ -148,7 +143,6 @@ namespace Hack
             // clamp has the same x rotation with the wall
             rot.x = wrot.x;
             rot.y = wrot.y + wallCollisionDetector.clampYRotationOffset;
-            // rot.z = wrot.z + wallCollisionDetector.clampZRotationOffset;
 
             // update distance
             pos.x = wpos.x + wallCollisionDetector._wallExtends.x + clampz * 2;
