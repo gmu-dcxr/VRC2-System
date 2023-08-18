@@ -1,6 +1,7 @@
 ﻿using System;
 using Oculus.Interaction;
 using UnityEngine;
+using VRC2.Pipe.Clamp;
 
 namespace VRC2.Events
 {
@@ -9,18 +10,18 @@ namespace VRC2.Events
     {
         private PointableUnityEventWrapper _wrapper;
 
-        private Rigidbody _rigidbody;
+        private ClampManipulation _clampManipulation;
 
-        private Rigidbody rigidbody
+        private ClampManipulation clampManipulation
         {
             get
             {
-                if (_rigidbody == null)
+                if (_clampManipulation == null)
                 {
-                    _rigidbody = gameObject.GetComponent<Rigidbody>();
+                    _clampManipulation = gameObject.GetComponent<ClampManipulation>();
                 }
 
-                return _rigidbody;
+                return _clampManipulation;
             }
         }
 
@@ -34,14 +35,15 @@ namespace VRC2.Events
 
         private void OnSelect()
         {
-            // enable
-            rigidbody.isKinematic = true;
+            clampManipulation.SetKinematic(false);
+            // reset
+            clampManipulation.collidingWall = false;
+            clampManipulation.compensated = false;
         }
 
         private void OnRelease()
         {
-            // disable
-            rigidbody.isKinematic = false;
+            
         }
     }
 }

@@ -86,11 +86,18 @@ namespace VRC2
 
         private void OnTriggerExit(Collider other)
         {
-            var go = other.gameObject;
-            if (go.CompareTag(GlobalConstants.pipeObjectTag))
+            _mainThreadWorkQueue.Enqueue(() =>
             {
-                HandlePipeCollision(go, false);
-            }
+                var go = other.gameObject;
+                if (go.CompareTag(GlobalConstants.pipeObjectTag))
+                {
+                    HandlePipeCollision(go, false);
+                }
+                else if (go.CompareTag(GlobalConstants.clampObjectTag))
+                {
+                    HandleClampCollision(go, false);
+                }
+            });
         }
 
         private void OnTriggerStay(Collider other)
@@ -108,7 +115,7 @@ namespace VRC2
             }
             else if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
-                HandleClampCollision(go);
+                HandleClampCollision(go, true);
             }
             else if (go.CompareTag(GlobalConstants.boxObjectTag))
             {
@@ -150,44 +157,13 @@ namespace VRC2
 
         #region Handle Clamp's Collision with the Wall
 
-        void HandleClampCollision(GameObject clamp)
+        void HandleClampCollision(GameObject clamp, bool enter)
         {
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
 
             var cm = iclamp.GetComponent<ClampManipulation>();
-            cm.collidingWall = true;
-
-            // enable kinematic to make it not fall
-            Rigidbody rb = null;
-            if (iclamp.TryGetComponent<Rigidbody>(out rb))
-            {
-                rb.isKinematic = true;
-            }
-
-            // // get clamp z
-            // var clampz = GetClampExtendsZ(clamp);
-            //
-            // var t = iclamp.transform;
-            // var pos = t.position;
-            // var rot = t.rotation.eulerAngles;
-            //
-            // // get the wall transform
-            // var wt = gameObject.transform;
-            // var wpos = wt.position;
-            // var wrot = wt.rotation.eulerAngles;
-            //
-            // // clamp has the same x rotation with the wall
-            // // rot.x = wrot.x;
-            // rot.y = wrot.y + clampYRotationOffset;
-            // rot.z = wrot.z + clampZRotationOffset;
-            //
-            // // update rotation
-            // iclamp.transform.rotation = Quaternion.Euler(rot);
-            // // update distance
-            // pos.x = wpos.x + _wallExtends.x + clampz * 2;
-            //
-            // iclamp.transform.position = pos;
+            cm.collidingWall = enter;
         }
 
 
