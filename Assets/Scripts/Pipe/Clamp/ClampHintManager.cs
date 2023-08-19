@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-
+using VRC2.Hack;
 using VRC2.Pipe;
 
 namespace VRC2.Pipe
@@ -46,6 +46,24 @@ namespace VRC2.Pipe
                 {
                     hint.SetActive(true);   
                 }
+            }
+
+            if (OnTheWall && hint.activeSelf)
+            {
+                // check whether to fall
+                var root = PipeHelper.GetRoot(gameObject);
+                // request check fallable
+                if (root.GetComponent<PipeGrabFreeTransformer>().isSimplePipe)
+                {
+                    print("PipeManipulation RequestCheckingFallable");
+                    // pipe manipulation
+                    root.GetComponent<PipeManipulation>().RequestCheckingFallable();
+                }
+                else
+                {
+                    print("PipesContainerManager RequestCheckingFallable");
+                    root.GetComponent<PipesContainerManager>().RequestCheckingFallable();
+                }   
             }
         }
 

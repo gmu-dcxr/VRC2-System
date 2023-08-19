@@ -380,5 +380,17 @@ namespace VRC2
 
 
         #endregion
+
+        #region Check if pipe can drop when clamphint changes
+
+        public void RequestCheckingFallable()
+        {
+            if(heldByController) return;
+            
+            // call OnRelease
+            OnRelease();
+        }
+
+        #endregion
     }
 }
