@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using VRC2.Events;
+using VRC2.Hack;
 
 namespace VRC2.Pipe
 {
@@ -22,8 +23,21 @@ namespace VRC2.Pipe
             }
         }
 
-        // under current simple pipe
-        private List<ClampHintManager> clampHintManagers;
+        private PipeGrabFreeTransformer _transformer;
+
+        private PipeGrabFreeTransformer transformer
+        {
+            get
+            {
+                if (_transformer == null)
+                {
+                    var root = PipeHelper.GetRoot(gameObject);
+                    _transformer = root.GetComponent<PipeGrabFreeTransformer>();
+                }
+
+                return _transformer;
+            }
+        }
 
         private void Start()
         {

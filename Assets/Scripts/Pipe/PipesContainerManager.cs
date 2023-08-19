@@ -96,6 +96,8 @@ namespace VRC2
         public void AttachToController(GameObject controller)
         {
             _controller = controller;
+            // set held by controller, it's to simulate holding
+            heldByController = true;
         }
 
         public void UpdateDiameter(PipeConstants.PipeDiameter d)
@@ -160,5 +162,27 @@ namespace VRC2
                 transform.rotation = Quaternion.Euler(rot);
             }
         }
+        #region Check if pipe can drop when clamphint changes
+
+        bool ShouldFall()
+        {
+            foreach (var chm in clampHintsManagers)
+            {
+                if (chm.Clamped) return false;
+            }
+            return true;
+        }
+        
+        public void RequestCheckingFallable()
+        {
+            if(heldByController) return;
+
+            if (ShouldFall())
+            {
+                _rigidbody.isKinematic = false;
+            }
+        }
+
+        #endregion
     }
 }
