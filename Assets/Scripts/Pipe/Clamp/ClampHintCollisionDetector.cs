@@ -39,6 +39,10 @@ namespace VRC2.Pipe
             }
         }
 
+        private GameObject root;
+
+        private bool requested = false;
+
         private void Start()
         {
         }
@@ -60,6 +64,10 @@ namespace VRC2.Pipe
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
                 hintManager.Clamped = false;
+                requested = false;
+            }else if (go.CompareTag(GlobalConstants.wallTag))
+            {
+                hintManager.OnTheWall = false;
             }
         }
 
@@ -69,6 +77,27 @@ namespace VRC2.Pipe
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
                 hintManager.Clamped = true;
+                // request update
+                UpdatePipeContainer();
+            }else if (go.CompareTag(GlobalConstants.wallTag))
+            {
+                hintManager.OnTheWall = true;
+            }
+        }
+
+        void UpdatePipeContainer()
+        {
+            if (root == null)
+            {
+                root = PipeHelper.GetRoot(gameObject);
+            }
+
+            var pcm = root.GetComponent<PipesContainerManager>();
+            if (!requested && pcm != null && pcm.collidingWall && !pcm.heldByController)
+            {
+                requested = true;
+                pcm.selfCompensated = false;
+                pcm.SelfCompensate();
             }
         }
 
