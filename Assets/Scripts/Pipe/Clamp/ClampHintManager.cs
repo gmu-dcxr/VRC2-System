@@ -33,7 +33,6 @@ namespace VRC2.Pipe
                 if (hint.activeSelf)
                 {
                     hint.SetActive(false);
-                    // hint is inactive
                 }
             }
             else
@@ -46,42 +45,8 @@ namespace VRC2.Pipe
                 if (!hint.activeSelf)
                 {
                     hint.SetActive(true);
-                    // hint becomes active, check whether to drop.
-                    // It will drop only when all hints are active
-                    
-                    // // check whether to fall
-                    // var root = PipeHelper.GetRoot(gameObject);
-                    // // request check fallable
-                    // if (root.GetComponent<PipeGrabFreeTransformer>().isSimplePipe)
-                    // {
-                    //     print("Simple pipe");
-                    //     // pipe manipulation
-                    //     if (root.GetComponent<PipeManipulation>().ShouldFall())
-                    //     {
-                    //         print("Pipe should fall");
-                    //         root.GetComponent<Rigidbody>().isKinematic = false;
-                    //     }
-                    // }
                 }
             }
-            
-            // if (OnTheWall && hint.activeSelf)
-            // {
-            //     // check whether to fall
-            //     var root = PipeHelper.GetRoot(gameObject);
-            //     // request check fallable
-            //     if (root.GetComponent<PipeGrabFreeTransformer>().isSimplePipe)
-            //     {
-            //         print("PipeManipulation RequestCheckingFallable");
-            //         // pipe manipulation
-            //         root.GetComponent<PipeManipulation>().RequestCheckingFallable();
-            //     }
-            //     else
-            //     {
-            //         print("PipesContainerManager RequestCheckingFallable");
-            //         root.GetComponent<PipesContainerManager>().RequestCheckingFallable();
-            //     }   
-            // }
         }
 
         public void Hide()
