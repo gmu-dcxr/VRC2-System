@@ -45,12 +45,7 @@ namespace VRC2
         // pipe is held by controller
         [HideInInspector] public bool heldByController = false;
 
-        [HideInInspector]
-        public bool collidingWall
-        {
-            get;
-            set;
-        }
+        [HideInInspector] public bool collidingWall { get; set; }
 
         public bool IsStraight
         {
@@ -116,7 +111,8 @@ namespace VRC2
 
         private List<ClampHintManager> _clampHintsManagers;
 
-        [HideInInspector]public List<ClampHintManager> clampHintsManagers
+        [HideInInspector]
+        public List<ClampHintManager> clampHintsManagers
         {
             get
             {
@@ -138,6 +134,34 @@ namespace VRC2
 
         #endregion
 
+        #region Distance Grab Interactable
+        
+        // enable/disable to let the pipe interactable/not-interactable
+
+        private DistanceGrabInteractable _distanceGrabInteractable;
+
+        private DistanceGrabInteractable distanceGrabInteractable
+        {
+            get
+            {
+                if (_distanceGrabInteractable == null)
+                {
+                    _distanceGrabInteractable = gameObject.GetComponentInChildren<DistanceGrabInteractable>();
+                }
+
+                return _distanceGrabInteractable;
+            }
+        }
+
+        private void SetInteractable(bool enabled)
+        {
+            if(distanceGrabInteractable.enabled == enabled) return;
+            
+            distanceGrabInteractable.enabled = enabled;
+        }
+
+        #endregion
+
 
         // Start is called before the first frame update
         void Start()
@@ -151,12 +175,7 @@ namespace VRC2
             // bind event
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
             _wrapper.WhenSelect.AddListener(OnSelect);
-            _wrapper.WhenSelect.AddListener(OnUnselect);
-            _wrapper.WhenMove.AddListener(OnMove);
-            _wrapper.WhenCancel.AddListener(OnCancel);
             _wrapper.WhenRelease.AddListener(OnRelease);
-            // _wrapper.WhenHover.AddListener(OnHover);
-            // _wrapper.WhenUnhover.AddListener(OnUnhover);
 
             _networkGrabbable = gameObject.GetComponent<NetworkGrabbable>();
         }
@@ -164,14 +183,30 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
+            if (!heldByController)
+            {
+                if (ShouldFall())
+                {
+                    _rigidbody.isKinematic = false;
+                    // make it interactable
+                    SetInteractable(true);
+                }
+                else
+                {
+                    _rigidbody.isKinematic = true;
+                    // make it not interactable
+                    SetInteractable(false);
+                }
+            }
         }
 
-        bool ShouldFall()
+        public bool ShouldFall()
         {
             foreach (var chm in clampHintsManagers)
             {
                 if (chm.Clamped) return false;
             }
+            
             return true;
         }
 
@@ -268,25 +303,7 @@ namespace VRC2
         }
 
         #region Pointable Event
-
-        void OnHover()
-        {
-        }
-
-        void OnUnhover()
-        {
-        }
-
-        void OnMove()
-        {
-
-        }
-
-        void OnCancel()
-        {
-            // Debug.Log("Pipe Cancel");
-        }
-
+        
         public void OnSelect()
         {
             heldByController = true;
@@ -294,22 +311,17 @@ namespace VRC2
             _rigidbody.isKinematic = true;
         }
 
-        public void OnUnselect()
-        {
-            // Debug.Log("Pipe OnUnselect");
-        }
-
         public void OnRelease()
         {
             heldByController = false;
-            
+
             if (collidingWall)
             {
                 // pipe is on the wall
                 if (ShouldFall())
                 {
                     // disable kinematic to let it drop
-                    _rigidbody.isKinematic = false;      
+                    _rigidbody.isKinematic = false;
                 }
                 else
                 {
@@ -378,18 +390,6 @@ namespace VRC2
         }
 
 
-
-        #endregion
-
-        #region Check if pipe can drop when clamphint changes
-
-        public void RequestCheckingFallable()
-        {
-            if(heldByController) return;
-            
-            // call OnRelease
-            OnRelease();
-        }
 
         #endregion
     }

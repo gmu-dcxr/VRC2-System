@@ -35,7 +35,6 @@ namespace Hack
             {
                 if (_wall == null)
                 {
-                    print("_wall is set");
                     _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
                 }
 
@@ -66,7 +65,6 @@ namespace Hack
             {
                 if (_wallCollisionDetector == null)
                 {
-                    print("_wallCollisionDetector is set");
                     _wallCollisionDetector = wall.GetComponent<WallCollisionDetector>();
                 }
 
