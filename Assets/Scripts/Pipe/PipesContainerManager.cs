@@ -68,6 +68,22 @@ namespace VRC2
 
         #endregion
 
+
+        #region Distance Grab Interactable
+
+        // enable/disable to let the pipe interactable/not-interactable
+
+        public DistanceGrabInteractable distanceGrabInteractable;
+
+        private void SetInteractable(bool enabled)
+        {
+            if (distanceGrabInteractable.enabled == enabled) return;
+
+            distanceGrabInteractable.enabled = enabled;
+        }
+
+        #endregion
+
         // Start is called before the first frame update
         void Start()
         {
@@ -127,6 +143,8 @@ namespace VRC2
                 if (!pressed)
                 {
                     Debug.Log("Released from the left hand controller.");
+                    heldByController = false;
+                    
                     _controller = null;
 
                     // make it able to fall
@@ -142,7 +160,7 @@ namespace VRC2
                     // enable Compensate
                     var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
                     (pos, rot) = pgft.CompensateWithDirection(pos, rot);
-                    
+
                     // update CHM flag
                     foreach (var chm in clampHintsManagers)
                     {
@@ -160,27 +178,46 @@ namespace VRC2
                 // synchronize transform of the parent
                 transform.position = pos;
                 transform.rotation = Quaternion.Euler(rot);
+
+                if (!ShouldFall())
+                {
+                    // no need to set interactable because it is attached to controller not picked up by controller
+                    _rigidbody.isKinematic = true;
+                }
+            }
+            else
+            {
+                // _controller is none, it is selected by controller
+                if (!heldByController)
+                {
+                    if (ShouldFall())
+                    {
+                        _rigidbody.isKinematic = false;
+                        // make it interactable
+                        SetInteractable(true);
+                    }
+                    else
+                    {
+                        _rigidbody.isKinematic = true;
+                        // make it not interactable
+                        SetInteractable(false);
+                    }
+                }
             }
         }
+
         #region Check if pipe can drop when clamphint changes
 
         bool ShouldFall()
         {
+            print("Should fall checking");
             foreach (var chm in clampHintsManagers)
             {
-                if (chm.Clamped) return false;
+                print($"{chm.gameObject.name}: {chm.Clamped}");
+                if (chm.CanShow && chm.Clamped) return false;
             }
-            return true;
-        }
-        
-        public void RequestCheckingFallable()
-        {
-            if(heldByController) return;
 
-            if (ShouldFall())
-            {
-                _rigidbody.isKinematic = false;
-            }
+            return true;
         }
 
         #endregion
