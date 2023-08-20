@@ -58,7 +58,11 @@ namespace VRC2
                     foreach (var child in children)
                     {
                         var chm = child.GetComponent<ClampHintManager>();
-                        _clampHintsManagers.Add(chm);
+                        if (chm.CanShow)
+                        {
+                            // only add valid chm
+                            _clampHintsManagers.Add(chm);   
+                        }
                     }
                 }
 
@@ -84,6 +88,10 @@ namespace VRC2
 
         #endregion
 
+        private PipeGrabFreeTransformer transformer;
+
+        [HideInInspector] public bool selfCompensated = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -94,6 +102,7 @@ namespace VRC2
         public void OnSelect()
         {
             heldByController = true;
+            selfCompensated = false;
 
             if (_rigidbody == null) return;
 
@@ -103,6 +112,9 @@ namespace VRC2
         public void OnRelease()
         {
             heldByController = false;
+            
+            // compensate to make it look nicer
+            SelfCompensate();
 
             if (_rigidbody == null) return;
 
@@ -114,6 +126,8 @@ namespace VRC2
             _controller = controller;
             // set held by controller, it's to simulate holding
             heldByController = true;
+
+            selfCompensated = false;
         }
 
         public void UpdateDiameter(PipeConstants.PipeDiameter d)
@@ -144,11 +158,20 @@ namespace VRC2
                 {
                     Debug.Log("Released from the left hand controller.");
                     heldByController = false;
-                    
                     _controller = null;
 
-                    // make it able to fall
-                    _rigidbody.isKinematic = false;
+                    if (collidingWall && !ShouldFall())
+                    {
+                        // compensate to make it look nicer
+                        SelfCompensate();
+
+                        _rigidbody.isKinematic = true;
+                    }
+                    else
+                    {
+                        // make it able to fall
+                        _rigidbody.isKinematic = false;
+                    }
                     return;
                 }
 
@@ -178,12 +201,6 @@ namespace VRC2
                 // synchronize transform of the parent
                 transform.position = pos;
                 transform.rotation = Quaternion.Euler(rot);
-
-                if (!ShouldFall())
-                {
-                    // no need to set interactable because it is attached to controller not picked up by controller
-                    _rigidbody.isKinematic = true;
-                }
             }
             else
             {
@@ -206,6 +223,24 @@ namespace VRC2
             }
         }
 
+        public void SelfCompensate()
+        {
+            if(selfCompensated) return;
+            
+            if (transformer == null)
+            {
+                transformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+            }
+
+            var t = gameObject.transform;
+            var (pos, rot) = transformer.CompensateWithDirection(t.position, t.rotation.eulerAngles);
+
+            gameObject.transform.position = pos;
+            gameObject.transform.rotation = Quaternion.Euler(rot);
+
+            selfCompensated = true;
+        }
+
         #region Check if pipe can drop when clamphint changes
 
         bool ShouldFall()
@@ -214,7 +249,7 @@ namespace VRC2
             foreach (var chm in clampHintsManagers)
             {
                 print($"{chm.gameObject.name}: {chm.Clamped}");
-                if (chm.CanShow && chm.Clamped) return false;
+                if (chm.Clamped) return false;
             }
 
             return true;

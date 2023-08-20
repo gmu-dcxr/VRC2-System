@@ -26,6 +26,7 @@ namespace VRC2
 
         public float boxDistanceOffset = 0.25f;
 
+        [HideInInspector] public Bounds _wallBounds;
         [HideInInspector] public Vector3 _wallExtends;
 
         private IDictionary<PipeDiameter, float> _pipeDiameters;
@@ -38,6 +39,7 @@ namespace VRC2
         void Start()
         {
             InitPipeDiameters();
+            _wallBounds = gameObject.GetComponent<MeshCollider>().bounds;
             _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
         }
 
@@ -130,6 +132,17 @@ namespace VRC2
             return _pipeDiameters[diameter];
         }
 
+        bool PipeFullyLeft(GameObject root)
+        {
+            var gos = Utils.GetChildren<PipeCollisionDetector>(root);
+            foreach (var go in gos)
+            {
+                if (_wallBounds.Intersects(go.GetComponent<MeshCollider>().bounds)) return false;
+            }
+
+            return true;
+        }
+
         void HandlePipeCollision(GameObject pipe, bool enter)
         {
             // here the pipe may belong to a pipe container
@@ -142,6 +155,13 @@ namespace VRC2
             {
                 // root is a pipe container
                 var pcm = root.GetComponent<PipesContainerManager>();
+
+                if (!enter)
+                {
+                    // check whether the pipe is fully away from the wall
+                    enter = PipeFullyLeft(root);
+                }
+
                 pcm.collidingWall = enter;
             }
             else
