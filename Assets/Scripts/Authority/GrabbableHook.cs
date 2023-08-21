@@ -24,5 +24,10 @@ namespace VRC2.Authority
         {
             grabInteractable?.SetActive(false);
         }
+
+        public override void Default()
+        {
+            grabInteractable?.SetActive(true);
+        }
     }
 }
