@@ -15,5 +15,10 @@ namespace VRC2.Authority
         {
             gameObject.SetActive(false);
         }
+
+        public override void Default()
+        {
+            gameObject.SetActive(true);
+        }
     }
 }
