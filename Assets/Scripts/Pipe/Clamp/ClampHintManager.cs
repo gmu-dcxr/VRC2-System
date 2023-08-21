@@ -5,20 +5,92 @@ using VRC2.Pipe;
 
 namespace VRC2.Pipe
 {
-    public class ClampHintManager: MonoBehaviour
+    public class ClampHintManager : MonoBehaviour
     {
         public GameObject hint;
 
         private bool positioned = false;
 
         // whether to show it, the right part of the connected pipe will be set to false
-        [HideInInspector]public bool CanShow = true;
-        
-        // show it only when it's on the wall
-        [HideInInspector]public bool OnTheWall = false;
+        [HideInInspector] public bool CanShow = true;
 
-        [HideInInspector]public bool Clamped = false;
-        
+        public Bounds _wallBounds
+        {
+            get { return wall.GetComponent<MeshCollider>().bounds; }
+        }
+
+        private Bounds _bounds
+        {
+            get { return gameObject.GetComponent<MeshCollider>().bounds; }
+        }
+
+        private PipeManipulation _pipeManipulation;
+        private PipesContainerManager _pipesContainerManager;
+
+        // show it only when it's on the wall
+        private bool OnTheWall
+        {
+            get
+            {
+                var b1 = _wallBounds.Intersects(_bounds);
+                if (transformer.isSimplePipe)
+                {
+                    if (_pipeManipulation == null)
+                    {
+                        _pipeManipulation = transformer.gameObject.GetComponent<PipeManipulation>();
+                    }
+
+                    return b1 | _pipeManipulation.collidingWall;
+                }
+                else
+                {
+                    if (_pipesContainerManager == null)
+                    {
+                        _pipesContainerManager = transform.gameObject.GetComponent<PipesContainerManager>();
+                    }
+
+                    return b1 | _pipesContainerManager.collidingWall;
+                }
+            }
+        }
+
+        [HideInInspector] public bool Clamped = false;
+
+        #region Wall
+
+        private GameObject _wall;
+
+        private GameObject wall
+        {
+            get
+            {
+                if (_wall == null)
+                {
+                    print("_wall is set");
+                    _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
+                }
+
+                return _wall;
+            }
+        }
+
+        private PipeGrabFreeTransformer _transformer;
+
+        private PipeGrabFreeTransformer transformer
+        {
+            get
+            {
+                if (_transformer == null)
+                {
+                    _transformer = PipeHelper.GetRoot(gameObject).GetComponent<PipeGrabFreeTransformer>();
+                }
+
+                return _transformer;
+            }
+        }
+
+        #endregion
+
         private void Start()
         {
             // Show();

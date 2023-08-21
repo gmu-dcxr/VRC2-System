@@ -61,13 +61,10 @@ namespace VRC2.Pipe
         {
             var go = other.gameObject;
             // update Clamped flag 
-            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
+            if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
                 hintManager.Clamped = false;
                 requested = false;
-            }else if (go.CompareTag(GlobalConstants.wallTag))
-            {
-                hintManager.OnTheWall = false;
             }
         }
 
@@ -79,9 +76,6 @@ namespace VRC2.Pipe
                 hintManager.Clamped = true;
                 // request update
                 UpdatePipeContainer();
-            }else if (go.CompareTag(GlobalConstants.wallTag))
-            {
-                hintManager.OnTheWall = true;
             }
         }
 
