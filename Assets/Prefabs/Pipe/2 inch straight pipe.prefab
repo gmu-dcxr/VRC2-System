@@ -236,7 +236,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 323872745924900872}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &1484753248382870158
 GameObject:
@@ -426,6 +425,7 @@ GameObject:
   - component: {fileID: 3038128650230721569}
   - component: {fileID: 1357919317410757490}
   - component: {fileID: 7143480700260129935}
+  - component: {fileID: 1707382307}
   m_Layer: 0
   m_Name: 2 inch straight pipe
   m_TagString: Untagged
@@ -440,7 +440,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2676710285741658411}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -451,7 +451,7 @@ Transform:
   - {fileID: 2588704976972869161}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!54 &2637869663360961745
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -464,10 +464,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!114 &3466102878915659373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -592,12 +592,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   segmentA: {fileID: 894374988860936173}
   segmentB: {fileID: 4429072006493905274}
+  segmentMid: {fileID: 0}
   pipeColor: 2
   pipeType: 0
   angle: 0
   diameter: 1
-  segmentALength: 5
-  segmentBLength: 5
+  segmentALength: 1
+  segmentBLength: 1
+  heldByController: 0
 --- !u!114 &3038128650230721569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -643,6 +645,21 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
+--- !u!114 &1707382307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2676710285741658411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e92660a30326b684eb3ad9d3380d2fbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 0
+  P2Only: 1
+  _authorityUpdated: 0
 --- !u!1 &3301357333510295123
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,7 +912,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 6505135487555903785}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &5436099888372209003
 GameObject:
@@ -907,8 +923,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8755805556507499802}
   - component: {fileID: 2520274585310893400}
-  - component: {fileID: 1080084776831175209}
   - component: {fileID: 2757031842453126175}
+  - component: {fileID: 1801161808}
   m_Layer: 0
   m_Name: GrabInteractable
   m_TagString: Untagged
@@ -951,8 +967,8 @@ MonoBehaviour:
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
-  _movementProvider: {fileID: 0}
---- !u!114 &1080084776831175209
+  _movementProvider: {fileID: 1801161808}
+--- !u!114 &2757031842453126175
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -961,7 +977,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 5436099888372209003}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c6cba82e9f3c84f80041e0d2741ef6, type: 3}
+  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 0}
+  _customIcon: {fileID: 0}
+  _snappiness: 0.8
+--- !u!114 &1801161808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436099888372209003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3906d48c19bb044995eeb166bf144f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _travellingData:
@@ -992,21 +1023,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   _pointableElement: {fileID: 7143480700260129935}
---- !u!114 &2757031842453126175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436099888372209003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _renderer: {fileID: 0}
-  _customIcon: {fileID: 0}
-  _snappiness: 0.8
+  maxDistance: -1
 --- !u!1 &6505135487555903785
 GameObject:
   m_ObjectHideFlags: 0
