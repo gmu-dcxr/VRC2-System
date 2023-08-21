@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 2855971639405814716}
   - component: {fileID: 7216050830860124804}
   - component: {fileID: 3721513878866547211}
+  - component: {fileID: 146082658}
   m_Layer: 0
   m_Name: 4 inch 135 deg pipe
   m_TagString: Untagged
@@ -141,7 +142,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038270875847862366}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -153,7 +154,7 @@ Transform:
   - {fileID: 3414106193635985205}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!54 &2204651919897772781
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -166,10 +167,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!114 &3955606267702464685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,8 +300,9 @@ MonoBehaviour:
   pipeType: 0
   angle: 3
   diameter: 3
-  segmentALength: 5
-  segmentBLength: 5
+  segmentALength: 1
+  segmentBLength: 1
+  heldByController: 0
 --- !u!114 &2855971639405814716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +348,21 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
+--- !u!114 &146082658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038270875847862366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e92660a30326b684eb3ad9d3380d2fbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 0
+  P2Only: 1
+  _authorityUpdated: 0
 --- !u!1 &2049554220245500994
 GameObject:
   m_ObjectHideFlags: 0
@@ -582,7 +599,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 2049554220245500994}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &3697232980580933782
 GameObject:
@@ -972,6 +988,7 @@ GameObject:
   - component: {fileID: 5755015304522518004}
   - component: {fileID: 1782398175596888537}
   - component: {fileID: 6405191446870709930}
+  - component: {fileID: 146082661}
   m_Layer: 0
   m_Name: GrabInteractable
   m_TagString: Untagged
@@ -1014,7 +1031,7 @@ MonoBehaviour:
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
-  _movementProvider: {fileID: 0}
+  _movementProvider: {fileID: 146082661}
 --- !u!114 &1782398175596888537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1070,6 +1087,47 @@ MonoBehaviour:
   _renderer: {fileID: 0}
   _customIcon: {fileID: 0}
   _snappiness: 0.8
+--- !u!114 &146082661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6072305797966588488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3906d48c19bb044995eeb166bf144f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _travellingData:
+    _travelSpeed: 1
+    _useFixedTravelTime: 0
+    _travelCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  _pointableElement: {fileID: 3721513878866547211}
+  maxDistance: -1
 --- !u!1 &6683191015535907866
 GameObject:
   m_ObjectHideFlags: 0
@@ -1197,7 +1255,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 512188708857620920}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &8130815253326039685
 GameObject:

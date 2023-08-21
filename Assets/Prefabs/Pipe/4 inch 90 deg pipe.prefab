@@ -236,7 +236,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 3186342524380681324}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &2886268989223835114
 GameObject:
@@ -741,6 +740,7 @@ GameObject:
   - component: {fileID: 8109067325141052591}
   - component: {fileID: 6760096739159050283}
   - component: {fileID: 6068843394687781108}
+  - component: {fileID: 1583523053}
   m_Layer: 0
   m_Name: 4 inch 90 deg pipe
   m_TagString: Untagged
@@ -755,7 +755,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5840087907368347046}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -767,7 +767,7 @@ Transform:
   - {fileID: 2827063653439470825}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!54 &6532761994013241565
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -780,10 +780,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!114 &6458903075772982474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -913,8 +913,9 @@ MonoBehaviour:
   pipeType: 0
   angle: 2
   diameter: 3
-  segmentALength: 5
-  segmentBLength: 5
+  segmentALength: 1
+  segmentBLength: 1
+  heldByController: 0
 --- !u!114 &8109067325141052591
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -960,6 +961,21 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
+--- !u!114 &1583523053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5840087907368347046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e92660a30326b684eb3ad9d3380d2fbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 0
+  P2Only: 1
+  _authorityUpdated: 0
 --- !u!1 &6430736869675296390
 GameObject:
   m_ObjectHideFlags: 0
@@ -970,8 +986,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7650768581280097786}
   - component: {fileID: 1472859230310122868}
-  - component: {fileID: 1657470098881308650}
   - component: {fileID: 7235684818951035165}
+  - component: {fileID: 1583523056}
   m_Layer: 0
   m_Name: GrabInteractable
   m_TagString: Untagged
@@ -1014,8 +1030,8 @@ MonoBehaviour:
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
-  _movementProvider: {fileID: 0}
---- !u!114 &1657470098881308650
+  _movementProvider: {fileID: 1583523056}
+--- !u!114 &7235684818951035165
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1024,7 +1040,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 6430736869675296390}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c6cba82e9f3c84f80041e0d2741ef6, type: 3}
+  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 0}
+  _customIcon: {fileID: 0}
+  _snappiness: 0.8
+--- !u!114 &1583523056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6430736869675296390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3906d48c19bb044995eeb166bf144f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _travellingData:
@@ -1055,21 +1086,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   _pointableElement: {fileID: 6068843394687781108}
---- !u!114 &7235684818951035165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6430736869675296390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _renderer: {fileID: 0}
-  _customIcon: {fileID: 0}
-  _snappiness: 0.8
+  maxDistance: -1
 --- !u!1 &6877382566211109826
 GameObject:
   m_ObjectHideFlags: 0
@@ -1241,5 +1258,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 564445043619895780}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
