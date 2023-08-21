@@ -385,6 +385,7 @@ GameObject:
   - component: {fileID: 1109814879341115456}
   - component: {fileID: 1552873685342311274}
   - component: {fileID: 6831780029017112564}
+  - component: {fileID: 913609678}
   m_Layer: 0
   m_Name: 3 inch 45 deg pipe
   m_TagString: Untagged
@@ -399,7 +400,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2593894485360860745}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -411,7 +412,7 @@ Transform:
   - {fileID: 4720938954902671306}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!54 &2467357649610167702
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -424,10 +425,10 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!114 &2345889421431852919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,8 +558,9 @@ MonoBehaviour:
   pipeType: 0
   angle: 1
   diameter: 2
-  segmentALength: 5
-  segmentBLength: 5
+  segmentALength: 1
+  segmentBLength: 1
+  heldByController: 0
 --- !u!114 &1109814879341115456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,6 +606,21 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
+--- !u!114 &913609678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2593894485360860745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e92660a30326b684eb3ad9d3380d2fbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 0
+  P2Only: 1
+  _authorityUpdated: 0
 --- !u!1 &2924947171177485876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,7 +1019,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 4664641326397263444}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &7615020145354600776
 GameObject:
@@ -1131,7 +1147,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hint: {fileID: 2451332664307593046}
   CanShow: 1
-  OnTheWall: 0
   Clamped: 0
 --- !u!1 &8408750364182701755
 GameObject:
@@ -1143,8 +1158,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6912608654764848889}
   - component: {fileID: 1281798107112590890}
-  - component: {fileID: 8922785119062741815}
   - component: {fileID: 3103574228733251719}
+  - component: {fileID: 913609676}
   m_Layer: 0
   m_Name: GrabInteractable
   m_TagString: Untagged
@@ -1187,8 +1202,8 @@ MonoBehaviour:
   _grabSource: {fileID: 0}
   _resetGrabOnGrabsUpdated: 1
   _physicsGrabbable: {fileID: 0}
-  _movementProvider: {fileID: 0}
---- !u!114 &8922785119062741815
+  _movementProvider: {fileID: 913609676}
+--- !u!114 &3103574228733251719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1197,7 +1212,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 8408750364182701755}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c6cba82e9f3c84f80041e0d2741ef6, type: 3}
+  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderer: {fileID: 0}
+  _customIcon: {fileID: 0}
+  _snappiness: 0.8
+--- !u!114 &913609676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8408750364182701755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba3906d48c19bb044995eeb166bf144f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _travellingData:
@@ -1228,18 +1258,4 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   _pointableElement: {fileID: 6831780029017112564}
---- !u!114 &3103574228733251719
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8408750364182701755}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0529a9671a3b6a74fab00c4d05312c64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _renderer: {fileID: 0}
-  _customIcon: {fileID: 0}
-  _snappiness: 0.8
+  maxDistance: -1
