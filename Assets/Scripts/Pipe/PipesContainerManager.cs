@@ -61,7 +61,7 @@ namespace VRC2
                         if (chm.CanShow)
                         {
                             // only add valid chm
-                            _clampHintsManagers.Add(chm);   
+                            _clampHintsManagers.Add(chm);
                         }
                     }
                 }
@@ -84,6 +84,42 @@ namespace VRC2
             if (distanceGrabInteractable.enabled == enabled) return;
 
             distanceGrabInteractable.enabled = enabled;
+        }
+
+        #endregion
+
+        #region Wall
+
+        private GameObject _wall;
+
+        private GameObject wall
+        {
+            get
+            {
+                if (_wall == null)
+                {
+                    print("_wall is set");
+                    _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
+                }
+
+                return _wall;
+            }
+        }
+
+        private WallCollisionDetector _wallCollisionDetector;
+
+        private WallCollisionDetector wallCollisionDetector
+        {
+            get
+            {
+                if (_wallCollisionDetector == null)
+                {
+                    print("_wallCollisionDetector is set");
+                    _wallCollisionDetector = wall.GetComponent<WallCollisionDetector>();
+                }
+
+                return _wallCollisionDetector;
+            }
         }
 
         #endregion
@@ -112,7 +148,7 @@ namespace VRC2
         public void OnRelease()
         {
             heldByController = false;
-            
+
             // compensate to make it look nicer
             SelfCompensate();
 
@@ -172,6 +208,7 @@ namespace VRC2
                         // make it able to fall
                         _rigidbody.isKinematic = false;
                     }
+
                     return;
                 }
 
@@ -183,19 +220,6 @@ namespace VRC2
                     // enable Compensate
                     var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
                     (pos, rot) = pgft.CompensateWithDirection(pos, rot);
-
-                    // update CHM flag
-                    foreach (var chm in clampHintsManagers)
-                    {
-                        chm.OnTheWall = true;
-                    }
-                }
-                else
-                {
-                    foreach (var chm in clampHintsManagers)
-                    {
-                        chm.OnTheWall = false;
-                    }
                 }
 
                 // synchronize transform of the parent
@@ -225,8 +249,8 @@ namespace VRC2
 
         public void SelfCompensate()
         {
-            if(selfCompensated) return;
-            
+            if (selfCompensated) return;
+
             if (transformer == null)
             {
                 transformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
@@ -245,10 +269,8 @@ namespace VRC2
 
         bool ShouldFall()
         {
-            print("Should fall checking");
             foreach (var chm in clampHintsManagers)
             {
-                print($"{chm.gameObject.name}: {chm.Clamped}");
                 if (chm.Clamped) return false;
             }
 

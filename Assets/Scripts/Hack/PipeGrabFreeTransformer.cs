@@ -118,6 +118,7 @@ namespace VRC2.Hack
         }
 
         private WallCollisionDetector _wallCollisionDetector;
+
         private WallCollisionDetector wallCollisionDetector
         {
             get
@@ -230,18 +231,6 @@ namespace VRC2.Hack
             {
                 // print("Colliding Wall. Apply compensation.");
                 (pos, rotation) = CompensateWithDirection(pos, rotation);
-
-                foreach (var chm in clampHintManagers)
-                {
-                    chm.OnTheWall = true;
-                }
-            }
-            else
-            {
-                foreach (var chm in clampHintManagers)
-                {
-                    chm.OnTheWall = false;
-                }
             }
 
             targetTransform.rotation = Quaternion.Euler(rotation);

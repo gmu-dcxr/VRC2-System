@@ -132,7 +132,7 @@ namespace VRC2
             return _pipeDiameters[diameter];
         }
 
-        bool PipeFullyLeft(GameObject root)
+        public bool PipeFullyLeft(GameObject root)
         {
             var gos = Utils.GetChildren<PipeCollisionDetector>(root);
             foreach (var go in gos)
