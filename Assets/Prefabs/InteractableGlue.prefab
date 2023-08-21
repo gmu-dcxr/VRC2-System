@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fda4ab9cf6b643b0bbeeb39fd6415679, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   horizontalGameObject: {fileID: 823708803646327826}
   verticalGameObject: {fileID: 823708803779699162}
 --- !u!114 &823708803891219264
@@ -509,6 +510,7 @@ MonoBehaviour:
     RawGuidValue: ee44dd4bdd50a9d47b92df074d78c490
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 823708803891219267}
   - {fileID: 823708803891219327}
   SimulationBehaviours: []
 --- !u!114 &823708803891219327
@@ -551,3 +553,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   P1Only: 1
   P2Only: 0
+  _authorityUpdated: 0
