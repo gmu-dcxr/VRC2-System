@@ -162,6 +162,30 @@ namespace VRC2
 
         #endregion
 
+        #region Simple Object Checking
+
+        private bool simplenessChecked = false;
+        private bool _isSimplePipe;
+
+        private bool isSimplePipe
+        {
+            get
+            {
+                if (!simplenessChecked)
+                {
+                    var root = PipeHelper.GetRoot(gameObject);
+
+                    _isSimplePipe = root == gameObject;
+
+                    simplenessChecked = true;
+                }
+
+                return _isSimplePipe;
+            }
+        }
+
+        #endregion
+
 
         // Start is called before the first frame update
         void Start()
@@ -183,7 +207,7 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
-            if (!heldByController)
+            if (isSimplePipe && !heldByController)
             {
                 if (ShouldFall())
                 {
