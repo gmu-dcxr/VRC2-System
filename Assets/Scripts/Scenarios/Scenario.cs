@@ -219,7 +219,7 @@ namespace VRC2.Scenarios
         {
             // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
             var runner = GameObject.FindObjectOfType<NetworkRunner>();
-            if (runner.IsRunning && scenariosManager.scenarios != null && scenariosManager.scenarios.Count > 0) return;
+            if (runner != null && runner.IsRunning && scenariosManager.scenarios != null && scenariosManager.scenarios.Count > 0) return;
 
             if (GUI.Button(new Rect(10, 10, 150, 30), $"Start {ClsName}"))
             {
