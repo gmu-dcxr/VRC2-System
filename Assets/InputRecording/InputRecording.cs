@@ -27,6 +27,7 @@ public class InputRecording : MonoBehaviour {
 	InputEventTrace m_Trace;
 	PlayerInputActions m_PlayerInputActions;
 	InputAction m_MoveInput;
+	private InputAction m_BigArmInput;
 
 	private Vector3 startPosition;
 
@@ -38,6 +39,7 @@ public class InputRecording : MonoBehaviour {
 		m_PlayerInputActions = new PlayerInputActions();
 		m_PlayerInputActions.Enable();
 		m_MoveInput = m_PlayerInputActions.Player.Move;
+		m_BigArmInput = m_PlayerInputActions.Player.BigArm;
 
 		m_Trace = new InputEventTrace(Keyboard.current);
 		m_Trace.onEvent += OnEvent;
@@ -57,6 +59,7 @@ public class InputRecording : MonoBehaviour {
 		var input = m_MoveInput.ReadValue<Vector2>();
 		var movement = new Vector3(input.x,0f,input.y) * 4f * Time.deltaTime;
 		m_Player.Translate(movement,Space.Self);
+		print(m_BigArmInput.ReadValue<Vector2>());
 	}
 
 	void ToggleRecording () {

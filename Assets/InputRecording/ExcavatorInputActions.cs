@@ -28,37 +28,278 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
             ""id"": ""2015e2e3-95a7-4e88-9274-732c9b7795c8"",
             ""actions"": [
                 {
-                    ""name"": ""Move"",
+                    ""name"": ""Switch"",
                     ""type"": ""Button"",
-                    ""id"": ""2f2ea906-89b1-411a-bc7f-0a57e06c079c"",
+                    ""id"": ""2de10c68-747e-4f99-9d15-e5cd61fbb1cf"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BigArm"",
+                    ""type"": ""Value"",
+                    ""id"": ""2403b2d7-30c0-4804-8452-c81c9eb30e97"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Door"",
+                    ""type"": ""Button"",
+                    ""id"": ""86680e04-140a-42ab-9739-e62afa14154e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Rotate"",
+                    ""type"": ""Value"",
+                    ""id"": ""2cf9474b-c2a3-47c6-8a49-ae460fb3b4d4"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Shovel"",
+                    ""type"": ""Value"",
+                    ""id"": ""fc2adc06-c60a-454c-b9e3-d0c8feeff778"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SmallArm"",
+                    ""type"": ""Value"",
+                    ""id"": ""cb0e6e00-b7ee-4f26-bee6-5c356954ee35"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""b21f8f0c-3c10-4adb-9f98-463008ee3750"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""d92ecb1a-e6c9-4cfe-ac6d-19b71e6939df"",
+                    ""id"": ""2e65318f-16c6-4414-9303-462530eb2276"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Switch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""34e71447-6f3f-45bf-af57-7e61663b4523"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BigArm"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""39228d93-4b2a-4033-a8e4-1304827f884d"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BigArm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""11e9c169-75d6-4f21-bfd4-f5bda6aa31bc"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BigArm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""47a52915-68c2-43b9-98f9-9538fbec4ed8"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Door"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""9b3b45ef-a24b-4c96-99fc-902933da0175"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""1e197bb9-fdf2-4ddf-82cb-ed7a085c744c"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""70cd6227-c0e5-4064-b2f4-8a9fc1f0dbfb"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""27e8620b-a560-483f-8ba7-68b40d90466e"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shovel"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""6a34e628-5118-4b1a-b5e1-0169ec3dfa33"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shovel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""37e82864-4b39-408c-859a-523cd5ad6efb"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shovel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""f48a2e47-9e07-4c3a-809b-b9c9deb87777"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SmallArm"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""b6bb24ba-c922-479e-9a9a-ac064db819bb"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SmallArm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""f97f8507-3084-419c-9c06-f0d578d96ed6"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SmallArm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""566035b6-998c-4838-8465-35ff65f5b8f1"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""68e0f789-695b-4ebf-953c-8699993e2e78"",
                     ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""e039c505-5134-4ffb-81dd-afc1a77f212d"",
-                    ""path"": """",
+                    ""name"": ""down"",
+                    ""id"": ""57b06d70-6a18-4fa0-bb2e-11c6e4539cb4"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""ac83fc4e-cf16-4270-8050-62c402974286"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""08dd093c-7143-43fb-80b2-e130736224c9"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -67,6 +308,12 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
 }");
         // Excavator
         m_Excavator = asset.FindActionMap("Excavator", throwIfNotFound: true);
+        m_Excavator_Switch = m_Excavator.FindAction("Switch", throwIfNotFound: true);
+        m_Excavator_BigArm = m_Excavator.FindAction("BigArm", throwIfNotFound: true);
+        m_Excavator_Door = m_Excavator.FindAction("Door", throwIfNotFound: true);
+        m_Excavator_Rotate = m_Excavator.FindAction("Rotate", throwIfNotFound: true);
+        m_Excavator_Shovel = m_Excavator.FindAction("Shovel", throwIfNotFound: true);
+        m_Excavator_SmallArm = m_Excavator.FindAction("SmallArm", throwIfNotFound: true);
         m_Excavator_Move = m_Excavator.FindAction("Move", throwIfNotFound: true);
     }
 
@@ -129,11 +376,23 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
     // Excavator
     private readonly InputActionMap m_Excavator;
     private List<IExcavatorActions> m_ExcavatorActionsCallbackInterfaces = new List<IExcavatorActions>();
+    private readonly InputAction m_Excavator_Switch;
+    private readonly InputAction m_Excavator_BigArm;
+    private readonly InputAction m_Excavator_Door;
+    private readonly InputAction m_Excavator_Rotate;
+    private readonly InputAction m_Excavator_Shovel;
+    private readonly InputAction m_Excavator_SmallArm;
     private readonly InputAction m_Excavator_Move;
     public struct ExcavatorActions
     {
         private @ExcavatorInputActions m_Wrapper;
         public ExcavatorActions(@ExcavatorInputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Switch => m_Wrapper.m_Excavator_Switch;
+        public InputAction @BigArm => m_Wrapper.m_Excavator_BigArm;
+        public InputAction @Door => m_Wrapper.m_Excavator_Door;
+        public InputAction @Rotate => m_Wrapper.m_Excavator_Rotate;
+        public InputAction @Shovel => m_Wrapper.m_Excavator_Shovel;
+        public InputAction @SmallArm => m_Wrapper.m_Excavator_SmallArm;
         public InputAction @Move => m_Wrapper.m_Excavator_Move;
         public InputActionMap Get() { return m_Wrapper.m_Excavator; }
         public void Enable() { Get().Enable(); }
@@ -144,6 +403,24 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
         {
             if (instance == null || m_Wrapper.m_ExcavatorActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_ExcavatorActionsCallbackInterfaces.Add(instance);
+            @Switch.started += instance.OnSwitch;
+            @Switch.performed += instance.OnSwitch;
+            @Switch.canceled += instance.OnSwitch;
+            @BigArm.started += instance.OnBigArm;
+            @BigArm.performed += instance.OnBigArm;
+            @BigArm.canceled += instance.OnBigArm;
+            @Door.started += instance.OnDoor;
+            @Door.performed += instance.OnDoor;
+            @Door.canceled += instance.OnDoor;
+            @Rotate.started += instance.OnRotate;
+            @Rotate.performed += instance.OnRotate;
+            @Rotate.canceled += instance.OnRotate;
+            @Shovel.started += instance.OnShovel;
+            @Shovel.performed += instance.OnShovel;
+            @Shovel.canceled += instance.OnShovel;
+            @SmallArm.started += instance.OnSmallArm;
+            @SmallArm.performed += instance.OnSmallArm;
+            @SmallArm.canceled += instance.OnSmallArm;
             @Move.started += instance.OnMove;
             @Move.performed += instance.OnMove;
             @Move.canceled += instance.OnMove;
@@ -151,6 +428,24 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
 
         private void UnregisterCallbacks(IExcavatorActions instance)
         {
+            @Switch.started -= instance.OnSwitch;
+            @Switch.performed -= instance.OnSwitch;
+            @Switch.canceled -= instance.OnSwitch;
+            @BigArm.started -= instance.OnBigArm;
+            @BigArm.performed -= instance.OnBigArm;
+            @BigArm.canceled -= instance.OnBigArm;
+            @Door.started -= instance.OnDoor;
+            @Door.performed -= instance.OnDoor;
+            @Door.canceled -= instance.OnDoor;
+            @Rotate.started -= instance.OnRotate;
+            @Rotate.performed -= instance.OnRotate;
+            @Rotate.canceled -= instance.OnRotate;
+            @Shovel.started -= instance.OnShovel;
+            @Shovel.performed -= instance.OnShovel;
+            @Shovel.canceled -= instance.OnShovel;
+            @SmallArm.started -= instance.OnSmallArm;
+            @SmallArm.performed -= instance.OnSmallArm;
+            @SmallArm.canceled -= instance.OnSmallArm;
             @Move.started -= instance.OnMove;
             @Move.performed -= instance.OnMove;
             @Move.canceled -= instance.OnMove;
@@ -173,6 +468,12 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
     public ExcavatorActions @Excavator => new ExcavatorActions(this);
     public interface IExcavatorActions
     {
+        void OnSwitch(InputAction.CallbackContext context);
+        void OnBigArm(InputAction.CallbackContext context);
+        void OnDoor(InputAction.CallbackContext context);
+        void OnRotate(InputAction.CallbackContext context);
+        void OnShovel(InputAction.CallbackContext context);
+        void OnSmallArm(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
     }
 }
