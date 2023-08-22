@@ -571,7 +571,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   _pointableElement: {fileID: 1002020612241236888}
-  maxDistance: 0.2
+  maxDistance: -1
 --- !u!1 &3442048840891937684
 GameObject:
   m_ObjectHideFlags: 0
@@ -675,7 +675,7 @@ Rigidbody:
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 1
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 3
 --- !u!114 &8262034610718663677
@@ -807,8 +807,9 @@ MonoBehaviour:
   pipeType: 0
   angle: 1
   diameter: 0
-  segmentALength: 5
-  segmentBLength: 5
+  segmentALength: 1
+  segmentBLength: 1
+  heldByController: 0
 --- !u!114 &618721087699970719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -868,6 +869,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   P1Only: 0
   P2Only: 1
+  _authorityUpdated: 0
 --- !u!1 &4919787555917545218
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,7 +899,7 @@ Transform:
   m_GameObject: {fileID: 4919787555917545218}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0}
-  m_LocalScale: {x: 0.25, y: 1.02, z: 1.02}
+  m_LocalScale: {x: 0.25, y: 1.1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 7673242556099162544}
   m_RootOrder: 1
@@ -1006,7 +1008,7 @@ Transform:
   m_GameObject: {fileID: 6553618584723194044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 1.02, z: 1.02}
+  m_LocalScale: {x: 0.25, y: 1.1, z: 1.1}
   m_Children: []
   m_Father: {fileID: 8212704642133240855}
   m_RootOrder: 1
