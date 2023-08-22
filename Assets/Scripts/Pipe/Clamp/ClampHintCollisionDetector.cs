@@ -65,6 +65,9 @@ namespace VRC2.Pipe
             {
                 hintManager.Clamped = false;
                 requested = false;
+            }else if (go.CompareTag(GlobalConstants.wallTag))
+            {
+                hintManager.OnTheWall = false;
             }
         }
 
@@ -76,6 +79,9 @@ namespace VRC2.Pipe
                 hintManager.Clamped = true;
                 // request update
                 UpdatePipeContainer();
+            } else if (go.CompareTag(GlobalConstants.wallTag))
+            {
+                hintManager.OnTheWall = true;
             }
         }
 

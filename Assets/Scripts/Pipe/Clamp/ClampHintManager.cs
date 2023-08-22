@@ -14,47 +14,28 @@ namespace VRC2.Pipe
         // whether to show it, the right part of the connected pipe will be set to false
         [HideInInspector] public bool CanShow = true;
 
-        public Bounds _wallBounds
-        {
-            get { return wall.GetComponent<MeshCollider>().bounds; }
-        }
-
-        private Bounds _bounds
-        {
-            get { return gameObject.GetComponent<MeshCollider>().bounds; }
-        }
-
         private PipeManipulation _pipeManipulation;
         private PipesContainerManager _pipesContainerManager;
 
         // show it only when it's on the wall
-        private bool OnTheWall
+        [HideInInspector] public bool OnTheWall;
+
+        [HideInInspector] public bool Clamped = false;
+
+        private MeshRenderer _meshRenderer;
+
+        private MeshRenderer meshRenderer
         {
             get
             {
-                var b1 = _wallBounds.Intersects(_bounds);
-                if (transformer.isSimplePipe)
+                if (_meshRenderer == null)
                 {
-                    if (_pipeManipulation == null)
-                    {
-                        _pipeManipulation = transformer.gameObject.GetComponent<PipeManipulation>();
-                    }
-
-                    return b1 | _pipeManipulation.collidingWall;
+                    _meshRenderer = hint.GetComponent<MeshRenderer>();
                 }
-                else
-                {
-                    if (_pipesContainerManager == null)
-                    {
-                        _pipesContainerManager = transform.gameObject.GetComponent<PipesContainerManager>();
-                    }
 
-                    return b1 | _pipesContainerManager.collidingWall;
-                }
+                return _meshRenderer;
             }
         }
-
-        [HideInInspector] public bool Clamped = false;
 
         #region Wall
 
@@ -102,9 +83,9 @@ namespace VRC2.Pipe
             // show only when CanShow is true and only when pipe is on the wall
             if (!CanShow || !OnTheWall || Clamped)
             {
-                if (hint.activeSelf)
+                if (meshRenderer.enabled)
                 {
-                    hint.SetActive(false);
+                    UpdateMeshRenderer(false);
                 }
             }
             else
@@ -114,16 +95,21 @@ namespace VRC2.Pipe
                     MoveHint();
                 }
 
-                if (!hint.activeSelf)
+                if (!meshRenderer.enabled)
                 {
-                    hint.SetActive(true);
+                    UpdateMeshRenderer(true);
                 }
             }
         }
 
         public void Hide()
         {
-            hint.SetActive(false);
+            UpdateMeshRenderer(false);
+        }
+
+        void UpdateMeshRenderer(bool enabled)
+        {
+            meshRenderer.enabled = enabled;
         }
 
         void MoveHint()

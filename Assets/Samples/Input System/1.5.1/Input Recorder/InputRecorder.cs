@@ -334,6 +334,7 @@ namespace UnityEngine.InputSystem
 
         private void OnEventRecorded(InputEventPtr eventPtr)
         {
+            print($"OnEventRecorded: {eventPtr.ToString()}");
             m_ChangeEvent?.Invoke(Change.EventCaptured);
         }
 
