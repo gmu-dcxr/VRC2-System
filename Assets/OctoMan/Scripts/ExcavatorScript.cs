@@ -5,23 +5,23 @@ public class ExcavatorScript : MonoBehaviour {
 
 	//Animator
 	public Animator anim;
-	float rotSpeed = 30f;
+	public float rotSpeed = 30f;
 	public float driveSpeed = 2f;
 	//Door
-	bool opened = false;
+	public bool opened = false;
 
 	public bool InDriveMode = true;
 	//Animate UV'S
 	public float scrollSpeed = 0.5f;
 
-	float offsetL;
-	float offsetR;
+	public float offsetL;
+	public float offsetR;
 
 	public bool U = false;
 	public bool V = true;
 
-	private Material matL;
-	private Material matR;
+	public Material matL;
+	public Material matR;
 
 	//Treads
 	public GameObject TreadsL;
@@ -52,6 +52,7 @@ public class ExcavatorScript : MonoBehaviour {
 
 	void Update() 
 	{
+		return;
 		if(!InDriveMode)
 		{
 			//-------------------------------------------------BIG ARM-----------------------------------------------------------------
