@@ -185,6 +185,7 @@ public class InputRecording : MonoBehaviour
 	void OnDestroy()
 	{
 		m_PlayerInputActions.Dispose();
+		excavatorIA.Dispose();
 		m_Trace.Dispose();
 	}
 
