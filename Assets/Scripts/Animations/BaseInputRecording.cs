@@ -21,7 +21,7 @@ public class BaseInputRecording : MonoBehaviour
 	private InputEventTrace m_Trace;
 
 	string GetFilePath() =>
-		Path.Combine(Path.GetDirectoryName(Application.dataPath), folder, GetFilename() + ".txt");
+		Path.Combine(Path.GetDirectoryName(Application.dataPath), folder, GetFilename() + ".inputtrace");
 	
     string ClsName
 	{
