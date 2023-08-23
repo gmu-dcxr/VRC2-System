@@ -260,7 +260,7 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
                 {
                     ""name"": ""up"",
                     ""id"": ""68e0f789-695b-4ebf-953c-8699993e2e78"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -271,7 +271,7 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
                 {
                     ""name"": ""down"",
                     ""id"": ""57b06d70-6a18-4fa0-bb2e-11c6e4539cb4"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -282,7 +282,7 @@ public partial class @ExcavatorInputActions: IInputActionCollection2, IDisposabl
                 {
                     ""name"": ""left"",
                     ""id"": ""ac83fc4e-cf16-4270-8050-62c402974286"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

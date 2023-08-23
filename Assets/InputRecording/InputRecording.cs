@@ -38,6 +38,11 @@ public class InputRecording : MonoBehaviour
 
 	private Vector3 startPosition;
 
+	private Transform excavatorBody
+	{
+		get => excavatorScript.gameObject.transform;
+	}
+
 	Animator anim
 	{
 		get => excavatorScript.anim;
@@ -192,12 +197,14 @@ public class InputRecording : MonoBehaviour
 		if (!InDriveMode)
 		{
 			//-------------------------------------------------BIG ARM-----------------------------------------------------------------
-			if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition") != 2)
+			// if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition") != 2)
+			if (bigArmInput.ReadValue<Vector2>().y > 0 && anim.GetInteger("BigArmPosition") != 2)
 			{
 				anim.SetInteger("BigArmPosition", 1);
 				anim.SetFloat("BigArmSpeed", 1f);
 			}
-			else if (!Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition") != 0)
+			// else if (!Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition") != 0)
+			else if (bigArmInput.ReadValue<Vector2>().y < 0 && anim.GetInteger("BigArmPosition") != 0)
 			{
 				anim.SetInteger("BigArmPosition", 1);
 				anim.SetFloat("BigArmSpeed", -1f);
@@ -208,14 +215,13 @@ public class InputRecording : MonoBehaviour
 			}
 
 			//-------------------------------------------------------SMALL ARM-------------------------------------------------------------
-			if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow) &&
-			    anim.GetInteger("SmallArmPosition") != 2)
+			// if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow) && anim.GetInteger("SmallArmPosition") != 2)
+			if (smallArmInput.ReadValue<Vector2>().y > 0 && anim.GetInteger("SmallArmPosition") != 2)
 			{
 				anim.SetInteger("SmallArmPosition", 1);
 				anim.SetFloat("SmallArmSpeed", 1f);
 			}
-			else if (!Input.GetKey(KeyCode.UpArrow) && Input.GetKey(KeyCode.DownArrow) &&
-			         anim.GetInteger("SmallArmPosition") != 0)
+			else if (smallArmInput.ReadValue<Vector2>().y < 0 && anim.GetInteger("SmallArmPosition") != 0)
 			{
 				anim.SetInteger("SmallArmPosition", 1);
 				anim.SetFloat("SmallArmSpeed", -1f);
@@ -226,13 +232,12 @@ public class InputRecording : MonoBehaviour
 			}
 
 			//----------------------------------------------------------SHOVEL-----------------------------------------------------------------
-			if (Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow) &&
-			    anim.GetInteger("ShovelPosition") != 2)
+			if (shovelInput.ReadValue<Vector2>().y > 0 && anim.GetInteger("ShovelPosition") != 2)
 			{
 				anim.SetInteger("ShovelPosition", 1);
 				anim.SetFloat("ShovelSpeed", 1f);
 			}
-			else if (!Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.RightArrow) &&
+			else if (shovelInput.ReadValue<Vector2>().y < 0 &&
 			         anim.GetInteger("ShovelPosition") != 0)
 			{
 				anim.SetInteger("ShovelPosition", 1);
@@ -244,11 +249,11 @@ public class InputRecording : MonoBehaviour
 			}
 
 			//---------------------------------------------------------ROTATE BODY----------------------------------------------------------
-			if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+			if (rotateInput.ReadValue<Vector2>().x < 0)
 			{
 				anim.SetFloat("RotateSpeed", 0.5f);
 			}
-			else if (!Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D))
+			else if (rotateInput.ReadValue<Vector2>().x > 0)
 			{
 				anim.SetFloat("RotateSpeed", -0.5f);
 			}
@@ -263,35 +268,35 @@ public class InputRecording : MonoBehaviour
 		if (InDriveMode)
 		{
 			//ANIMATE RIGHT TREAD
-			if (Input.GetKey(KeyCode.Q) && !Input.GetKey(KeyCode.A))
+			if (moveInput.ReadValue<Vector2>().y > 0)
 			{
-				transform.RotateAround(leftTread.transform.position, -Vector3.up, Time.deltaTime * rotSpeed);
+				excavatorBody.RotateAround(leftTread.transform.position, -Vector3.up, Time.deltaTime * rotSpeed);
 				offsetR = Time.time * scrollSpeed % 1;
 				WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 4);
 				WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 4);
 
 			}
 
-			if (!Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.A))
+			if (moveInput.ReadValue<Vector2>().y < 0)
 			{
-				transform.RotateAround(leftTread.transform.position, Vector3.up, Time.deltaTime * rotSpeed);
+				excavatorBody.RotateAround(leftTread.transform.position, Vector3.up, Time.deltaTime * rotSpeed);
 				offsetR = Time.time * -scrollSpeed % 1;
 				WheelFrontRight.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 4);
 				WheelBackRight.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 4);
 			}
 
 			//ANIMATE LEFT TREAD
-			if (Input.GetKey(KeyCode.E) && !Input.GetKey(KeyCode.D))
+			if (moveInput.ReadValue<Vector2>().x < 0)
 			{
-				transform.RotateAround(rightTread.transform.position, Vector3.up, Time.deltaTime * rotSpeed);
+				excavatorBody.RotateAround(rightTread.transform.position, Vector3.up, Time.deltaTime * rotSpeed);
 				offsetL = Time.time * scrollSpeed % 1;
 				WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 4);
 				WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 4);
 			}
 
-			if (!Input.GetKey(KeyCode.E) && Input.GetKey(KeyCode.D))
+			if (moveInput.ReadValue<Vector2>().x > 0)
 			{
-				transform.RotateAround(rightTread.transform.position, -Vector3.up, Time.deltaTime * rotSpeed);
+				excavatorBody.RotateAround(rightTread.transform.position, -Vector3.up, Time.deltaTime * rotSpeed);
 				offsetL = Time.time * -scrollSpeed % 1;
 				WheelFrontLeft.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 4);
 				WheelBackLeft.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 4);
@@ -299,14 +304,14 @@ public class InputRecording : MonoBehaviour
 		}
 
 		//------------------------------------------------------DOOR OPEN / CLOSE-----------------------------------------------------
-		if (Input.GetKeyDown(KeyCode.F))
+		if (doorInput.triggered)
 		{
 			opened = !opened;
 			anim.SetBool("DoorOpen", opened);
 		}
 
 		//-----------------------------------------------Switch Drive Mode/ Work Mode-------------------------------------------------
-		if (Input.GetKeyDown(KeyCode.Tab))
+		if (switchInput.triggered)
 		{
 			InDriveMode = !InDriveMode;
 		}
@@ -361,7 +366,7 @@ public class InputRecording : MonoBehaviour
 
 	void OnEvent(InputEventPtr ev)
 	{
-		Debug.Log(ev.ToString());
+		
 	}
 
 	void Save()
