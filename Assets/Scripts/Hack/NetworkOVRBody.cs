@@ -352,22 +352,22 @@ namespace VRC2
         [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
         public void RPC_SendSkeletonPoseData(byte[] bytes, RpcInfo info = default)
         {
-            var message = "";
+            // var message = "";
 
             if (info.IsInvokeLocal)
             {
-                message = $"Send data of length: {bytes.Length}";
+                // message = $"Send data of length: {bytes.Length}";
             }
             else
             {
-                message = $"Recv data of length: {bytes.Length}\n";
+                // message = $"Recv data of length: {bytes.Length}\n";
                 // decode
                 var data = DecodeSkeletonPoseData(bytes);
                 // covert
                 _RPCDecodedSkeletonPoseData = ConvertSkeletonPoseData(data);
             }
 
-            Debug.LogWarning(message);
+            // Debug.LogWarning(message);
         }
 
         public SkeletonPoseData DecodeSkeletonPoseData(byte[] bytes)
