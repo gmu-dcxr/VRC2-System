@@ -1,5 +1,6 @@
 ﻿using UnityEngine.InputSystem;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VRC2.Animations
 {
@@ -14,6 +15,7 @@ namespace VRC2.Animations
 
         //__________Boom Cart_____________________
         public Transform boomCart;
+
         // public KeyCode forwardBoomCart = KeyCode.Q;
         // public KeyCode backBoomCart = KeyCode.E;
         public float speedBoomCart = 0.75f;
@@ -36,8 +38,8 @@ namespace VRC2.Animations
         private bool blockPlayOneShot_BoomCart = true;
         [HideInInspector] public Transform pointMovingForward;
         [HideInInspector] public Transform pointMovingBack;
-        [HideInInspector] public Transform pointLineArrow_BoomCart;
-        [HideInInspector] public Transform boomCart_Detal0;
+        public Transform pointLineArrow_BoomCart;
+        public Transform boomCart_Detal0;
         public Transform pointLineHook0;
         public Transform pointLineHook1;
         public Transform pointLineHook2;
@@ -49,11 +51,15 @@ namespace VRC2.Animations
         private bool onLineCableHook = false;
         private Vector3 minMovingBoomCart;
         private Vector3 maxMovingBoomCart;
+
         [HideInInspector] public bool blockControllerCrane = false;
-        [Space(30)] [Header("SettingsHook")] public KeyCode upMovingHook = KeyCode.W;
+
+        // [Space(30)] [Header("SettingsHook")] 
+        // public KeyCode upMovingHook = KeyCode.W;
         // public KeyCode downMovingHook = KeyCode.S;
         // public KeyCode seizeTheCargo = KeyCode.C;
         [Space(20)] [Header("Rotation Cargo")] public KeyCode rotationCargo_Press = KeyCode.LeftShift;
+
         // public KeyCode leftRotationCargo = KeyCode.Mouse0;
         // public KeyCode rightRotation = KeyCode.Mouse1;
         private float offsetRotationHook = 0;
@@ -94,6 +100,14 @@ namespace VRC2.Animations
         private Transform pointLineCargo_4;
         [HideInInspector] public Transform pointCheckDistanceUI;
 
+        [Space(30)] [Header("Settings UI Panel")]
+        public Text distanceCartUI;
+
+        public Text hookCargoMassUI;
+        public Text distanceHookUI;
+        public Text rotationCraneUI;
+        public Text counterweightUI;
+        public Image rotationCrane_DUI;
         private RectTransform rotationCrane_D;
         [HideInInspector] public int counterweightUI_Int = 0;
         private bool blockSound_A = true;
@@ -111,7 +125,7 @@ namespace VRC2.Animations
         #region Input Actions
 
         private CraneInputActions craneIA;
-        
+
         private InputAction cartInput;
         private InputAction craneInput;
         private InputAction hookInput;
@@ -120,7 +134,7 @@ namespace VRC2.Animations
         private InputAction seizeInput;
         private InputAction releaseInput;
 
-        
+
 
         #endregion
 
@@ -172,8 +186,9 @@ namespace VRC2.Animations
 
         public void Update()
         {
-            if (blockController_Int == 3 && scriptTPL.blockArrowIfBoomCartActive == false &&
-                blockControllerCrane == true)
+            // if (blockController_Int == 3 && scriptTPL.blockArrowIfBoomCartActive == false &&
+            // blockControllerCrane == true)
+            if (true)
             {
                 AnimationBoomCart();
                 RotationCrane();
@@ -453,7 +468,7 @@ namespace VRC2.Animations
             }
 
             // if (Input.GetKeyUp(rotationCargo_Press) || Input.GetKeyUp(leftRotationCargo) ||
-                // Input.GetKeyUp(rightRotation))
+            // Input.GetKeyUp(rightRotation))
             if (cargoInput.ReadValue<Vector2>().x == 0)
             {
                 rotPlatformBool = false;
@@ -552,9 +567,9 @@ namespace VRC2.Animations
             var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
             rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
                 Time.deltaTime * speedRotationCrane / smoothRotationCrane);
-            var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
-            rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel,
-                Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+            // var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
+            // rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel,
+            //     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
         }
 
         public void CreateCableHook()
