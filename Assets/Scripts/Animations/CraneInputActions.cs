@@ -53,6 +53,33 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Cargo"",
+                    ""type"": ""Value"",
+                    ""id"": ""cba70bed-040a-4bb4-8e4f-2e5535cf0c0a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Seize"",
+                    ""type"": ""Button"",
+                    ""id"": ""e8a4f214-d44b-4d2b-a08d-b0183d934305"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Release"",
+                    ""type"": ""Button"",
+                    ""id"": ""9ca0f579-b88a-4e92-adbc-4dc79fd30630"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -154,6 +181,61 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Cart"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""08cdd227-56c8-41ce-99f9-20a9f41bfbc9"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cargo"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""a60ae39e-98b7-4c50-8f4e-c932f288c187"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cargo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""8bb5ec9c-b5c0-4a3a-8e3f-8b0509c43d6d"",
+                    ""path"": ""<Keyboard>/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cargo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4b1f35d6-66be-4b8c-8ccc-142b4040553e"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Seize"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf50e203-e862-4adf-80b6-def21c1ca6cb"",
+                    ""path"": ""<Keyboard>/o"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Release"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -165,6 +247,9 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
         m_Crane_Cart = m_Crane.FindAction("Cart", throwIfNotFound: true);
         m_Crane_Crane = m_Crane.FindAction("Crane", throwIfNotFound: true);
         m_Crane_Hook = m_Crane.FindAction("Hook", throwIfNotFound: true);
+        m_Crane_Cargo = m_Crane.FindAction("Cargo", throwIfNotFound: true);
+        m_Crane_Seize = m_Crane.FindAction("Seize", throwIfNotFound: true);
+        m_Crane_Release = m_Crane.FindAction("Release", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -229,6 +314,9 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Crane_Cart;
     private readonly InputAction m_Crane_Crane;
     private readonly InputAction m_Crane_Hook;
+    private readonly InputAction m_Crane_Cargo;
+    private readonly InputAction m_Crane_Seize;
+    private readonly InputAction m_Crane_Release;
     public struct CraneActions
     {
         private @CraneInputActions m_Wrapper;
@@ -236,6 +324,9 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
         public InputAction @Cart => m_Wrapper.m_Crane_Cart;
         public InputAction @Crane => m_Wrapper.m_Crane_Crane;
         public InputAction @Hook => m_Wrapper.m_Crane_Hook;
+        public InputAction @Cargo => m_Wrapper.m_Crane_Cargo;
+        public InputAction @Seize => m_Wrapper.m_Crane_Seize;
+        public InputAction @Release => m_Wrapper.m_Crane_Release;
         public InputActionMap Get() { return m_Wrapper.m_Crane; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -254,6 +345,15 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
             @Hook.started += instance.OnHook;
             @Hook.performed += instance.OnHook;
             @Hook.canceled += instance.OnHook;
+            @Cargo.started += instance.OnCargo;
+            @Cargo.performed += instance.OnCargo;
+            @Cargo.canceled += instance.OnCargo;
+            @Seize.started += instance.OnSeize;
+            @Seize.performed += instance.OnSeize;
+            @Seize.canceled += instance.OnSeize;
+            @Release.started += instance.OnRelease;
+            @Release.performed += instance.OnRelease;
+            @Release.canceled += instance.OnRelease;
         }
 
         private void UnregisterCallbacks(ICraneActions instance)
@@ -267,6 +367,15 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
             @Hook.started -= instance.OnHook;
             @Hook.performed -= instance.OnHook;
             @Hook.canceled -= instance.OnHook;
+            @Cargo.started -= instance.OnCargo;
+            @Cargo.performed -= instance.OnCargo;
+            @Cargo.canceled -= instance.OnCargo;
+            @Seize.started -= instance.OnSeize;
+            @Seize.performed -= instance.OnSeize;
+            @Seize.canceled -= instance.OnSeize;
+            @Release.started -= instance.OnRelease;
+            @Release.performed -= instance.OnRelease;
+            @Release.canceled -= instance.OnRelease;
         }
 
         public void RemoveCallbacks(ICraneActions instance)
@@ -289,5 +398,8 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
         void OnCart(InputAction.CallbackContext context);
         void OnCrane(InputAction.CallbackContext context);
         void OnHook(InputAction.CallbackContext context);
+        void OnCargo(InputAction.CallbackContext context);
+        void OnSeize(InputAction.CallbackContext context);
+        void OnRelease(InputAction.CallbackContext context);
     }
 }
