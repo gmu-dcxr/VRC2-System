@@ -7,8 +7,8 @@ namespace VRC2.Animations
     public class CraneInputRecording : BaseInputRecording
     {
 
-        private SwitchingBetweenVehicles scriptSwitch;
-        private TowerPlatformInstallation scriptTPL;
+        public SwitchingBetweenVehicles scriptSwitch;
+        public TowerPlatformInstallation scriptTPL;
         public Material lineMaterial;
 
         [HideInInspector] public int blockController_Int = 0;
@@ -140,8 +140,8 @@ namespace VRC2.Animations
 
         public void Start()
         {
-            scriptTPL = this.gameObject.GetComponent<TowerPlatformInstallation>();
-            scriptSwitch = this.gameObject.GetComponent<SwitchingBetweenVehicles>();
+            // scriptTPL = this.gameObject.GetComponent<TowerPlatformInstallation>();
+            // scriptSwitch = this.gameObject.GetComponent<SwitchingBetweenVehicles>();
             GameObject _pointHooh = new GameObject("PointHook");
             _pointHooh.transform.SetParent(boomCart);
             pointHook = _pointHooh.transform;
