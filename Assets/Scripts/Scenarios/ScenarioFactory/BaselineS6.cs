@@ -30,22 +30,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject hook;
         public GameObject decayHookOn;
         public Wind scriptWind;
-        private ConfigurableJoint _jointHook;
 
-        private ConfigurableJoint jointHook
-        {
-            get
-            {
-                if (_jointHook == null)
-                {
-                    _jointHook = hook.GetComponent<ConfigurableJoint>();
-                }
 
-                return _jointHook;
-            }
-        }
-
-        private TowerControllerCrane controllerCrane;
         private bool clockWise; //From above
         private bool canRotate;
         //end Actually Using        
@@ -94,8 +80,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             base.Start();
             player = localPlayer;
 
-            controllerCrane = crane.GetComponent<TowerControllerCrane>();
-
             clockWise = true;
             canRotate = true;
         }
@@ -107,17 +91,17 @@ namespace VRC2.Scenarios.ScenarioFactory
                 ConnectCargo(pipes);
             }
 
-            // if (canRotate)
-            // {
-            //     if (clockWise)
-            //     {
-            //         replay.Left();
-            //     }
-            //     else
-            //     {
-            //         replay.Right();
-            //     }
-            // }
+            if (_connected && canRotate)
+            {
+                if (clockWise)
+                {
+                    replay.Left(true);
+                }
+                else
+                {
+                    replay.Right(true);
+                }
+            }
         }
 
         void SetPipeActiveness(bool enable)
