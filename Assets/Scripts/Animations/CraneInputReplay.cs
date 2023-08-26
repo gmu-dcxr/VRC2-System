@@ -6,9 +6,6 @@ namespace VRC2.Animations
 {
     public class CraneInputReplay : BaseInputReplay
     {
-        [Header("Markers")] public Transform pickupTransform;
-        public Transform dropoffTransform;
-
         [Space(30)] [Header("Filename")] public string forwardFile;
         public string backwardFile;
         public string pickupFile;
