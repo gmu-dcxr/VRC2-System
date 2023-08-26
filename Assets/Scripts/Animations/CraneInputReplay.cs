@@ -68,20 +68,55 @@ namespace VRC2.Animations
 
         private void Start()
         {
-            
+
         }
 
         #region Controllers' callbacks
 
         private void OnEvent(InputEventPtr obj)
         {
-            print("onevent");
+
         }
 
         void OnFinished()
         {
 
         }
+
+        #endregion
+
+        #region APIs
+
+        public void Forward()
+        {
+            StartReplay(ref forwardController);
+        }
+
+        public void Backward()
+        {
+            StartReplay(ref backwardController);
+        }
+
+        public void Left()
+        {
+            StartReplay(ref leftController);
+        }
+
+        public void Right()
+        {
+            StartReplay(ref rightController);
+        }
+
+        public void Pickup()
+        {
+            StartReplay(ref pickupController);
+        }
+
+        public void Dropoff()
+        {
+            StartReplay(ref dropoffController);
+        }
+
 
         #endregion
 
