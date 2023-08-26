@@ -7,6 +7,12 @@ namespace VRC2.Animations
     public class CraneInputRecording : BaseInputRecording
     {
 
+        [Header("Output Settings")] public string filename = "CraneInputRecording";
+
+        [Header("Crane Settings")] public float startRotation;
+        public float endRotation;
+        
+        [Space(30)]
         public SwitchingBetweenVehicles scriptSwitch;
         public TowerPlatformInstallation scriptTPL;
         public Material lineMaterial;
@@ -159,6 +165,9 @@ namespace VRC2.Animations
 
             // hack here
             CreateCableHook();
+
+            // initialize crane rotation
+            // rotationElementCrane.localRotation = Quaternion.Euler(0, startRotation, 0);
         }
 
         public override void InitInputActions()
@@ -182,6 +191,11 @@ namespace VRC2.Animations
 
         public override void UpdateLogic()
         {
+        }
+
+        public override string GetFilename()
+        {
+            return filename;
         }
 
         public void Update()
