@@ -4,6 +4,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 using UnityTimer;
+using VRC2.Animations;
 using Timer = UnityTimer.Timer;
 
 
@@ -14,6 +15,12 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Header("Wind level")] public float level1 = 20;
         public float level2 = 100;
         public float level3 = 300;
+
+        [Space(30)] public CraneInputRecording recording;
+        public CraneInputReplay replay;
+
+        public Transform startTransform;
+        public Transform endTransform;
 
         [Space(30)]
         //Actaully Using
@@ -79,6 +86,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
         }
 
+
+
         private void Start()
         {
 
@@ -93,22 +102,22 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
-            if (!_connected)
+            if (recording.Ready && !_connected)
             {
                 ConnectCargo(pipes);
             }
 
-            if (canRotate)
-            {
-                if (clockWise)
-                {
-                    controllerCrane.RotateCrane(true, false, false, false);
-                }
-                else
-                {
-                    controllerCrane.RotateCrane(false, false, true, false);
-                }
-            }
+            // if (canRotate)
+            // {
+            //     if (clockWise)
+            //     {
+            //         replay.Left();
+            //     }
+            //     else
+            //     {
+            //         replay.Right();
+            //     }
+            // }
         }
 
         void SetPipeActiveness(bool enable)
@@ -130,7 +139,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (decayHookOn.activeSelf)
             {
-                controllerCrane.ManuallyConnectCargo();
+                recording.ManuallyConnectCargo();
                 _connected = true;
             }
         }

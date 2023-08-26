@@ -11,9 +11,8 @@ namespace VRC2.Animations
 
         [Header("Crane Settings")] public float startRotation;
         public float endRotation;
-        
-        [Space(30)]
-        public SwitchingBetweenVehicles scriptSwitch;
+
+        [Space(30)] public SwitchingBetweenVehicles scriptSwitch;
         public TowerPlatformInstallation scriptTPL;
         public Material lineMaterial;
 
@@ -144,8 +143,15 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region Crane status check
+
+        [HideInInspector] public bool Ready { get; set; }
+
+        #endregion
+
         public void Start()
         {
+            Ready = false;
             // scriptTPL = this.gameObject.GetComponent<TowerPlatformInstallation>();
             // scriptSwitch = this.gameObject.GetComponent<SwitchingBetweenVehicles>();
             GameObject _pointHooh = new GameObject("PointHook");
@@ -168,6 +174,7 @@ namespace VRC2.Animations
 
             // initialize crane rotation
             // rotationElementCrane.localRotation = Quaternion.Euler(0, startRotation, 0);
+            Ready = true;
         }
 
         public override void InitInputActions()
@@ -807,5 +814,56 @@ namespace VRC2.Animations
             pointRayDecay.GetComponent<LineRenderer>().positionCount = lineCargo.Length;
             pointRayDecay.GetComponent<LineRenderer>().SetPositions(lineCargo);
         }
+
+        #region Connect Cargo Hardcode
+
+        public void ManuallyConnectCargo()
+        {
+            if (addPhysicsHook_Bool == false)
+            {
+                Ray ray = new Ray(pointRayDecay.position, -Vector3.up);
+                int layerCargo = (1 << 10);
+                int layerIgnore = ~(1 << 2);
+                if (Physics.Raycast(ray, out hit, 1000, layerIgnore))
+                {
+                    decayHookPoint.position = hit.point + hit.normal * 0.01f;
+                    decayHookPoint.rotation = Quaternion.LookRotation(-hit.normal);
+                }
+
+                if (Physics.Raycast(ray, out hit, 100))
+                {
+                    maxOffset = hit.distance;
+                }
+
+                RaycastHit hitCargo;
+                if (Physics.Raycast(ray, out hitCargo, distanceCargoToHook, layerCargo) && maxOffset > 1.7f &&
+                    connectedCargo_Bool == true)
+                {
+                    decayHookOn.gameObject.SetActive(true);
+                    _cargo = hitCargo.collider.gameObject;
+                    distanceCargo = hitCargo.distance;
+                    Vector3 decayOn = scriptSwitch.towerCrane.transform.position - transform.position;
+                    decayHookOn.rotation = Quaternion.LookRotation(-decayOn, Vector3.up);
+                }
+                else
+                {
+                    decayHookOn.gameObject.SetActive(false);
+                    distanceCargo = 0;
+                }
+
+                if (connectedCargo_Bool == true)
+                {
+                    ConnectedCargo();
+                    connectedCargo_Bool = false;
+                }
+                else if (connectedCargo_Bool == false)
+                {
+                    ConnectedCargo();
+                    connectedCargo_Bool = true;
+                }
+            }
+        }
+
+        #endregion
     }
 }
