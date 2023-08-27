@@ -114,6 +114,16 @@ namespace VRC2.Animations
             StartReplay(ref dropoffController, loop: loop);
         }
 
+        public bool PickupFinished()
+        {
+            return IsFinished(ref pickupController, true);
+        }
+
+        public bool DropoffFinished()
+        {
+            return IsFinished(ref dropoffController, true);
+        }
+
 
         #endregion
 
