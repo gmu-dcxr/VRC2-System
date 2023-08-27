@@ -20,6 +20,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public float startAngle = 180f;
         public float endAngle = 120f;
+        public float dropAngle = 150f; // when to drop the pipe
 
         public float startBoomcart = -22.40558f; //x
         public float endBoomcart = -10;
@@ -45,6 +46,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool triggered = false;
         private bool clockWise = false;
+
+        private bool enableDrop = false;
+
 
         private void Start()
         {
@@ -154,6 +158,16 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 replay.Right(true);
                 replay.Left(false, true);
+            }
+
+            if (enableDrop)
+            {
+                print(Math.Abs(recording.GetCraneRotation() - dropAngle));
+                if (Math.Abs(recording.GetCraneRotation() - dropAngle) < 1f)
+                {
+                    // drop pipe
+                    DropOffPipe();
+                }
             }
         }
 
@@ -281,6 +295,22 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A load with an unpacked pipe is passing overhead.
         }
 
+        void DropOffPipe()
+        {
+            // // update pipe position so it'll drop from the player's head
+            // var pos = player.transform.position;
+            // pos.y = unpackedPipe.transform.position.y;
+            // unpackedPipe.transform.position = pos;
+
+            // release it
+            unpackedPipe.transform.parent = null;
+            // add rigid body
+            PipeHelper.EnsureRigidBody(ref unpackedPipe);
+            // it will automatically fall
+
+            enableDrop = false;
+        }
+
         public void On_BaselineS1_7_Start()
         {
             print("On_BaselineS1_7_Start");
@@ -288,20 +318,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(7);
 
+            Reset();
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            // update pipe position so it'll drop from the player's head
-            var pos = player.transform.position;
-            pos.y = unpackedPipe.transform.position.y;
+            triggered = true;
+            clockWise = false;
 
-            unpackedPipe.transform.position = pos;
-
-            // release it
-            unpackedPipe.transform.parent = null;
-            // add rigid body
-            PipeHelper.EnsureRigidBody(ref unpackedPipe);
-            // it will automatically fall
+            enableDrop = true;
         }
 
         public void On_BaselineS1_7_Finish()
