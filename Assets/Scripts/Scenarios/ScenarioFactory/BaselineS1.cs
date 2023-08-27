@@ -8,6 +8,15 @@ using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
+
+    enum CraneStatus
+    {
+        Idle = 0,
+        Pickup = 1,
+        Rotate = 2,
+        Dropoff = 3,
+    }
+
     public class BaselineS1 : Scenario
     {
         private Transform _pipeParent;
@@ -25,15 +34,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float startBoomcart = -22.40558f; //x
         public float endBoomcart = -10;
 
-        // [Header("Animator")] public Animator animator;
-        // public float yaw;
-        // public float dolly;
-        // public float hook;
-
-        private float yawOffset = 20;
-
-        private float randomYawIncrease;
-
         private GameObject crane;
 
         private GameObject player; // local player
@@ -44,10 +44,15 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject unpackedPipe;
 
 
-        private bool triggered = false;
+        private Vector3 pipeStackPos;
+        private Quaternion pipeStackRot;
+
+        // private bool triggered = false;
         private bool clockWise = false;
 
         private bool enableDrop = false;
+
+        private CraneStatus _craneStatus;
 
 
         private void Start()
@@ -63,9 +68,10 @@ namespace VRC2.Scenarios.ScenarioFactory
                 player = playerIndicator;
             }
 
-            BackupPipeLocalTransform();
+            _craneStatus = CraneStatus.Idle;
 
-            triggered = false;
+            BackupTransforms();
+
             clockWise = false;
 
             SetActiveness(true, false);
@@ -73,9 +79,31 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
-            if (triggered)
+            switch (_craneStatus)
             {
-                RotateCrane(clockWise);
+                case CraneStatus.Pickup:
+                    replay.Pickup();
+                    if (replay.PickupFinished())
+                    {
+                        _craneStatus = CraneStatus.Rotate;
+                    }
+
+                    break;
+                case CraneStatus.Rotate:
+                    RotateCrane(clockWise);
+                    break;
+                case CraneStatus.Dropoff:
+                    replay.Dropoff();
+                    if (replay.DropoffFinished())
+                    {
+                        clockWise = true;
+                        _craneStatus = CraneStatus.Idle;
+                    }
+
+                    break;
+                case CraneStatus.Idle:
+                    StopRotating();
+                    break;
             }
         }
 
@@ -89,42 +117,16 @@ namespace VRC2.Scenarios.ScenarioFactory
             recording.ForceUpdateBoomCart(x);
         }
 
-        float CalculateRawBetweenCranePlayer(GameObject crane, GameObject player)
-        {
-            var cranepos = crane.transform.position;
-            cranepos.y = 0;
-
-            var playerpos = player.transform.position;
-            playerpos.y = 0;
-
-            Vector3 dir = (playerpos - cranepos).normalized;
-            var forward = this.crane.transform.forward;
-
-            var angle = Vector3.SignedAngle(dir, forward, Vector3.up);
-
-            if (clockWise)
-            {
-                angle += yawOffset;
-            }
-            else
-            {
-                angle += -yawOffset;
-            }
-
-            if (angle < 0)
-            {
-                angle += 360;
-            }
-
-            return angle;
-        }
-
-        void BackupPipeLocalTransform()
+        void BackupTransforms()
         {
             var t = unpackedPipe.transform;
             _pipeLocalPos = t.localPosition;
             _pipeLocalRot = t.localRotation;
             _pipeParent = t.parent;
+
+            t = pipeStack.transform;
+            pipeStackPos = t.position;
+            pipeStackRot = t.rotation;
         }
 
         private void Reset()
@@ -139,12 +141,21 @@ namespace VRC2.Scenarios.ScenarioFactory
                 unpackedPipe.transform.localPosition = _pipeLocalPos;
                 unpackedPipe.transform.localRotation = _pipeLocalRot;
             }
+
+            pipeStack.transform.position = pipeStackPos;
+            pipeStack.transform.rotation = pipeStackRot;
         }
 
         void SetActiveness(bool pipestack, bool unpackedpipe)
         {
             pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
             unpackedPipe.SetActive(unpackedpipe);
+        }
+
+        void StopRotating()
+        {
+            replay.Left(true);
+            replay.Right(true);
         }
 
         void RotateCrane(bool clockWise)
@@ -160,9 +171,15 @@ namespace VRC2.Scenarios.ScenarioFactory
                 replay.Left(false, true);
             }
 
+            var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
+            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 1f)
+            {
+                _craneStatus = CraneStatus.Dropoff;
+            }
+            
+
             if (enableDrop)
             {
-                print(Math.Abs(recording.GetCraneRotation() - dropAngle));
                 if (Math.Abs(recording.GetCraneRotation() - dropAngle) < 1f)
                 {
                     // drop pipe
@@ -179,15 +196,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S1");
-            triggered = true;
         }
 
         public void On_BaselineS1_1_Start()
         {
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
 
-            replay.Pickup();
         }
 
         public void On_BaselineS1_1_Finish()
@@ -203,9 +216,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
 
             ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
             SetActiveness(true, false);
-
-            triggered = true;
+            
+            _craneStatus = CraneStatus.Pickup;
             clockWise = false;
         }
 
@@ -222,10 +236,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(3);
 
             ResetCraneRotation(endAngle);
-            SetActiveness(false, false);
 
-            triggered = true;
             clockWise = true;
+            _craneStatus = CraneStatus.Rotate;
         }
 
         public void On_BaselineS1_3_Finish()
@@ -242,10 +255,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            Reset();
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            triggered = true;
+            StopRotating();
+            _craneStatus = CraneStatus.Pickup;
             clockWise = false;
         }
 
@@ -262,10 +277,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(5);
 
             ResetCraneRotation(endAngle);
-            SetActiveness(false, false);
 
-            triggered = true;
             clockWise = true;
+            _craneStatus = CraneStatus.Rotate;
         }
 
         public void On_BaselineS1_5_Finish()
@@ -286,7 +300,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            triggered = true;
+            _craneStatus = CraneStatus.Pickup;
             clockWise = false;
         }
 
@@ -322,9 +336,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            triggered = true;
+            _craneStatus = CraneStatus.Pickup;
             clockWise = false;
-
             enableDrop = true;
         }
 
@@ -341,12 +354,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(8);
             var warning = incident.Warning;
             print(warning);
-            
+
             Reset();
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
-            
-            triggered = true;
+
+            _craneStatus = CraneStatus.Pickup;
             clockWise = false;
         }
 
@@ -365,7 +378,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS1_9_Finish()
         {
             // SAGAT query
-            triggered = false;
             HideSAGAT();
         }
 

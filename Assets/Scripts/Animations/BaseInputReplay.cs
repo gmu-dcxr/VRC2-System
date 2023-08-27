@@ -58,6 +58,17 @@ namespace VRC2.Animations
                 .OnEvent(action);
         }
 
+        public bool IsFinished(ref InputEventTrace.ReplayController controller, bool rewind=false)
+        {
+            var res = controller.finished;
+            if (res && rewind)
+            {
+                controller.Rewind();
+            }
+
+            return res;
+        }
+
         public void StartReplay(ref InputEventTrace.ReplayController controller, bool loop=false, bool stop=false)
         {
             if (stop)
