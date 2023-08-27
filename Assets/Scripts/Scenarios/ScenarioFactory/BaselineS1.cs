@@ -143,7 +143,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         void SetActiveness(bool pipestack, bool unpackedpipe)
         {
-            pipeStack.SetActive(pipestack);
+            pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
             unpackedPipe.SetActive(unpackedpipe);
         }
 
@@ -339,13 +339,15 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A load with an unpacked pipe is passing overhead.
             // get incident
             var incident = GetIncident(8);
-
-            Reset();
-            ResetCraneRotation(endAngle);
-            SetActiveness(true, true);
-
             var warning = incident.Warning;
             print(warning);
+            
+            Reset();
+            ResetCraneRotation(startAngle);
+            SetActiveness(true, true);
+            
+            triggered = true;
+            clockWise = false;
         }
 
         public void On_BaselineS1_8_Finish()
