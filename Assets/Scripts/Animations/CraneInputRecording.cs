@@ -599,6 +599,13 @@ namespace VRC2.Animations
             rotationElementCrane.localRotation = Quaternion.Euler(0, y, 0);
         }
 
+        public void ForceUpdateBoomCart(float x)
+        {
+            var vec = boomCart.localPosition;
+            vec.x = x;
+            boomCart.localPosition = vec;
+        }
+
         public void CreateCableHook()
         {
             // Line Renderer 1___________________________________________________

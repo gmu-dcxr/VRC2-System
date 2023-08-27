@@ -2,6 +2,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using VRC2.Animations;
 using VRC2.Pipe;
 using Random = UnityEngine.Random;
 
@@ -14,10 +15,19 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Vector3 _pipeLocalPos;
         private Quaternion _pipeLocalRot;
 
-        [Header("Animator")] public Animator animator;
-        public float yaw;
-        public float dolly;
-        public float hook;
+        public CraneInputRecording recording;
+        public CraneInputReplay replay;
+        
+        public float startAngle = 180f;
+        public float endAngle = 120f;
+
+        public float startBoomcart = -22.40558f; //x
+        public float endBoomcart = -10;
+
+        // [Header("Animator")] public Animator animator;
+        // public float yaw;
+        // public float dolly;
+        // public float hook;
 
         private float yawOffset = 20;
 
@@ -50,9 +60,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             BackupPipeLocalTransform();
-
-            crane = animator.gameObject;
-            randomYawIncrease = 5; //Random.Range(1, 10);
             
             triggered = false;
             backwardsTriggered = false;
@@ -62,17 +69,17 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
-            if (triggered)
-            {
-                yaw += Time.deltaTime * randomYawIncrease;
-                UpdateAnimator(yaw, dolly, hook);
-            }
+            
+        }
+        
+        void ResetCraneRotation(float angle)
+        {
+            recording.ForceUpdateRotation(angle);
+        }
 
-            if (backwardsTriggered)
-            {
-                yaw += Time.deltaTime * -randomYawIncrease;
-                UpdateAnimator(yaw, dolly, hook);
-            }
+        void ResetBoomCart(float x)
+        {
+            recording.ForceUpdateBoomCart(x);
         }
 
         float CalculateRawBetweenCranePlayer(GameObject crane, GameObject player)
@@ -84,7 +91,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             playerpos.y = 0;
 
             Vector3 dir = (playerpos - cranepos).normalized;
-            var forward = animator.gameObject.transform.forward;
+            var forward = this.crane.transform.forward;
 
             var angle = Vector3.SignedAngle(dir, forward, Vector3.up);
 
@@ -127,24 +134,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
         }
 
-        void UpdateAnimator(float y, float d, float h)
-        {
-            if (y >= 0)
-            {
-                animator.SetFloat("Rotate_YAW", Mathf.Abs(y) % 360);
-            }
-
-            if (d >= 0)
-            {
-                animator.SetFloat("dolly", d);
-            }
-
-            if (h >= 0)
-            {
-                animator.SetFloat("hook", h);
-            }
-        }
-
         void SetActiveness(bool pipestack, bool unpackedpipe)
         {
             pipeStack.SetActive(pipestack);
@@ -164,6 +153,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS1_1_Start()
         {
+            ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
+            
+            replay.Pickup();
         }
 
         public void On_BaselineS1_1_Finish()
@@ -181,7 +174,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             SetActiveness(true, false);
 
             // get yaw
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
             triggered = true;
         }
 
@@ -201,7 +193,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             triggered = false;
             backwardsTriggered = true;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_3_Finish()
@@ -222,7 +213,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             backwardsTriggered = false;
             triggered = true;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -240,7 +230,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             backwardsTriggered = true;
             triggered = false;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_5_Finish()
@@ -262,7 +251,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             backwardsTriggered = false;
             triggered = true;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
         }
 
         public void On_BaselineS1_6_Finish()
@@ -279,7 +267,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             Reset();
             SetActiveness(true, true);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
 
             // update pipe position so it'll drop from the player's head
             var pos = player.transform.position;
@@ -310,7 +297,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             SetActiveness(true, true);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
             var warning = incident.Warning;
             print(warning);
         }
