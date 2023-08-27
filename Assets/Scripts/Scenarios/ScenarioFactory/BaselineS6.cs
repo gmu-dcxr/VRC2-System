@@ -26,6 +26,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         //Actaully Using
         public GameObject pipes;
 
+        public GameObject unpackedPipe; // use the same as that in S1
+
         public GameObject crane;
         public GameObject hook;
         public GameObject decayHookOn;
@@ -82,6 +84,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             clockWise = true;
             canRotate = true;
+            
+            unpackedPipe.SetActive(false);
         }
 
         private void Update()
