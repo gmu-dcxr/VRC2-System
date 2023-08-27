@@ -593,6 +593,12 @@ namespace VRC2.Animations
             //     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
         }
 
+        public void ForceUpdateRotation(float y)
+        {
+            floatRotCabin = y;
+            rotationElementCrane.localRotation = Quaternion.Euler(0, y, 0);
+        }
+
         public void CreateCableHook()
         {
             // Line Renderer 1___________________________________________________

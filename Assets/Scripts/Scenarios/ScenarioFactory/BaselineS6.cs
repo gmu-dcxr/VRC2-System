@@ -19,8 +19,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Space(30)] public CraneInputRecording recording;
         public CraneInputReplay replay;
 
-        public Transform startTransform;
-        public Transform endTransform;
+        public float startAngle = 180f;
+        public float endAngle = 120f;
 
         [Space(30)]
         //Actaully Using
@@ -65,7 +65,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 if (_craneSwivel == null)
                 {
-                    _craneSwivel = crane.GetComponent<TowerControllerCrane>().rotationElementCrane;
+                    _craneSwivel = recording.rotationElementCrane;
                 }
 
                 return _craneSwivel;
@@ -93,14 +93,21 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (_connected && canRotate)
             {
-                if (clockWise)
-                {
-                    replay.Left(true);
-                }
-                else
-                {
-                    replay.Right(true);
-                }
+                RotateCrane(clockWise);
+            }
+        }
+
+        void RotateCrane(bool clockWise)
+        {
+            if (clockWise)
+            {
+                replay.Left(true);
+                replay.Right(false, true);
+            }
+            else
+            {
+                replay.Right(true);
+                replay.Left(false, true);
             }
         }
 
@@ -132,6 +139,20 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #endregion
 
+        void ResetCraneRotation(float angle)
+        {
+            // var rot = craneSwivel.transform.localRotation.eulerAngles;
+            // rot.y = angle;
+            // craneSwivel.transform.localRotation = Quaternion.Euler(rot);
+
+            recording.ForceUpdateRotation(angle);
+        }
+
+        float GetCurrentAngle()
+        {
+            return craneSwivel.transform.localRotation.eulerAngles.y;
+        }
+
 
         #region Accident Events Callbacks
 
@@ -160,7 +181,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            //TriggerEvent(wind1, true, false);
+            ResetCraneRotation(startAngle);
+
             clockWise = false;
             canRotate = true;
             scriptWind.windForce = level1;
@@ -179,7 +201,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            //TriggerEvent(wind1, false, true);
+            ResetCraneRotation(endAngle);
             clockWise = true;
             SetPipeActiveness(false);
         }
@@ -198,7 +220,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            //TriggerEvent(wind2, true, false);
+            ResetCraneRotation(startAngle);
             clockWise = false;
             SetPipeActiveness(true);
             scriptWind.windForce = level2;
@@ -216,6 +238,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
+            ResetCraneRotation(endAngle);
             //TriggerEvent(wind2, false, true);
             clockWise = true;
             SetPipeActiveness(false);
@@ -234,7 +257,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(6);
             var warning = incident.Warning;
 
-            //TriggerEvent(wind3, true, false);
+            ResetCraneRotation(startAngle);
             clockWise = false;
             SetPipeActiveness(true);
             scriptWind.windForce = level3;
