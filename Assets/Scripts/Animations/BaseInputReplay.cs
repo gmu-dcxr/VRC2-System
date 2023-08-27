@@ -58,8 +58,16 @@ namespace VRC2.Animations
                 .OnEvent(action);
         }
 
-        public void StartReplay(ref InputEventTrace.ReplayController controller, bool loop=false)
+        public void StartReplay(ref InputEventTrace.ReplayController controller, bool loop=false, bool stop=false)
         {
+            if (stop)
+            {
+                controller.paused = true;
+                return;
+            }
+
+            controller.paused = false;
+            
             if (controller.position == 0)
             {
                 controller.PlayAllEventsAccordingToTimestamps();   

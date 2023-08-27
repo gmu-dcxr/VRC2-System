@@ -94,14 +94,14 @@ namespace VRC2.Animations
             StartReplay(ref backwardController, loop: loop);
         }
 
-        public void Left(bool loop=false)
+        public void Left(bool stop=false, bool loop=false)
         {
-            StartReplay(ref leftController, loop: loop);
+            StartReplay(ref leftController, loop: loop, stop:stop);
         }
 
-        public void Right(bool loop=false)
+        public void Right(bool stop=false, bool loop=false)
         {
-            StartReplay(ref rightController, loop: loop);
+            StartReplay(ref rightController, loop: loop, stop:stop);
         }
 
         public void Pickup(bool loop=false)
