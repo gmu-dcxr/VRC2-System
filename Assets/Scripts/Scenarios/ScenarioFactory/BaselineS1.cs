@@ -17,7 +17,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public CraneInputRecording recording;
         public CraneInputReplay replay;
-        
+
         public float startAngle = 180f;
         public float endAngle = 120f;
 
@@ -44,7 +44,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
 
         private bool triggered = false;
-        private bool backwardsTriggered = false;
+        private bool clockWise = false;
 
         private void Start()
         {
@@ -52,7 +52,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (localPlayer != null)
             {
-                player = localPlayer;   
+                player = localPlayer;
             }
             else
             {
@@ -60,18 +60,21 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             BackupPipeLocalTransform();
-            
+
             triggered = false;
-            backwardsTriggered = false;
+            clockWise = false;
 
             SetActiveness(true, false);
         }
 
         private void Update()
         {
-            
+            if (triggered)
+            {
+                RotateCrane(clockWise);
+            }
         }
-        
+
         void ResetCraneRotation(float angle)
         {
             recording.ForceUpdateRotation(angle);
@@ -95,7 +98,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             var angle = Vector3.SignedAngle(dir, forward, Vector3.up);
 
-            if (backwardsTriggered)
+            if (clockWise)
             {
                 angle += yawOffset;
             }
@@ -140,8 +143,22 @@ namespace VRC2.Scenarios.ScenarioFactory
             unpackedPipe.SetActive(unpackedpipe);
         }
 
+        void RotateCrane(bool clockWise)
+        {
+            if (clockWise)
+            {
+                replay.Left(true);
+                replay.Right(false, true);
+            }
+            else
+            {
+                replay.Right(true);
+                replay.Left(false, true);
+            }
+        }
+
         #region Accident Events Callbacks
-        
+
         // TODO: When scenario ends, start the normal event
 
         // normal event
@@ -155,7 +172,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             ResetCraneRotation(startAngle);
             ResetBoomCart(startBoomcart);
-            
+
             replay.Pickup();
         }
 
@@ -171,10 +188,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
+            ResetCraneRotation(startAngle);
             SetActiveness(true, false);
 
-            // get yaw
             triggered = true;
+            clockWise = false;
         }
 
         public void On_BaselineS1_2_Finish()
@@ -189,10 +207,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
+            ResetCraneRotation(endAngle);
             SetActiveness(false, false);
 
-            triggered = false;
-            backwardsTriggered = true;
+            triggered = true;
+            clockWise = true;
         }
 
         public void On_BaselineS1_3_Finish()
@@ -209,10 +228,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            backwardsTriggered = false;
             triggered = true;
+            clockWise = false;
         }
 
         public void On_BaselineS1_4_Finish()
@@ -226,10 +246,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(5);
+
+            ResetCraneRotation(endAngle);
             SetActiveness(false, false);
 
-            backwardsTriggered = true;
-            triggered = false;
+            triggered = true;
+            clockWise = true;
         }
 
         public void On_BaselineS1_5_Finish()
@@ -247,10 +269,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             Reset();
+            ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            backwardsTriggered = false;
             triggered = true;
+            clockWise = false;
         }
 
         public void On_BaselineS1_6_Finish()
@@ -264,9 +287,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The unpacked pipe drops next to the participants. And the load is still passing overhead.
             // get incident
             var incident = GetIncident(7);
-            Reset();
-            SetActiveness(true, true);
 
+            ResetCraneRotation(startAngle);
+            SetActiveness(true, true);
 
             // update pipe position so it'll drop from the player's head
             var pos = player.transform.position;
@@ -294,7 +317,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(8);
 
             Reset();
-
+            ResetCraneRotation(endAngle);
             SetActiveness(true, true);
 
             var warning = incident.Warning;
