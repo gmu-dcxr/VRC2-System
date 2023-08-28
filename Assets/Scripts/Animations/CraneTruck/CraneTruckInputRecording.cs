@@ -37,6 +37,8 @@ namespace VRC2.Animations.CraneTruck
 
         #endregion
 
+        [HideInInspector]public bool truckMode = true;
+
         public override void InitInputActions()
         {
             craneTIA = new CraneTruckInputActions();
@@ -49,6 +51,8 @@ namespace VRC2.Animations.CraneTruck
             craneMoveInput = craneTIA.Crane.Move;
             craneArrowInput = craneTIA.Crane.Arrow;
             craneSeizeInput = craneTIA.Crane.Seize;
+
+            truckMode = true;
         }
 
         public override void DisposeInputActions()
@@ -71,16 +75,27 @@ namespace VRC2.Animations.CraneTruck
 
         void Update()
         {
-            _acceleration = truckMoveInput.ReadValue<Vector2>().y > 0 ? 1f : 0;
-            _acceleration = truckMoveInput.ReadValue<Vector2>().y < 0 ? _acceleration - 1 : _acceleration;
-            truckController.AccelerationInput = _acceleration;
+            if (truckSwithInput.triggered)
+            {
+                truckMode = !truckMode;
+            }
+            if (truckMode)
+            {
+                _acceleration = truckMoveInput.ReadValue<Vector2>().y > 0 ? 1f : 0;
+                _acceleration = truckMoveInput.ReadValue<Vector2>().y < 0 ? _acceleration - 1 : _acceleration;
+                truckController.AccelerationInput = _acceleration;
 
-            _steering = 0f;
-            _steering = truckMoveInput.ReadValue<Vector2>().x > 0 ? _steering + 1 : _steering;
-            _steering = truckMoveInput.ReadValue<Vector2>().x < 0 ? _steering - 1 : _steering;
-            truckController.SteeringInput = _steering;
+                _steering = 0f;
+                _steering = truckMoveInput.ReadValue<Vector2>().x > 0 ? _steering + 1 : _steering;
+                _steering = truckMoveInput.ReadValue<Vector2>().x < 0 ? _steering - 1 : _steering;
+                truckController.SteeringInput = _steering;
 
-            truckController.BrakesInput = truckBrakeInput.triggered ? 1f : 0f;
+                truckController.BrakesInput = truckBrakeInput.triggered ? 1f : 0f;   
+            }
+            else
+            {
+                
+            }
         }
 
     }
