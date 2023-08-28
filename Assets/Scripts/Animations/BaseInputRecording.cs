@@ -10,6 +10,7 @@ public class BaseInputRecording : MonoBehaviour
 
 	#region Buttons
 
+	[Header("Recording Control")]
 	public Button recordButton;
 	public Button replayButton;
 	public Button saveButton;
@@ -28,7 +29,7 @@ public class BaseInputRecording : MonoBehaviour
 		get => GetType().Name;
 	}
     
-    private string GetFilename()
+    public virtual string GetFilename()
     {
 	    return ClsName;
     }

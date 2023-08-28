@@ -2,11 +2,21 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using VRC2.Animations;
 using VRC2.Pipe;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
+
+    enum CraneStatus
+    {
+        Idle = 0,
+        Pickup = 1,
+        Rotate = 2,
+        Dropoff = 3,
+    }
+
     public class BaselineS1 : Scenario
     {
         private Transform _pipeParent;
@@ -14,14 +24,15 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Vector3 _pipeLocalPos;
         private Quaternion _pipeLocalRot;
 
-        [Header("Animator")] public Animator animator;
-        public float yaw;
-        public float dolly;
-        public float hook;
+        public CraneInputRecording recording;
+        public CraneInputReplay replay;
 
-        private float yawOffset = 20;
+        public float startAngle = 180f;
+        public float endAngle = 120f;
+        public float dropAngle = 150f; // when to drop the pipe
 
-        private float randomYawIncrease;
+        public float startBoomcart = -22.40558f; //x
+        public float endBoomcart = -10;
 
         private GameObject crane;
 
@@ -33,8 +44,16 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject unpackedPipe;
 
 
-        private bool triggered = false;
-        private bool backwardsTriggered = false;
+        private Vector3 pipeStackPos;
+        private Quaternion pipeStackRot;
+
+        // private bool triggered = false;
+        private bool clockWise = false;
+
+        private bool enableDrop = false;
+
+        private CraneStatus _craneStatus;
+
 
         private void Start()
         {
@@ -42,75 +61,72 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (localPlayer != null)
             {
-                player = localPlayer;   
+                player = localPlayer;
             }
             else
             {
                 player = playerIndicator;
             }
 
-            BackupPipeLocalTransform();
+            _craneStatus = CraneStatus.Idle;
 
-            crane = animator.gameObject;
-            randomYawIncrease = 5; //Random.Range(1, 10);
-            
-            triggered = false;
-            backwardsTriggered = false;
+            BackupTransforms();
+
+            clockWise = false;
 
             SetActiveness(true, false);
         }
 
         private void Update()
         {
-            if (triggered)
+            switch (_craneStatus)
             {
-                yaw += Time.deltaTime * randomYawIncrease;
-                UpdateAnimator(yaw, dolly, hook);
-            }
+                case CraneStatus.Pickup:
+                    replay.Pickup();
+                    if (replay.PickupFinished())
+                    {
+                        _craneStatus = CraneStatus.Rotate;
+                    }
 
-            if (backwardsTriggered)
-            {
-                yaw += Time.deltaTime * -randomYawIncrease;
-                UpdateAnimator(yaw, dolly, hook);
+                    break;
+                case CraneStatus.Rotate:
+                    RotateCrane(clockWise);
+                    break;
+                case CraneStatus.Dropoff:
+                    replay.Dropoff();
+                    if (replay.DropoffFinished())
+                    {
+                        clockWise = true;
+                        _craneStatus = CraneStatus.Idle;
+                    }
+
+                    break;
+                case CraneStatus.Idle:
+                    StopRotating();
+                    break;
             }
         }
 
-        float CalculateRawBetweenCranePlayer(GameObject crane, GameObject player)
+        void ResetCraneRotation(float angle)
         {
-            var cranepos = crane.transform.position;
-            cranepos.y = 0;
-
-            var playerpos = player.transform.position;
-            playerpos.y = 0;
-
-            Vector3 dir = (playerpos - cranepos).normalized;
-            var forward = animator.gameObject.transform.forward;
-
-            var angle = Vector3.SignedAngle(dir, forward, Vector3.up);
-
-            if (backwardsTriggered)
-            {
-                angle += yawOffset;
-            }
-            else
-            {
-                angle += -yawOffset;
-            }
-
-            if (angle < 0)
-            {
-                angle += 360;
-            }
-
-            return angle;
+            recording.ForceUpdateRotation(angle);
         }
 
-        void BackupPipeLocalTransform()
+        void ResetBoomCart(float x)
+        {
+            recording.ForceUpdateBoomCart(x);
+        }
+
+        void BackupTransforms()
         {
             var t = unpackedPipe.transform;
             _pipeLocalPos = t.localPosition;
             _pipeLocalRot = t.localRotation;
             _pipeParent = t.parent;
+
+            t = pipeStack.transform;
+            pipeStackPos = t.position;
+            pipeStackRot = t.rotation;
         }
 
         private void Reset()
@@ -125,45 +141,66 @@ namespace VRC2.Scenarios.ScenarioFactory
                 unpackedPipe.transform.localPosition = _pipeLocalPos;
                 unpackedPipe.transform.localRotation = _pipeLocalRot;
             }
-        }
 
-        void UpdateAnimator(float y, float d, float h)
-        {
-            if (y >= 0)
-            {
-                animator.SetFloat("Rotate_YAW", Mathf.Abs(y) % 360);
-            }
-
-            if (d >= 0)
-            {
-                animator.SetFloat("dolly", d);
-            }
-
-            if (h >= 0)
-            {
-                animator.SetFloat("hook", h);
-            }
+            pipeStack.transform.position = pipeStackPos;
+            pipeStack.transform.rotation = pipeStackRot;
         }
 
         void SetActiveness(bool pipestack, bool unpackedpipe)
         {
-            pipeStack.SetActive(pipestack);
+            pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
             unpackedPipe.SetActive(unpackedpipe);
         }
 
+        void StopRotating()
+        {
+            replay.Left(true);
+            replay.Right(true);
+        }
+
+        void RotateCrane(bool clockWise)
+        {
+            if (clockWise)
+            {
+                replay.Left(true);
+                replay.Right(false, true);
+            }
+            else
+            {
+                replay.Right(true);
+                replay.Left(false, true);
+            }
+
+            var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
+            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 1f)
+            {
+                _craneStatus = CraneStatus.Dropoff;
+            }
+            
+
+            if (enableDrop)
+            {
+                if (Math.Abs(recording.GetCraneRotation() - dropAngle) < 1f)
+                {
+                    // drop pipe
+                    DropOffPipe();
+                }
+            }
+        }
+
         #region Accident Events Callbacks
-        
+
         // TODO: When scenario ends, start the normal event
 
         // normal event
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S1");
-            triggered = true;
         }
 
         public void On_BaselineS1_1_Start()
         {
+
         }
 
         public void On_BaselineS1_1_Finish()
@@ -178,11 +215,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
+            ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
             SetActiveness(true, false);
-
-            // get yaw
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
-            triggered = true;
+            
+            _craneStatus = CraneStatus.Pickup;
+            clockWise = false;
         }
 
         public void On_BaselineS1_2_Finish()
@@ -197,11 +235,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            SetActiveness(false, false);
+            ResetCraneRotation(endAngle);
 
-            triggered = false;
-            backwardsTriggered = true;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
+            clockWise = true;
+            _craneStatus = CraneStatus.Rotate;
         }
 
         public void On_BaselineS1_3_Finish()
@@ -218,11 +255,13 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            Reset();
+            ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            backwardsTriggered = false;
-            triggered = true;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
+            StopRotating();
+            _craneStatus = CraneStatus.Pickup;
+            clockWise = false;
         }
 
         public void On_BaselineS1_4_Finish()
@@ -236,11 +275,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(5);
-            SetActiveness(false, false);
 
-            backwardsTriggered = true;
-            triggered = false;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
+            ResetCraneRotation(endAngle);
+
+            clockWise = true;
+            _craneStatus = CraneStatus.Rotate;
         }
 
         public void On_BaselineS1_5_Finish()
@@ -258,16 +297,32 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             Reset();
+            ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            backwardsTriggered = false;
-            triggered = true;
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
+            _craneStatus = CraneStatus.Pickup;
+            clockWise = false;
         }
 
         public void On_BaselineS1_6_Finish()
         {
             // A load with an unpacked pipe is passing overhead.
+        }
+
+        void DropOffPipe()
+        {
+            // // update pipe position so it'll drop from the player's head
+            // var pos = player.transform.position;
+            // pos.y = unpackedPipe.transform.position.y;
+            // unpackedPipe.transform.position = pos;
+
+            // release it
+            unpackedPipe.transform.parent = null;
+            // add rigid body
+            PipeHelper.EnsureRigidBody(ref unpackedPipe);
+            // it will automatically fall
+
+            enableDrop = false;
         }
 
         public void On_BaselineS1_7_Start()
@@ -276,22 +331,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The unpacked pipe drops next to the participants. And the load is still passing overhead.
             // get incident
             var incident = GetIncident(7);
+
             Reset();
+            ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
-
-            // update pipe position so it'll drop from the player's head
-            var pos = player.transform.position;
-            pos.y = unpackedPipe.transform.position.y;
-
-            unpackedPipe.transform.position = pos;
-
-            // release it
-            unpackedPipe.transform.parent = null;
-            // add rigid body
-            PipeHelper.EnsureRigidBody(ref unpackedPipe);
-            // it will automatically fall
+            _craneStatus = CraneStatus.Pickup;
+            clockWise = false;
+            enableDrop = true;
         }
 
         public void On_BaselineS1_7_Finish()
@@ -305,14 +352,15 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A load with an unpacked pipe is passing overhead.
             // get incident
             var incident = GetIncident(8);
-
-            Reset();
-
-            SetActiveness(true, true);
-
-            yaw = CalculateRawBetweenCranePlayer(crane, player);
             var warning = incident.Warning;
             print(warning);
+
+            Reset();
+            ResetCraneRotation(startAngle);
+            SetActiveness(true, true);
+
+            _craneStatus = CraneStatus.Pickup;
+            clockWise = false;
         }
 
         public void On_BaselineS1_8_Finish()
@@ -330,7 +378,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS1_9_Finish()
         {
             // SAGAT query
-            triggered = false;
             HideSAGAT();
         }
 
