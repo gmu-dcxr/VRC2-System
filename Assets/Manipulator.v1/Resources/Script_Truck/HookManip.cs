@@ -136,15 +136,18 @@ public class HookManip : MonoBehaviour
 						{
 							if (hitCargo.distance > 2.7f)
 							{
-								m_ScriptHook_2.connectedCargoIm.enabled = false;
+								// hack
+								// m_ScriptHook_2.connectedCargoIm.enabled = false;
 							}
 							else if (hitCargo.distance < 2.5f)
 							{
-								m_ScriptHook_2.connectedCargoIm.enabled = false;
+								// hack
+								// m_ScriptHook_2.connectedCargoIm.enabled = false;
 							}
 							else
 							{
-								m_ScriptHook_2.connectedCargoIm.enabled = true;
+								// hack
+								// m_ScriptHook_2.connectedCargoIm.enabled = true;
 							}
 
 							if (m_ScriptHook_2.connectedCargoIm.enabled == true)
@@ -158,7 +161,8 @@ public class HookManip : MonoBehaviour
 						}
 						else
 						{
-							m_ScriptHook_2.connectedCargoIm.enabled = false;
+							// hack
+							// m_ScriptHook_2.connectedCargoIm.enabled = false;
 						}
 					}
 				}

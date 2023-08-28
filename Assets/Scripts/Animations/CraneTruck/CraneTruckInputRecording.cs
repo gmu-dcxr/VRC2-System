@@ -18,6 +18,8 @@ namespace VRC2.Animations.CraneTruck
         [Header("Truck")]
         public WSMVehicleController truckController;
 
+        public ControllerTruck craneController;
+        
         private float _acceleration = 0f;
         private float _steering = 0f;
 
@@ -94,7 +96,7 @@ namespace VRC2.Animations.CraneTruck
             }
             else
             {
-                
+                craneController.TriggerCrane();
             }
         }
 
