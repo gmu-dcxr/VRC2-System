@@ -186,6 +186,8 @@ public class ControllerTruck : MonoBehaviour
 			{
 				truckCanvas.enabled = false;
 			}
+			// hack
+			truckCanvas.enabled = false;
 
 			//Image Cargo
 			var imCargo = new GameObject();

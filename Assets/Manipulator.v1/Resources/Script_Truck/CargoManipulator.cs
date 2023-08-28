@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using VRC2.Animations.CraneTruck;
 
 public class CargoManipulator : MonoBehaviour {
 
@@ -33,8 +35,27 @@ public class CargoManipulator : MonoBehaviour {
 	private bool stopCarutine_Bool = true;
 	[Header("The time after which the Cargo will be attached to the Truck is indicated")]
 	public float connectedSecond = 0f;
+	
+	[Space(30)]
+	[Header("Recording/Replay")]
+	#region Hack for recording
+
+	private CraneTruckInputActions craneTIA;
+	private InputAction craneSeizeInput;
+
+
+	public CraneTruckInputRecording recording;
+
+	#endregion
 
 	void Start(){
+		
+		// initialize input actions
+		craneTIA = new CraneTruckInputActions();
+		craneTIA.Enable();
+		
+		craneSeizeInput = craneTIA.Crane.Seize;
+		
 		if (gameObject.GetComponent<Rigidbody> () == null) {
 			gameObject.AddComponent<Rigidbody> ();
 		}
@@ -42,11 +63,16 @@ public class CargoManipulator : MonoBehaviour {
 		lineMaterial = Resources.Load ("Material/LineMat", typeof(Material))as Material;
 	}
 	void Update(){
-		if (hook != null) {
-			if (Input.GetKeyDown (connectedCargo) && hook.GetComponent<HookManip> ().m_ScriptHook_2.connectedCargoIm.enabled == true && gameObject.GetComponent<HingeJoint>() == null) {
+		if (hook != null)
+		{
+			if (recording.truckMode) return;
+			
+			// if (Input.GetKeyDown (connectedCargo) && hook.GetComponent<HookManip> ().m_ScriptHook_2.connectedCargoIm.enabled == true && gameObject.GetComponent<HingeJoint>() == null) {
+			if (craneSeizeInput.triggered && hook.GetComponent<HookManip> ().m_ScriptHook_2.connectedCargoIm.enabled == true && gameObject.GetComponent<HingeJoint>() == null) {
 				ConnectedCargoToHook ();
 			}else
-			if (Input.GetKeyDown (connectedCargo) && gameObject.GetComponent<HingeJoint>() != null) {
+			// if (Input.GetKeyDown (connectedCargo) && gameObject.GetComponent<HingeJoint>() != null) {
+			if (craneSeizeInput.triggered && gameObject.GetComponent<HingeJoint>() != null) {
 				ConnectedCargoToHook ();
 			}
 		}
