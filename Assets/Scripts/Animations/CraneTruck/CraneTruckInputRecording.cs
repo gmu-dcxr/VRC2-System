@@ -14,12 +14,10 @@ namespace VRC2.Animations.CraneTruck
 
         #region Truck
 
-        [Space(30)] 
-        [Header("Truck")]
-        public WSMVehicleController truckController;
+        [Space(30)] [Header("Truck")] public WSMVehicleController truckController;
 
         public ControllerTruck craneController;
-        
+
         private float _acceleration = 0f;
         private float _steering = 0f;
 
@@ -39,7 +37,7 @@ namespace VRC2.Animations.CraneTruck
 
         #endregion
 
-        [HideInInspector]public bool truckMode = true;
+        [HideInInspector] public bool truckMode = true;
 
         public override void InitInputActions()
         {
@@ -81,6 +79,7 @@ namespace VRC2.Animations.CraneTruck
             {
                 truckMode = !truckMode;
             }
+
             if (truckMode)
             {
                 _acceleration = truckMoveInput.ReadValue<Vector2>().y > 0 ? 1f : 0;
@@ -92,7 +91,16 @@ namespace VRC2.Animations.CraneTruck
                 _steering = truckMoveInput.ReadValue<Vector2>().x < 0 ? _steering - 1 : _steering;
                 truckController.SteeringInput = _steering;
 
-                truckController.BrakesInput = truckBrakeInput.triggered ? 1f : 0f;   
+                if (truckBrakeInput.ReadValue<float>() > 0)
+                {
+                    truckController.AccelerationInput = 0;
+                    truckController.SteeringInput = 0;
+                    truckController.BrakesInput = 1;
+                }
+                else
+                {
+                    truckController.BrakesInput = 0;
+                }
             }
             else
             {
