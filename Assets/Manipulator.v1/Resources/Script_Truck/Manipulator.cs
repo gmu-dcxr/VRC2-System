@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Manipulator : MonoBehaviour {
 
-	[HideInInspector]
+	// [HideInInspector]
 	public ControllerTruck m_ScriptM;
 	[HideInInspector]
 	public Transform obj_Manipulator;
@@ -23,20 +23,20 @@ public class Manipulator : MonoBehaviour {
 	public Transform support_FR_Horizontal;
 	private bool support_FR_Horizontal_Bool = true;
 	//Arrow
-	[HideInInspector]
+	// [HideInInspector]
 	public Transform arrowRotation;
-	[HideInInspector]
+	// [HideInInspector]
 	public Transform arrowForward1;
-	[HideInInspector]
+	// [HideInInspector]
 	public Transform arrowForward2;
 	private Vector3 endPos_Arrow2;
-	[HideInInspector]
+	// [HideInInspector]
 	public Transform arrowForward3;
 	private Vector3 endPos_Arrow3;
-	[HideInInspector]
+	// [HideInInspector]
 	public Transform arrowForward4;
 	private Vector3 endPos_Arrow4;
-	[HideInInspector]
+	// [HideInInspector]
 	public Transform arrowForward5;
 	private Vector3 endPos_Arrow5;
 	//Piston
@@ -160,13 +160,13 @@ public class Manipulator : MonoBehaviour {
 					}
 				}
 				if (Input.GetKeyDown (m_ScriptM.powrManipulator)) {
-					AddUIManip ();
-					if (panelManipFL_Button_Bool == false) {
-						panelManipFL.GetComponent<Image> ().color = new Color32 (255, 193, 30, 165);
-					}
-					if (panelManipFR_Button_Bool == false) {
-						panelManipFR.GetComponent<Image> ().color = new Color32 (255, 193, 30, 165);
-					}
+					// AddUIManip ();
+					// if (panelManipFL_Button_Bool == false) {
+					// 	panelManipFL.GetComponent<Image> ().color = new Color32 (255, 193, 30, 165);
+					// }
+					// if (panelManipFR_Button_Bool == false) {
+					// 	panelManipFR.GetComponent<Image> ().color = new Color32 (255, 193, 30, 165);
+					// }
 				}
 				if (Input.GetKeyDown (m_ScriptM.powrManipulator) && m_ScriptM.blockOnManip_Cargo == false) {
 					StartCoroutine ("BlockOnPower");
