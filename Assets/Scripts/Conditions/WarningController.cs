@@ -82,7 +82,14 @@ public class WarningController : MonoBehaviour
     void Start()
     {
         scenariosManager = FindFirstObjectByType<ScenariosManager>();
-        _cameraTransform = Camera.main.transform;
+
+        var cam = Camera.main;
+        if (cam == null)
+        {
+            cam = FindObjectOfType<Camera>();
+        }
+        
+        _cameraTransform = cam.transform;
 
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.playOnAwake = false;

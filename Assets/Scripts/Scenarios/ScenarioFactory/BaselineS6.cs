@@ -4,6 +4,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 using UnityTimer;
+using VRC2.Animations;
 using Timer = UnityTimer.Timer;
 
 
@@ -15,30 +16,24 @@ namespace VRC2.Scenarios.ScenarioFactory
         public float level2 = 100;
         public float level3 = 300;
 
+        [Space(30)] public CraneInputRecording recording;
+        public CraneInputReplay replay;
+
+        public float startAngle = 180f;
+        public float endAngle = 120f;
+
         [Space(30)]
         //Actaully Using
         public GameObject pipes;
+
+        public GameObject unpackedPipe; // use the same as that in S1
 
         public GameObject crane;
         public GameObject hook;
         public GameObject decayHookOn;
         public Wind scriptWind;
-        private ConfigurableJoint _jointHook;
 
-        private ConfigurableJoint jointHook
-        {
-            get
-            {
-                if (_jointHook == null)
-                {
-                    _jointHook = hook.GetComponent<ConfigurableJoint>();
-                }
 
-                return _jointHook;
-            }
-        }
-
-        private TowerControllerCrane controllerCrane;
         private bool clockWise; //From above
         private bool canRotate;
         //end Actually Using        
@@ -72,12 +67,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 if (_craneSwivel == null)
                 {
-                    _craneSwivel = crane.GetComponent<TowerControllerCrane>().rotationElementCrane;
+                    _craneSwivel = recording.rotationElementCrane;
                 }
 
                 return _craneSwivel;
             }
         }
+
+
 
         private void Start()
         {
@@ -85,29 +82,36 @@ namespace VRC2.Scenarios.ScenarioFactory
             base.Start();
             player = localPlayer;
 
-            controllerCrane = crane.GetComponent<TowerControllerCrane>();
-
             clockWise = true;
             canRotate = true;
+            
+            unpackedPipe.SetActive(false);
         }
 
         private void Update()
         {
-            if (!_connected)
+            if (recording.Ready && !_connected)
             {
                 ConnectCargo(pipes);
             }
 
-            if (canRotate)
+            if (_connected && canRotate)
             {
-                if (clockWise)
-                {
-                    controllerCrane.RotateCrane(true, false, false, false);
-                }
-                else
-                {
-                    controllerCrane.RotateCrane(false, false, true, false);
-                }
+                RotateCrane(clockWise);
+            }
+        }
+
+        void RotateCrane(bool clockWise)
+        {
+            if (clockWise)
+            {
+                replay.Left(true);
+                replay.Right(false, true);
+            }
+            else
+            {
+                replay.Right(true);
+                replay.Left(false, true);
             }
         }
 
@@ -130,7 +134,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (decayHookOn.activeSelf)
             {
-                controllerCrane.ManuallyConnectCargo();
+                recording.ManuallyConnectCargo();
                 _connected = true;
             }
         }
@@ -138,6 +142,20 @@ namespace VRC2.Scenarios.ScenarioFactory
 
 
         #endregion
+
+        void ResetCraneRotation(float angle)
+        {
+            // var rot = craneSwivel.transform.localRotation.eulerAngles;
+            // rot.y = angle;
+            // craneSwivel.transform.localRotation = Quaternion.Euler(rot);
+
+            recording.ForceUpdateRotation(angle);
+        }
+
+        float GetCurrentAngle()
+        {
+            return craneSwivel.transform.localRotation.eulerAngles.y;
+        }
 
 
         #region Accident Events Callbacks
@@ -167,7 +185,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            //TriggerEvent(wind1, true, false);
+            ResetCraneRotation(startAngle);
+
             clockWise = false;
             canRotate = true;
             scriptWind.windForce = level1;
@@ -186,7 +205,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            //TriggerEvent(wind1, false, true);
+            ResetCraneRotation(endAngle);
             clockWise = true;
             SetPipeActiveness(false);
         }
@@ -205,7 +224,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            //TriggerEvent(wind2, true, false);
+            ResetCraneRotation(startAngle);
             clockWise = false;
             SetPipeActiveness(true);
             scriptWind.windForce = level2;
@@ -223,6 +242,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
+            ResetCraneRotation(endAngle);
             //TriggerEvent(wind2, false, true);
             clockWise = true;
             SetPipeActiveness(false);
@@ -241,7 +261,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(6);
             var warning = incident.Warning;
 
-            //TriggerEvent(wind3, true, false);
+            ResetCraneRotation(startAngle);
             clockWise = false;
             SetPipeActiveness(true);
             scriptWind.windForce = level3;

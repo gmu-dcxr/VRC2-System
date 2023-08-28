@@ -7,8 +7,13 @@ namespace VRC2.Animations
     public class CraneInputRecording : BaseInputRecording
     {
 
-        private SwitchingBetweenVehicles scriptSwitch;
-        private TowerPlatformInstallation scriptTPL;
+        [Header("Output Settings")] public string filename = "CraneInputRecording";
+
+        [Header("Crane Settings")] public float startRotation;
+        public float endRotation;
+
+        [Space(30)] public SwitchingBetweenVehicles scriptSwitch;
+        public TowerPlatformInstallation scriptTPL;
         public Material lineMaterial;
 
         [HideInInspector] public int blockController_Int = 0;
@@ -138,10 +143,17 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region Crane status check
+
+        [HideInInspector] public bool Ready { get; set; }
+
+        #endregion
+
         public void Start()
         {
-            scriptTPL = this.gameObject.GetComponent<TowerPlatformInstallation>();
-            scriptSwitch = this.gameObject.GetComponent<SwitchingBetweenVehicles>();
+            Ready = false;
+            // scriptTPL = this.gameObject.GetComponent<TowerPlatformInstallation>();
+            // scriptSwitch = this.gameObject.GetComponent<SwitchingBetweenVehicles>();
             GameObject _pointHooh = new GameObject("PointHook");
             _pointHooh.transform.SetParent(boomCart);
             pointHook = _pointHooh.transform;
@@ -159,6 +171,10 @@ namespace VRC2.Animations
 
             // hack here
             CreateCableHook();
+
+            // initialize crane rotation
+            // rotationElementCrane.localRotation = Quaternion.Euler(0, startRotation, 0);
+            Ready = true;
         }
 
         public override void InitInputActions()
@@ -182,6 +198,11 @@ namespace VRC2.Animations
 
         public override void UpdateLogic()
         {
+        }
+
+        public override string GetFilename()
+        {
+            return filename;
         }
 
         public void Update()
@@ -572,6 +593,24 @@ namespace VRC2.Animations
             //     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
         }
 
+        public void ForceUpdateRotation(float y)
+        {
+            floatRotCabin = y;
+            rotationElementCrane.localRotation = Quaternion.Euler(0, y, 0);
+        }
+
+        public float GetCraneRotation()
+        {
+            return rotationElementCrane.localRotation.eulerAngles.y;
+        }
+
+        public void ForceUpdateBoomCart(float x)
+        {
+            var vec = boomCart.localPosition;
+            vec.x = x;
+            boomCart.localPosition = vec;
+        }
+
         public void CreateCableHook()
         {
             // Line Renderer 1___________________________________________________
@@ -793,5 +832,56 @@ namespace VRC2.Animations
             pointRayDecay.GetComponent<LineRenderer>().positionCount = lineCargo.Length;
             pointRayDecay.GetComponent<LineRenderer>().SetPositions(lineCargo);
         }
+
+        #region Connect Cargo Hardcode
+
+        public void ManuallyConnectCargo()
+        {
+            if (addPhysicsHook_Bool == false)
+            {
+                Ray ray = new Ray(pointRayDecay.position, -Vector3.up);
+                int layerCargo = (1 << 10);
+                int layerIgnore = ~(1 << 2);
+                if (Physics.Raycast(ray, out hit, 1000, layerIgnore))
+                {
+                    decayHookPoint.position = hit.point + hit.normal * 0.01f;
+                    decayHookPoint.rotation = Quaternion.LookRotation(-hit.normal);
+                }
+
+                if (Physics.Raycast(ray, out hit, 100))
+                {
+                    maxOffset = hit.distance;
+                }
+
+                RaycastHit hitCargo;
+                if (Physics.Raycast(ray, out hitCargo, distanceCargoToHook, layerCargo) && maxOffset > 1.7f &&
+                    connectedCargo_Bool == true)
+                {
+                    decayHookOn.gameObject.SetActive(true);
+                    _cargo = hitCargo.collider.gameObject;
+                    distanceCargo = hitCargo.distance;
+                    Vector3 decayOn = scriptSwitch.towerCrane.transform.position - transform.position;
+                    decayHookOn.rotation = Quaternion.LookRotation(-decayOn, Vector3.up);
+                }
+                else
+                {
+                    decayHookOn.gameObject.SetActive(false);
+                    distanceCargo = 0;
+                }
+
+                if (connectedCargo_Bool == true)
+                {
+                    ConnectedCargo();
+                    connectedCargo_Bool = false;
+                }
+                else if (connectedCargo_Bool == false)
+                {
+                    ConnectedCargo();
+                    connectedCargo_Bool = true;
+                }
+            }
+        }
+
+        #endregion
     }
 }
