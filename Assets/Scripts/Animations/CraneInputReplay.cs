@@ -84,32 +84,42 @@ namespace VRC2.Animations
 
         #region APIs
 
-        public void Forward(bool loop=false)
+        public void Forward(bool loop = false)
         {
             StartReplay(ref forwardController, loop: loop);
         }
 
-        public void Backward(bool loop=false)
+        public void Backward(bool loop = false)
         {
             StartReplay(ref backwardController, loop: loop);
         }
 
-        public void Left(bool stop=false, bool loop=false)
+        public void Left(bool stop = false, bool loop = false)
         {
-            StartReplay(ref leftController, loop: loop, stop:stop);
+            StartReplay(ref leftController, loop: loop, stop: stop);
         }
 
-        public void Right(bool stop=false, bool loop=false)
+        public void Right(bool stop = false, bool loop = false)
         {
-            StartReplay(ref rightController, loop: loop, stop:stop);
+            StartReplay(ref rightController, loop: loop, stop: stop);
         }
 
-        public void Pickup(bool loop=false)
+        public void Pickup(bool loop = false)
         {
             StartReplay(ref pickupController, loop: loop);
         }
 
-        public void Dropoff(bool loop=false)
+        public void RewindPickup()
+        {
+            ForceRewind(ref pickupController);
+        }
+
+        public void RewindDropoff()
+        {
+            ForceRewind(ref dropoffController);
+        }
+
+        public void Dropoff(bool loop = false)
         {
             StartReplay(ref dropoffController, loop: loop);
         }
