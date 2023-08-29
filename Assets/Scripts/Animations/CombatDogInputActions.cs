@@ -44,6 +44,15 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Hit"",
+                    ""type"": ""Button"",
+                    ""id"": ""de4d2314-a8dd-4aa3-93c4-1865d0d3b727"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -134,6 +143,17 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
                     ""action"": ""Walk"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bbca5b95-b8ef-4f73-abcc-e5dbf5f6c95e"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -144,6 +164,7 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
         m_CombatDog = asset.FindActionMap("CombatDog", throwIfNotFound: true);
         m_CombatDog_Walk = m_CombatDog.FindAction("Walk", throwIfNotFound: true);
         m_CombatDog_Turn = m_CombatDog.FindAction("Turn", throwIfNotFound: true);
+        m_CombatDog_Hit = m_CombatDog.FindAction("Hit", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,12 +228,14 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
     private List<ICombatDogActions> m_CombatDogActionsCallbackInterfaces = new List<ICombatDogActions>();
     private readonly InputAction m_CombatDog_Walk;
     private readonly InputAction m_CombatDog_Turn;
+    private readonly InputAction m_CombatDog_Hit;
     public struct CombatDogActions
     {
         private @CombatDogInputActions m_Wrapper;
         public CombatDogActions(@CombatDogInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Walk => m_Wrapper.m_CombatDog_Walk;
         public InputAction @Turn => m_Wrapper.m_CombatDog_Turn;
+        public InputAction @Hit => m_Wrapper.m_CombatDog_Hit;
         public InputActionMap Get() { return m_Wrapper.m_CombatDog; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -228,6 +251,9 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
             @Turn.started += instance.OnTurn;
             @Turn.performed += instance.OnTurn;
             @Turn.canceled += instance.OnTurn;
+            @Hit.started += instance.OnHit;
+            @Hit.performed += instance.OnHit;
+            @Hit.canceled += instance.OnHit;
         }
 
         private void UnregisterCallbacks(ICombatDogActions instance)
@@ -238,6 +264,9 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
             @Turn.started -= instance.OnTurn;
             @Turn.performed -= instance.OnTurn;
             @Turn.canceled -= instance.OnTurn;
+            @Hit.started -= instance.OnHit;
+            @Hit.performed -= instance.OnHit;
+            @Hit.canceled -= instance.OnHit;
         }
 
         public void RemoveCallbacks(ICombatDogActions instance)
@@ -259,5 +288,6 @@ public partial class @CombatDogInputActions: IInputActionCollection2, IDisposabl
     {
         void OnWalk(InputAction.CallbackContext context);
         void OnTurn(InputAction.CallbackContext context);
+        void OnHit(InputAction.CallbackContext context);
     }
 }
