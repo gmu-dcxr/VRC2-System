@@ -143,6 +143,8 @@ namespace VRC2.Animations
 
         #endregion
 
+        [Header("Hack")] [HideInInspector] public GameObject backupCargo; // sometime automatic detecting cargo doesn't work.
+
         #region Crane status check
 
         [HideInInspector] public bool Ready { get; set; }
@@ -769,6 +771,12 @@ namespace VRC2.Animations
         {
             if (connectedCargo_Bool == true)
             {
+                // fix just in case
+                if (_cargo == null)
+                {
+                    _cargo = backupCargo;
+                }
+                
                 if (_cargo.GetComponent<ConstantForce>() != null)
                 {
                     DestroyImmediate(_cargo.GetComponent<ConstantForce>());
