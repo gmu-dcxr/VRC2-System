@@ -134,20 +134,18 @@ public class HookManip : MonoBehaviour
 						RaycastHit hitCargo;
 						if (Physics.Raycast(rayDecal, out hitCargo, 3.6f, layerCargo, QueryTriggerInteraction.Ignore))
 						{
-							if (hitCargo.distance > 2.7f)
+							if (hitCargo.distance > 1.0f) // 2.7f
 							{
-								// hack
-								// m_ScriptHook_2.connectedCargoIm.enabled = false;
+								m_ScriptHook_2.connectedCargoIm.enabled = false;
 							}
-							else if (hitCargo.distance < 2.5f)
+							else if (hitCargo.distance < 0.5f) // 2.5f
 							{
-								// hack
-								// m_ScriptHook_2.connectedCargoIm.enabled = false;
+								m_ScriptHook_2.connectedCargoIm.enabled = false;
 							}
 							else
 							{
-								// hack
-								// m_ScriptHook_2.connectedCargoIm.enabled = true;
+								print("Can connect cargo......");
+								m_ScriptHook_2.connectedCargoIm.enabled = true;
 							}
 
 							if (m_ScriptHook_2.connectedCargoIm.enabled == true)
@@ -161,8 +159,7 @@ public class HookManip : MonoBehaviour
 						}
 						else
 						{
-							// hack
-							// m_ScriptHook_2.connectedCargoIm.enabled = false;
+							m_ScriptHook_2.connectedCargoIm.enabled = false;
 						}
 					}
 				}

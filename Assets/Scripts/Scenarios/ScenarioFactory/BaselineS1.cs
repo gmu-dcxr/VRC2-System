@@ -75,6 +75,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             clockWise = false;
 
             SetActiveness(true, false);
+            
+            // override cargo to avoid error
+            recording.backupCargo = pipeStack;
         }
 
         private void Update()
@@ -176,7 +179,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 _craneStatus = CraneStatus.Dropoff;
             }
-            
+
 
             if (enableDrop)
             {
@@ -218,8 +221,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             ResetCraneRotation(startAngle);
             ResetBoomCart(startBoomcart);
             SetActiveness(true, false);
-            
+
             _craneStatus = CraneStatus.Pickup;
+            replay.RewindPickup();
             clockWise = false;
         }
 
@@ -261,6 +265,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             StopRotating();
             _craneStatus = CraneStatus.Pickup;
+            replay.RewindPickup();
             clockWise = false;
         }
 
@@ -300,7 +305,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
+            StopRotating();
             _craneStatus = CraneStatus.Pickup;
+            replay.RewindPickup();
             clockWise = false;
         }
 
@@ -336,7 +343,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
+            StopRotating();
             _craneStatus = CraneStatus.Pickup;
+            replay.RewindPickup();
             clockWise = false;
             enableDrop = true;
         }
@@ -359,7 +368,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             ResetCraneRotation(startAngle);
             SetActiveness(true, true);
 
+            StopRotating();
             _craneStatus = CraneStatus.Pickup;
+            replay.RewindPickup();
             clockWise = false;
         }
 

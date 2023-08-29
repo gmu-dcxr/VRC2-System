@@ -102,7 +102,7 @@ public class ControllerTruck : MonoBehaviour
 	[HideInInspector] public bool onManip = true;
 	[HideInInspector] public Canvas truckCanvas;
 	[HideInInspector] public Canvas EnterCanvas;
-	[HideInInspector] public Image connectedCargoIm;
+	public Image connectedCargoIm;
 	[HideInInspector] public Image EnterExitCar_Im;
 	private Image panelTruckQ1;
 	private Image panelTruckQ2;
@@ -153,10 +153,18 @@ public class ControllerTruck : MonoBehaviour
 			S_stop = Resources.Load("Sound/Stop_DV", typeof(AudioClip)) as AudioClip;
 		}
 
+		// hack
+		startTruck = true;
+		
 		if (startTruck == true)
 		{
-			rig = gameObject.AddComponent<Rigidbody>();
+			rig = gameObject.GetComponent<Rigidbody>();
+			if (rig == null)
+			{
+				rig = gameObject.AddComponent<Rigidbody>();
+			}
 			rig.mass = massTruck;
+			
 			if (fps_Bool == false)
 			{
 				s_Engine.Play();
@@ -178,6 +186,8 @@ public class ControllerTruck : MonoBehaviour
 			{
 				truckCanvas.enabled = false;
 			}
+			// hack
+			truckCanvas.enabled = false;
 
 			//Image Cargo
 			var imCargo = new GameObject();
