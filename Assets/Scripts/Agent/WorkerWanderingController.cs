@@ -13,16 +13,25 @@ namespace VRC2.Agent
 
         private Animator _animator;
 
-        [Header("Settings")] public float stopDistance = 0.1f;
+        [Space(30)] [Header("Settings")] public float stopDistance = 0.1f;
 
         public Transform startPoint;
         public Transform endPoint;
 
         public bool loop = false;
 
-        private Timer _timer;
+        [Space(30)] [Header("Animation")] public string idle;
+
+        [Space(30)] [Header("Time")] public float idleTime = 2.0f;
+        public float workingTime = 5.0f;
+
+        // private Timer _timer;
+        private Timer _idleTimer;
+        private Timer _workingTimer;
 
         private bool startDestination = false;
+
+        private bool procceeded = false;
 
         private void Start()
         {
@@ -37,53 +46,75 @@ namespace VRC2.Agent
             _animator = gameObject.GetComponent<Animator>();
 
             MoveToStartPoint();
-
-            StartCoroutine("OnCompleteAttackAnimation");
         }
 
         void MoveToStartPoint()
         {
             startDestination = true;
             _agent.SetDestination(startPoint.position);
+            StartWalking();
+        }
+
+        void StartWalking()
+        {
+
+        }
+
+        void StartIdle()
+        {
+            _animator.SetBool(idle, true);
+        }
+
+        void StartWorking()
+        {
+            _animator.SetBool(idle, false);
+        }
+
+        void StartAnimation(Vector3 destination)
+        {
+            StartIdle();
+            StartTimer(ref _idleTimer, idleTime, () =>
+            {
+                StartWorking();
+
+                StartTimer(ref _workingTimer, workingTime, () =>
+                {
+                    // should start walking
+                    StartIdle();
+
+                    // change destination
+                    _agent.SetDestination(destination);
+                    startDestination = !startDestination;
+                    procceeded = false;
+                });
+            });
         }
 
         private void Update()
         {
-            if (AgentHelper.ReachDestination(_agent))
+            if (AgentHelper.ReachDestination(_agent) && !procceeded)
             {
+                procceeded = true;
                 // change destination
                 if (startDestination)
                 {
-                    // change to end
-                    _agent.SetDestination(endPoint.position);
-                    startDestination = false;
+                    StartAnimation(endPoint.position);
                 }
                 else
                 {
-                    // change to start
-                    _agent.SetDestination(startPoint.position);
-                    startDestination = true;
+                    StartAnimation(startPoint.position);
                 }
             }
         }
 
-        IEnumerator OnCompleteAttackAnimation()
+        void StartTimer(ref Timer timer, float duration, Action oncomplete)
         {
-            while (_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-                yield return null;
-
-            // TODO: Do something when animation did complete
-            print("animation is done");
-        }
-
-        void StartTimer(float duration, Action oncomplete)
-        {
-            if (_timer != null)
+            if (timer != null)
             {
-                Timer.Cancel(_timer);
+                Timer.Cancel(timer);
             }
 
-            _timer = Timer.Register(duration, oncomplete, isLooped: false, useRealTime: true);
+            timer = Timer.Register(duration, oncomplete, isLooped: false, useRealTime: true);
         }
     }
 }
