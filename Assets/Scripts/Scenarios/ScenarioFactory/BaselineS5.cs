@@ -6,25 +6,22 @@ using WSMGameStudio.HeavyMachinery;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 using UnityTimer;
+using VRC2.Animations.CraneTruck;
 using Timer = UnityTimer.Timer;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
-    public enum WorkStage
+    internal enum CraneTruckStage
     {
         Stop = 0,
-        UpLift = 1,
-        Forward = 2,
-        DownLift = 3,
-        Back = 4,
+        Forward = 1,
+        Backward = 2,
+        Dropoff = 3,
     }
 
     public class BaselineS5 : Scenario
     {
-        public GameObject craneTruck;
-        
-        [Header("Loads")]
-        public GameObject normalGood;
+        [Header("Loads")] public GameObject normalGood;
         public GameObject heavierGood;
         public GameObject heaviestGood;
 
@@ -33,9 +30,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Header("Tilt")] public Transform titleTransform;
 
         public Transform overturnTransfrom;
-        
+
         private Vector3 destinationPos;
-        
+
         private Vector3 startPos;
         private Quaternion startRotation;
 
@@ -44,13 +41,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         private float speed = 6f;
         private float rotationSpeed = 0f;
 
-        private float distanceThreshold = 4.0f;
+        private float distanceThreshold = 2.0f;
 
         private GameObject player;
 
         private Timer _timer;
 
-        private WorkStage _stage;
+        private CraneTruckStage _stage;
 
         private float liftHeightThreshold = 0.5f;
 
@@ -67,6 +64,24 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
         }
 
+        #region New Version
+
+        [Space(30)] [Header("Recording/Replay")]
+        public CraneTruckInputRecording recording;
+
+        public CraneTruckInputReplay replay;
+
+        public Transform startPoint;
+        public Transform dropoffPoint;
+
+        private GameObject craneTruck
+        {
+            get => recording.CraneTruck;
+        }
+
+
+        #endregion
+
 
         private void Start()
         {
@@ -74,7 +89,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             player = localPlayer;
 
-            _stage = WorkStage.Stop;
+            _stage = CraneTruckStage.Stop;
 
             moving = false;
 
@@ -91,69 +106,21 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
-            if (!moving) return;
-
             switch (_stage)
             {
-                case WorkStage.Stop:
-                    StopVehicle();
+                case CraneTruckStage.Stop:
+                    replay.Stop();
                     break;
-                case WorkStage.UpLift:
-                    /*
-                    if (ReachedLiftHeight(true))
-                    {
-                        _stage = WorkStage.Forward;
-                    }
-                    else
-                    {
-                        LiftLoad(true);
-                    }
-                    */
-
+                case CraneTruckStage.Forward:
                     break;
-                case WorkStage.Forward:
-                    if (ReachedDestination(true))
+                case CraneTruckStage.Backward:
+                    if (ReachedDestination())
                     {
-                        // stop
-                        _stage = WorkStage.Stop;
-                    }
-                    else
-                    {
-                        MoveForward(true);
+                        _stage = CraneTruckStage.Stop;
                     }
 
                     break;
-                case WorkStage.Back:
-
-                    if (ReachedDestination(false))
-                    {
-                        // stop
-                        _stage = WorkStage.Stop;
-                    }
-                    else
-                    {
-                        MoveForward(false);
-                    }
-
-                    break;
-                case WorkStage.DownLift:
-                    /*
-                    if (ReachedLiftHeight(false))
-                    {
-                        // fix a bug that sometimes the load can not be unloaded.
-
-                        load.GetComponent<Rigidbody>().useGravity = false;
-                        load.transform.Translate(0f, 0.1f, 0f, Space.Self);
-                        StartTimer(1, () => { load.GetComponent<Rigidbody>().useGravity = true; });
-
-                        _stage = WorkStage.Back;
-                    }
-                    else
-                    {
-                        LiftLoad(false);
-                    }
-                    */
-
+                case CraneTruckStage.Dropoff:
                     break;
             }
         }
@@ -189,18 +156,17 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region craneTruck control
 
-        bool ReachedDestination(bool _forward)
+        bool ReachedDestination()
         {
-            var d = destinationPos; // forward
-            if (!_forward)
-            {
-                d = startPos; // back
-            }
-
-            // ignore y distance
+            var d = dropoffPoint.position;
             var t = craneTruck.transform.position;
-            d.y = t.y;
+            
+            // use the same y
+            d.y = 0;
+            t.y = 0;
             var distance = Vector3.Distance(t, d);
+            
+            print(distance);
 
             if (distance < distanceThreshold)
             {
@@ -248,7 +214,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         void StartVehicle()
         {
-            
+
         }
 
         void MoveForward(bool forward)
@@ -267,13 +233,13 @@ namespace VRC2.Scenarios.ScenarioFactory
 
 
         #region Accident Events Callbacks
-        
+
         // normal event
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S5");
         }
-        
+
         public void On_BaselineS5_1_Start()
         {
 
@@ -292,13 +258,16 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-            
-            ResetTruck();
 
-            EnableGoods(true, false, false);
+            _stage = CraneTruckStage.Backward;
 
-            _stage = WorkStage.UpLift;
-            moving = true;
+            replay.Backward(true);
+            // ResetTruck();
+
+            // EnableGoods(true, false, false);
+
+            // _stage = CraneTruckStage.UpLift;
+            // moving = true;
         }
 
         public void On_BaselineS5_2_Finish()
@@ -313,7 +282,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            _stage = WorkStage.DownLift;
+            _stage = CraneTruckStage.Forward;
             moving = true;
         }
 
@@ -332,14 +301,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
-            
+
             ResetTruck();
 
             craneTruck.transform.rotation = titleTransform.rotation;
 
             EnableGoods(false, true, false);
 
-            _stage = WorkStage.UpLift;
+            _stage = CraneTruckStage.Forward;
             moving = true;
         }
 
@@ -356,7 +325,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            _stage = WorkStage.DownLift;
+            _stage = CraneTruckStage.Forward;
             moving = true;
         }
 
@@ -377,12 +346,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             ResetTruck();
-            
+
             craneTruck.transform.rotation = overturnTransfrom.rotation;
-            
+
             EnableGoods(false, false, true);
 
-            _stage = WorkStage.UpLift;
+            _stage = CraneTruckStage.Backward;
             moving = true;
         }
 
