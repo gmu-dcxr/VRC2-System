@@ -190,7 +190,6 @@ namespace VRC2.Animations
             cargoInput = craneIA.Crane.Cargo;
 
             seizeInput = craneIA.Crane.Seize;
-            releaseInput = craneIA.Crane.Release;
         }
 
         public override void DisposeInputActions()

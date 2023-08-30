@@ -71,15 +71,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Release"",
-                    ""type"": ""Button"",
-                    ""id"": ""9ca0f579-b88a-4e92-adbc-4dc79fd30630"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -225,17 +216,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Seize"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""bf50e203-e862-4adf-80b6-def21c1ca6cb"",
-                    ""path"": ""<Keyboard>/o"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Release"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -249,7 +229,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
         m_Crane_Hook = m_Crane.FindAction("Hook", throwIfNotFound: true);
         m_Crane_Cargo = m_Crane.FindAction("Cargo", throwIfNotFound: true);
         m_Crane_Seize = m_Crane.FindAction("Seize", throwIfNotFound: true);
-        m_Crane_Release = m_Crane.FindAction("Release", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -316,7 +295,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Crane_Hook;
     private readonly InputAction m_Crane_Cargo;
     private readonly InputAction m_Crane_Seize;
-    private readonly InputAction m_Crane_Release;
     public struct CraneActions
     {
         private @CraneInputActions m_Wrapper;
@@ -326,7 +304,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
         public InputAction @Hook => m_Wrapper.m_Crane_Hook;
         public InputAction @Cargo => m_Wrapper.m_Crane_Cargo;
         public InputAction @Seize => m_Wrapper.m_Crane_Seize;
-        public InputAction @Release => m_Wrapper.m_Crane_Release;
         public InputActionMap Get() { return m_Wrapper.m_Crane; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -351,9 +328,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
             @Seize.started += instance.OnSeize;
             @Seize.performed += instance.OnSeize;
             @Seize.canceled += instance.OnSeize;
-            @Release.started += instance.OnRelease;
-            @Release.performed += instance.OnRelease;
-            @Release.canceled += instance.OnRelease;
         }
 
         private void UnregisterCallbacks(ICraneActions instance)
@@ -373,9 +347,6 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
             @Seize.started -= instance.OnSeize;
             @Seize.performed -= instance.OnSeize;
             @Seize.canceled -= instance.OnSeize;
-            @Release.started -= instance.OnRelease;
-            @Release.performed -= instance.OnRelease;
-            @Release.canceled -= instance.OnRelease;
         }
 
         public void RemoveCallbacks(ICraneActions instance)
@@ -400,6 +371,5 @@ public partial class @CraneInputActions: IInputActionCollection2, IDisposable
         void OnHook(InputAction.CallbackContext context);
         void OnCargo(InputAction.CallbackContext context);
         void OnSeize(InputAction.CallbackContext context);
-        void OnRelease(InputAction.CallbackContext context);
     }
 }
