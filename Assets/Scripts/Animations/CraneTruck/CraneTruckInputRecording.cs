@@ -27,6 +27,17 @@ namespace VRC2.Animations.CraneTruck
             get => truckController.gameObject;  
         }
 
+        [HideInInspector]
+        public bool TruckStopped
+        {
+            get
+            {
+                var v = truckController.CurrentSpeed;
+                print(v);
+                return v < 0.01f;
+            }
+        }
+
         #endregion
 
         #region Input Actions
