@@ -26,7 +26,7 @@ namespace VRC2.Animations
 
         public virtual void InitControllers()
         {
-            
+
         }
 
         public void InitTrace(ref InputEventTrace trace, string filename)
@@ -51,14 +51,15 @@ namespace VRC2.Animations
         //         .PlayAllEventsAccordingToTimestamps();
         // }
 
-        public InputEventTrace.ReplayController InitController(ref InputEventTrace trace, Action onfinished, Action<InputEventPtr> action)
+        public InputEventTrace.ReplayController InitController(ref InputEventTrace trace, Action onfinished,
+            Action<InputEventPtr> action)
         {
             return trace.Replay()
                 .OnFinished(onfinished)
                 .OnEvent(action);
         }
 
-        public bool IsFinished(ref InputEventTrace.ReplayController controller, bool rewind=false)
+        public bool IsFinished(ref InputEventTrace.ReplayController controller, bool rewind = false)
         {
             var res = controller.finished;
             if (res && rewind)
@@ -74,7 +75,17 @@ namespace VRC2.Animations
             controller.Rewind();
         }
 
-        public void StartReplay(ref InputEventTrace.ReplayController controller, bool loop=false, bool stop=false)
+        public void StopReplay(ref InputEventTrace.ReplayController controller, bool rewind)
+        {
+            controller.paused = true;
+
+            if (rewind)
+            {
+                controller.Rewind();
+            }
+        }
+
+        public void StartReplay(ref InputEventTrace.ReplayController controller, bool loop = false, bool stop = false)
         {
             if (stop)
             {
@@ -83,10 +94,10 @@ namespace VRC2.Animations
             }
 
             controller.paused = false;
-            
+
             if (controller.position == 0)
             {
-                controller.PlayAllEventsAccordingToTimestamps();   
+                controller.PlayAllEventsAccordingToTimestamps();
             }
             else
             {
@@ -94,7 +105,7 @@ namespace VRC2.Animations
                 {
                     if (loop)
                     {
-                        controller.Rewind();   
+                        controller.Rewind();
                     }
                 }
             }

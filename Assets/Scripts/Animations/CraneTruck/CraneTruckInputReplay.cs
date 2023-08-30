@@ -75,5 +75,41 @@ namespace VRC2.Animations.CraneTruck
         }
 
         #endregion
+
+        #region Replay events
+
+        public void Forward(bool loop = false)
+        {
+            StartReplay(ref forwardController, loop);
+        }
+
+        public void Backward(bool loop = false)
+        {
+            StartReplay(ref backwardController, loop);
+        }
+
+        public void Stop()
+        {
+            StartReplay(ref stopController);
+        }
+
+        public void LeftForward(bool loop = false)
+        {
+            StartReplay(ref forwardController, loop);
+            StartReplay(ref leftController, loop);
+        }
+
+        public void RightForward(bool loop = false)
+        {
+            StartReplay(ref forwardController, loop);
+            StartReplay(ref rightController, loop);
+        }
+
+        public void Dropoff()
+        {
+            StartReplay(ref dropoffController);
+        }
+
+        #endregion
     }
 }
