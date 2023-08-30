@@ -110,7 +110,14 @@ namespace VRC2.Animations.CraneTruck
 
         public void Dropoff()
         {
+            StopReplay(ref stopController, true);
+            print("dropoff");
             StartReplay(ref dropoffController);
+        }
+
+        public bool FinishDropoff()
+        {
+            return IsFinished(ref dropoffController, true);
         }
 
         #endregion
