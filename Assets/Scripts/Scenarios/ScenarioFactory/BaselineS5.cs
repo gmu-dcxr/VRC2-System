@@ -7,6 +7,7 @@ using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 using UnityTimer;
 using VRC2.Animations.CraneTruck;
+using VRC2.Extention;
 using Timer = UnityTimer.Timer;
 
 namespace VRC2.Scenarios.ScenarioFactory
@@ -21,6 +22,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
     public class BaselineS5 : Scenario
     {
+        [Header("Gameobjects")] public GameObject craneTruck;
+        public GameObject cargo;
 
         [Space(30)] [Header("Recording/Replay")]
         public CraneTruckInputRecording recording;
@@ -30,15 +33,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Transform startPoint;
         public Transform dropoffPoint;
 
-        private GameObject craneTruck
-        {
-            get => recording.CraneTruck;
-        }
-
         private bool isDroppingoff = false;
-
-        private Vector3 startPos;
-        private Quaternion startRotation;
 
         // when to stop truck
         private float distanceThreshold = 2.0f;
@@ -49,15 +44,22 @@ namespace VRC2.Scenarios.ScenarioFactory
         // current stage 
         private CraneTruckStage _stage;
 
+        #region Transform backup/restore
+
+        private BackupableTransform truckTransform;
+        private BackupableTransform cargoTransform;
+
+
+        #endregion
+
         private void Start()
         {
             base.Start();
 
             _stage = CraneTruckStage.Stop;
 
-            //Find positions
-            startPos = craneTruck.transform.position;
-            startRotation = craneTruck.transform.rotation;
+            truckTransform = BackupableTransform.Clone(craneTruck);
+            cargoTransform = BackupableTransform.Clone(cargo);
         }
 
         private void Update()
@@ -108,10 +110,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
         }
 
-        void ResetTruck()
+        void ResetTransforms()
         {
-            craneTruck.transform.position = startPos;
-            craneTruck.transform.rotation = startRotation;
+            truckTransform.Restore(ref craneTruck);
+            cargoTransform.Restore(ref cargo);
         }
 
         void StartTimer(int second, Action oncomplete)
@@ -174,7 +176,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
 
             _stage = CraneTruckStage.Backward;
-
             replay.Backward(true);
         }
 
@@ -190,7 +191,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            _stage = CraneTruckStage.Forward;
+            // it already automatically moves forward
+            // _stage = CraneTruckStage.Forward;
         }
 
         public void On_BaselineS5_3_Finish()
@@ -209,9 +211,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            ResetTruck();
-
-            _stage = CraneTruckStage.Forward;
+            ResetTransforms();
+            _stage = CraneTruckStage.Backward;
+            replay.Backward(true);
         }
 
         public void On_BaselineS5_4_Finish()
@@ -227,7 +229,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            _stage = CraneTruckStage.Forward;
+            // _stage = CraneTruckStage.Forward;
         }
 
         public void On_BaselineS5_5_Finish()
@@ -246,9 +248,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            ResetTruck();
-
+            ResetTransforms();
             _stage = CraneTruckStage.Backward;
+            replay.Backward(true);
         }
 
         public void On_BaselineS5_6_Finish()
