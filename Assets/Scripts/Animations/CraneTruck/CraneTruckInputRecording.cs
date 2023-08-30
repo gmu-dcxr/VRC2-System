@@ -22,20 +22,10 @@ namespace VRC2.Animations.CraneTruck
         private float _steering = 0f;
 
         [HideInInspector]
-        public GameObject CraneTruck
-        {
-            get => truckController.gameObject;  
-        }
-
-        [HideInInspector]
         public bool TruckStopped
         {
-            get
-            {
-                var v = truckController.CurrentSpeed;
-                print(v);
-                return v < 0.01f;
-            }
+            // sometimes the speed is not 0
+            get => truckController.CurrentSpeed < 0.01f;
         }
 
         #endregion
