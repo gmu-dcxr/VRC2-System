@@ -9,6 +9,14 @@ namespace VRC2.Scenarios
 {
     public class CustomForkLiftController : MonoBehaviour
     {
+        internal enum WorkStage
+        {
+            Stop = 0,
+            Forward = 1,
+            UpLift = 2,
+            Back = 3,
+            DownLift = 4,
+        }
 
         public GameObject forklift;
         public GameObject good;

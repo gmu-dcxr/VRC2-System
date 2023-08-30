@@ -90,7 +90,10 @@ namespace VRC2.Animations.CraneTruck
 
         public void Stop()
         {
-            StartReplay(ref stopController);
+            StartReplay(ref stopController, true);
+            // stop forward and backward if applicable
+            StopReplay(ref forwardController, true);
+            StopReplay(ref backwardController, true);
         }
 
         public void LeftForward(bool loop = false)

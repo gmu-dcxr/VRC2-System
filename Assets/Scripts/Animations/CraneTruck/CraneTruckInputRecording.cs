@@ -21,6 +21,12 @@ namespace VRC2.Animations.CraneTruck
         private float _acceleration = 0f;
         private float _steering = 0f;
 
+        [HideInInspector]
+        public GameObject CraneTruck
+        {
+            get => truckController.gameObject;  
+        }
+
         #endregion
 
         #region Input Actions
