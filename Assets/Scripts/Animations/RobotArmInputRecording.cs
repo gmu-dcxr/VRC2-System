@@ -9,13 +9,18 @@ namespace VRC2.Animations
 
         public RoboticArm move;
         public RobotArmInputAction armIA;
-        public float rotateSpeed = 20f;
+        //has to be between 0.00 - 1.00
+        public float rotateSpeed = 0.1f;
 
         private InputAction part0;
         private InputAction part1;
         private InputAction part2;
         private InputAction part3;
 
+        private float angle0 = 0.3f;
+        private float angle1 = 0.3f;
+        private float angle2 = 0.3f;
+        private float angle3 = 0.3f;
 
         public override void InitInputActions()
         {
@@ -38,42 +43,50 @@ namespace VRC2.Animations
             //part0 up
             if (part0.ReadValue<Vector2>().y > 0) 
             {
-                move.rotatePart0(rotateSpeed);
+                angle0 += rotateSpeed;
+                move.rotatePart0(angle0);
             }
             //part0 down
             if (part0.ReadValue<Vector2>().y < 0) 
             {
-                move.rotatePart0(rotateSpeed * -1f);
+                angle0 -= rotateSpeed;
+                move.rotatePart0(angle0);
             }
             //part1 up
             if (part1.ReadValue<Vector2>().y > 0) 
             {
-                move.rotatePart1(rotateSpeed);
+                angle1 += rotateSpeed;
+                move.rotatePart1(angle1);
             }
             //part1 down
             if (part1.ReadValue<Vector2>().y < 0)
             {
-                move.rotatePart1(rotateSpeed * -1f);
+                angle1 -= rotateSpeed;
+                move.rotatePart1(angle1);
             }
             //part2 up
             if (part2.ReadValue<Vector2>().y > 0) 
             {
-                move.rotatePart2(rotateSpeed);
+                angle2 += rotateSpeed;
+                move.rotatePart2(angle2);
             }
             //part2 down
             if (part2.ReadValue<Vector2>().y < 0) 
             {
-                move.rotatePart2(rotateSpeed * -1f);
+                angle2 -= rotateSpeed;
+                move.rotatePart2(angle2);
             }
             //part3 up
             if (part3.ReadValue<Vector2>().y > 0) 
             {
-                move.rotatePart3(rotateSpeed);
+                angle3 += rotateSpeed;
+                move.rotatePart3(angle3);
             }
             //part3 down
             if (part3.ReadValue<Vector2>().y < 0) 
             {
-                move.rotatePart3(rotateSpeed * -1f);
+                angle3 -= rotateSpeed;
+                move.rotatePart3(angle3);
             }
 
 
