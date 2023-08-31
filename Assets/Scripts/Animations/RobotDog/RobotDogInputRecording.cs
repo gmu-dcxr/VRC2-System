@@ -1,42 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine;
 
-namespace VRC2.Animations.RobotDog
+namespace VRC2.Animations
 {
-
     public class RobotDogInputRecording : BaseInputRecording
     {
+        [Space(30)] [Header("Body")]
+        //Movement
+        public float moveSpeed = 1f;
+
+        public float rotateSpeed = 20f;
+
+        //
+        public Transform body;
+
+        //Scripts
+        public Actions actions;
+
+        //bools
+        private bool walk;
+        private bool turn;
 
         private RobotDogInputActions inputActions;
-
         private InputAction bodyMoveIA;
         private InputAction bodyTurnIA;
-
-        #region Body
-
-        public CombatDogController dogCtr;
-
-        private bool walk = false;
-        private bool turn = false;
-        private bool idle = false;
-
-        private float moveSpeed
-        {
-            get => dogCtr.moveSpeed;
-        }
-
-        private float rotateSpeed
-        {
-            get => dogCtr.rotateSpeed;
-        }
-
-        public Actions act;
-        public GameObject dog;
-
-        #endregion
-
 
         public override void InitInputActions()
         {
@@ -52,113 +39,111 @@ namespace VRC2.Animations.RobotDog
             inputActions.Dispose();
         }
 
-        // public virtual void UpdateLogic()
-        // {
-        //     // var input = m_MoveInput.ReadValue<Vector2>();
-        //     // var movement = new Vector3(input.x,0f,input.y) * 4f * Time.deltaTime;
-        //     // m_Player.Translate(movement,Space.Self);
-        //     
-        //     ControlBody();
-        // }
-
-
         // Start is called before the first frame update
         void Start()
         {
-
+            walk = false;
+            turn = false;
         }
 
         // Update is called once per frame
         void Update()
         {
-            ControlBody();
-        }
-
-        #region Robot dog body control
-
-        void ControlBody()
-        {
             //walking foward
+            // if (Input.GetKey(KeyCode.W))
             if (bodyMoveIA.ReadValue<Vector2>().y > 0)
             {
                 if (walk == false)
                 {
-                    act.Walk();
+                    actions.Walk();
                     walk = true;
-                    idle = false;
                 }
 
-                dog.transform.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
+                body.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
 
             }
+
             // turn left
-            else if (bodyTurnIA.ReadValue<Vector2>().x < 0)
+            // if (Input.GetKey(KeyCode.Q))
+            if (bodyTurnIA.ReadValue<Vector2>().x < 0)
             {
                 if (turn == false)
                 {
-                    act.TurnLeft();
+                    actions.TurnLeft();
                     turn = true;
-                    idle = false;
                 }
 
-                dog.transform.Rotate(-1 * Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
+                body.Rotate(-1 * Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
             }
+
             // turn right
-            else if (bodyTurnIA.ReadValue<Vector2>().x > 0)
+            // if (Input.GetKey(KeyCode.E))
+            if (bodyTurnIA.ReadValue<Vector2>().x > 0)
             {
                 if (turn == false)
                 {
-                    act.TurnRight();
+                    actions.TurnRight();
                     turn = true;
-                    idle = false;
                 }
 
-                dog.transform.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
+                body.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
             }
+
             // move backwards
-            else if (bodyMoveIA.ReadValue<Vector2>().y < 0)
+            // if (Input.GetKey(KeyCode.S))
+            if (bodyMoveIA.ReadValue<Vector2>().y < 0)
             {
                 if (walk == false)
                 {
-                    act.Walk();
+                    actions.Walk();
                     walk = true;
-                    idle = false;
                 }
 
-                dog.transform.Translate(new Vector3(0, 0, -1) * moveSpeed * Time.deltaTime);
+                body.Translate(new Vector3(0, 0, -1) * moveSpeed * Time.deltaTime);
             }
+
             // Strafe left
-            else if (bodyMoveIA.ReadValue<Vector2>().x < 0)
+            // if (Input.GetKey(KeyCode.A))
+            if (bodyMoveIA.ReadValue<Vector2>().x < 0)
             {
                 if (walk == false)
                 {
-                    act.StrafeLeft();
+                    actions.StrafeLeft();
                     walk = true;
-                    idle = false;
                 }
 
-                dog.transform.Translate(new Vector3(-1, 0, 0) * moveSpeed * Time.deltaTime);
+                body.Translate(new Vector3(-1, 0, 0) * moveSpeed * Time.deltaTime);
             } // Strafe right
-            else if (bodyMoveIA.ReadValue<Vector2>().x > 0)
-            {
 
+            // if (Input.GetKey(KeyCode.D))
+            if (bodyMoveIA.ReadValue<Vector2>().x > 0)
+            {
                 if (walk == false)
                 {
-                    act.StrafeRight();
+                    actions.StrafeRight();
                     walk = true;
-                    idle = false;
                 }
 
-                dog.transform.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
+                body.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
             }
+
+
+            //No button, go idle
+            if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) ||
+                Input.GetKeyUp(KeyCode.A)
+                || Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.E))
+            {
+                walk = false;
+                turn = false;
+                actions.Idle1();
+            }
+
+            //Use to look like picking up 
+            if (Input.GetKey(KeyCode.R))
+            {
+                actions.Hit1();
+            }
+
         }
-
-        #endregion
-
-        #region Robot dog arm control
-
-
-
-        #endregion
     }
 }
