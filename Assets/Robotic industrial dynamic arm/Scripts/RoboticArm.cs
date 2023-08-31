@@ -81,6 +81,35 @@ public class RoboticArm : MonoBehaviour {
 		}
 	}
 
+	public void CloseGrip(float step)
+	{
+		var left = gripLeft.localRotation.eulerAngles;
+		var right = gripRight.localRotation.eulerAngles;
+
+		left.z += step;
+		right.z += step;
+		
+		gripLeft.localRotation = Quaternion.Euler(left);
+		gripRight.localRotation = Quaternion.Euler(right);
+		if (audioS.isPlaying == false) {
+			audioS.Play ();
+		}
+	}
+
+	public void OpenGrip(float step)
+	{
+		var left = gripLeft.localRotation.eulerAngles;
+		var right = gripRight.localRotation.eulerAngles;
+
+		left.z -= step;
+		right.z -= step;
+		
+		gripLeft.localRotation = Quaternion.Euler(left);
+		gripRight.localRotation = Quaternion.Euler(right);
+		if (audioS.isPlaying == false) {
+			audioS.Play ();
+		}
+	}
 
 
 
