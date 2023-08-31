@@ -17,10 +17,10 @@ namespace VRC2.Animations
         private InputAction part2;
         private InputAction part3;
 
-        private float angle0 = 0.3f;
-        private float angle1 = 0.3f;
-        private float angle2 = 0.3f;
-        private float angle3 = 0.3f;
+        private float angle0 = 0.0f;
+        private float angle1 = 0.0f;
+        private float angle2 = 0.0f;
+        private float angle3 = 0.0f;
 
         public override void InitInputActions()
         {
