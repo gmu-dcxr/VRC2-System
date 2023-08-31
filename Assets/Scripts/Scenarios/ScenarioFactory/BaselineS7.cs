@@ -4,6 +4,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using WSMGameStudio.HeavyMachinery;
+using VRC2.Animations;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 
@@ -11,24 +12,32 @@ namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS7 : Scenario
     {
-        public GameObject backHoe;
+        public GameObject excav;
 
-        [Header("BackhoeController")] public Transform BackhoeController1;
-        public Transform BackhoeController2;
-        public Transform BackhoeController3;
+        internal enum ExcavatorStage
+        {
+            Stop = 0,
+            Forward = 1,
+            Backward = 2,
+            Dig = 3,
+            Left = 4,
+            Right = 5,
+        }
 
-        [Header("Dumpster")] public GameObject dumpster1;
-        public GameObject dumpster2;
-        public GameObject dumpster3;
+        [Space(30)]  [Header("Recording/Replay")]
+        public ExcavatorInputRecording recording;
+               
+
+        public ExcavatorInputReplay replay;
+
+        public Transform startPoint;
+        public Transform digPoint;
+
 
 
         [Header("Rock")] public GameObject rock1;
         public GameObject rock2;
         public GameObject rock3;
-
-        [Header("Normal")] public Transform normalBackhoe;
-        public GameObject normalDumpster;
-        public GameObject normalRock;
 
         // public GameObject excavator;
 
@@ -51,27 +60,78 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool moving = false;
 
-        private float distanceThreshold = 5.0f;
+        private bool isDigging = false;
+
+        private float distanceThreshold = 3.0f;
 
         private GameObject activeSetting;
+
+        private ExcavatorStage _stage;
+
+        
 
 
         private void Start()
         {
             base.Start();
-
+            _stage = ExcavatorStage.Stop;
             // destinationPos = destination.transform.position;
         }
 
         private void Update()
         {
-        }
+            switch (_stage)
+            {
+                case ExcavatorStage.Stop:
+                    //replay.Stop();
+                    if (ReachDestination(digPoint.position) && (recording.driveSpeed == 0))
+                    {
+                        isDigging = false;
+                        // time to dig
+                        _stage = ExcavatorStage.Dig;
+                    }
+
+                    break;
+                case ExcavatorStage.Forward:
+                    //replay.Forward(true);
+                    if (ReachDestination(startPoint.position))
+                    {
+                        _stage = ExcavatorStage.Stop;
+                    }
+
+                    break;
+                case ExcavatorStage.Backward:
+                    if (ReachDestination(digPoint.position))
+                    {
+                        _stage = ExcavatorStage.Stop;
+                    }
+
+                    break;
+
+                case ExcavatorStage.Dig:
+                    if (!isDigging)
+                    {
+                        isDigging = true;
+                        //replay.Dig();
+                    }
+                    else
+                    {
+                        if (replay.DigFinished())
+                        {
+                            _stage = ExcavatorStage.Forward;
+                        }
+                    }
+
+                    break;
+            }
+            }
+        
 
         void UpdateTransforms(Transform bc, GameObject rk, GameObject ds)
         {
             // backHoe.SetActive(false);
-            backHoe.transform.position = bc.position;
-            backHoe.transform.rotation = bc.rotation;
+            excav.transform.position = bc.position;
+            excav.transform.rotation = bc.rotation;
 
             // backHoe.SetActive(true);
 
@@ -90,8 +150,20 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Driving Control
 
-        bool ReachDestination()
+        bool ReachDestination(Vector3 des)
         {
+            var t = excav.transform.position;
+
+            // use the same y
+            des.y = 0;
+            t.y = 0;
+            var distance = Vector3.Distance(t, des);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -107,7 +179,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         void MoveBackward()
         {
 
-            if (ReachDestination())
+            if (ReachDestination(startPoint.position))
             {
                 print("Truck reach destination");
                 moving = false;
