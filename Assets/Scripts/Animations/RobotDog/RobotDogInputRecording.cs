@@ -21,9 +21,23 @@ namespace VRC2.Animations
         private bool walk;
         private bool turn;
 
+        [Space(30)] [Header("Arm")] public RoboticArm arm;
+        public float armRotateSpeed = 0.01f;
+
+        private float angle0 = 0.0f;
+        private float angle1 = 0.0f;
+        private float angle2 = 0.0f;
+        private float angle3 = 0.0f;
+
         private RobotDogInputActions inputActions;
         private InputAction bodyMoveIA;
         private InputAction bodyTurnIA;
+        private InputAction stopIA;
+        private InputAction d0IA;
+        private InputAction d1IA;
+        private InputAction d2IA;
+        private InputAction d3IA;
+        private InputAction gripIA;
 
         public override void InitInputActions()
         {
@@ -32,6 +46,13 @@ namespace VRC2.Animations
 
             bodyMoveIA = inputActions.Body.Move;
             bodyTurnIA = inputActions.Body.Turn;
+            stopIA = inputActions.Body.Stop;
+
+            d0IA = inputActions.Arm.DOF0;
+            d1IA = inputActions.Arm.DOF1;
+            d2IA = inputActions.Arm.DOF2;
+            d3IA = inputActions.Arm.DOF3;
+            gripIA = inputActions.Arm.Grip;
         }
 
         public override void DisposeInputActions()
@@ -48,6 +69,14 @@ namespace VRC2.Animations
 
         // Update is called once per frame
         void Update()
+        {
+            ControlRobotBody();
+            ControlRobotArm();
+        }
+
+        #region Robot body control
+
+        void ControlRobotBody()
         {
             //walking foward
             // if (Input.GetKey(KeyCode.W))
@@ -127,23 +156,96 @@ namespace VRC2.Animations
                 body.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
             }
 
-
-            //No button, go idle
-            if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) ||
-                Input.GetKeyUp(KeyCode.A)
-                || Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.E))
+            if (stopIA.triggered)
             {
                 walk = false;
                 turn = false;
                 actions.Idle1();
             }
 
-            //Use to look like picking up 
-            if (Input.GetKey(KeyCode.R))
+            //No button, go idle
+            // if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) ||
+            //     Input.GetKeyUp(KeyCode.A)
+            //     || Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.E))
+            //
+            // //Use to look like picking up 
+            // if (Input.GetKey(KeyCode.R))
+            // {
+            //     actions.Hit1();
+            // }
+        }
+
+        #endregion
+
+        #region Control robot arm
+
+        void ControlRobotArm()
+        {
+            //part0 up
+            if (d0IA.ReadValue<Vector2>().x > 0)
             {
-                actions.Hit1();
+                angle0 += armRotateSpeed;
+                arm.rotatePart0(angle0);
             }
 
+            //part0 down
+            if (d0IA.ReadValue<Vector2>().x < 0)
+            {
+                angle0 -= armRotateSpeed;
+                arm.rotatePart0(angle0);
+            }
+
+            //part1 up
+            if (d1IA.ReadValue<Vector2>().x > 0)
+            {
+                angle1 += armRotateSpeed;
+                arm.rotatePart1(angle1);
+            }
+
+            //part1 down
+            if (d1IA.ReadValue<Vector2>().x < 0)
+            {
+                angle1 -= armRotateSpeed;
+                arm.rotatePart1(angle1);
+            }
+
+            //part2 up
+            if (d2IA.ReadValue<Vector2>().x > 0)
+            {
+                angle2 += armRotateSpeed;
+                arm.rotatePart2(angle2);
+            }
+
+            //part2 down
+            if (d2IA.ReadValue<Vector2>().x < 0)
+            {
+                angle2 -= armRotateSpeed;
+                arm.rotatePart2(angle2);
+            }
+
+            //part3 up
+            if (d3IA.ReadValue<Vector2>().x > 0)
+            {
+                angle3 += armRotateSpeed;
+                arm.rotatePart3(angle3);
+            }
+
+            //part3 down
+            if (d3IA.ReadValue<Vector2>().x < 0)
+            {
+                angle3 -= armRotateSpeed;
+                arm.rotatePart3(angle3);
+            }
+
+            // grip
+            if (gripIA.triggered)
+            {
+                arm.grip(0.1f);
+            }
         }
+
+
+
+        #endregion
     }
 }
