@@ -199,12 +199,12 @@ public partial class @RobotDogInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Grip"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""5b8cb527-f70e-4e6d-8c74-c73874618a2f"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -341,15 +341,37 @@ public partial class @RobotDogInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""7627a8d7-5c10-4759-b62a-a039ab37c6ed"",
-                    ""path"": ""<Keyboard>/x"",
+                    ""name"": ""2D Vector"",
+                    ""id"": ""e530b21b-d4ed-4211-9b4a-622be55ae7fc"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grip"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""d801c967-465c-4ac5-b5bc-1997f7fd91be"",
+                    ""path"": ""<Keyboard>/comma"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Grip"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""10d68c72-dcd4-497e-9fe9-ebab8740543e"",
+                    ""path"": ""<Keyboard>/period"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }

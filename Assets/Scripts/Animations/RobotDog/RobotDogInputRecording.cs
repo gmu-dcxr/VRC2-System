@@ -24,7 +24,7 @@ namespace VRC2.Animations
         [Space(30)] [Header("Arm")] public RoboticArm arm;
         public float armRotateSpeed = 0.01f;
 
-        private float gripSpeed = 0.01f;
+        private float gripSpeed = 0.5f;
         private float grip = 0.0f;
 
         private float angle0 = 0.0f;
@@ -241,25 +241,14 @@ namespace VRC2.Animations
             }
 
             // grip
-            if (gripIA.triggered)
+            if (gripIA.ReadValue<Vector2>().x < 0)
             {
-                arm.CloseGrip(1);
-                // grip += gripSpeed;
-                // arm.grip(grip);
-                
-                // if (grip)
-                // {
-                //     gripLeft.AddTorque(torque * gripLeft.mass * gripLeft.transform.forward);
-                //     gripRight.AddTorque(torque * gripRight.mass * gripRight.transform.forward);
-                //
-                // }
-                // else
-                // {
-                //     gripLeft.AddTorque(-torque * gripLeft.mass * gripLeft.transform.forward);
-                //     gripRight.AddTorque(-torque * gripRight.mass * gripRight.transform.forward);
-                //
-                // }
-                
+                arm.CloseGrip(gripSpeed);
+            }
+
+            if (gripIA.ReadValue<Vector2>().x > 0)
+            {
+                arm.OpenGrip(gripSpeed);
             }
         }
 
