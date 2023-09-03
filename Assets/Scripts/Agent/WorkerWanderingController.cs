@@ -18,6 +18,11 @@ namespace VRC2.Agent
         public Transform startPoint;
         public Transform endPoint;
 
+        public float startToEndYRotation = 0;
+        public float endToStartYRotation = 0;
+
+        private float currentYRotation = 0;
+
         public bool loop = false;
 
         [Space(30)] [Header("Animation")] public string idle;
@@ -53,6 +58,8 @@ namespace VRC2.Agent
             startDestination = true;
             _agent.SetDestination(startPoint.position);
             StartWalking();
+
+            currentYRotation = startToEndYRotation;
         }
 
         void StartWalking()
@@ -80,12 +87,19 @@ namespace VRC2.Agent
                 StartTimer(ref _workingTimer, workingTime, () =>
                 {
                     // should start walking
-                    StartIdle();
+                    StartWalking();
 
                     // change destination
                     _agent.SetDestination(destination);
                     startDestination = !startDestination;
                     procceeded = false;
+                    if (startDestination)
+                    {
+                        currentYRotation = startToEndYRotation;
+                    } else
+                    {
+                        currentYRotation = endToStartYRotation;
+                    }
                 });
             });
         }
@@ -105,6 +119,8 @@ namespace VRC2.Agent
                     StartAnimation(startPoint.position);
                 }
             }
+            //
+            gameObject.transform.localRotation = Quaternion.Euler(0, currentYRotation, 0);
         }
 
         void StartTimer(ref Timer timer, float duration, Action oncomplete)
