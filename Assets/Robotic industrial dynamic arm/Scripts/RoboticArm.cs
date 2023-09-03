@@ -115,6 +115,10 @@ public class RoboticArm : MonoBehaviour
 		left.z -= step;
 		right.z -= step;
 
+		
+		
+		
+		
 		// make it not too big
 		if (right.y > 230) return;
 
