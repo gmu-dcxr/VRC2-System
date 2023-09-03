@@ -1,0 +1,259 @@
+using UnityEngine.InputSystem;
+using UnityEngine;
+
+namespace VRC2.Animations
+{
+    public class RobotDogInputRecording : BaseInputRecording
+    {
+        [Space(30)] [Header("Body")]
+        //Movement
+        public float moveSpeed = 1f;
+
+        public float rotateSpeed = 20f;
+
+        //
+        public Transform body;
+
+        //Scripts
+        public Actions actions;
+
+        //bools
+        private bool walk;
+        private bool turn;
+
+        [Space(30)] [Header("Arm")] public RoboticArm arm;
+        public float armRotateSpeed = 0.01f;
+
+        private float gripSpeed = 0.5f;
+        private float grip = 0.0f;
+
+        private float angle0 = 0.0f;
+        private float angle1 = 0.0f;
+        private float angle2 = 0.0f;
+        private float angle3 = 0.0f;
+
+        private RobotDogInputActions inputActions;
+        private InputAction bodyMoveIA;
+        private InputAction bodyTurnIA;
+        private InputAction stopIA;
+        private InputAction d0IA;
+        private InputAction d1IA;
+        private InputAction d2IA;
+        private InputAction d3IA;
+        private InputAction gripIA;
+
+        public override void InitInputActions()
+        {
+            inputActions = new RobotDogInputActions();
+            inputActions.Enable();
+
+            bodyMoveIA = inputActions.Body.Move;
+            bodyTurnIA = inputActions.Body.Turn;
+            stopIA = inputActions.Body.Stop;
+
+            d0IA = inputActions.Arm.DOF0;
+            d1IA = inputActions.Arm.DOF1;
+            d2IA = inputActions.Arm.DOF2;
+            d3IA = inputActions.Arm.DOF3;
+            gripIA = inputActions.Arm.Grip;
+        }
+
+        public override void DisposeInputActions()
+        {
+            inputActions.Dispose();
+        }
+
+        // Start is called before the first frame update
+        void Start()
+        {
+            walk = false;
+            turn = false;
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            ControlRobotBody();
+            ControlRobotArm();
+        }
+
+        #region Robot body control
+
+        void ControlRobotBody()
+        {
+            //walking foward
+            // if (Input.GetKey(KeyCode.W))
+            if (bodyMoveIA.ReadValue<Vector2>().y > 0)
+            {
+                if (walk == false)
+                {
+                    actions.Walk();
+                    walk = true;
+                }
+
+                body.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
+
+            }
+
+            // turn left
+            // if (Input.GetKey(KeyCode.Q))
+            if (bodyTurnIA.ReadValue<Vector2>().x < 0)
+            {
+                if (turn == false)
+                {
+                    actions.TurnLeft();
+                    turn = true;
+                }
+
+                body.Rotate(-1 * Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
+            }
+
+            // turn right
+            // if (Input.GetKey(KeyCode.E))
+            if (bodyTurnIA.ReadValue<Vector2>().x > 0)
+            {
+                if (turn == false)
+                {
+                    actions.TurnRight();
+                    turn = true;
+                }
+
+                body.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
+            }
+
+            // move backwards
+            // if (Input.GetKey(KeyCode.S))
+            if (bodyMoveIA.ReadValue<Vector2>().y < 0)
+            {
+                if (walk == false)
+                {
+                    actions.Walk();
+                    walk = true;
+                }
+
+                body.Translate(new Vector3(0, 0, -1) * moveSpeed * Time.deltaTime);
+            }
+
+            // Strafe left
+            // if (Input.GetKey(KeyCode.A))
+            if (bodyMoveIA.ReadValue<Vector2>().x < 0)
+            {
+                if (walk == false)
+                {
+                    actions.StrafeLeft();
+                    walk = true;
+                }
+
+                body.Translate(new Vector3(-1, 0, 0) * moveSpeed * Time.deltaTime);
+            } // Strafe right
+
+            // if (Input.GetKey(KeyCode.D))
+            if (bodyMoveIA.ReadValue<Vector2>().x > 0)
+            {
+                if (walk == false)
+                {
+                    actions.StrafeRight();
+                    walk = true;
+                }
+
+                body.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
+            }
+
+            if (stopIA.triggered)
+            {
+                walk = false;
+                turn = false;
+                actions.Idle1();
+            }
+
+            //No button, go idle
+            // if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) ||
+            //     Input.GetKeyUp(KeyCode.A)
+            //     || Input.GetKeyUp(KeyCode.Q) || Input.GetKeyUp(KeyCode.E))
+            //
+            // //Use to look like picking up 
+            // if (Input.GetKey(KeyCode.R))
+            // {
+            //     actions.Hit1();
+            // }
+        }
+
+        #endregion
+
+        #region Control robot arm
+
+        void ControlRobotArm()
+        {
+            //part0 up
+            if (d0IA.ReadValue<Vector2>().x > 0)
+            {
+                angle0 += armRotateSpeed;
+                arm.rotatePart0(angle0);
+            }
+
+            //part0 down
+            if (d0IA.ReadValue<Vector2>().x < 0)
+            {
+                angle0 -= armRotateSpeed;
+                arm.rotatePart0(angle0);
+            }
+
+            //part1 up
+            if (d1IA.ReadValue<Vector2>().x > 0)
+            {
+                angle1 += armRotateSpeed;
+                arm.rotatePart1(angle1);
+            }
+
+            //part1 down
+            if (d1IA.ReadValue<Vector2>().x < 0)
+            {
+                angle1 -= armRotateSpeed;
+                arm.rotatePart1(angle1);
+            }
+
+            //part2 up
+            if (d2IA.ReadValue<Vector2>().x > 0)
+            {
+                angle2 += armRotateSpeed;
+                arm.rotatePart2(angle2);
+            }
+
+            //part2 down
+            if (d2IA.ReadValue<Vector2>().x < 0)
+            {
+                angle2 -= armRotateSpeed;
+                arm.rotatePart2(angle2);
+            }
+
+            //part3 up
+            if (d3IA.ReadValue<Vector2>().x > 0)
+            {
+                angle3 += armRotateSpeed;
+                arm.rotatePart3(angle3);
+            }
+
+            //part3 down
+            if (d3IA.ReadValue<Vector2>().x < 0)
+            {
+                angle3 -= armRotateSpeed;
+                arm.rotatePart3(angle3);
+            }
+
+            // grip
+            if (gripIA.ReadValue<Vector2>().x < 0)
+            {
+                arm.CloseGrip(gripSpeed);
+            }
+
+            if (gripIA.ReadValue<Vector2>().x > 0)
+            {
+                arm.OpenGrip(gripSpeed);
+            }
+        }
+
+
+
+        #endregion
+    }
+}

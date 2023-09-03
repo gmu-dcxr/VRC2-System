@@ -34,7 +34,7 @@ public class BaseInputRecording : MonoBehaviour
 	    return ClsName;
     }
 
-	#region Need implementation in children class
+	#region Need implementation in children classes
 
 	public virtual void InitInputActions()
 	{
