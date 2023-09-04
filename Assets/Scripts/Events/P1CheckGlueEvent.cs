@@ -13,7 +13,7 @@ namespace VRC2.Events
         public GameObject gluebox; // glue box to store the glue
 
         [Header("Animation")] public string animationString = "Walking";
-        public Animator animator;
+        private Animator animator;
         
         private ExperimenterRoutine _routine = ExperimenterRoutine.Default;
 
@@ -21,6 +21,8 @@ namespace VRC2.Events
 
         void Start()
         {
+            animator = experimenter.gameObject.GetComponent<Animator>();
+            
             experimenter.stoppingDistance = 0.5f;
             animator.SetBool(animationString, true);
         }
