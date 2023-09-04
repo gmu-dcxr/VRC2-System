@@ -24,7 +24,7 @@ namespace VRC2.Authority
         public override void EnableP2()
         {
             // set it to invisible at first
-            _distanceMeasurer.enabled = false;
+            _distanceMeasurer.ClearTexts();
         }
     }
 }

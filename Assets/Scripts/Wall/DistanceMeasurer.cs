@@ -54,7 +54,7 @@ namespace VRC2
             ClearTexts();
         }
 
-        void ClearTexts()
+        public void ClearTexts()
         {
             quad.SetActive(false);
             _horizontal.text = "";
