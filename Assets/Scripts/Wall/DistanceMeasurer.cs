@@ -31,10 +31,6 @@ namespace VRC2
         // Start is called before the first frame update
         void Start()
         {
-            var (h, v, d) = GetTouchPointsDistances();
-            print(h.ToString("f5"));
-            print(v.ToString("f5"));
-            print(d.ToString("f5"));
         }
 
         // Update is called once per frame
