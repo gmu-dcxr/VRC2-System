@@ -30,7 +30,7 @@ namespace VRC2.Animations
         private float angle0 = 0.0f;
         private float angle1 = 0.0f;
         private float angle2 = 0.0f;
-        private float angle3 = 0.0f;
+        private float angle3 = 0.25f; // FIX: default is 0.25
 
         private RobotDogInputActions inputActions;
         private InputAction bodyMoveIA;
