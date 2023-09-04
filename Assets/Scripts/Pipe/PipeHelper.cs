@@ -385,6 +385,15 @@ namespace VRC2.Pipe
             return root.gameObject;
         }
 
+        public static bool IsSimpleStraightNotcutPipe(GameObject go)
+        {
+            var root = GetRoot(go);
+            var pm = root.GetComponent<PipeManipulation>();
+            if (pm == null) return false;
+            if (pm.angle != PipeBendAngles.Angle_0) return false;
+            return pm.IsNotCut();
+        }
+
         #region Material
 
         public static string GetPipeMaterialPath(PipeParameters para)

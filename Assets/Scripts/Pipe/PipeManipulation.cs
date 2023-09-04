@@ -304,6 +304,13 @@ namespace VRC2
             UpdateTexture(segmentB, fb);
         }
 
+        public bool IsNotCut()
+        {
+            var sax = segmentA.transform.localScale.x;
+            var sbx = segmentB.transform.localScale.x;
+            return (sax == 1) && (sbx == 1);
+        }
+
         void UpdateTexture(GameObject pipe, float xValue, float yValue = 1.0f)
         {
             // By: Will @ willfredranc@gmail.com
