@@ -25,7 +25,6 @@ namespace VRC2.Events
 
             // disable at the start
             _distanceMeasurer.enabled = false;
-            _distanceMeasurer.enabled = false;
         }
 
         public override void Execute()
