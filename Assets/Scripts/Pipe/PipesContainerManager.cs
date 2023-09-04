@@ -229,7 +229,7 @@ namespace VRC2
             else
             {
                 // _controller is none, it is selected by controller
-                if (!heldByController)
+                if (!heldByController && _rigidbody != null)
                 {
                     if (ShouldFall())
                     {
