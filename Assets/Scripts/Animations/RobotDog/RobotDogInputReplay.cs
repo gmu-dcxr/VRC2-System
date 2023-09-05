@@ -12,6 +12,7 @@ namespace VRC2.Animations
         public string rightTurnFile;
         public string pickupFile;
         public string dropoffFile;
+        public string stopFile;
 
         [Space(30)] [Header("Settings")] public float rotationOffset = 90; // pipe.y - dog.y
         public float positionOffset = 1; // pos.y - dog.y
@@ -25,6 +26,7 @@ namespace VRC2.Animations
         private InputEventTrace rightTurnET;
         private InputEventTrace pickupET;
         private InputEventTrace dropoffET;
+        private InputEventTrace stopET;
 
         #endregion
 
@@ -37,6 +39,7 @@ namespace VRC2.Animations
         private InputEventTrace.ReplayController rightTurnController;
         private InputEventTrace.ReplayController pickupController;
         private InputEventTrace.ReplayController dropoffController;
+        private InputEventTrace.ReplayController stopController;
 
 
 
@@ -53,6 +56,7 @@ namespace VRC2.Animations
             InitTrace(ref rightTurnET, rightTurnFile);
             InitTrace(ref pickupET, pickupFile);
             InitTrace(ref dropoffET, dropoffFile);
+            InitTrace(ref stopET, stopFile);
         }
 
         public override void InitControllers()
@@ -64,6 +68,7 @@ namespace VRC2.Animations
             rightTurnController = InitController(ref rightTurnET, OnFinished, OnEvent);
             pickupController = InitController(ref pickupET, OnFinished, OnEvent);
             dropoffController = InitController(ref dropoffET, OnFinished, OnEvent);
+            stopController = InitController(ref stopET, OnFinished, OnEvent);
         }
 
         #endregion
@@ -83,6 +88,46 @@ namespace VRC2.Animations
         #endregion
 
         #region APIs
+
+        public void Forward(bool loop = false)
+        {
+            StartReplay(ref forwardController, loop, false);
+        }
+
+        public void Left(bool loop = false)
+        {
+            StartReplay(ref leftController, loop, false);
+        }
+
+        public void Right(bool loop = false)
+        {
+            StartReplay(ref rightController, loop, false);
+        }
+
+        public void LeftTurn(bool loop = false)
+        {
+            StartReplay(ref leftTurnController, loop, false);
+        }
+
+        public void RightTurn(bool loop = false)
+        {
+            StartReplay(ref rightTurnController, loop, false);
+        }
+
+        public void Stop(bool loop = false)
+        {
+            StartReplay(ref stopController, loop, false);
+        }
+
+        public void Pickup()
+        {
+            StartReplay(ref pickupController);
+        }
+
+        public void Dropoff()
+        {
+            StartReplay(ref dropoffController);
+        }
 
         #endregion
 
