@@ -24,6 +24,7 @@ namespace VRC2.Animations
         private RobotStage stage;
 
         private float angleThreshold = 2f;
+        private float distanceThreshold = 0.5f;
 
         private void Start()
         {
@@ -48,15 +49,53 @@ namespace VRC2.Animations
             }
         }
 
+        float GetDistance(Transform t)
+        {
+            var pos1 = robotDog.transform.position;
+            pos1.y = 0;
+            var pos2 = t.position;
+            pos2.y = 0;
+
+            return Vector3.Distance(pos1, pos2);
+        }
+
         public void Update()
         {
             var angle = Math.Abs(GetForwardAngleDiff());
-            print(angle);
-            
+            var pipet = pipe.transform;
+
+            var rot1 = pipe.transform.rotation.eulerAngles.y;
+            var rot2 = robotDog.transform.rotation.eulerAngles.y;
+
+            var rotDiff = rot1 - rot2;
+
+            print($"{rot1}\t{rot2}\t{rotDiff}");
+
+            var yoffset = replay.rotationOffset;
+
             switch (stage)
             {
                 case RobotStage.Stop:
                     replay.Stop(true);
+                    break;
+
+                case RobotStage.Forward:
+                    var distance = GetDistance(pipet);
+
+                    if (distance < distanceThreshold)
+                    {
+                        replay.Forward(false, true);
+                        // stage = RobotStage.Stop;
+                        // force update position
+                        ForceRobotPosition(pipet);
+                        // make it to pickup
+                        stage = RobotStage.Pickup;
+                    }
+                    else
+                    {
+                        replay.Forward(true);
+                    }
+
                     break;
 
                 case RobotStage.Left:
@@ -64,9 +103,10 @@ namespace VRC2.Animations
                     {
                         // stop and force updating the rotation
                         replay.LeftTurn(false, true);
-                        stage = RobotStage.Stop;
-                        ForceRobotTowards(pipe.transform);
+                        // stage = RobotStage.Stop;
+                        ForceRobotTowards(pipet);
                         print("left stop");
+                        stage = RobotStage.Forward;
                     }
                     else
                     {
@@ -84,6 +124,38 @@ namespace VRC2.Animations
                     else
                     {
                         replay.RightTurn(true, false);
+                    }
+
+                    break;
+
+                case RobotStage.Pickup:
+                    if (rotDiff < yoffset)
+                    {
+                        if (yoffset - rotDiff < angleThreshold)
+                        {
+                            // stop
+                            stage = RobotStage.Stop;
+                            replay.RightTurn(false, true);
+                        }
+                        else
+                        {
+                            // right turn
+                            replay.RightTurn(true);
+                        }
+                    }
+                    else
+                    {
+                        if (rotDiff - yoffset < angleThreshold)
+                        {
+                            // stop
+                            stage = RobotStage.Stop;
+                            replay.LeftTurn(false, true);
+                        }
+                        else
+                        {
+                            // left turn
+                            replay.LeftTurn(true);
+                        }
                     }
 
                     break;
@@ -115,6 +187,19 @@ namespace VRC2.Animations
             var upward = robotDog.transform.up;
             var rot = Quaternion.LookRotation(vec.normalized, upward);
             robotDog.transform.rotation = rot;
+        }
+
+        void ForceRobotPosition(Transform t)
+        {
+            var pos1 = robotDog.transform.position;
+            var pos2 = t.position;
+
+            var zoffset = replay.positionOffset;
+
+            pos1.x = pos2.x;
+            pos1.z = pos2.z - zoffset;
+
+            robotDog.transform.position = pos1;
         }
 
         private void OnGUI()
