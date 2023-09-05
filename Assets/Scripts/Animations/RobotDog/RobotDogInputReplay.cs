@@ -15,7 +15,7 @@ namespace VRC2.Animations
         public string stopFile;
 
         [Space(30)] [Header("Settings")] public float rotationOffset = 90; // pipe.y - dog.y
-        public float positionOffset = 1; // pos.y - dog.y
+        public float positionOffset = 1; // pos.z - dog.z
 
         #region Traces
 
