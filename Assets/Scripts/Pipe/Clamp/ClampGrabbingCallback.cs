@@ -44,8 +44,10 @@ namespace VRC2.Events
 
         private void OnRelease()
         {
-            // make it drop
-            clampManipulation.SetKinematic(false);
+            if (!clampManipulation.collidingWall)
+            {
+                clampManipulation.SetKinematic(false);
+            }
         }
     }
 }
