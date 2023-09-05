@@ -89,29 +89,29 @@ namespace VRC2.Animations
 
         #region APIs
 
-        public void Forward(bool loop = false)
+        public void Forward(bool loop = false, bool stop = false)
         {
-            StartReplay(ref forwardController, loop, false);
+            StartReplay(ref forwardController, loop, stop);
         }
 
-        public void Left(bool loop = false)
+        public void Left(bool loop = false, bool stop = false)
         {
-            StartReplay(ref leftController, loop, false);
+            StartReplay(ref leftController, loop, stop);
         }
 
-        public void Right(bool loop = false)
+        public void Right(bool loop = false, bool stop = false)
         {
-            StartReplay(ref rightController, loop, false);
+            StartReplay(ref rightController, loop, stop);
         }
 
-        public void LeftTurn(bool loop = false)
+        public void LeftTurn(bool loop = false, bool stop = false)
         {
-            StartReplay(ref leftTurnController, loop, false);
+            StartReplay(ref leftTurnController, loop, stop);
         }
 
-        public void RightTurn(bool loop = false)
+        public void RightTurn(bool loop = false, bool stop = false)
         {
-            StartReplay(ref rightTurnController, loop, false);
+            StartReplay(ref rightTurnController, loop, stop);
         }
 
         public void Stop(bool loop = false)
@@ -135,10 +135,10 @@ namespace VRC2.Animations
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 10, 100, 50), "Start"))
-            {
-                StartReplay(ref pickupController);
-            }
+            // if (GUI.Button(new Rect(10, 10, 100, 50), "Start"))
+            // {
+            //     StartReplay(ref pickupController);
+            // }
         }
 
         #endregion
