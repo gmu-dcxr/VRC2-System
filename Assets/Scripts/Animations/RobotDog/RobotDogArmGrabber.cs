@@ -9,20 +9,29 @@ namespace VRC2.Animations
     {
         [Header("Attachment")] public GameObject attachPoint;
 
-        private GameObject attached;
+        private PipeManipulation _pipeManipulation;
+
+        private bool grabbed;
 
         private void Start()
         {
-            attached = null;
+            _pipeManipulation = null;
+            grabbed = false;
         }
 
         private void Update()
         {
-            if (attached != null)
+            if (_pipeManipulation != null)
             {
-                // force update the local transformation
-                attached.transform.localPosition = Vector3.zero;
-                attached.transform.localRotation = Quaternion.identity;
+                var rot = transform.localRotation.eulerAngles;
+                if (rot.x == 270 && rot.y < 20)
+                {
+                    // left gripper, drop
+                    _pipeManipulation.gameObject.GetComponent<Rigidbody>().useGravity = true;
+                    _pipeManipulation.robotArmGrabbed = false;
+                    _pipeManipulation = null;
+                    grabbed = false;
+                }
             }
         }
 
@@ -30,15 +39,18 @@ namespace VRC2.Animations
         {
             var pipeTag = GlobalConstants.pipeObjectTag;
             var go = other.gameObject;
-            if (go.CompareTag(pipeTag))
+            if (!grabbed && go.CompareTag(pipeTag))
             {
-                var flag = PipeHelper.IsSimpleStraightNotcutPipe(go);
+                // var flag = PipeHelper.IsSimpleStraightNotcutPipe(go);
                 var root = PipeHelper.GetRoot(go);
-                if (flag && root.transform.parent == null)
+                _pipeManipulation = root.GetComponent<PipeManipulation>();
+                // if (flag && root.transform.parent == null)
+                if (_pipeManipulation != null && !_pipeManipulation.robotArmGrabbed)
                 {
+                    grabbed = true;
                     root.GetComponent<Rigidbody>().useGravity = false;
                     root.transform.parent = attachPoint.transform;
-                    attached = root;
+                    _pipeManipulation.robotArmGrabbed = true;
                 }
             }
         }
@@ -55,16 +67,16 @@ namespace VRC2.Animations
 
         private void OnTriggerExit(Collider other)
         {
-            var pipeTag = GlobalConstants.pipeObjectTag;
-            if (other.gameObject.CompareTag(pipeTag))
-            {
-                if (attached != null)
-                {
-                    attached.transform.parent = null;
-                    attached.GetComponent<Rigidbody>().useGravity = true;
-                    attached = null;
-                }
-            }
+            // var pipeTag = GlobalConstants.pipeObjectTag;
+            // if (other.gameObject.CompareTag(pipeTag))
+            // {
+            //     if (attached != null)
+            //     {
+            //         attached.transform.parent = null;
+            //         attached.GetComponent<Rigidbody>().useGravity = true;
+            //         attached = null;
+            //     }
+            // }
         }
     }
 }
