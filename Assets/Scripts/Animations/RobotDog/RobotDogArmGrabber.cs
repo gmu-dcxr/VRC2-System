@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using VRC2.Authority;
 using VRC2.Pipe;
 
 namespace VRC2.Animations
@@ -25,21 +26,31 @@ namespace VRC2.Animations
             }
         }
 
-        private void OnTriggerEnter(Collider other)
+        void OnTriggerEnterAndStay(Collider other)
         {
             var pipeTag = GlobalConstants.pipeObjectTag;
             var go = other.gameObject;
             if (go.CompareTag(pipeTag))
             {
                 var flag = PipeHelper.IsSimpleStraightNotcutPipe(go);
-                if (flag)
+                var root = PipeHelper.GetRoot(go);
+                if (flag && root.transform.parent == null)
                 {
-                    var root = PipeHelper.GetRoot(go);
                     root.GetComponent<Rigidbody>().useGravity = false;
                     root.transform.parent = attachPoint.transform;
                     attached = root;
                 }
             }
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            OnTriggerEnterAndStay(other);
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            OnTriggerEnterAndStay(other);
         }
 
         private void OnTriggerExit(Collider other)
@@ -51,7 +62,7 @@ namespace VRC2.Animations
                 {
                     attached.transform.parent = null;
                     attached.GetComponent<Rigidbody>().useGravity = true;
-                    attached = null;   
+                    attached = null;
                 }
             }
         }
