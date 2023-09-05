@@ -46,8 +46,6 @@ namespace VRC2
         [HideInInspector] public bool heldByController = false;
 
         [HideInInspector] public bool collidingWall { get; set; }
-        
-        [HideInInspector] public bool robotArmGrabbed { get; set; }
 
         public bool IsStraight
         {
@@ -204,19 +202,11 @@ namespace VRC2
             _wrapper.WhenRelease.AddListener(OnRelease);
 
             _networkGrabbable = gameObject.GetComponent<NetworkGrabbable>();
-            robotArmGrabbed = false;
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (robotArmGrabbed)
-            {
-                transform.localPosition = Vector3.zero;
-                transform.localRotation = Quaternion.identity;
-                return;
-            }
-            
             if (isSimplePipe && !heldByController)
             {
                 if (_rigidbody != null)
