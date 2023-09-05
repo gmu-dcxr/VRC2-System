@@ -9,27 +9,26 @@ namespace VRC2.Animations
     {
         [Header("Attachment")] public GameObject attachPoint;
 
-        private PipeManipulation _pipeManipulation;
+        private GameObject pipe;
 
         private bool grabbed;
 
         private void Start()
         {
-            _pipeManipulation = null;
+            pipe = null;
             grabbed = false;
         }
 
         private void Update()
         {
-            if (_pipeManipulation != null)
+            if (pipe != null)
             {
                 var rot = transform.localRotation.eulerAngles;
                 if (rot.x == 270 && rot.y < 20)
                 {
                     // left gripper, drop
-                    _pipeManipulation.gameObject.GetComponent<Rigidbody>().useGravity = true;
-                    _pipeManipulation.robotArmGrabbed = false;
-                    _pipeManipulation = null;
+                    pipe.transform.parent = null;
+                    PipeHelper.AfterMove(ref pipe);
                     grabbed = false;
                 }
             }
@@ -41,16 +40,15 @@ namespace VRC2.Animations
             var go = other.gameObject;
             if (!grabbed && go.CompareTag(pipeTag))
             {
-                // var flag = PipeHelper.IsSimpleStraightNotcutPipe(go);
                 var root = PipeHelper.GetRoot(go);
-                _pipeManipulation = root.GetComponent<PipeManipulation>();
-                // if (flag && root.transform.parent == null)
-                if (_pipeManipulation != null && !_pipeManipulation.robotArmGrabbed)
+                var pm = root.GetComponent<PipeManipulation>();
+
+                if (pm != null)
                 {
+                    pipe = root;
                     grabbed = true;
-                    root.GetComponent<Rigidbody>().useGravity = false;
-                    root.transform.parent = attachPoint.transform;
-                    _pipeManipulation.robotArmGrabbed = true;
+                    PipeHelper.BeforeMove(ref pipe);
+                    pipe.transform.parent = attachPoint.transform;
                 }
             }
         }
