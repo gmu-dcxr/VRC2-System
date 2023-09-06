@@ -44,6 +44,7 @@ namespace VRC2.Animations
         {
             stage = RobotStage.Stop;
             targetTransform = pipe.transform;
+            recording.ResetArm();
         }
 
         void MoveToTarget()
@@ -242,6 +243,9 @@ namespace VRC2.Animations
                     {
                         if (replay.DropoffDone())
                         {
+                            // reset arm
+                            recording.ResetArm();
+                            
                             // TODO: make a timer to let it wait
                             
                             // ready to pickup again
