@@ -28,7 +28,13 @@ public class RoboticArm : MonoBehaviour
 
 	void FixedUpdate()
 	{
-
+		// var r1 = part0.localRotation.eulerAngles.y;
+		// var r2 = part1.localRotation.eulerAngles.z;
+		// var r3 = part2.localRotation.eulerAngles.z;
+		// var r4 = part3.localRotation.eulerAngles.x;
+		// var r5 = gripLeft.localRotation.eulerAngles.y;
+		//
+		// print($"{r1} {r2} {r3} {r4} {r5}");
 	}
 
 	public void rotatePart0(float val)
