@@ -108,7 +108,13 @@ namespace VRC2.Animations
                         }
                         else if (targetTransform == bendcutOutput)
                         {
+                            print("forward to bend cut output");
                             stage = RobotStage.PickupPrepare;
+                        }
+                        else if (targetTransform == deliveryPoint)
+                        {
+                            stage = RobotStage.Dropoff;
+                            droppingoff = false;
                         }
                     }
                     else
@@ -120,7 +126,7 @@ namespace VRC2.Animations
 
                 case RobotStage.Left:
                     var angle = Math.Abs(GetForwardAngleDiff());
-                    if (angle < 2* angleThreshold)
+                    if (angle < 2 * angleThreshold)
                     {
                         // stop and force updating the rotation
                         replay.LeftTurn(false, true);
@@ -139,7 +145,8 @@ namespace VRC2.Animations
                     {
                         // stop and force updating the rotation
                         replay.RightTurn(false, true);
-                        print("right stop");
+                        ForceRobotTowards(targetTransform);
+                        stage = RobotStage.Forward;
                     }
                     else
                     {
@@ -179,6 +186,7 @@ namespace VRC2.Animations
                         {
                             // stop
                             stage = RobotStage.Pickup;
+                            pickingup = false;
                             replay.LeftTurn(false, true);
                             ForceRobotPosition(targetTransform);
                         }
@@ -245,13 +253,20 @@ namespace VRC2.Animations
                         {
                             // reset arm
                             recording.ResetArm();
-                            
-                            // TODO: make a timer to let it wait
-                            
-                            // ready to pickup again
-                            targetTransform = bendcutOutput;
 
-                            MoveToTarget();
+                            // TODO: make a timer to let it wait
+
+                            if (targetTransform == bendcutMachine)
+                            {
+                                // ready to pickup again
+                                targetTransform = bendcutOutput;
+
+                                MoveToTarget();
+                            }
+                            else if (targetTransform == deliveryPoint)
+                            {
+                                stage = RobotStage.Stop;
+                            }
                         }
                     }
 
@@ -289,7 +304,10 @@ namespace VRC2.Animations
         void ForceRobotPosition(Transform t)
         {
             var zoffset = replay.positionOffset;
-            robotDog.transform.position = t.position;
+            var pos = t.position;
+            // use the original y
+            pos.y = robotDog.transform.position.y;
+            robotDog.transform.position = pos;
             robotDog.transform.Translate(0, 0, -zoffset, Space.Self);
         }
 
