@@ -67,9 +67,17 @@ namespace VRC2.Animations
             var rot1 = pipe.transform.rotation.eulerAngles.y;
             var rot2 = robotDog.transform.rotation.eulerAngles.y;
 
-            var rotDiff = rot1 - rot2;
+            var f1 = pipe.transform.forward;
+            var f2 = robotDog.transform.forward;
 
-            print($"{rot1}\t{rot2}\t{rotDiff}");
+            f1.y = 0;
+            f2.y = 0;
+
+            var rotDiff = Vector3.Angle(f1, f2);
+            
+            print(rotDiff);
+
+            // print($"{rot1}\t{rot2}\t{rotDiff}");
 
             var yoffset = replay.rotationOffset;
 
@@ -87,7 +95,7 @@ namespace VRC2.Animations
                         replay.Forward(false, true);
                         // stage = RobotStage.Stop;
                         // force update position
-                        ForceRobotPosition(pipet);
+                        // ForceRobotPosition(pipet);
                         // make it to pickup
                         stage = RobotStage.Pickup;
                     }
@@ -136,6 +144,7 @@ namespace VRC2.Animations
                             // stop
                             stage = RobotStage.Stop;
                             replay.RightTurn(false, true);
+                            ForceRobotPosition(pipet);
                         }
                         else
                         {
@@ -150,6 +159,7 @@ namespace VRC2.Animations
                             // stop
                             stage = RobotStage.Stop;
                             replay.LeftTurn(false, true);
+                            ForceRobotPosition(pipet);
                         }
                         else
                         {
@@ -191,15 +201,9 @@ namespace VRC2.Animations
 
         void ForceRobotPosition(Transform t)
         {
-            var pos1 = robotDog.transform.position;
-            var pos2 = t.position;
-
             var zoffset = replay.positionOffset;
-
-            pos1.x = pos2.x;
-            pos1.z = pos2.z - zoffset;
-
-            robotDog.transform.position = pos1;
+            robotDog.transform.position = t.position;
+            robotDog.transform.Translate(0,0, -zoffset, Space.Self);
         }
 
         private void OnGUI()
