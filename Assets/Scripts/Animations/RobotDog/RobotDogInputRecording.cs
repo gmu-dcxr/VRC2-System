@@ -45,6 +45,8 @@ namespace VRC2.Animations
         private InputAction d3IA;
         private InputAction gripIA;
 
+        public System.Action OnCloseGrip;
+
         public override void InitInputActions()
         {
             inputActions = new RobotDogInputActions();
@@ -256,6 +258,10 @@ namespace VRC2.Animations
             // grip
             if (gripIA.ReadValue<Vector2>().x < 0)
             {
+                if (OnCloseGrip != null)
+                {
+                    OnCloseGrip();
+                }
                 arm.CloseGrip(gripSpeed);
             }
 

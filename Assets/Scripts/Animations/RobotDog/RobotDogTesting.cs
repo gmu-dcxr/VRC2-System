@@ -19,6 +19,8 @@ namespace VRC2.Animations
         public GameObject robotDog;
         public GameObject pipe;
 
+        public GameObject attachePoint;
+
         public RobotDogInputRecording recording;
         public RobotDogInputReplay replay;
 
@@ -44,6 +46,18 @@ namespace VRC2.Animations
         {
             stage = RobotStage.Stop;
             targetTransform = pipe.transform;
+            
+            recording.OnCloseGrip += OnCloseGrip;
+        }
+
+        private void OnCloseGrip()
+        {
+            if (pipe.transform.parent == null)
+            {
+                // fix grapping
+                print("manually fix grapping");
+                ManuallyFixGrabbing();
+            }
         }
 
         void MoveToTarget()
@@ -74,11 +88,26 @@ namespace VRC2.Animations
             return Vector3.Distance(pos1, pos2);
         }
 
+        // sometimes, it can not precisely grab the pipe
+        void ManuallyFixGrabbing()
+        {
+            // disable gravity
+            var rb = pipe.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.useGravity = false;   
+            }
+            
+            // update position
+            var pos = pipe.transform.position;
+            pos.y = attachePoint.transform.position.y;
+
+            pipe.transform.position = pos;
+        }
+
         // Tip: better to use FixedUpdate than Update for animation replaying
         public void FixedUpdate()
         {
-            return;
-            
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -87,6 +116,8 @@ namespace VRC2.Animations
 
                 case RobotStage.Forward:
                     var distance = GetDistance(targetTransform);
+                    
+                    print(distance);
 
                     if (distance < distanceThreshold)
                     {
@@ -127,6 +158,7 @@ namespace VRC2.Animations
 
                 case RobotStage.Left:
                     var angle = Math.Abs(GetForwardAngleDiff());
+                    print($"left: {angle}");
                     if (angle < 2 * angleThreshold)
                     {
                         // stop and force updating the rotation
@@ -142,6 +174,7 @@ namespace VRC2.Animations
                     break;
                 case RobotStage.Right:
                     angle = Math.Abs(GetForwardAngleDiff());
+                    print($"right: {angle}");
                     if (angle < 2 * angleThreshold)
                     {
                         // stop and force updating the rotation
