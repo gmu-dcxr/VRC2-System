@@ -9,26 +9,25 @@ namespace VRC2.Animations
     {
         [Header("Attachment")] public GameObject attachPoint;
 
-        private GameObject pipe;
-
         private bool grabbed;
 
         private void Start()
         {
-            pipe = null;
             grabbed = false;
         }
 
         private void Update()
         {
-            if (pipe != null)
+            if (attachPoint.transform.childCount > 0)
             {
                 var rot = transform.localRotation.eulerAngles;
-                if (rot.x == 270 && rot.y < 20)
+                var left = gameObject.name.StartsWith("Left");
+                if (left && rot.y < 20)
                 {
+                    var child = attachPoint.transform.GetChild(0).gameObject;
                     // left gripper, drop
-                    pipe.transform.parent = null;
-                    PipeHelper.AfterMove(ref pipe);
+                    child.transform.parent = null;
+                    PipeHelper.AfterMove(ref child);
                     grabbed = false;
                 }
             }
@@ -45,10 +44,9 @@ namespace VRC2.Animations
 
                 if (pm != null)
                 {
-                    pipe = root;
                     grabbed = true;
-                    PipeHelper.BeforeMove(ref pipe);
-                    pipe.transform.parent = attachPoint.transform;
+                    PipeHelper.BeforeMove(ref root);
+                    root.transform.parent = attachPoint.transform;
                 }
             }
         }
