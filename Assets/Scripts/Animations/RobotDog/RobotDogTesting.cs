@@ -32,6 +32,8 @@ namespace VRC2.Animations
         private bool pickingup = false;
         private bool droppingoff = false;
 
+        private GameObject targetGameObject;
+
         #region Targets
 
         public Transform bendcutMachine;
@@ -92,17 +94,17 @@ namespace VRC2.Animations
         void ManuallyFixGrabbing()
         {
             // disable gravity
-            var rb = pipe.GetComponent<Rigidbody>();
+            var rb = targetGameObject.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.useGravity = false;   
             }
             
             // update position
-            var pos = pipe.transform.position;
-            pos.y = attachePoint.transform.position.y;
+            // var pos = targetGameObject.transform.position;
+            // pos.y = attachePoint.transform.position.y;
 
-            pipe.transform.position = pos;
+            targetGameObject.transform.position = attachePoint.transform.position;
         }
 
         // Tip: better to use FixedUpdate than Update for animation replaying
@@ -128,6 +130,7 @@ namespace VRC2.Animations
 
                         if (targetTransform == pipe.transform)
                         {
+                            targetGameObject = pipe;
                             // pickup
                             // make it to pickup
                             stage = RobotStage.PickupPrepare;
@@ -141,6 +144,7 @@ namespace VRC2.Animations
                         else if (targetTransform == bendcutOutput)
                         {
                             print("forward to bend cut output");
+                            targetGameObject = bendcutOutput.gameObject;
                             stage = RobotStage.PickupPrepare;
                         }
                         else if (targetTransform == deliveryPoint)
