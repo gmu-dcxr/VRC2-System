@@ -9,8 +9,9 @@ namespace VRC2.Animations
         Forward = 1,
         Left = 2,
         Right = 3,
-        Pickup = 4,
-        Dropoff = 5,
+        PickupPrepare = 4,
+        Pickup = 5,
+        Dropoff = 6,
     }
 
     public class RobotDogTesting : MonoBehaviour
@@ -25,6 +26,8 @@ namespace VRC2.Animations
 
         private float angleThreshold = 2f;
         private float distanceThreshold = 0.5f;
+
+        private bool pickingup = false;
 
         private void Start()
         {
@@ -64,9 +67,6 @@ namespace VRC2.Animations
             var angle = Math.Abs(GetForwardAngleDiff());
             var pipet = pipe.transform;
 
-            var rot1 = pipe.transform.rotation.eulerAngles.y;
-            var rot2 = robotDog.transform.rotation.eulerAngles.y;
-
             var f1 = pipe.transform.forward;
             var f2 = robotDog.transform.forward;
 
@@ -74,7 +74,7 @@ namespace VRC2.Animations
             f2.y = 0;
 
             var rotDiff = Vector3.Angle(f1, f2);
-            
+
             print(rotDiff);
 
             // print($"{rot1}\t{rot2}\t{rotDiff}");
@@ -97,7 +97,7 @@ namespace VRC2.Animations
                         // force update position
                         // ForceRobotPosition(pipet);
                         // make it to pickup
-                        stage = RobotStage.Pickup;
+                        stage = RobotStage.PickupPrepare;
                     }
                     else
                     {
@@ -111,9 +111,7 @@ namespace VRC2.Animations
                     {
                         // stop and force updating the rotation
                         replay.LeftTurn(false, true);
-                        // stage = RobotStage.Stop;
                         ForceRobotTowards(pipet);
-                        print("left stop");
                         stage = RobotStage.Forward;
                     }
                     else
@@ -136,13 +134,14 @@ namespace VRC2.Animations
 
                     break;
 
-                case RobotStage.Pickup:
+                case RobotStage.PickupPrepare:
                     if (rotDiff < yoffset)
                     {
                         if (yoffset - rotDiff < angleThreshold)
                         {
-                            // stop
-                            stage = RobotStage.Stop;
+                            // pickup
+                            stage = RobotStage.Pickup;
+                            pickingup = false;
                             replay.RightTurn(false, true);
                             ForceRobotPosition(pipet);
                         }
@@ -157,7 +156,7 @@ namespace VRC2.Animations
                         if (rotDiff - yoffset < angleThreshold)
                         {
                             // stop
-                            stage = RobotStage.Stop;
+                            stage = RobotStage.Pickup;
                             replay.LeftTurn(false, true);
                             ForceRobotPosition(pipet);
                         }
@@ -165,6 +164,22 @@ namespace VRC2.Animations
                         {
                             // left turn
                             replay.LeftTurn(true);
+                        }
+                    }
+
+                    break;
+
+                case RobotStage.Pickup:
+                    if (!pickingup)
+                    {
+                        if (recording.IsIdle())
+                        {
+                            replay.Pickup();
+                            pickingup = true;
+                        }
+                        else
+                        {
+                            replay.Stop(true);
                         }
                     }
 
@@ -203,7 +218,7 @@ namespace VRC2.Animations
         {
             var zoffset = replay.positionOffset;
             robotDog.transform.position = t.position;
-            robotDog.transform.Translate(0,0, -zoffset, Space.Self);
+            robotDog.transform.Translate(0, 0, -zoffset, Space.Self);
         }
 
         private void OnGUI()
