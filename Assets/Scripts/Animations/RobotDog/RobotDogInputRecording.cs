@@ -187,6 +187,11 @@ namespace VRC2.Animations
             // }
         }
 
+        public bool IsIdle()
+        {
+            return actions.IsIdle();
+        }
+
         #endregion
 
         #region Control robot arm
