@@ -124,7 +124,12 @@ namespace VRC2.Animations
             StartReplay(ref pickupController);
         }
 
-        public bool PickupDone()
+        public void RewindPickup()
+        {
+            ForceRewind(ref pickupController);
+        }
+
+    public bool PickupDone()
         {
             return IsFinished(ref pickupController, true);
         }

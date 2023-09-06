@@ -267,11 +267,11 @@ namespace VRC2.Animations
 
         public void ResetArm()
         {
-            arm.rotatePart0(0);
-            arm.rotatePart1(0);
-            arm.rotatePart2(0);
-            arm.rotatePart3(0.25f);
-            arm.grip(0.5f);
+            angle0 = 0.0f;
+            angle1 = 0.0f;
+            angle2 = 0.0f;
+            angle3 = 0.25f;
+            arm.ResetRotations();
         }
 
 

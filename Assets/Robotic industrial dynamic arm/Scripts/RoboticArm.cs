@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRC2.Extention;
 
 public class RoboticArm : MonoBehaviour
 {
@@ -18,23 +19,41 @@ public class RoboticArm : MonoBehaviour
 	// this is the audio source to play the arm sound
 	public AudioSource audioS;
 
+	#region Rotation backups
+
+	private Quaternion rotation0;
+	private Quaternion rotation1;
+	private Quaternion rotation2;
+	private Quaternion rotation3;
+	private Quaternion rotationLeft;
+	private Quaternion rotationRight;
+
+
+
+	#endregion
+
 	void Start()
 	{
-
-
+		rotation0 = Quaternion.Euler(270,0,0);
+		rotation1 = Quaternion.Euler(0,270,0);
+		rotation2 = Quaternion.Euler(0,0,0);
+		rotation3 = Quaternion.Euler(90,90,0);
+		rotationLeft = Quaternion.Euler(270,0,0);
+		rotationRight = Quaternion.Euler(90,180,0);
 	}
 
 	// Update is called once per frame
 
 	void FixedUpdate()
 	{
-		// var r1 = part0.localRotation.eulerAngles.y;
-		// var r2 = part1.localRotation.eulerAngles.z;
-		// var r3 = part2.localRotation.eulerAngles.z;
-		// var r4 = part3.localRotation.eulerAngles.x;
-		// var r5 = gripLeft.localRotation.eulerAngles.y;
-		//
-		// print($"{r1} {r2} {r3} {r4} {r5}");
+		var r1 = part0.localRotation.eulerAngles;
+		var r2 = part1.localRotation.eulerAngles;
+		var r3 = part2.localRotation.eulerAngles;
+		var r4 = part3.localRotation.eulerAngles;
+		var r5 = gripLeft.localRotation.eulerAngles;
+		var r6 = gripRight.localRotation.eulerAngles;
+		
+		print($"{r1} {r2} {r3} {r4} {r5} {r6}");
 	}
 
 	public void rotatePart0(float val)
@@ -120,10 +139,6 @@ public class RoboticArm : MonoBehaviour
 
 		left.z -= step;
 		right.z -= step;
-
-		
-		
-		
 		
 		// make it not too big
 		if (right.y > 230) return;
@@ -135,4 +150,15 @@ public class RoboticArm : MonoBehaviour
 			audioS.Play();
 		}
 	}
+
+	public void ResetRotations()
+	{
+		part0.localRotation = rotation0;
+		part1.localRotation = rotation1;
+		part2.localRotation = rotation2;
+		part3.localRotation = rotation3;
+		gripLeft.localRotation = rotationLeft;
+		gripRight.localRotation = rotationRight;
+	}
+
 }
