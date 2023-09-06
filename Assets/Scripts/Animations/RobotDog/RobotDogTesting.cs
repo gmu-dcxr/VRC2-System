@@ -29,9 +29,20 @@ namespace VRC2.Animations
 
         private bool pickingup = false;
 
+        #region Targets
+
+        public Transform bendcutMachine;
+        public Transform bendcutOutput;
+        public Transform deliveryPoint;
+
+        private Transform targetTransform;
+
+        #endregion
+
         private void Start()
         {
             stage = RobotStage.Stop;
+            targetTransform = pipe.transform;
         }
 
         void MoveToTarget()
@@ -62,25 +73,9 @@ namespace VRC2.Animations
             return Vector3.Distance(pos1, pos2);
         }
 
-        public void Update()
+        // Tip: better to use FixedUpdate than Update for animation replaying
+        public void FixedUpdate()
         {
-            var angle = Math.Abs(GetForwardAngleDiff());
-            var pipet = pipe.transform;
-
-            var f1 = pipe.transform.forward;
-            var f2 = robotDog.transform.forward;
-
-            f1.y = 0;
-            f2.y = 0;
-
-            var rotDiff = Vector3.Angle(f1, f2);
-
-            print(rotDiff);
-
-            // print($"{rot1}\t{rot2}\t{rotDiff}");
-
-            var yoffset = replay.rotationOffset;
-
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -88,14 +83,14 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.Forward:
-                    var distance = GetDistance(pipet);
+                    var distance = GetDistance(targetTransform);
 
                     if (distance < distanceThreshold)
                     {
                         replay.Forward(false, true);
                         // stage = RobotStage.Stop;
                         // force update position
-                        // ForceRobotPosition(pipet);
+                        // ForceRobotPosition(target);
                         // make it to pickup
                         stage = RobotStage.PickupPrepare;
                     }
@@ -107,11 +102,12 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.Left:
+                    var angle = Math.Abs(GetForwardAngleDiff());
                     if (angle < angleThreshold)
                     {
                         // stop and force updating the rotation
                         replay.LeftTurn(false, true);
-                        ForceRobotTowards(pipet);
+                        ForceRobotTowards(targetTransform);
                         stage = RobotStage.Forward;
                     }
                     else
@@ -121,6 +117,7 @@ namespace VRC2.Animations
 
                     break;
                 case RobotStage.Right:
+                    angle = Math.Abs(GetForwardAngleDiff());
                     if (angle < angleThreshold)
                     {
                         // stop and force updating the rotation
@@ -135,6 +132,14 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.PickupPrepare:
+                    var f1 = targetTransform.forward;
+                    var f2 = robotDog.transform.forward;
+
+                    f1.y = 0;
+                    f2.y = 0;
+
+                    var rotDiff = Vector3.Angle(f1, f2);
+                    var yoffset = replay.rotationOffset;
                     if (rotDiff < yoffset)
                     {
                         if (yoffset - rotDiff < angleThreshold)
@@ -143,7 +148,7 @@ namespace VRC2.Animations
                             stage = RobotStage.Pickup;
                             pickingup = false;
                             replay.RightTurn(false, true);
-                            ForceRobotPosition(pipet);
+                            ForceRobotPosition(targetTransform);
                         }
                         else
                         {
@@ -158,7 +163,7 @@ namespace VRC2.Animations
                             // stop
                             stage = RobotStage.Pickup;
                             replay.LeftTurn(false, true);
-                            ForceRobotPosition(pipet);
+                            ForceRobotPosition(targetTransform);
                         }
                         else
                         {
@@ -182,6 +187,14 @@ namespace VRC2.Animations
                             replay.Stop(true);
                         }
                     }
+                    else
+                    {
+                        if (replay.PickupDone())
+                        {
+                            // move to target
+                            print("pickup is done");
+                        }
+                    }
 
                     break;
             }
@@ -190,7 +203,7 @@ namespace VRC2.Animations
         float GetForwardAngleDiff()
         {
             var pos1 = robotDog.transform.position;
-            var pos2 = pipe.transform.position;
+            var pos2 = targetTransform.position;
 
             pos1.y = 0;
             pos2.y = 0;

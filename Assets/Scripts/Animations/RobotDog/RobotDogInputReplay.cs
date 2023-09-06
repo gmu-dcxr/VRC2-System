@@ -124,6 +124,11 @@ namespace VRC2.Animations
             StartReplay(ref pickupController);
         }
 
+        public bool PickupDone()
+        {
+            return IsFinished(ref pickupController, true);
+        }
+
         public void Dropoff()
         {
             StartReplay(ref dropoffController);
