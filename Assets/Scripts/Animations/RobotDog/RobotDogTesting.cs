@@ -44,7 +44,6 @@ namespace VRC2.Animations
         {
             stage = RobotStage.Stop;
             targetTransform = pipe.transform;
-            recording.ResetArm();
         }
 
         void MoveToTarget()
@@ -78,6 +77,8 @@ namespace VRC2.Animations
         // Tip: better to use FixedUpdate than Update for animation replaying
         public void FixedUpdate()
         {
+            return;
+            
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -319,9 +320,20 @@ namespace VRC2.Animations
                 MoveToTarget();
             }
 
-            if (GUI.Button(new Rect(10, 150, 100, 50), "Rotate"))
+            if (GUI.Button(new Rect(150, 10, 100, 50), "Rotate"))
             {
                 replay.LeftTurn(false);
+            }
+
+            if (GUI.Button(new Rect(10, 100, 100, 50), "ResetArm"))
+            {
+                recording.ResetArm();
+            }
+            
+            if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
+            {
+                replay.RewindPickup();
+                replay.Pickup();
             }
         }
     }
