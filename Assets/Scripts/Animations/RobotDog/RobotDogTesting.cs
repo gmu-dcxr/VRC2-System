@@ -28,6 +28,7 @@ namespace VRC2.Animations
         private float distanceThreshold = 0.5f;
 
         private bool pickingup = false;
+        private bool droppingoff = false;
 
         #region Targets
 
@@ -91,8 +92,23 @@ namespace VRC2.Animations
                         // stage = RobotStage.Stop;
                         // force update position
                         // ForceRobotPosition(target);
-                        // make it to pickup
-                        stage = RobotStage.PickupPrepare;
+
+                        if (targetTransform == pipe.transform)
+                        {
+                            // pickup
+                            // make it to pickup
+                            stage = RobotStage.PickupPrepare;
+                        }
+                        else if (targetTransform == bendcutMachine)
+                        {
+                            // make it dropoff
+                            stage = RobotStage.Dropoff;
+                            droppingoff = false;
+                        }
+                        else if (targetTransform == bendcutOutput)
+                        {
+                            stage = RobotStage.PickupPrepare;
+                        }
                     }
                     else
                     {
@@ -103,7 +119,7 @@ namespace VRC2.Animations
 
                 case RobotStage.Left:
                     var angle = Math.Abs(GetForwardAngleDiff());
-                    if (angle < angleThreshold)
+                    if (angle < 2* angleThreshold)
                     {
                         // stop and force updating the rotation
                         replay.LeftTurn(false, true);
@@ -118,7 +134,7 @@ namespace VRC2.Animations
                     break;
                 case RobotStage.Right:
                     angle = Math.Abs(GetForwardAngleDiff());
-                    if (angle < angleThreshold)
+                    if (angle < 2 * angleThreshold)
                     {
                         // stop and force updating the rotation
                         replay.RightTurn(false, true);
@@ -193,6 +209,45 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
+                            if (targetTransform == pipe.transform)
+                            {
+                                // change target to bendcut machine
+                                targetTransform = bendcutMachine;
+                            }
+                            else if (targetTransform == bendcutOutput)
+                            {
+                                targetTransform = deliveryPoint;
+                            }
+
+                            MoveToTarget();
+                        }
+                    }
+
+                    break;
+
+                case RobotStage.Dropoff:
+                    if (!droppingoff)
+                    {
+                        if (recording.IsIdle())
+                        {
+                            replay.Dropoff();
+                            droppingoff = true;
+                        }
+                        else
+                        {
+                            replay.Stop(true);
+                        }
+                    }
+                    else
+                    {
+                        if (replay.DropoffDone())
+                        {
+                            // TODO: make a timer to let it wait
+                            
+                            // ready to pickup again
+                            targetTransform = bendcutOutput;
+
+                            MoveToTarget();
                         }
                     }
 
