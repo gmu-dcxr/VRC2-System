@@ -133,6 +133,8 @@ namespace VRC2.Animations
                     var distance = GetDistance(targetTransform);
                     
                     print(distance);
+                    
+                    ForceRobotTowards(targetTransform);
 
                     if (distance < distanceThreshold)
                     {
@@ -176,11 +178,11 @@ namespace VRC2.Animations
                 case RobotStage.Left:
                     var angle = Math.Abs(GetForwardAngleDiff());
                     print($"left: {angle}");
-                    if (angle < 2 * angleThreshold)
+                    if (angle < angleThreshold)
                     {
                         // stop and force updating the rotation
                         replay.LeftTurn(false, true);
-                        ForceRobotTowards(targetTransform);
+                        // ForceRobotTowards(targetTransform);
                         stage = RobotStage.Forward;
                     }
                     else
@@ -192,11 +194,11 @@ namespace VRC2.Animations
                 case RobotStage.Right:
                     angle = Math.Abs(GetForwardAngleDiff());
                     print($"right: {angle}");
-                    if (angle < 2 * angleThreshold)
+                    if (angle < angleThreshold)
                     {
                         // stop and force updating the rotation
                         replay.RightTurn(false, true);
-                        ForceRobotTowards(targetTransform);
+                        // ForceRobotTowards(targetTransform);
                         stage = RobotStage.Forward;
                     }
                     else
@@ -398,7 +400,8 @@ namespace VRC2.Animations
 
         private GameObject currentPipe
         {
-            get => GlobalConstants.lastSpawnedPipe;
+            // get => GlobalConstants.lastSpawnedPipe;
+            get => pipe;
         }
 
         private PipeParameters parameters;
@@ -532,6 +535,7 @@ namespace VRC2.Animations
         {
             Debug.Log("Robot PickUp");
             // get the pipe from P1, and move to pickup the pipe
+            
             
             targetTransform = currentPipe.transform;
             
