@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using VRC2.Animations;
 using VRC2.Events;
 using VRC2.Pipe;
 
@@ -533,7 +534,7 @@ namespace VRC2
                 return;
             }
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
-            var rbc = go.GetComponent<RobotBendCut>();
+            var rbc = go.GetComponent<RobotDogTesting>();
             rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);
             rbc.Execute();
         }
