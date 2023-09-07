@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using UnityEngine;
+using VRC2.Animations;
 using VRC2.Pipe;
 
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -19,7 +20,7 @@ namespace VRC2.Events
         [Header("Monitor")] public QuadImageManager imageManager;
         public AudioSource audioSource;
 
-        [Header("Executor")] public RobotBendCut robotBendCut;
+        [Header("Executor")] public RobotDogTesting robotDog;
         public float duration = 5.0f;
         
         [Header("Error")] public bool enableError = false;
@@ -34,7 +35,7 @@ namespace VRC2.Events
         private void Start()
         {
             random = new Random();
-            robotBendCut.ReadyToOperate += OnReadyToOperate;
+            robotDog.ReadyToOperate += OnReadyToOperate;
         }
 
         private void OnReadyToOperate(PipeBendAngles angle)
@@ -78,7 +79,7 @@ namespace VRC2.Events
             audioSource.Stop();
             
             // spawn pipe
-            var no = robotBendCut.SpawnPipe(_angle);
+            var no = robotDog.SpawnPipe(_angle);
             // update spawned pipe transform
             no.transform.position = pipeOutput.transform.position;
             no.transform.rotation = pipeOutput.transform.rotation;
@@ -86,7 +87,7 @@ namespace VRC2.Events
             // start a new timer to let robot deliver
             SetTimer(() =>
             {
-                robotBendCut.PickupResult(pipeOutput.position);
+                robotDog.PickupResult(pipeOutput.position);
             });
         }
 
