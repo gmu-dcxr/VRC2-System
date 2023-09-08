@@ -23,7 +23,6 @@ namespace VRC2.Animations
         Forward = 1,
         Left = 2,
         Right = 3,
-        PickupPrepare = 4,
         Pickup = 5,
         Dropoff = 6,
     }
@@ -155,7 +154,7 @@ namespace VRC2.Animations
                             targetGameObject = pipe;
                             // pickup
                             // make it to pickup
-                            stage = RobotStage.PickupPrepare;
+                            stage = RobotStage.Pickup;
                         }
                         else if (targetTransform == bendcutMachine)
                         {
@@ -167,7 +166,7 @@ namespace VRC2.Animations
                         {
                             print("forward to bend cut output");
                             targetGameObject = bendcutOutput.gameObject;
-                            stage = RobotStage.PickupPrepare;
+                            stage = RobotStage.Pickup;
                         }
                         else if (targetTransform == deliveryPoint)
                         {
@@ -211,50 +210,6 @@ namespace VRC2.Animations
                     else
                     {
                         replay.RightTurn(true, false);
-                    }
-
-                    break;
-
-                case RobotStage.PickupPrepare:
-                    var f1 = targetTransform.forward;
-                    var f2 = robotDog.transform.forward;
-
-                    f1.y = 0;
-                    f2.y = 0;
-
-                    var rotDiff = Vector3.Angle(f1, f2);
-                    var yoffset = replay.rotationOffset;
-                    if (rotDiff < yoffset)
-                    {
-                        if (yoffset - rotDiff < angleThreshold)
-                        {
-                            // pickup
-                            stage = RobotStage.Pickup;
-                            pickingup = false;
-                            replay.RightTurn(false, true);
-                            ForceRobotPosition(targetTransform);
-                        }
-                        else
-                        {
-                            // right turn
-                            replay.RightTurn(true);
-                        }
-                    }
-                    else
-                    {
-                        if (rotDiff - yoffset < angleThreshold)
-                        {
-                            // stop
-                            stage = RobotStage.Pickup;
-                            pickingup = false;
-                            replay.LeftTurn(false, true);
-                            ForceRobotPosition(targetTransform);
-                        }
-                        else
-                        {
-                            // left turn
-                            replay.LeftTurn(true);
-                        }
                     }
 
                     break;
