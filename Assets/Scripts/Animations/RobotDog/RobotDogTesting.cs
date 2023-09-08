@@ -40,7 +40,7 @@ namespace VRC2.Animations
 
         private RobotStage stage;
 
-        private float angleThreshold = 2f;
+        private float angleThreshold = 10f;
         private float distanceThreshold = 0.5f;
 
         private bool pickingup = false;
@@ -50,7 +50,7 @@ namespace VRC2.Animations
 
         #region Targets
 
-        public Transform bendcutMachine;
+        public Transform bendcutInput;
         public Transform bendcutOutput;
         public Transform deliveryPoint;
 
@@ -139,8 +139,6 @@ namespace VRC2.Animations
                 case RobotStage.Forward:
                     var distance = GetDistance(targetTransform);
 
-                    print(distance);
-
                     ForceRobotTowards(targetTransform);
 
                     if (distance < distanceThreshold)
@@ -150,30 +148,22 @@ namespace VRC2.Animations
                         // force update position
                         // ForceRobotPosition(target);
 
-                        if (targetTransform == currentPipe.transform)
+                        if (currentPipe != null && targetTransform == currentPipe.transform)
                         {
                             // pickup
                             // make it ready for pickup
                             stage = RobotStage.PickupPrepare;
                         }
-                        else if (targetTransform == bendcutMachine)
+                        else if (targetTransform == bendcutInput)
                         {
                             // // make it dropoff
                             // stage = RobotStage.Dropoff;
                             // droppingoff = false;
-
-                            stage = RobotStage.Stop;
-
-                            // make it waiting
-                            if (ReadyToOperate != null)
-                            {
-                                ReadyToOperate(parameters.angle);
-                            }
+                            stage = RobotStage.Dropoff;
                         }
                         else if (targetTransform == bendcutOutput)
                         {
                             print("forward to bend cut output");
-                            targetGameObject = bendcutOutput.gameObject;
                             stage = RobotStage.PickupPrepare;
                         }
                         else if (targetTransform == deliveryPoint)
@@ -288,7 +278,7 @@ namespace VRC2.Animations
                             if (targetTransform == currentPipe.transform)
                             {
                                 // change target to bendcut machine
-                                targetTransform = bendcutMachine;
+                                targetTransform = bendcutInput;
                             }
                             else if (targetTransform == bendcutOutput)
                             {
@@ -318,18 +308,24 @@ namespace VRC2.Animations
                     {
                         if (replay.DropoffDone())
                         {
+                            print("dropoff done");
                             // reset arm
                             recording.ResetArm();
 
-                            // TODO: make a timer to let it wait
-
-                            if (targetTransform == bendcutMachine)
+                            if (targetTransform == bendcutInput)
                             {
                                 print("bend cut output");
+
+                                stage = RobotStage.Stop;
+
                                 // ready to pickup again
                                 targetTransform = bendcutOutput;
 
-                                MoveToTarget();
+                                // make it waiting
+                                if (ReadyToOperate != null)
+                                {
+                                    ReadyToOperate(parameters.angle);
+                                }
                             }
                             else if (targetTransform == deliveryPoint)
                             {
@@ -414,11 +410,7 @@ namespace VRC2.Animations
         [Header("Grab Offset")] public Vector3 positionOffset = Vector3.zero;
         public Vector3 rotationOffset = Vector3.zero;
 
-        private GameObject currentPipe
-        {
-            get => GlobalConstants.lastSpawnedPipe;
-            // get => pipe;
-        }
+        [HideInInspector]public GameObject currentPipe { get; set; }
 
         private PipeParameters parameters;
 
@@ -578,12 +570,11 @@ namespace VRC2.Animations
             return spawnedPipe;
         }
 
-        public void PickupResult(Transform result)
+        public void PickupResult(GameObject go)
         {
             // move to pick result
-            // _routine = RobotRoutine.GetResult;
-            // _agent.SetDestination(des);
-            targetTransform = result;
+            print("pickup result");
+            targetGameObject = go;
             MoveToTarget();
         }
 

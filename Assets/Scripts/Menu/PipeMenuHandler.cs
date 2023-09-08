@@ -538,6 +538,8 @@ namespace VRC2
             }
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
             var rbc = go.GetComponent<RobotDogTesting>();
+            // update current pipe
+            rbc.currentPipe = GlobalConstants.lastSpawnedPipe;
             rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);
             rbc.Execute();
         }

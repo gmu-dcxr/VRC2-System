@@ -12,15 +12,10 @@ namespace VRC2.Events
 {
     public class BendCutMachineController : BaseEvent
     {
-        [Header("Markers")] public Transform robotStop;
-        public Transform pipeInput;
-        public Transform pipeOutput;
-        public Transform delivery;
-
         [Header("Monitor")] public QuadImageManager imageManager;
         public AudioSource audioSource;
 
-        [Header("Executor")] public RobotDogTesting robotDog;
+        [Header("RobotDog")] public RobotDogTesting robotDog;
         public float duration = 5.0f;
 
         [Header("Error")] public bool enableError = false;
@@ -51,11 +46,16 @@ namespace VRC2.Events
             // play noise 
             audioSource.Play();
 
+            var pipeInput = robotDog.bendcutInput;
+
             // update pipe
             var pipe = GlobalConstants.lastSpawnedPipe;
             pipe.transform.position = pipeInput.position;
             pipe.transform.rotation = pipeInput.rotation;
             pipe.transform.parent = null;
+            
+            // update current pipe
+            robotDog.currentPipe = pipe;
 
             RPC_SendMessage(_angle);
 
@@ -78,14 +78,16 @@ namespace VRC2.Events
             // stop noise
             audioSource.Stop();
 
+            var pipeOutput = robotDog.bendcutOutput;
+            
             // spawn pipe
             var no = robotDog.SpawnPipe(_angle);
             // update spawned pipe transform
             no.transform.position = pipeOutput.transform.position;
             no.transform.rotation = pipeOutput.transform.rotation;
-
+            
             // start a new timer to let robot deliver
-            SetTimer(() => { robotDog.PickupResult(pipeOutput); });
+            SetTimer(() => { robotDog.PickupResult(no.gameObject); });
         }
 
         private void Update()
