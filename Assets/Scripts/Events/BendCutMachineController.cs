@@ -22,11 +22,11 @@ namespace VRC2.Events
 
         [Header("Executor")] public RobotDogTesting robotDog;
         public float duration = 5.0f;
-        
+
         [Header("Error")] public bool enableError = false;
 
         private PipeBendAngles _angle;
-        
+
         private Timer _timer;
 
         // for generating wrong pipe (angle only)
@@ -58,7 +58,7 @@ namespace VRC2.Events
             pipe.transform.parent = null;
 
             RPC_SendMessage(_angle);
-            
+
             // start timer
             SetTimer(SpawnPipe);
         }
@@ -74,21 +74,18 @@ namespace VRC2.Events
         }
 
         void SpawnPipe()
-        {   
+        {
             // stop noise
             audioSource.Stop();
-            
+
             // spawn pipe
             var no = robotDog.SpawnPipe(_angle);
             // update spawned pipe transform
             no.transform.position = pipeOutput.transform.position;
             no.transform.rotation = pipeOutput.transform.rotation;
-            
+
             // start a new timer to let robot deliver
-            SetTimer(() =>
-            {
-                robotDog.PickupResult(pipeOutput.position);
-            });
+            SetTimer(() => { robotDog.PickupResult(pipeOutput); });
         }
 
         private void Update()
@@ -113,7 +110,7 @@ namespace VRC2.Events
             var s = Utils.GetDisplayName<PipeBendAngles>(angle);
             return s.Split('_')[1];
         }
-        
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(PipeBendAngles angle, RpcInfo info = default)
         {

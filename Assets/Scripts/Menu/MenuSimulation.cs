@@ -6,7 +6,8 @@ namespace VRC2.Menu
     public class MenuSimulation : MonoBehaviour
     {
         [SerializeField] private PipeMenuHandler _handler;
-        
+
+        [Space(30)] [Header("Pipe Spawning")] public Transform spawnPoint;
         private void Start()
         {
         }
@@ -57,7 +58,7 @@ namespace VRC2.Menu
 
                 if (Input.GetKeyUp(KeyCode.Keypad2))
                 {
-                    _handler.Simulate_SpawnPipe();
+                    _handler.Simulate_SpawnPipe(spawnPoint);
                 }
 
                 if (Input.GetKeyUp(KeyCode.Keypad3))

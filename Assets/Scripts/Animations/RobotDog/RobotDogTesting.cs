@@ -23,6 +23,7 @@ namespace VRC2.Animations
         Forward = 1,
         Left = 2,
         Right = 3,
+        PickupPrepare = 4,
         Pickup = 5,
         Dropoff = 6,
     }
@@ -30,7 +31,7 @@ namespace VRC2.Animations
     public class RobotDogTesting : MonoBehaviour
     {
         public GameObject robotDog;
-        public GameObject pipe;
+        // public GameObject pipe;
 
         public GameObject attachePoint;
 
@@ -60,13 +61,13 @@ namespace VRC2.Animations
         private void Start()
         {
             stage = RobotStage.Stop;
-            targetTransform = pipe.transform;
+            // targetTransform = pipe.transform;
 
             // set arm reference
             replay.arm = recording.arm;
             replay.recording = recording;
 
-            recording.OnCloseGrip += OnCloseGrip;
+            // recording.OnCloseGrip += OnCloseGrip;
         }
 
         private void OnCloseGrip()
@@ -149,25 +150,31 @@ namespace VRC2.Animations
                         // force update position
                         // ForceRobotPosition(target);
 
-                        if (targetTransform == pipe.transform)
+                        if (targetTransform == currentPipe.transform)
                         {
-                            targetGameObject = pipe;
                             // pickup
-                            // make it to pickup
-                            stage = RobotStage.Pickup;
+                            // make it ready for pickup
+                            stage = RobotStage.PickupPrepare;
                         }
                         else if (targetTransform == bendcutMachine)
                         {
-                            // make it dropoff
-                            stage = RobotStage.Dropoff;
-                            droppingoff = false;
+                            // // make it dropoff
+                            // stage = RobotStage.Dropoff;
+                            // droppingoff = false;
+
+                            stage = RobotStage.Stop;
+
+                            // make it waiting
+                            if (ReadyToOperate != null)
+                            {
+                                ReadyToOperate(parameters.angle);
+                            }
                         }
                         else if (targetTransform == bendcutOutput)
                         {
                             print("forward to bend cut output");
                             targetGameObject = bendcutOutput.gameObject;
-                            stage = RobotStage.Pickup;
-                            pickingup = false;
+                            stage = RobotStage.PickupPrepare;
                         }
                         else if (targetTransform == deliveryPoint)
                         {
@@ -215,6 +222,50 @@ namespace VRC2.Animations
 
                     break;
 
+                case RobotStage.PickupPrepare:
+                    var f1 = targetTransform.forward;
+                    var f2 = robotDog.transform.forward;
+
+                    f1.y = 0;
+                    f2.y = 0;
+
+                    var rotDiff = Vector3.Angle(f1, f2);
+                    var yoffset = replay.rotationOffset;
+                    if (rotDiff < yoffset)
+                    {
+                        if (yoffset - rotDiff < angleThreshold)
+                        {
+                            // pickup
+                            stage = RobotStage.Pickup;
+                            pickingup = false;
+                            replay.RightTurn(false, true);
+                            ForceRobotPosition(targetTransform);
+                        }
+                        else
+                        {
+                            // right turn
+                            replay.RightTurn(true);
+                        }
+                    }
+                    else
+                    {
+                        if (rotDiff - yoffset < angleThreshold)
+                        {
+                            // stop
+                            stage = RobotStage.Pickup;
+                            pickingup = false;
+                            replay.LeftTurn(false, true);
+                            ForceRobotPosition(targetTransform);
+                        }
+                        else
+                        {
+                            // left turn
+                            replay.LeftTurn(true);
+                        }
+                    }
+
+                    break;
+
                 case RobotStage.Pickup:
                     if (!pickingup)
                     {
@@ -234,7 +285,7 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
-                            if (targetTransform == pipe.transform)
+                            if (targetTransform == currentPipe.transform)
                             {
                                 // change target to bendcut machine
                                 targetTransform = bendcutMachine;
@@ -365,19 +416,19 @@ namespace VRC2.Animations
 
         private GameObject currentPipe
         {
-            // get => GlobalConstants.lastSpawnedPipe;
-            get => pipe;
+            get => GlobalConstants.lastSpawnedPipe;
+            // get => pipe;
         }
 
         private PipeParameters parameters;
 
         private NetworkObject spawnedPipe;
 
-        private NavMeshAgent _agent;
+        // private NavMeshAgent _agent;
 
-        private RobotRoutine _routine;
+        // private RobotRoutine _routine;
 
-        private Vector3 destination;
+        // private Vector3 destination;
 
         public System.Action<PipeBendAngles> ReadyToOperate;
 
@@ -499,11 +550,13 @@ namespace VRC2.Animations
         public void PickUp()
         {
             Debug.Log("Robot PickUp");
+
+            // remove rigidbody
+            targetGameObject = currentPipe;
+            PipeHelper.BeforeMove(ref targetGameObject);
+
             // get the pipe from P1, and move to pickup the pipe
-
-
-            targetTransform = currentPipe.transform;
-
+            targetTransform = targetGameObject.transform;
             MoveToTarget();
         }
 
@@ -525,87 +578,89 @@ namespace VRC2.Animations
             return spawnedPipe;
         }
 
-        public void PickupResult(Vector3 des)
+        public void PickupResult(Transform result)
         {
             // move to pick result
-            _routine = RobotRoutine.GetResult;
-            _agent.SetDestination(des);
+            // _routine = RobotRoutine.GetResult;
+            // _agent.SetDestination(des);
+            targetTransform = result;
+            MoveToTarget();
         }
 
         #region Handlers
 
-        void PickupHandler()
-        {
-            // reach to the workspace
-            if (AgentHelper.ReachDestination(_agent))
-            {
-                // save for future delivery
-                destination = currentPipe.transform.position;
-                // set pipe parent to robot hand
-                currentPipe.transform.parent = robotHand;
-                // update local position and rotation
-                currentPipe.transform.localPosition = positionOffset;
-                currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+        // void PickupHandler()
+        // {
+        //     // reach to the workspace
+        //     if (AgentHelper.ReachDestination(_agent))
+        //     {
+        //         // save for future delivery
+        //         destination = currentPipe.transform.position;
+        //         // set pipe parent to robot hand
+        //         currentPipe.transform.parent = robotHand;
+        //         // update local position and rotation
+        //         currentPipe.transform.localPosition = positionOffset;
+        //         currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+        //
+        //         var go = currentPipe;
+        //
+        //         PipeHelper.BeforeMove(ref go);
+        //
+        //         // move to robot base
+        //         _routine = RobotRoutine.BendCut;
+        //         _agent.SetDestination(robotBase.position);
+        //     }
+        // }
 
-                var go = currentPipe;
+        // // TODO: apply when reaching the machine
+        // void BendCutHandler()
+        // {
+        //     if (AgentHelper.ReachDestination(_agent))
+        //     {
+        //         if (ReadyToOperate != null)
+        //         {
+        //             ReadyToOperate(parameters.angle);
+        //         }
+        //
+        //         _routine = RobotRoutine.Waiting;
+        //     }
+        // }
 
-                PipeHelper.BeforeMove(ref go);
-
-                // move to robot base
-                _routine = RobotRoutine.BendCut;
-                _agent.SetDestination(robotBase.position);
-            }
-        }
-
-        // TODO: apply when reaching the machine
-        void BendCutHandler()
-        {
-            if (AgentHelper.ReachDestination(_agent))
-            {
-                if (ReadyToOperate != null)
-                {
-                    ReadyToOperate(parameters.angle);
-                }
-
-                _routine = RobotRoutine.Waiting;
-            }
-        }
-
-        // TODO: when the result carried by the robot dog reaches the delivery point
-        void DropoffHandler()
-        {
-            if (AgentHelper.ReachDestination(_agent))
-            {
-                spawnedPipe.transform.parent = null;
-
-                var go = spawnedPipe.gameObject;
-                PipeHelper.AfterMove(ref go);
-
-                // return to base
-                _routine = RobotRoutine.Default;
-                _agent.SetDestination(robotBase.position);
-            }
-        }
-
-        // TODO: when the result is available
-        void GetResultHandler()
-        {
-            if (AgentHelper.ReachDestination(_agent))
-            {
-                var go = spawnedPipe.gameObject;
-                PipeHelper.BeforeMove(ref go);
-
-                // parent object to robot hand
-                spawnedPipe.transform.parent = robotHand;
-
-                spawnedPipe.transform.localPosition = positionOffset;
-                spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
-
-                // move to workspace
-                _routine = RobotRoutine.DropOff;
-                _agent.SetDestination(destination);
-            }
-        }
+        // // TODO: when the result carried by the robot dog reaches the delivery point
+        // void DropoffHandler()
+        // {
+        //     if (AgentHelper.ReachDestination(_agent))
+        //     {
+        //         spawnedPipe.transform.parent = null;
+        //
+        //         var go = spawnedPipe.gameObject;
+        //         PipeHelper.AfterMove(ref go);
+        //
+        //         // return to base
+        //         _routine = RobotRoutine.Default;
+        //         _agent.SetDestination(robotBase.position);
+        //     }
+        // }
+        //
+        // // TODO: when the result is available
+        // void GetResultHandler()
+        // {
+        //     if (AgentHelper.ReachDestination(_agent))
+        //     {
+        //         var go = spawnedPipe.gameObject;
+        //         PipeHelper.BeforeMove(ref go);
+        //
+        //         // parent object to robot hand
+        //         spawnedPipe.transform.parent = robotHand;
+        //
+        //         spawnedPipe.transform.localPosition = positionOffset;
+        //         spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
+        //
+        //         // move to workspace
+        //         _routine = RobotRoutine.DropOff;
+        //         _agent.SetDestination(destination);
+        //     }
+        // }
 
         #endregion
 
