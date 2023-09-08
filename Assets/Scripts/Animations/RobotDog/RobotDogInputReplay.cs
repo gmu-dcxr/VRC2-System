@@ -10,9 +10,9 @@ namespace VRC2.Animations
         ERotation = 2,
         WRotation = 3,
         GripClose = 4,
-        Pickedup = 5,
-        SRotation = 6,
-        QRotation = 7,
+        SRotation = 5,
+        QRotation = 6,
+        Pickedup = 7,
         GripOpen = 8,
         Droppedoff = 9,
     }
@@ -115,6 +115,11 @@ namespace VRC2.Animations
             get => arm.part2.localRotation.eulerAngles.z;
         }
 
+        private bool gripped
+        {
+            get => arm.gripped;
+        }
+
         #endregion
 
 
@@ -175,10 +180,8 @@ namespace VRC2.Animations
                     var diff = Math.Abs(part2Pickup - part2Rotation);
                     if (diff < angleThrehold)
                     {
-                        print(diff);
                         StopReplay(ref pickupEController, true);
                         // recording.forceStop = true;
-                        // force update rotation
                         _phrase = PickupPhrase.WRotation;
                     }
                     else
@@ -189,13 +192,12 @@ namespace VRC2.Animations
                     break;
                 case PickupPhrase.WRotation:
                     diff = Math.Abs(part1Pickup - part1Rotation);
-                    print(diff);
                     if (diff < angleThrehold)
                     {
-                        print(diff);
                         StopReplay(ref pickupWController, true);
                         // force stop
-                        recording.forceStop = true;
+                        // recording.forceStop = true;
+                        _phrase = PickupPhrase.GripClose;
                     }
                     else
                     {
@@ -204,12 +206,44 @@ namespace VRC2.Animations
 
                     break;
                 case PickupPhrase.GripClose:
-                    break;
-                case PickupPhrase.Pickedup:
-                    break;
-                case PickupPhrase.SRotation:
+                    if (!gripped)
+                    {
+                        StartReplay(ref pickupCloseController, true, false);
+                    }
+                    else
+                    {
+                        StopReplay(ref pickupCloseController, true);
+                        _phrase = PickupPhrase.QRotation;
+                    }
                     break;
                 case PickupPhrase.QRotation:
+                    diff = Math.Abs(part2Holding - part2Rotation);
+                    if (diff < angleThrehold)
+                    {
+                        StopReplay(ref pickupQController, true);
+                        // recording.forceStop = true;
+                        _phrase = PickupPhrase.SRotation;
+                    }
+                    else
+                    {
+                        StartReplay(ref pickupQController, true, false);
+                    }
+                    break;
+                case PickupPhrase.SRotation:
+                    diff = Math.Abs(part1Holding - part1Rotation);
+                    if (diff < angleThrehold)
+                    {
+                        StopReplay(ref pickupSController, true);
+                        // force stop
+                        recording.forceStop = true;
+                        _phrase = PickupPhrase.Pickedup;
+                    }
+                    else
+                    {
+                        StartReplay(ref pickupSController, true, false);
+                    }
+                    break;
+                case PickupPhrase.Pickedup:
                     break;
                 case PickupPhrase.GripOpen:
                     break;
