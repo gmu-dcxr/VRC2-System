@@ -235,7 +235,7 @@ namespace VRC2.Animations
                     {
                         StopReplay(ref pickupSController, true);
                         // force stop
-                        recording.forceStop = true;
+                        // recording.forceStop = true;
                         _phrase = PickupPhrase.Pickedup;
                     }
                     else
