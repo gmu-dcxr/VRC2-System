@@ -510,7 +510,7 @@ namespace VRC2
             add.Execute();
         }
 
-        public void Simulate_SpawnPipe()
+        public void Simulate_SpawnPipe(Transform point)
         {
             PipeConstants.PipeParameters para = new PipeConstants.PipeParameters();
             para.diameter = PipeConstants.PipeDiameter.Diameter_1;
@@ -524,6 +524,9 @@ namespace VRC2
             var no = runner.Spawn(prefab);
             // set global select pipe
             GlobalConstants.lastSpawnedPipe = no.gameObject;
+
+            no.gameObject.transform.position = point.position;
+            no.gameObject.transform.rotation = point.rotation;
         }
 
         public void Simulate_RobotBendCut()

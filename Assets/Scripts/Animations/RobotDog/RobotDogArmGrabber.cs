@@ -28,7 +28,7 @@ namespace VRC2.Animations
                     // left gripper, drop
                     child.transform.parent = null;
                     PipeHelper.AfterMove(ref child);
-                    grabbed = false;
+                    // grabbed = false;
                 }
             }
         }
@@ -42,11 +42,15 @@ namespace VRC2.Animations
                 var root = PipeHelper.GetRoot(go);
                 var pm = root.GetComponent<PipeManipulation>();
 
-                if (pm != null)
+                if (pm != null && root.transform.parent == null)
                 {
-                    grabbed = true;
-                    PipeHelper.BeforeMove(ref root);
+                    // grabbed = true;
+                    // PipeHelper.BeforeMove(ref root);
                     root.transform.parent = attachPoint.transform;
+                    if (root.transform.parent != null)
+                    {
+                        grabbed = true;
+                    }
                 }
             }
         }
