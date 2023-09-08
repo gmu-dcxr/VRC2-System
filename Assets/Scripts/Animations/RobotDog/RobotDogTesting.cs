@@ -18,6 +18,7 @@ namespace VRC2.Animations
 {
     internal enum RobotStage
     {
+        Default = -1,
         Stop = 0,
         Forward = 1,
         Left = 2,
@@ -61,6 +62,10 @@ namespace VRC2.Animations
         {
             stage = RobotStage.Stop;
             targetTransform = pipe.transform;
+
+            // set arm reference
+            replay.arm = recording.arm;
+            replay.recording = recording;
             
             recording.OnCloseGrip += OnCloseGrip;
         }
@@ -123,6 +128,8 @@ namespace VRC2.Animations
         // Tip: better to use FixedUpdate than Update for animation replaying
         public void FixedUpdate()
         {
+            if(stage == RobotStage.Default) return;
+            
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -384,6 +391,7 @@ namespace VRC2.Animations
             
             if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
             {
+                stage = RobotStage.Default;
                 replay.RewindPickup();
                 replay.Pickup();
             }

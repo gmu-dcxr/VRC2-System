@@ -47,6 +47,8 @@ namespace VRC2.Animations
 
         public System.Action OnCloseGrip;
 
+        [HideInInspector] public bool forceStop = false;
+
         public override void InitInputActions()
         {
             inputActions = new RobotDogInputActions();
@@ -83,6 +85,8 @@ namespace VRC2.Animations
         // Update is called once per frame
         void Update()
         {
+            if(forceStop) return;
+            
             ControlRobotBody();
             ControlRobotArm();
         }

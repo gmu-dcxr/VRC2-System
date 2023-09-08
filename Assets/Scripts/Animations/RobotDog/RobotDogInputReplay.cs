@@ -1,10 +1,25 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 
 namespace VRC2.Animations
 {
+    internal enum PickupPhrase
+    {
+        Initial = 1,
+        ERotation = 2,
+        WRotation = 3,
+        GripClose = 4,
+        Pickedup = 5,
+        SRotation = 6,
+        QRotation = 7,
+        GripOpen = 8,
+        Droppedoff = 9,
+    }
+
     public class RobotDogInputReplay : BaseInputReplay
     {
+
         [Space(30)] [Header("Filename")] public string forwardFile;
         public string leftFile;
         public string rightFile;
@@ -73,7 +88,7 @@ namespace VRC2.Animations
         #endregion
 
         #region Pickup / Dropoff
-        
+
         // initial rotation, part 1 (0,270,0)      , part 2 (0,0,0)
         // pickup rotation , part 1 (0,270,170) - W, part 2 (0,0,90) - E 
         // holding rotation, part 1 (0,270,200) - S, part 2 (0,0,70) - Q
@@ -83,7 +98,22 @@ namespace VRC2.Animations
         private float part1Holding = 200;
         private float part2Holding = 70;
 
+        private PickupPhrase _phrase = PickupPhrase.Initial;
 
+        private float angleThrehold = 1.0f;
+
+        [HideInInspector] public RoboticArm arm { get; set; }
+        [HideInInspector] public RobotDogInputRecording recording { get; set; }
+
+        private float part1Rotation
+        {
+            get => arm.part1.localRotation.eulerAngles.z;
+        }
+
+        private float part2Rotation
+        {
+            get => arm.part2.localRotation.eulerAngles.z;
+        }
 
         #endregion
 
@@ -129,6 +159,67 @@ namespace VRC2.Animations
         }
 
         #endregion
+
+        private void Start()
+        {
+
+        }
+
+        void FixedUpdate()
+        {
+            switch (_phrase)
+            {
+                case PickupPhrase.Initial:
+                    break;
+                case PickupPhrase.ERotation:
+                    var diff = Math.Abs(part2Pickup - part2Rotation);
+                    if (diff < angleThrehold)
+                    {
+                        print(diff);
+                        StopReplay(ref pickupEController, true);
+                        // recording.forceStop = true;
+                        // force update rotation
+                        _phrase = PickupPhrase.WRotation;
+                    }
+                    else
+                    {
+                        StartReplay(ref pickupEController, true, false);
+                    }
+
+                    break;
+                case PickupPhrase.WRotation:
+                    diff = Math.Abs(part1Pickup - part1Rotation);
+                    print(diff);
+                    if (diff < angleThrehold)
+                    {
+                        print(diff);
+                        StopReplay(ref pickupWController, true);
+                        // force stop
+                        recording.forceStop = true;
+                    }
+                    else
+                    {
+                        StartReplay(ref pickupWController, true, false);
+                    }
+
+                    break;
+                case PickupPhrase.GripClose:
+                    break;
+                case PickupPhrase.Pickedup:
+                    break;
+                case PickupPhrase.SRotation:
+                    break;
+                case PickupPhrase.QRotation:
+                    break;
+                case PickupPhrase.GripOpen:
+                    break;
+                case PickupPhrase.Droppedoff:
+                    break;
+                default:
+                    break;
+            }
+        }
+
 
         #region Controllers' callbacks
 
@@ -178,27 +269,30 @@ namespace VRC2.Animations
 
         public void Pickup()
         {
+            _phrase = PickupPhrase.ERotation;
             // StartReplay(ref pickupController);
         }
 
         public void RewindPickup()
         {
             // ForceRewind(ref pickupController);
+            _phrase = PickupPhrase.Initial;
         }
 
         public bool PickupDone()
         {
             // return IsFinished(ref pickupController, true);
+            return _phrase == PickupPhrase.Pickedup;
         }
 
         public bool DropoffDone()
         {
-            return IsFinished(ref dropoffController, true);
+            return _phrase == PickupPhrase.Droppedoff;
         }
 
         public void Dropoff()
         {
-            StartReplay(ref dropoffController);
+            _phrase = PickupPhrase.GripOpen;
         }
 
         #endregion
