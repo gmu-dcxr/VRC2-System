@@ -65,13 +65,13 @@ namespace VRC2.Animations
             // set arm reference
             replay.arm = recording.arm;
             replay.recording = recording;
-            
-            // recording.OnCloseGrip += OnCloseGrip;
+
+            recording.OnCloseGrip += OnCloseGrip;
         }
 
         private void OnCloseGrip()
         {
-            if (pipe.transform.parent == null)
+            if (targetTransform.parent == null)
             {
                 // fix grapping
                 print("manually fix grapping");
@@ -114,9 +114,9 @@ namespace VRC2.Animations
             var rb = targetGameObject.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.useGravity = false;   
+                rb.useGravity = false;
             }
-            
+
             // update position
             // var pos = targetGameObject.transform.position;
             // pos.y = attachePoint.transform.position.y;
@@ -127,8 +127,8 @@ namespace VRC2.Animations
         // Tip: better to use FixedUpdate than Update for animation replaying
         public void FixedUpdate()
         {
-            if(stage == RobotStage.Default) return;
-            
+            if (stage == RobotStage.Default) return;
+
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -137,9 +137,9 @@ namespace VRC2.Animations
 
                 case RobotStage.Forward:
                     var distance = GetDistance(targetTransform);
-                    
+
                     print(distance);
-                    
+
                     ForceRobotTowards(targetTransform);
 
                     if (distance < distanceThreshold)
@@ -167,6 +167,7 @@ namespace VRC2.Animations
                             print("forward to bend cut output");
                             targetGameObject = bendcutOutput.gameObject;
                             stage = RobotStage.Pickup;
+                            pickingup = false;
                         }
                         else if (targetTransform == deliveryPoint)
                         {
@@ -273,6 +274,7 @@ namespace VRC2.Animations
 
                             if (targetTransform == bendcutMachine)
                             {
+                                print("bend cut output");
                                 // ready to pickup again
                                 targetTransform = bendcutOutput;
 
@@ -343,7 +345,7 @@ namespace VRC2.Animations
             {
                 recording.ResetArm();
             }
-            
+
             if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
             {
                 stage = RobotStage.Default;
@@ -353,7 +355,7 @@ namespace VRC2.Animations
         }
 
         #region WIP - Adaptation
-        
+
         [Header("Robot Setting")] public GameObject robot;
         public Transform robotBase;
         public Transform robotHand;
@@ -378,8 +380,8 @@ namespace VRC2.Animations
         private Vector3 destination;
 
         public System.Action<PipeBendAngles> ReadyToOperate;
-        
-         void UpdateLocalSpawnedPipe(GameObject go)
+
+        void UpdateLocalSpawnedPipe(GameObject go)
         {
             var pm = go.GetComponent<PipeManipulation>();
 
@@ -498,10 +500,10 @@ namespace VRC2.Animations
         {
             Debug.Log("Robot PickUp");
             // get the pipe from P1, and move to pickup the pipe
-            
-            
+
+
             targetTransform = currentPipe.transform;
-            
+
             MoveToTarget();
         }
 
@@ -514,7 +516,7 @@ namespace VRC2.Animations
         {
             // update angle
             parameters.angle = angle;
-            
+
             // start bend/cut
             SpawnPipeUsingSelected();
             UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
