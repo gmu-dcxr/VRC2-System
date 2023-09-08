@@ -246,6 +246,15 @@ namespace VRC2.Animations
                 case PickupPhrase.Pickedup:
                     break;
                 case PickupPhrase.GripOpen:
+                    if (gripped)
+                    {
+                        StartReplay(ref pickupReleaseController, true, false);
+                    }
+                    else
+                    {
+                        StopReplay(ref pickupReleaseController, true);
+                        _phrase = PickupPhrase.Droppedoff;
+                    }
                     break;
                 case PickupPhrase.Droppedoff:
                     break;
