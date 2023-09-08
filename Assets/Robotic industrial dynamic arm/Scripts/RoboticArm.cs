@@ -15,6 +15,8 @@ public class RoboticArm : MonoBehaviour
 	public Transform part3;
 	public Transform gripLeft;
 	public Transform gripRight;
+	
+	public Transform attachPoint;
 
 	// this is the audio source to play the arm sound
 	public AudioSource audioS;
@@ -29,6 +31,18 @@ public class RoboticArm : MonoBehaviour
 	private Quaternion rotationRight;
 
 
+
+	#endregion
+
+	#region Grip / release status
+
+	[HideInInspector]
+	public bool gripped
+	{
+		get => attachPoint.childCount != 0;
+	}
+
+	
 
 	#endregion
 

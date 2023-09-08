@@ -67,7 +67,7 @@ namespace VRC2.Animations
             replay.arm = recording.arm;
             replay.recording = recording;
             
-            recording.OnCloseGrip += OnCloseGrip;
+            // recording.OnCloseGrip += OnCloseGrip;
         }
 
         private void OnCloseGrip()
