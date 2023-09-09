@@ -257,6 +257,7 @@ namespace VRC2.Animations
                     }
                     break;
                 case PickupPhrase.Droppedoff:
+                    // reset status
                     break;
                 default:
                     break;

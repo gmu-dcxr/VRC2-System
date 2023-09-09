@@ -37,6 +37,8 @@ namespace VRC2.Animations
         {
             var pipeTag = GlobalConstants.pipeObjectTag;
             var go = other.gameObject;
+            // var right = gameObject.name.StartsWith("Right");
+            // var rot = transform.localRotation.eulerAngles;
             if (!grabbed && go.CompareTag(pipeTag))
             {
                 var root = PipeHelper.GetRoot(go);
@@ -44,9 +46,8 @@ namespace VRC2.Animations
 
                 if (pm != null && root.transform.parent == null)
                 {
-                    // grabbed = true;
-                    // PipeHelper.BeforeMove(ref root);
                     root.transform.parent = attachPoint.transform;
+                    root.transform.localPosition = Vector3.zero;
                     if (root.transform.parent != null)
                     {
                         grabbed = true;
