@@ -258,6 +258,8 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
+                            droppingoff = false;
+                            
                             if (currentPipe != null && targetTransform == currentPipe.transform)
                             {
                                 // change target to bendcut machine
@@ -294,6 +296,7 @@ namespace VRC2.Animations
                             print("dropoff done");
                             // reset arm
                             recording.ResetArm();
+                            pickingup = false;
 
                             if (targetTransform == bendcutInput)
                             {

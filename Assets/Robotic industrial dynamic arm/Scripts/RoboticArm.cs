@@ -37,12 +37,22 @@ public class RoboticArm : MonoBehaviour
 	#region Grip / release status
 
 	[HideInInspector]
-	public bool gripped
+	public float rightYRot
 	{
-		get => attachPoint.childCount != 0;
+		get
+		{
+			var rot = gripRight.localRotation.eulerAngles;
+			return rot.y;
+		}
 	}
 
-	
+	[HideInInspector]
+	public bool gripped
+	{
+		get => attachPoint.childCount != 0 && rightYRot <= 150;
+	}
+
+
 
 	#endregion
 
