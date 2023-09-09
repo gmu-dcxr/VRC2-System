@@ -45,7 +45,8 @@ namespace VRC2.Animations
         private InputAction d3IA;
         private InputAction gripIA;
 
-        public System.Action OnCloseGrip;
+        public System.Action OnCloseGripOnce;
+        private bool onCloseGripped = false;
 
         [HideInInspector] public bool forceStop = false;
 
@@ -260,15 +261,17 @@ namespace VRC2.Animations
             // grip
             if (gripIA.ReadValue<Vector2>().x < 0)
             {
-                if (OnCloseGrip != null)
+                if (!onCloseGripped && OnCloseGripOnce != null)
                 {
-                    OnCloseGrip();
+                    onCloseGripped = true;
+                    OnCloseGripOnce();
                 }
                 arm.CloseGrip(gripSpeed);
             }
 
             if (gripIA.ReadValue<Vector2>().x > 0)
             {
+                onCloseGripped = false;
                 arm.OpenGrip(gripSpeed);
             }
         }

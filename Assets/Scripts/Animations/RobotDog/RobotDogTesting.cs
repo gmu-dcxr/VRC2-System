@@ -67,17 +67,17 @@ namespace VRC2.Animations
             replay.arm = recording.arm;
             replay.recording = recording;
 
-            // recording.OnCloseGrip += OnCloseGrip;
+            recording.OnCloseGripOnce += OnCloseGripOnce;
         }
 
-        private void OnCloseGrip()
+        // this is only triggered once
+        private void OnCloseGripOnce()
         {
-            if (targetTransform.parent == null)
-            {
-                // fix grapping
-                print("manually fix grapping");
-                ManuallyFixGrabbing();
-            }
+            // sometimes, it can not precisely grab the pipe
+            print("manually fix grapping");
+            var pos = attachePoint.transform.position;
+            pos.y = targetTransform.transform.position.y;
+            targetGameObject.transform.position = pos;
         }
 
         void MoveToTarget()
@@ -106,23 +106,6 @@ namespace VRC2.Animations
             pos2.y = 0;
 
             return Vector3.Distance(pos1, pos2);
-        }
-
-        // sometimes, it can not precisely grab the pipe
-        void ManuallyFixGrabbing()
-        {
-            // disable gravity
-            var rb = targetGameObject.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.useGravity = false;
-            }
-
-            // update position
-            // var pos = targetGameObject.transform.position;
-            // pos.y = attachePoint.transform.position.y;
-
-            targetGameObject.transform.position = attachePoint.transform.position;
         }
 
         // Tip: better to use FixedUpdate than Update for animation replaying
@@ -275,7 +258,7 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
-                            if (targetTransform == currentPipe.transform)
+                            if (currentPipe != null && targetTransform == currentPipe.transform)
                             {
                                 // change target to bendcut machine
                                 targetTransform = bendcutInput;
@@ -574,6 +557,7 @@ namespace VRC2.Animations
         {
             // move to pick result
             print("pickup result");
+            PipeHelper.BeforeMove(ref go);
             targetGameObject = go;
             MoveToTarget();
         }
