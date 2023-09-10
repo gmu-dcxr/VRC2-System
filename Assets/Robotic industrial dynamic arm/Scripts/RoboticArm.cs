@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using VRC2.Extention;
@@ -83,6 +84,16 @@ public class RoboticArm : MonoBehaviour
 		// var r6 = gripRight.localRotation.eulerAngles;
 		//
 		// print($"{r1} {r2} {r3} {r4} {r5} {r6}");
+	}
+
+	private void Update()
+	{
+		if (gripped)
+		{
+			var go = attachPoint.transform.GetChild(0);
+			// force local position
+			go.localPosition = Vector3.zero;
+		}
 	}
 
 	public void rotatePart0(float val)
