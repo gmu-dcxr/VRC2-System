@@ -61,7 +61,46 @@ namespace VRC2.Animations
         #region Debug Pickup
 
         [Space(30)] [Header("Debug pipe")] public GameObject debugPipe;
-        
+
+
+        #endregion
+
+        #region Compensate rotation when preparing pickup
+
+        private Vector3 GetCompensateForward(Transform t)
+        {
+            var pm = t.gameObject.GetComponent<PipeManipulation>();
+
+            // rotate forward vector
+            // refer: https://discussions.unity.com/t/rotate-a-vector3-direction/14722
+            // vector = Quaternion.AngleAxis(-45, Vector3.up) * vector;
+            // vector = Quaternion.Euler(0, -45, 0) * vector;
+
+            var y = 0;
+
+            switch (pm.angle)
+            {
+                case PipeBendAngles.Angle_0:
+                    break;
+                case PipeBendAngles.Angle_45:
+                    y = 90;
+                    break;
+                case PipeBendAngles.Angle_90:
+                    y = 90;
+                    break;
+                case PipeBendAngles.Angle_135:
+                    y = 45;
+                    break;
+                default:
+                    break;
+            }
+
+            var forward = Quaternion.Euler(0, y, 0) * t.forward;
+
+            return forward;
+        }
+
+
 
         #endregion
 
@@ -75,9 +114,17 @@ namespace VRC2.Animations
             replay.recording = recording;
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
-            
+            recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
+
             // debug purpose
             targetTransform = debugPipe.transform;
+            targetGameObject = debugPipe;
+        }
+
+        private void OnNeedReleasingOnce()
+        {
+            targetGameObject.transform.parent = null;
+            PipeHelper.AfterMove(ref targetGameObject);
         }
 
         // this is only triggered once
@@ -206,7 +253,8 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.PickupPrepare:
-                    var f1 = targetTransform.forward;
+                    // var f1 = targetTransform.forward;
+                    var f1 = GetCompensateForward(targetTransform);
                     var f2 = robotDog.transform.forward;
 
                     f1.y = 0;
@@ -269,7 +317,7 @@ namespace VRC2.Animations
                             // move to target
                             print("pickup is done");
                             droppingoff = false;
-                            
+
                             if (currentPipe != null && targetTransform == currentPipe.transform)
                             {
                                 // change target to bendcut machine
@@ -395,6 +443,11 @@ namespace VRC2.Animations
                 replay.RewindPickup();
                 replay.Pickup();
             }
+
+            if (GUI.Button(new Rect(10, 150, 100, 50), "Dropoff"))
+            {
+                stage = RobotStage.Dropoff;
+            }
         }
 
         #region WIP - Adaptation
@@ -406,7 +459,7 @@ namespace VRC2.Animations
         [Header("Grab Offset")] public Vector3 positionOffset = Vector3.zero;
         public Vector3 rotationOffset = Vector3.zero;
 
-        [HideInInspector]public GameObject currentPipe { get; set; }
+        [HideInInspector] public GameObject currentPipe { get; set; }
 
         private PipeParameters parameters;
 
