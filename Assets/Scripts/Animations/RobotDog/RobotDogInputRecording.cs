@@ -1,5 +1,8 @@
+using System.Diagnostics;
+using Fusion;
 using UnityEngine.InputSystem;
 using UnityEngine;
+using VRC2.Events;
 
 namespace VRC2.Animations
 {
@@ -47,7 +50,7 @@ namespace VRC2.Animations
 
         public System.Action OnCloseGripOnce;
         public System.Action OnNeedReleasingOnce;
-        
+
         private bool onCloseGripped = false;
         private bool onNeedReleasing = false;
 
@@ -201,6 +204,33 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region RPC actions to change to arm
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_RotatePart(int index, float angle, RpcInfo info = default)
+        {
+            switch (index)
+            {
+                case 0:
+                    arm.rotatePart0(angle);
+                    break;
+                case 1:
+                    arm.rotatePart1(angle);
+                    break;
+                case 2:
+                    arm.rotatePart2(angle);
+                    break;
+                case 3:
+                    arm.rotatePart3(angle);
+                    break;
+            }
+        }
+
+
+
+        #endregion
+
+
         #region Control robot arm
 
         void ControlRobotArm()
@@ -209,56 +239,64 @@ namespace VRC2.Animations
             if (d0IA.ReadValue<Vector2>().x > 0)
             {
                 angle0 += armRotateSpeed;
-                arm.rotatePart0(angle0);
+                // arm.rotatePart0(angle0);
+                RPC_RotatePart(0, angle0);
             }
 
             //part0 down
             if (d0IA.ReadValue<Vector2>().x < 0)
             {
                 angle0 -= armRotateSpeed;
-                arm.rotatePart0(angle0);
+                // arm.rotatePart0(angle0);
+                RPC_RotatePart(0, angle0);
             }
 
             //part1 up
             if (d1IA.ReadValue<Vector2>().x > 0)
             {
                 angle1 += armRotateSpeed;
-                arm.rotatePart1(angle1);
+                // arm.rotatePart1(angle1);
+                RPC_RotatePart(1, angle1);
             }
 
             //part1 down
             if (d1IA.ReadValue<Vector2>().x < 0)
             {
                 angle1 -= armRotateSpeed;
-                arm.rotatePart1(angle1);
+                // arm.rotatePart1(angle1);
+                RPC_RotatePart(1, angle1);
             }
 
             //part2 up
             if (d2IA.ReadValue<Vector2>().x > 0)
             {
                 angle2 += armRotateSpeed;
-                arm.rotatePart2(angle2);
+                // arm.rotatePart2(angle2);
+                RPC_RotatePart(2, angle2);
             }
 
             //part2 down
             if (d2IA.ReadValue<Vector2>().x < 0)
             {
                 angle2 -= armRotateSpeed;
-                arm.rotatePart2(angle2);
+                // arm.rotatePart2(angle2);
+                RPC_RotatePart(2, angle2);
             }
 
             //part3 up
             if (d3IA.ReadValue<Vector2>().x > 0)
             {
                 angle3 += armRotateSpeed;
-                arm.rotatePart3(angle3);
+                // arm.rotatePart3(angle3);
+                RPC_RotatePart(3, angle3);
             }
 
             //part3 down
             if (d3IA.ReadValue<Vector2>().x < 0)
             {
                 angle3 -= armRotateSpeed;
-                arm.rotatePart3(angle3);
+                // arm.rotatePart3(angle3);
+                RPC_RotatePart(3, angle3);
             }
 
             // grip
@@ -270,6 +308,7 @@ namespace VRC2.Animations
                     onCloseGripped = true;
                     OnCloseGripOnce();
                 }
+
                 arm.CloseGrip(gripSpeed);
             }
 
