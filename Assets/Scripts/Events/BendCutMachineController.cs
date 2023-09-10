@@ -15,7 +15,7 @@ namespace VRC2.Events
         [Header("Monitor")] public QuadImageManager imageManager;
         public AudioSource audioSource;
 
-        [Header("RobotDog")] public RobotDogTesting robotDog;
+        [Header("RobotDog")] public RobotDogController robotDog;
         public float duration = 5.0f;
 
         [Header("Error")] public bool enableError = false;

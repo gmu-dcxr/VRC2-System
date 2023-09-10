@@ -28,7 +28,7 @@ namespace VRC2.Animations
         Dropoff = 6,
     }
 
-    public class RobotDogTesting : MonoBehaviour
+    public class RobotDogController : MonoBehaviour
     {
         public GameObject robotDog;
         // public GameObject pipe;
@@ -58,6 +58,18 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region For network
+
+        [HideInInspector] public GameObject currentPipe { get; set; }
+
+        private PipeParameters parameters;
+
+        private NetworkObject spawnedPipe;
+
+        public System.Action<PipeBendAngles> ReadyToOperate;
+
+        #endregion
+
         #region Compensate rotation when preparing pickup
 
         private Vector3 GetCompensateForward(Transform t)
@@ -79,14 +91,11 @@ namespace VRC2.Animations
             return forward;
         }
 
-
-
         #endregion
 
         private void Start()
         {
             stage = RobotStage.Stop;
-            // targetTransform = pipe.transform;
 
             // set arm reference
             replay.arm = recording.arm;
@@ -94,8 +103,10 @@ namespace VRC2.Animations
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
             recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
-            
+
         }
+
+        #region Gripper one-time callback
 
         private void OnNeedReleasingOnce()
         {
@@ -112,6 +123,11 @@ namespace VRC2.Animations
             pos.y = targetTransform.transform.position.y;
             targetGameObject.transform.position = pos;
         }
+
+        #endregion
+
+        #region Animation control
+
 
         void MoveToTarget()
         {
@@ -395,59 +411,11 @@ namespace VRC2.Animations
             robotDog.transform.Translate(0, 0, -zoffset, Space.Self);
         }
 
-        private void OnGUI()
-        {
-            if (GUI.Button(new Rect(10, 10, 100, 50), "Move"))
-            {
-                // move to target
-                MoveToTarget();
-            }
+        #endregion
 
-            if (GUI.Button(new Rect(150, 10, 100, 50), "Rotate"))
-            {
-                replay.LeftTurn(false);
-            }
+        #region Network synchronization
 
-            if (GUI.Button(new Rect(10, 100, 100, 50), "Pickup Prep"))
-            {
-                stage = RobotStage.PickupPrepare;
-            }
 
-            if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
-            {
-                stage = RobotStage.Default;
-                replay.RewindPickup();
-                replay.Pickup();
-            }
-
-            if (GUI.Button(new Rect(10, 150, 100, 50), "Dropoff"))
-            {
-                stage = RobotStage.Dropoff;
-            }
-        }
-
-        #region WIP - Adaptation
-
-        [Header("Robot Setting")] public GameObject robot;
-        public Transform robotBase;
-        public Transform robotHand;
-
-        [Header("Grab Offset")] public Vector3 positionOffset = Vector3.zero;
-        public Vector3 rotationOffset = Vector3.zero;
-
-        [HideInInspector] public GameObject currentPipe { get; set; }
-
-        private PipeParameters parameters;
-
-        private NetworkObject spawnedPipe;
-
-        // private NavMeshAgent _agent;
-
-        // private RobotRoutine _routine;
-
-        // private Vector3 destination;
-
-        public System.Action<PipeBendAngles> ReadyToOperate;
 
         void UpdateLocalSpawnedPipe(GameObject go)
         {
@@ -522,35 +490,6 @@ namespace VRC2.Animations
         }
 
 
-        // private void Start()
-        // {
-        //     _routine = RobotRoutine.Default;
-        //     _agent = robot.GetComponent<NavMeshAgent>();
-        //     _agent.stoppingDistance = 0.5f;
-        // }
-
-        // private void Update()
-        // {
-        //     switch (_routine)
-        //     {
-        //         case RobotRoutine.PickUp:
-        //             PickupHandler();
-        //             break;
-        //         case RobotRoutine.BendCut:
-        //             BendCutHandler();
-        //             break;
-        //         case RobotRoutine.GetResult:
-        //             GetResultHandler();
-        //             break;
-        //         case RobotRoutine.Waiting:
-        //             break;
-        //
-        //         case RobotRoutine.DropOff:
-        //             DropoffHandler();
-        //             break;
-        //     }
-        // }
-
         public void InitParameters(PipeBendAngles angle, float a, float b)
         {
             parameters.angle = angle;
@@ -606,82 +545,42 @@ namespace VRC2.Animations
             MoveToTarget();
         }
 
-        #region Handlers
-
-        // void PickupHandler()
-        // {
-        //     // reach to the workspace
-        //     if (AgentHelper.ReachDestination(_agent))
-        //     {
-        //         // save for future delivery
-        //         destination = currentPipe.transform.position;
-        //         // set pipe parent to robot hand
-        //         currentPipe.transform.parent = robotHand;
-        //         // update local position and rotation
-        //         currentPipe.transform.localPosition = positionOffset;
-        //         currentPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
-        //
-        //         var go = currentPipe;
-        //
-        //         PipeHelper.BeforeMove(ref go);
-        //
-        //         // move to robot base
-        //         _routine = RobotRoutine.BendCut;
-        //         _agent.SetDestination(robotBase.position);
-        //     }
-        // }
-
-        // // TODO: apply when reaching the machine
-        // void BendCutHandler()
-        // {
-        //     if (AgentHelper.ReachDestination(_agent))
-        //     {
-        //         if (ReadyToOperate != null)
-        //         {
-        //             ReadyToOperate(parameters.angle);
-        //         }
-        //
-        //         _routine = RobotRoutine.Waiting;
-        //     }
-        // }
-
-        // // TODO: when the result carried by the robot dog reaches the delivery point
-        // void DropoffHandler()
-        // {
-        //     if (AgentHelper.ReachDestination(_agent))
-        //     {
-        //         spawnedPipe.transform.parent = null;
-        //
-        //         var go = spawnedPipe.gameObject;
-        //         PipeHelper.AfterMove(ref go);
-        //
-        //         // return to base
-        //         _routine = RobotRoutine.Default;
-        //         _agent.SetDestination(robotBase.position);
-        //     }
-        // }
-        //
-        // // TODO: when the result is available
-        // void GetResultHandler()
-        // {
-        //     if (AgentHelper.ReachDestination(_agent))
-        //     {
-        //         var go = spawnedPipe.gameObject;
-        //         PipeHelper.BeforeMove(ref go);
-        //
-        //         // parent object to robot hand
-        //         spawnedPipe.transform.parent = robotHand;
-        //
-        //         spawnedPipe.transform.localPosition = positionOffset;
-        //         spawnedPipe.transform.localRotation = Quaternion.Euler(rotationOffset);
-        //
-        //         // move to workspace
-        //         _routine = RobotRoutine.DropOff;
-        //         _agent.SetDestination(destination);
-        //     }
-        // }
-
         #endregion
+
+        #region GUI Debug
+
+
+
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, 10, 100, 50), "Move"))
+            {
+                // move to target
+                MoveToTarget();
+            }
+
+            if (GUI.Button(new Rect(150, 10, 100, 50), "Rotate"))
+            {
+                replay.LeftTurn(false);
+            }
+
+            if (GUI.Button(new Rect(10, 100, 100, 50), "Pickup Prep"))
+            {
+                stage = RobotStage.PickupPrepare;
+            }
+
+            if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
+            {
+                stage = RobotStage.Default;
+                replay.RewindPickup();
+                replay.Pickup();
+            }
+
+            if (GUI.Button(new Rect(10, 150, 100, 50), "Dropoff"))
+            {
+                stage = RobotStage.Dropoff;
+            }
+        }
 
         #endregion
     }
