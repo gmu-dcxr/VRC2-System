@@ -54,9 +54,16 @@ public class RoboticArm : MonoBehaviour
 	}
 
 	[HideInInspector]
+	public bool holdingObject
+	{
+		get => attachPoint.childCount != 0;
+	}
+	
+
+	[HideInInspector]
 	public bool needReleasing
 	{
-		get => attachPoint.childCount == 1 && rightYRot >= 180;
+		get => attachPoint.childCount != 0 && rightYRot >= 180;
 	}
     
 

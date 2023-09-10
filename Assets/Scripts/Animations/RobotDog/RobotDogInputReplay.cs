@@ -120,6 +120,11 @@ namespace VRC2.Animations
             get => arm.gripped;
         }
 
+        private bool holdingObject
+        {
+            get => arm.holdingObject;
+        }
+
         #endregion
 
 
@@ -215,6 +220,7 @@ namespace VRC2.Animations
                         StopReplay(ref pickupCloseController, true);
                         _phrase = PickupPhrase.QRotation;
                     }
+
                     break;
                 case PickupPhrase.QRotation:
                     diff = Math.Abs(part2Holding - part2Rotation);
@@ -228,6 +234,7 @@ namespace VRC2.Animations
                     {
                         StartReplay(ref pickupQController, true, false);
                     }
+
                     break;
                 case PickupPhrase.SRotation:
                     diff = Math.Abs(part1Holding - part1Rotation);
@@ -242,19 +249,20 @@ namespace VRC2.Animations
                     {
                         StartReplay(ref pickupSController, true, false);
                     }
+
                     break;
                 case PickupPhrase.Pickedup:
                     break;
                 case PickupPhrase.GripOpen:
-                    if (gripped)
+                    if (holdingObject)
                     {
                         StartReplay(ref pickupReleaseController, true, false);
                     }
                     else
                     {
-                        StopReplay(ref pickupReleaseController, true);
                         _phrase = PickupPhrase.Droppedoff;
                     }
+
                     break;
                 case PickupPhrase.Droppedoff:
                     // reset status
