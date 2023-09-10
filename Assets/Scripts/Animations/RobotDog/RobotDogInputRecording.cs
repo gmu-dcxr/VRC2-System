@@ -239,6 +239,16 @@ namespace VRC2.Animations
             }
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_ResetArm(RpcInfo info = default)
+        {
+            angle0 = 0.0f;
+            angle1 = 0.0f;
+            angle2 = 0.0f;
+            angle3 = 0.25f;
+            arm.ResetRotations();
+        }
+
 
         #endregion
 
@@ -340,11 +350,12 @@ namespace VRC2.Animations
 
         public void ResetArm()
         {
-            angle0 = 0.0f;
-            angle1 = 0.0f;
-            angle2 = 0.0f;
-            angle3 = 0.25f;
-            arm.ResetRotations();
+            // angle0 = 0.0f;
+            // angle1 = 0.0f;
+            // angle2 = 0.0f;
+            // angle3 = 0.25f;
+            // arm.ResetRotations();
+            RPC_ResetArm();
         }
 
 
