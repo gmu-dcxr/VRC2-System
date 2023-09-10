@@ -97,7 +97,14 @@ namespace VRC2.Animations
 
             if (controller.position == 0)
             {
-                controller.PlayAllEventsAccordingToTimestamps();
+                try
+                {
+                    controller.PlayAllEventsAccordingToTimestamps();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
             }
             else
             {
