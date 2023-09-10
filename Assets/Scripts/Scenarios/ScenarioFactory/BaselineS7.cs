@@ -7,12 +7,16 @@ using WSMGameStudio.HeavyMachinery;
 using VRC2.Animations;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
+using Timer = UnityTimer.Timer;
+
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
     public class BaselineS7 : Scenario
     {
         public GameObject excav;
+        public GameObject dirt;
+        public Transform endPiece;
 
         internal enum ExcavatorStage
         {
@@ -20,8 +24,16 @@ namespace VRC2.Scenarios.ScenarioFactory
             Forward = 1,
             Backward = 2,
             Dig = 3,
-            Left = 4,
-            Right = 5,
+            Rotate = 4,
+            RRotate = 5,
+        }
+
+        internal enum part
+        {
+            nextTo = 0,
+            into1 = 1,
+            into2 = 2,
+            
         }
 
         [Space(30)]  [Header("Recording/Replay")]
@@ -32,6 +44,13 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public Transform startPoint;
         public Transform digPoint;
+        public Transform rotatePoint;
+        public Transform ogPoint;
+
+        public Transform deep;
+        public Transform deeper;
+        public Transform deepR;
+        public Transform deeperR;
 
 
 
@@ -62,46 +81,135 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool isDigging = false;
 
-        private float distanceThreshold = 3.0f;
+        private float distanceThreshold = 2.0f;
 
         private GameObject activeSetting;
 
         private ExcavatorStage _stage;
 
-        
+        private part pt;
+
+        public float endAngle = 120f;
+
+        private bool digDone = false;
+
+        public Vector3 scaleChange = new Vector3(1.0f, 1.0f, 1.0f);
+
+
 
 
         private void Start()
         {
+            //replay.Start();
             base.Start();
+            pt = part.nextTo;
             _stage = ExcavatorStage.Stop;
             // destinationPos = destination.transform.position;
         }
 
         private void Update()
         {
+            var angle = Math.Abs(recording.getRotation() - endAngle);
+            //print(angle);
+            
             switch (_stage)
             {
                 case ExcavatorStage.Stop:
                     //replay.Stop();
-                    if (ReachDestination(digPoint.position) && (recording.driveSpeed == 0))
+                    //print("STOP STOP STOP");
+                    //dirt.transform.localScale -= scaleChange;
+                    dirt.SetActive(false);
+                    if (ReachDestination(digPoint.position) )
                     {
-                        isDigging = false;
-                        // time to dig
+                        if (TurnCheck(rotatePoint))
+                        {
+                            isDigging = false;
+                            // time to dig
+                            _stage = ExcavatorStage.Dig;
+                        } else
+                        {
+                            if (replay.DigFinished())
+                            {
+                                if (TurnCheck(ogPoint))
+                                {
+                                    break;
+                                }
+                            }
+                            _stage = ExcavatorStage.Rotate;
+                            //rotate to correct angle
+
+                        }
+                    } else
+                    {
+                        //print("NOT NOT");
+                    }
+                    break;
+
+                case ExcavatorStage.Rotate:
+                    print("rotaterotate");
+                    replay.Turn(true);
+                    print("***check turn: ");
+                    if (TurnCheck(rotatePoint))
+                    {
+                        print("time to dig!");
                         _stage = ExcavatorStage.Dig;
                     }
-
                     break;
+
+                case ExcavatorStage.RRotate:
+                    //play replay
+                    replay.TurnR(true);
+                    if (digDone)
+                    {
+                        print("Checking turn digdone: ");
+                        if (TurnCheck(ogPoint))
+                        {
+                            print("dig is done and its time to go back");
+                            _stage = ExcavatorStage.Backward;
+                        }
+                    }
+                    break;
+
+                    
                 case ExcavatorStage.Forward:
-                    //replay.Forward(true);
-                    if (ReachDestination(startPoint.position))
+                    print("FORWARD FORWARD FORWARD");
+                    replay.Forward(true);
+                    if(pt == part.into1)
+                    {
+                        print("into1!!!!!!!!!!!");
+                        if (ReachDestination(deep.position))
+                        {
+                            _stage = ExcavatorStage.Dig;
+                        } else
+                        {
+                            break;
+                        }
+                    }
+                    if(pt == part.into2)
+                    {
+                        if (ReachDestination(deeper.position))
+                        {
+                            _stage = ExcavatorStage.Dig;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    if (ReachDestination(digPoint.position) && pt == part.nextTo)
                     {
                         _stage = ExcavatorStage.Stop;
+                    } else
+                    {
+                        //print("STILL FORWARD");
                     }
 
                     break;
                 case ExcavatorStage.Backward:
-                    if (ReachDestination(digPoint.position))
+                    print("BACK BACK BACK");
+                    dirt.SetActive(false);
+                    replay.Backward(true);
+                    if (ReachDestination(startPoint.position))
                     {
                         _stage = ExcavatorStage.Stop;
                     }
@@ -109,19 +217,37 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case ExcavatorStage.Dig:
+                    //dirt.transform.localScale += scaleChange;
+                    dirt.SetActive(true);
+                    
                     if (!isDigging)
                     {
+                        print("diggin");
                         isDigging = true;
-                        //replay.Dig();
+                        replay.Dig();
                     }
                     else
                     {
-                        if (replay.DigFinished())
+                        if (replay.DigFinished() && !digDone)
                         {
-                            _stage = ExcavatorStage.Forward;
+                            if(pt == part.nextTo)
+                            {
+                                pt = part.into1;
+                                _stage = ExcavatorStage.Forward;
+                                isDigging = false;
+                                break;
+                            }
+                            if (pt == part.into1)
+                            {
+                                pt = part.into2;
+                                _stage = ExcavatorStage.Forward;
+                                isDigging = false;
+                                break;
+                            }
+                            digDone = true;
+                            _stage = ExcavatorStage.RRotate; 
                         }
                     }
-
                     break;
             }
             }
@@ -145,7 +271,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         IEnumerator ExcavatorDig()
         {
-            yield break;
+            Start();
+            return null;
         }
 
         #region Driving Control
@@ -166,6 +293,37 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             return false;
         }
+
+        bool TurnCheck(Transform des) 
+        {
+            
+            Vector3 dirFromAtoB = (endPiece.position - des.position).normalized;
+            float dotProd = Vector3.Dot(dirFromAtoB, endPiece.forward);
+            
+            print(dotProd);
+            if (digDone)
+            {
+                if(dotProd < 0.20)
+                {
+                    return true;
+                } else
+                {
+                    return false;
+                }
+            }
+            
+            
+                if (dotProd > 0.30)
+                {
+                // ObjA is looking mostly towards ObjB
+                print("real");
+                    return true;
+                }
+                //print(dotProd);
+                return false;
+            
+            
+        } 
 
 
         void StopVehicle()
@@ -200,12 +358,16 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             EnableSetting(0);
 
-            StartCoroutine(ExcavatorDig());
+            //StartCoroutine(ExcavatorDig());
+            _stage = ExcavatorStage.Forward;
+            replay.Forward();
         }
 
         public void On_BaselineS7_1_Start()
         {
             moving = true;
+            _stage = ExcavatorStage.Forward;
+            replay.Forward();
         }
 
         public void On_BaselineS7_1_Finish()

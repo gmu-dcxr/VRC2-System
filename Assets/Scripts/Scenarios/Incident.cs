@@ -99,7 +99,8 @@ namespace VRC2.Scenarios
             {
                 if (!started)
                 {
-                    print($"{Scenario} - Incident #{_id} - Start @ {localts}");
+                    //UNCOMMENT AFTER
+                    //print($"{Scenario} - Incident #{_id} - Start @ {localts}");
                     if (OnStart != null)
                     {
                         OnStart(_id);

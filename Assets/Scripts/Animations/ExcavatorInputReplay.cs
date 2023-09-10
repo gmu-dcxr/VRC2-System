@@ -9,16 +9,20 @@ namespace VRC2.Animations
         [Space(30)] [Header("Filename")] public string forwardFile;
         public string backwardFile;
         public string digFile;
-        public string leftFile;
-        public string rightFile;
+        public string turnFile;
+        public string stopFile;
+        public string turnRFile;
+        public string startFile;
 
         #region Traces
 
         private InputEventTrace forwardET;
         private InputEventTrace backwardET;
         private InputEventTrace digET;
-        private InputEventTrace leftET;
-        private InputEventTrace rightET;
+        private InputEventTrace turnET;
+        private InputEventTrace stopET;
+        private InputEventTrace turnRET;
+        private InputEventTrace startET;
 
         #endregion
 
@@ -27,8 +31,10 @@ namespace VRC2.Animations
         private InputEventTrace.ReplayController forwardController;
         private InputEventTrace.ReplayController backwardController;
         private InputEventTrace.ReplayController digController;
-        private InputEventTrace.ReplayController leftController;
-        private InputEventTrace.ReplayController rightController;
+        private InputEventTrace.ReplayController turnController;
+        private InputEventTrace.ReplayController stopController;
+        private InputEventTrace.ReplayController turnRController;
+        private InputEventTrace.ReplayController startController;
 
 
 
@@ -42,8 +48,10 @@ namespace VRC2.Animations
             InitTrace(ref forwardET, forwardFile);
             InitTrace(ref backwardET, backwardFile);
             InitTrace(ref digET, digFile);
-            InitTrace(ref leftET, leftFile);
-            InitTrace(ref rightET, rightFile);
+            InitTrace(ref turnET, turnFile);
+            InitTrace(ref stopET, stopFile);
+            InitTrace(ref turnRET, turnRFile);
+            InitTrace(ref startET, startFile);
         }
 
         public override void InitControllers()
@@ -52,15 +60,17 @@ namespace VRC2.Animations
             forwardController = InitController(ref forwardET, OnFinished, OnEvent);
             backwardController = InitController(ref backwardET, OnFinished, OnEvent);
             digController = InitController(ref digET, OnFinished, OnEvent);
-            leftController = InitController(ref leftET, OnFinished, OnEvent);
-            rightController = InitController(ref rightET, OnFinished, OnEvent);
+            turnController = InitController(ref turnET, OnFinished, OnEvent);
+            turnRController = InitController(ref turnRET, OnFinished, OnEvent);
+            stopController = InitController(ref stopET, OnFinished, OnEvent);
+            startController = InitController(ref startET, OnFinished, OnEvent);
         }
 
         #endregion
 
         private void Start()
         {
-
+            
         }
 
         #region Controllers' callbacks
@@ -79,6 +89,14 @@ namespace VRC2.Animations
 
         #region APIs
 
+        public void Stop()
+        {
+            StartReplay(ref stopController, true);
+            // stop forward and backward if applicable
+            StopReplay(ref forwardController, true);
+            StopReplay(ref backwardController, true);
+        }
+
         public void Forward(bool loop = false)
         {
             StartReplay(ref forwardController, loop: loop);
@@ -89,19 +107,31 @@ namespace VRC2.Animations
             StartReplay(ref backwardController, loop: loop);
         }
 
-        public void Left(bool stop = false, bool loop = false)
+        public void Turn(bool loop = false)
         {
-            StartReplay(ref leftController, loop: loop, stop: stop);
+            StartReplay(ref turnController, loop: loop);
         }
 
-        public void Right(bool stop = false, bool loop = false)
+        public void TurnR(bool loop = false)
         {
-            StartReplay(ref rightController, loop: loop, stop: stop);
+            StartReplay(ref turnRController, loop: loop);
         }
+
+        public void Start(bool loop = false)
+        {
+            StartReplay(ref startController, loop: loop);
+        }
+
+
 
         public void Dig(bool loop = false)
         {
-            StartReplay(ref digController, loop: loop);
+            //StopReplay(ref stopController, true);
+            print("digdig***");
+            //StartReplay(ref digController);
+            StopReplay(ref stopController, true);
+            StartReplay(ref digController);
+
         }
 
         public bool DigFinished()
@@ -119,7 +149,7 @@ namespace VRC2.Animations
         {
             if (GUI.Button(new Rect(10, 10, 100, 50), "Start"))
             {
-                //StartReplay(ref forwardController);
+                StartReplay(ref forwardController);
             }
         }
 
