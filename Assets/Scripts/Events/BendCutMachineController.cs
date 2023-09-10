@@ -87,7 +87,7 @@ namespace VRC2.Events
             no.transform.rotation = pipeOutput.transform.rotation;
             
             // start a new timer to let robot deliver
-            SetTimer(() => { robotDog.PickupResult(no.gameObject); });
+            SetTimer(() => { robotDog.PickupResult(no.gameObject, pipeOutput); });
         }
 
         private void Update()

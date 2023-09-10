@@ -58,13 +58,6 @@ namespace VRC2.Animations
 
         #endregion
 
-        #region Debug Pickup
-
-        [Space(30)] [Header("Debug pipe")] public GameObject debugPipe;
-
-
-        #endregion
-
         #region Compensate rotation when preparing pickup
 
         private Vector3 GetCompensateForward(Transform t)
@@ -101,10 +94,7 @@ namespace VRC2.Animations
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
             recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
-
-            // debug purpose
-            targetTransform = debugPipe.transform;
-            targetGameObject = debugPipe;
+            
         }
 
         private void OnNeedReleasingOnce()
@@ -240,7 +230,7 @@ namespace VRC2.Animations
 
                 case RobotStage.PickupPrepare:
                     // var f1 = targetTransform.forward;
-                    var f1 = GetCompensateForward(targetTransform);
+                    var f1 = GetCompensateForward(targetGameObject.transform);
                     var f2 = robotDog.transform.forward;
 
                     f1.y = 0;
@@ -605,12 +595,14 @@ namespace VRC2.Animations
             return spawnedPipe;
         }
 
-        public void PickupResult(GameObject go)
+        // NOTE: gameobject may be different from the transform, the transform is to mark the destination
+        public void PickupResult(GameObject go, Transform t)
         {
             // move to pick result
             print("pickup result");
             PipeHelper.BeforeMove(ref go);
             targetGameObject = go;
+            targetTransform = t;
             MoveToTarget();
         }
 
