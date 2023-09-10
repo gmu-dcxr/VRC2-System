@@ -28,7 +28,7 @@ namespace VRC2.Animations
         Dropoff = 6,
     }
 
-    public class RobotDogController : MonoBehaviour
+    public class RobotDogController : NetworkBehaviour
     {
         public GameObject robotDog;
         // public GameObject pipe;
@@ -54,7 +54,7 @@ namespace VRC2.Animations
         public Transform bendcutOutput;
         public Transform deliveryPoint;
         public Transform standbyPoint;
-        
+
         private Transform targetTransform;
 
         #endregion
@@ -511,7 +511,8 @@ namespace VRC2.Animations
             parameters.diameter = pm.diameter;
         }
 
-        public void PickUp()
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_PickUp(RpcInfo info = default)
         {
             Debug.Log("Robot PickUp");
 
@@ -526,7 +527,8 @@ namespace VRC2.Animations
 
         public void Execute()
         {
-            PickUp();
+            // PickUp();
+            RPC_PickUp();
         }
 
         public NetworkObject SpawnPipe(PipeBendAngles angle)
@@ -542,15 +544,25 @@ namespace VRC2.Animations
             return spawnedPipe;
         }
 
+        // [Rpc(RpcSources.All, RpcTargets.All)]
+        // private void RPC_PickupResult(GameObject go, Transform t, RpcInfo info = default)
+        // {
+        //     if (info.IsInvokeLocal)
+        //     {
+        //         print("pickup result");
+        //         PipeHelper.BeforeMove(ref go);
+        //     }
+        //
+        //     targetGameObject = go;
+        //     targetTransform = t;
+        //     MoveToTarget();
+        // }
+
         // NOTE: gameobject may be different from the transform, the transform is to mark the destination
         public void PickupResult(GameObject go, Transform t)
         {
             // move to pick result
-            print("pickup result");
-            PipeHelper.BeforeMove(ref go);
-            targetGameObject = go;
-            targetTransform = t;
-            MoveToTarget();
+            // RPC_PickupResult(go, t);
         }
 
         #endregion
