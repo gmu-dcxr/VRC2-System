@@ -76,26 +76,12 @@ namespace VRC2.Animations
             // vector = Quaternion.AngleAxis(-45, Vector3.up) * vector;
             // vector = Quaternion.Euler(0, -45, 0) * vector;
 
-            var y = 0;
+            var forward = t.forward;
 
-            switch (pm.angle)
+            if (pm.angle == PipeBendAngles.Angle_45)
             {
-                case PipeBendAngles.Angle_0:
-                    break;
-                case PipeBendAngles.Angle_45:
-                    y = 90;
-                    break;
-                case PipeBendAngles.Angle_90:
-                    y = 90;
-                    break;
-                case PipeBendAngles.Angle_135:
-                    y = 45;
-                    break;
-                default:
-                    break;
+                forward = Quaternion.Euler(0, 90, 0) * forward;
             }
-
-            var forward = Quaternion.Euler(0, y, 0) * t.forward;
 
             return forward;
         }
