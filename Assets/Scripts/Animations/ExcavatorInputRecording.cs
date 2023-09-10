@@ -5,7 +5,8 @@ namespace VRC2.Animations
 {
 	public class ExcavatorInputRecording : BaseInputRecording
 	{
-
+		[Space(30)]
+		public Transform rotation;
 		#region Self fields
 
 		public ExcavatorScript excavatorScript;
@@ -152,6 +153,11 @@ namespace VRC2.Animations
 		public override void DisposeInputActions()
 		{
 			excavatorIA.Dispose();
+		}
+
+		public float getRotation()
+        {
+			return rotation.localRotation.eulerAngles.x;
 		}
 
 		public override void UpdateLogic()
