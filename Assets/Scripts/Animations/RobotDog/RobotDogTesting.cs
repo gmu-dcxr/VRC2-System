@@ -58,6 +58,13 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region Debug Pickup
+
+        [Space(30)] [Header("Debug pipe")] public GameObject debugPipe;
+        
+
+        #endregion
+
         private void Start()
         {
             stage = RobotStage.Stop;
@@ -68,6 +75,9 @@ namespace VRC2.Animations
             replay.recording = recording;
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
+            
+            // debug purpose
+            targetTransform = debugPipe.transform;
         }
 
         // this is only triggered once
@@ -374,9 +384,9 @@ namespace VRC2.Animations
                 replay.LeftTurn(false);
             }
 
-            if (GUI.Button(new Rect(10, 100, 100, 50), "ResetArm"))
+            if (GUI.Button(new Rect(10, 100, 100, 50), "Pickup Prep"))
             {
-                recording.ResetArm();
+                stage = RobotStage.PickupPrepare;
             }
 
             if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
