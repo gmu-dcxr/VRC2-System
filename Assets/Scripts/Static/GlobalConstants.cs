@@ -215,7 +215,7 @@ namespace VRC2
 
         public static string PipePrefabsPath = "Assets/Prefabs/Pipe/";
         public static GameObject lastSpawnedPipe = null;
-        public static string BendCutRobot = "BendCutRobot";
+        public static string BendCutRobot = "RobotDogController";
 
         #endregion
 

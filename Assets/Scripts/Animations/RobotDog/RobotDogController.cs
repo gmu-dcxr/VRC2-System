@@ -53,7 +53,8 @@ namespace VRC2.Animations
         public Transform bendcutInput;
         public Transform bendcutOutput;
         public Transform deliveryPoint;
-
+        public Transform standbyPoint;
+        
         private Transform targetTransform;
 
         #endregion
@@ -203,6 +204,12 @@ namespace VRC2.Animations
                             stage = RobotStage.Dropoff;
                             droppingoff = false;
                         }
+                        else if (targetTransform == standbyPoint)
+                        {
+                            stage = RobotStage.Stop;
+                            // reset arm
+                            recording.ResetArm();
+                        }
                     }
                     else
                     {
@@ -213,7 +220,7 @@ namespace VRC2.Animations
 
                 case RobotStage.Left:
                     var angle = Math.Abs(GetForwardAngleDiff());
-                    print($"left: {angle}");
+                    // print($"left: {angle}");
                     if (angle < angleThreshold)
                     {
                         // stop and force updating the rotation
@@ -229,7 +236,7 @@ namespace VRC2.Animations
                     break;
                 case RobotStage.Right:
                     angle = Math.Abs(GetForwardAngleDiff());
-                    print($"right: {angle}");
+                    // print($"right: {angle}");
                     if (angle < angleThreshold)
                     {
                         // stop and force updating the rotation
@@ -344,9 +351,9 @@ namespace VRC2.Animations
                         if (replay.DropoffDone())
                         {
                             print("dropoff done");
+                            pickingup = false;
                             // reset arm
                             recording.ResetArm();
-                            pickingup = false;
 
                             if (targetTransform == bendcutInput)
                             {
@@ -365,7 +372,8 @@ namespace VRC2.Animations
                             }
                             else if (targetTransform == deliveryPoint)
                             {
-                                stage = RobotStage.Stop;
+                                targetTransform = standbyPoint;
+                                MoveToTarget();
                             }
                         }
                     }
