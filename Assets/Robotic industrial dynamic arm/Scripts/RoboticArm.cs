@@ -52,7 +52,12 @@ public class RoboticArm : MonoBehaviour
 		get => attachPoint.childCount != 0 && rightYRot <= 150;
 	}
 
-
+	[HideInInspector]
+	public bool needReleasing
+	{
+		get => attachPoint.childCount == 1 && rightYRot >= 180;
+	}
+    
 
 	#endregion
 
