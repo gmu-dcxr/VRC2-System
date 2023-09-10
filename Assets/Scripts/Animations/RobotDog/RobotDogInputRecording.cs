@@ -226,6 +226,18 @@ namespace VRC2.Animations
             }
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_OperateGrip(bool open, float speed, RpcInfo info = default)
+        {
+            if (open)
+            {
+                arm.OpenGrip(speed);
+            }
+            else
+            {
+                arm.CloseGrip(speed);
+            }
+        }
 
 
         #endregion
@@ -309,13 +321,15 @@ namespace VRC2.Animations
                     OnCloseGripOnce();
                 }
 
-                arm.CloseGrip(gripSpeed);
+                // arm.CloseGrip(gripSpeed);
+                RPC_OperateGrip(false, gripSpeed);
             }
 
             if (gripIA.ReadValue<Vector2>().x > 0)
             {
                 onCloseGripped = false;
-                arm.OpenGrip(gripSpeed);
+                // arm.OpenGrip(gripSpeed);
+                RPC_OperateGrip(true, gripSpeed);
                 if (!onNeedReleasing && arm.needReleasing && OnNeedReleasingOnce != null)
                 {
                     onNeedReleasing = true;
