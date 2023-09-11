@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Fusion;
 using UnityEngine.InputSystem;
@@ -92,11 +93,58 @@ namespace VRC2.Animations
         // Update is called once per frame
         void Update()
         {
+            if(Runner == null || !Runner.isActiveAndEnabled) return;
+            
             ControlRobotBody();
             ControlRobotArm();
         }
 
         #region Robot body control
+
+        #region RPC actions
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_Invoke(int index, RpcInfo info = default)
+        {
+            switch (index)
+            {
+                case 0:
+                    actions.Walk();
+                    walk = true;
+                    break;
+                case 1:
+                    actions.TurnLeft();
+                    turn = true;
+                    break;
+                case 2:
+                    actions.TurnRight();
+                    turn = true;
+                    break;
+                case 3:
+                    actions.Walk();
+                    walk = true;
+                    break;
+                case 4:
+                    actions.StrafeLeft();
+                    walk = true;
+                    break;
+                case 5:
+                    actions.StrafeRight();
+                    walk = true;
+                    break;
+                case 6:
+                    walk = false;
+                    turn = false;
+                    actions.Idle1();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+
+        #endregion
 
         void ControlRobotBody()
         {
@@ -106,8 +154,9 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.Walk();
-                    walk = true;
+                    // actions.Walk();
+                    // walk = true;  
+                    RPC_Invoke(0);
                 }
 
                 body.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
@@ -120,8 +169,10 @@ namespace VRC2.Animations
             {
                 if (turn == false)
                 {
-                    actions.TurnLeft();
-                    turn = true;
+                    // actions.TurnLeft();
+                    // turn = true;
+                    //
+                    RPC_Invoke(1);
                 }
 
                 body.Rotate(-1 * Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
@@ -133,8 +184,10 @@ namespace VRC2.Animations
             {
                 if (turn == false)
                 {
-                    actions.TurnRight();
-                    turn = true;
+                    // actions.TurnRight();
+                    // turn = true;
+
+                    RPC_Invoke(2);
                 }
 
                 body.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
@@ -146,8 +199,9 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.Walk();
-                    walk = true;
+                    // actions.Walk();
+                    // walk = true;
+                    RPC_Invoke(3);
                 }
 
                 body.Translate(new Vector3(0, 0, -1) * moveSpeed * Time.deltaTime);
@@ -159,8 +213,10 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.StrafeLeft();
-                    walk = true;
+                    // actions.StrafeLeft();
+                    // walk = true;
+                    RPC_Invoke(4);
+
                 }
 
                 body.Translate(new Vector3(-1, 0, 0) * moveSpeed * Time.deltaTime);
@@ -171,8 +227,10 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.StrafeRight();
-                    walk = true;
+                    // actions.StrafeRight();
+                    // walk = true;
+
+                    RPC_Invoke(5);
                 }
 
                 body.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
@@ -180,9 +238,11 @@ namespace VRC2.Animations
 
             if (stopIA.triggered)
             {
-                walk = false;
-                turn = false;
-                actions.Idle1();
+                // walk = false;
+                // turn = false;
+                // actions.Idle1();
+
+                RPC_Invoke(6);
             }
 
             //No button, go idle
