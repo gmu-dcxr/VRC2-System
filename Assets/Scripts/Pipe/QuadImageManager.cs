@@ -33,15 +33,22 @@ namespace VRC2
             _texture = Resources.Load<Texture2D>(name);
             _texture.alphaIsTransparency = true;
             gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = _texture;
-            
+
             SetTexture(_texture);
-            
+
         }
 
         public void SetTexture(Texture2D texture2D)
         {
             gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = texture2D;
         }
+
+        public void UpdateFolderFilename(string folder, string filename)
+        {
+            this.folder = folder;
+            this.filename = filename;
+        }
+
 
         public void UpdateFilename(string fn)
         {

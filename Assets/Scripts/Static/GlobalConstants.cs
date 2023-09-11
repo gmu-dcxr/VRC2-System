@@ -298,10 +298,11 @@ namespace VRC2
 
         public static string instructionTag = "Instruction";
 
-        public static Texture2D loadTaskInstruction(int start, int end)
+        // texture, folder, filename
+        public static (Texture2D, string, string) loadTaskInstruction(int start, int end)
         {
             var filename = $"T-{start}-{end}";
-            return loadTaskInstruction(filename);
+            return (loadTaskInstruction(filename), instructionImagesResource, filename);
         }
 
         public static Texture2D loadTaskInstruction(string filename)
@@ -313,10 +314,11 @@ namespace VRC2
             return texture;
         }
 
-        public static Texture2D loadTrainingInstruction()
+        // texture, folder, filename
+        public static (Texture2D, string, string) loadTrainingInstruction()
         {
             var filename = "Training";
-            return loadTaskInstruction(filename);
+            return (loadTaskInstruction(filename), instructionImagesResource, filename);
         }
 
         #endregion
