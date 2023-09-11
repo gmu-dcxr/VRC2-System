@@ -96,7 +96,7 @@ namespace VRC2.Animations
 
         private void Start()
         {
-            stage = RobotStage.Stop;
+            stage = RobotStage.Default;
 
             // set arm reference
             replay.arm = recording.arm;
