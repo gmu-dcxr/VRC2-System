@@ -75,7 +75,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             clockWise = false;
 
             SetActiveness(true, false);
-            
+
             // override cargo to avoid error
             recording.backupCargo = pipeStack;
         }
@@ -261,6 +261,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             Reset();
             ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
@@ -303,6 +304,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             Reset();
             ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
@@ -341,6 +343,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             Reset();
             ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
@@ -366,6 +369,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             Reset();
             ResetCraneRotation(startAngle);
+            ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();

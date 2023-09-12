@@ -186,19 +186,21 @@ namespace VRC2.Scenarios
             UpdateWallBoxes(s, e);
 
             Texture2D texture = null;
+            string folder = "";
+            string filename = "";
 
 
             if (isTraining)
             {
-                texture = GlobalConstants.loadTrainingInstruction();
+                (texture, folder, filename) = GlobalConstants.loadTrainingInstruction();
             }
             else
             {
-                texture = GlobalConstants.loadTaskInstruction(s, e);
+                (texture, folder, filename) = GlobalConstants.loadTaskInstruction(s, e);
             }
 
             UpdateInstructionPanel(texture);
-            UpdateWallBackground(texture);
+            UpdateWallBackground(texture, folder, filename);
         }
 
         void UpdateInstructionPanel(Texture2D texture)
@@ -207,10 +209,11 @@ namespace VRC2.Scenarios
             qim.SetTexture(texture);
         }
 
-        void UpdateWallBackground(Texture2D texture)
+        void UpdateWallBackground(Texture2D texture, string folder, string filename)
         {
             var qim = GameObject.FindWithTag(GlobalConstants.wallTag).GetComponent<QuadImageManager>();
             qim.SetTexture(texture);
+            qim.UpdateFolderFilename(folder, filename);
         }
 
         void UpdateWallBoxes(int s, int e)

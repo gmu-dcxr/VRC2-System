@@ -1,4 +1,8 @@
 ﻿using UnityEngine;
+using VRC2.Animations;
+using WSMGameStudio.HeavyMachinery;
+using WSMGameStudio.Vehicles;
+using static VRC2.Scenarios.ScenarioFactory.BaselineS7;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
@@ -8,9 +12,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [Header("Forklift")] public CustomForkLiftController customForkLiftController;
 
-
         [Header("Hammer")] public HammerController hammerController;
-        
+
+
+
         private void Start()
         {
             base.Start();

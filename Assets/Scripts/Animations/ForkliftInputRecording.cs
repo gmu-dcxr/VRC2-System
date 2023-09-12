@@ -88,6 +88,12 @@ namespace VRC2.Animations
                 vehicleController.SteeringInput = -1f;
                 vehicleController.BrakesInput = 0f;
             }
+            //move straight
+            if (move.ReadValue<Vector2>().x == 0)
+            {
+                vehicleController.SteeringInput = 0f;
+                vehicleController.BrakesInput = 0f;
+            }
             //stop move
             if (move.ReadValue<Vector2>().x == 0 && move.ReadValue<Vector2>().y == 0)
             {

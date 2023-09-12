@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using VRC2.Authority;
 using VRC2.Pipe;
 
 namespace VRC2.Animations
@@ -8,52 +9,26 @@ namespace VRC2.Animations
     {
         [Header("Attachment")] public GameObject attachPoint;
 
-        private GameObject attached;
-
-        private void Start()
+        void OnTriggerEnterAndStay(Collider other)
         {
-            attached = null;
-        }
-
-        private void Update()
-        {
-            if (attached != null)
+            var pipeTag = GlobalConstants.pipeObjectTag;
+            var go = other.gameObject;
+            if (attachPoint.transform.childCount == 0 && go.CompareTag(pipeTag))
             {
-                // force update the local transformation
-                attached.transform.localPosition = Vector3.zero;
-                attached.transform.localRotation = Quaternion.identity;
+                var root = PipeHelper.GetRoot(go);
+                root.transform.parent = attachPoint.transform;
+                root.transform.localPosition = Vector3.zero;
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            var pipeTag = GlobalConstants.pipeObjectTag;
-            var go = other.gameObject;
-            if (go.CompareTag(pipeTag))
-            {
-                var flag = PipeHelper.IsSimpleStraightNotcutPipe(go);
-                if (flag)
-                {
-                    var root = PipeHelper.GetRoot(go);
-                    root.GetComponent<Rigidbody>().useGravity = false;
-                    root.transform.parent = attachPoint.transform;
-                    attached = root;
-                }
-            }
+            OnTriggerEnterAndStay(other);
         }
 
-        private void OnTriggerExit(Collider other)
+        private void OnTriggerStay(Collider other)
         {
-            var pipeTag = GlobalConstants.pipeObjectTag;
-            if (other.gameObject.CompareTag(pipeTag))
-            {
-                if (attached != null)
-                {
-                    attached.transform.parent = null;
-                    attached.GetComponent<Rigidbody>().useGravity = true;
-                    attached = null;   
-                }
-            }
+            OnTriggerEnterAndStay(other);
         }
     }
 }

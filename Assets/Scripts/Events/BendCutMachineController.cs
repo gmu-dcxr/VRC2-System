@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using UnityEngine;
+using VRC2.Animations;
 using VRC2.Pipe;
 
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -11,21 +12,16 @@ namespace VRC2.Events
 {
     public class BendCutMachineController : BaseEvent
     {
-        [Header("Markers")] public Transform robotStop;
-        public Transform pipeInput;
-        public Transform pipeOutput;
-        public Transform delivery;
-
         [Header("Monitor")] public QuadImageManager imageManager;
         public AudioSource audioSource;
 
-        [Header("Executor")] public RobotBendCut robotBendCut;
+        [Header("RobotDog")] public RobotDogController robotDog;
         public float duration = 5.0f;
-        
+
         [Header("Error")] public bool enableError = false;
 
         private PipeBendAngles _angle;
-        
+
         private Timer _timer;
 
         // for generating wrong pipe (angle only)
@@ -34,7 +30,7 @@ namespace VRC2.Events
         private void Start()
         {
             random = new Random();
-            robotBendCut.ReadyToOperate += OnReadyToOperate;
+            robotDog.ReadyToOperate += OnReadyToOperate;
         }
 
         private void OnReadyToOperate(PipeBendAngles angle)
@@ -50,14 +46,19 @@ namespace VRC2.Events
             // play noise 
             audioSource.Play();
 
+            var pipeInput = robotDog.bendcutInput;
+
             // update pipe
             var pipe = GlobalConstants.lastSpawnedPipe;
             pipe.transform.position = pipeInput.position;
             pipe.transform.rotation = pipeInput.rotation;
             pipe.transform.parent = null;
+            
+            // update current pipe
+            robotDog.currentPipe = pipe;
 
             RPC_SendMessage(_angle);
-            
+
             // start timer
             SetTimer(SpawnPipe);
         }
@@ -73,21 +74,20 @@ namespace VRC2.Events
         }
 
         void SpawnPipe()
-        {   
+        {
             // stop noise
             audioSource.Stop();
+
+            var pipeOutput = robotDog.bendcutOutput;
             
             // spawn pipe
-            var no = robotBendCut.SpawnPipe(_angle);
+            var no = robotDog.SpawnPipe(_angle);
             // update spawned pipe transform
             no.transform.position = pipeOutput.transform.position;
             no.transform.rotation = pipeOutput.transform.rotation;
             
             // start a new timer to let robot deliver
-            SetTimer(() =>
-            {
-                robotBendCut.PickupResult(pipeOutput.position);
-            });
+            SetTimer(() => { robotDog.PickupResult(no.gameObject, pipeOutput); });
         }
 
         private void Update()
@@ -112,7 +112,7 @@ namespace VRC2.Events
             var s = Utils.GetDisplayName<PipeBendAngles>(angle);
             return s.Split('_')[1];
         }
-        
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(PipeBendAngles angle, RpcInfo info = default)
         {

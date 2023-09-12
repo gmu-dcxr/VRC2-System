@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using VRC2.Animations;
 using VRC2.Events;
 using VRC2.Pipe;
 
@@ -509,7 +510,7 @@ namespace VRC2
             add.Execute();
         }
 
-        public void Simulate_SpawnPipe()
+        public void Simulate_SpawnPipe(Transform point)
         {
             PipeConstants.PipeParameters para = new PipeConstants.PipeParameters();
             para.diameter = PipeConstants.PipeDiameter.Diameter_1;
@@ -523,6 +524,9 @@ namespace VRC2
             var no = runner.Spawn(prefab);
             // set global select pipe
             GlobalConstants.lastSpawnedPipe = no.gameObject;
+
+            no.gameObject.transform.position = point.position;
+            no.gameObject.transform.rotation = point.rotation;
         }
 
         public void Simulate_RobotBendCut()
@@ -533,7 +537,9 @@ namespace VRC2
                 return;
             }
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
-            var rbc = go.GetComponent<RobotBendCut>();
+            var rbc = go.GetComponent<RobotDogController>();
+            // update current pipe
+            rbc.currentPipe = GlobalConstants.lastSpawnedPipe;
             rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);
             rbc.Execute();
         }

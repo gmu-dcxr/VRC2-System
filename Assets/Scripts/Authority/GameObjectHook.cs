@@ -6,6 +6,8 @@ namespace VRC2.Authority
     public class GameObjectHook : AuthorityHook
     {
 
+        [Space(30)] public bool defaultValue = true;
+        
         public override void DisableP1()
         {
             gameObject.SetActive(false);
@@ -18,7 +20,7 @@ namespace VRC2.Authority
 
         public override void Default()
         {
-            gameObject.SetActive(true);
+            gameObject.SetActive(defaultValue);
         }
     }
 }
