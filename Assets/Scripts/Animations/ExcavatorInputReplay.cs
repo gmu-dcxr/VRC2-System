@@ -13,6 +13,7 @@ namespace VRC2.Animations
         public string stopFile;
         public string turnRFile;
         public string startFile;
+        public string dumpFile;
 
         #region Traces
 
@@ -23,6 +24,7 @@ namespace VRC2.Animations
         private InputEventTrace stopET;
         private InputEventTrace turnRET;
         private InputEventTrace startET;
+        private InputEventTrace dumpET;
 
         #endregion
 
@@ -35,6 +37,7 @@ namespace VRC2.Animations
         private InputEventTrace.ReplayController stopController;
         private InputEventTrace.ReplayController turnRController;
         private InputEventTrace.ReplayController startController;
+        private InputEventTrace.ReplayController dumpController;
 
 
 
@@ -52,6 +55,7 @@ namespace VRC2.Animations
             InitTrace(ref stopET, stopFile);
             InitTrace(ref turnRET, turnRFile);
             InitTrace(ref startET, startFile);
+            InitTrace(ref dumpET, dumpFile);
         }
 
         public override void InitControllers()
@@ -64,6 +68,7 @@ namespace VRC2.Animations
             turnRController = InitController(ref turnRET, OnFinished, OnEvent);
             stopController = InitController(ref stopET, OnFinished, OnEvent);
             startController = InitController(ref startET, OnFinished, OnEvent);
+            dumpController = InitController(ref dumpET, OnFinished, OnEvent);
         }
 
         #endregion
@@ -122,6 +127,11 @@ namespace VRC2.Animations
             StartReplay(ref startController, loop: loop);
         }
 
+        public void Dump(bool loop = false)
+        {
+            StartReplay(ref dumpController, loop: loop);
+        }
+
 
 
         public void Dig(bool loop = false)
@@ -137,6 +147,11 @@ namespace VRC2.Animations
         public bool DigFinished()
         {
             return IsFinished(ref digController, true);
+        }
+
+        public bool DumpDone()
+        {
+            return IsFinished(ref dumpController, true);
         }
 
 

@@ -17,6 +17,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject excav;
         public GameObject dirt;
         public Transform endPiece;
+        public Transform spawn;
 
         internal enum ExcavatorStage
         {
@@ -26,6 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             Dig = 3,
             Rotate = 4,
             RRotate = 5,
+            Dump = 6,
         }
 
         internal enum part
@@ -95,29 +97,29 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public Vector3 scaleChange = new Vector3(1.0f, 1.0f, 1.0f);
 
+        public bool dump = false;
+
 
 
 
         private void Start()
         {
-            //replay.Start();
             base.Start();
             pt = part.nextTo;
+            dirt.transform.SetParent(endPiece);
+            dirt.GetComponent<Rigidbody>().useGravity = false;
+            dirt.GetComponent<Rigidbody>().isKinematic = false;
+            dirt.GetComponent<MeshCollider>().convex = false;
             _stage = ExcavatorStage.Stop;
-            // destinationPos = destination.transform.position;
         }
 
         private void Update()
         {
             var angle = Math.Abs(recording.getRotation() - endAngle);
-            //print(angle);
             
             switch (_stage)
             {
                 case ExcavatorStage.Stop:
-                    //replay.Stop();
-                    //print("STOP STOP STOP");
-                    //dirt.transform.localScale -= scaleChange;
                     dirt.SetActive(false);
                     if (ReachDestination(digPoint.position) )
                     {
@@ -136,13 +138,9 @@ namespace VRC2.Scenarios.ScenarioFactory
                                 }
                             }
                             _stage = ExcavatorStage.Rotate;
-                            //rotate to correct angle
-
                         }
-                    } else
-                    {
-                        //print("NOT NOT");
                     }
+
                     break;
 
                 case ExcavatorStage.Rotate:
@@ -156,21 +154,53 @@ namespace VRC2.Scenarios.ScenarioFactory
                     }
                     break;
 
+                case ExcavatorStage.Dump:
+                    print("DUMPERRR");
+                    dirtCheck();
+                    replay.Dump(true);
+                    if (replay.DumpDone())
+                    {
+                        if (pt == part.nextTo)
+                        {
+                            pt = part.into1;
+                            _stage = ExcavatorStage.Forward;
+                            dump = false;
+                            isDigging = false;
+                            break;
+                        }
+                        if (pt == part.into1)
+                        {
+                            pt = part.into2;
+                            _stage = ExcavatorStage.Forward;
+                            dump = false;
+                            isDigging = false;
+                            break;
+                        }
+                        digDone = true;
+                        _stage = ExcavatorStage.Backward;
+                    }
+
+                    break;
+
                 case ExcavatorStage.RRotate:
                     //play replay
                     replay.TurnR(true);
-                    if (digDone)
+                    print("Checking turn digdone: ");
+                    if (TurnCheck(ogPoint))
                     {
-                        print("Checking turn digdone: ");
-                        if (TurnCheck(ogPoint))
+                        if (digDone)
                         {
                             print("dig is done and its time to go back");
                             _stage = ExcavatorStage.Backward;
+                        } else
+                        {
+                            _stage = ExcavatorStage.Dump;
+                            //dump time
                         }
                     }
+                    
                     break;
 
-                    
                 case ExcavatorStage.Forward:
                     print("FORWARD FORWARD FORWARD");
                     replay.Forward(true);
@@ -179,7 +209,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                         print("into1!!!!!!!!!!!");
                         if (ReachDestination(deep.position))
                         {
-                            _stage = ExcavatorStage.Dig;
+                            _stage = ExcavatorStage.Rotate;
+                            //_stage = ExcavatorStage.Dig;
                         } else
                         {
                             break;
@@ -189,7 +220,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                     {
                         if (ReachDestination(deeper.position))
                         {
-                            _stage = ExcavatorStage.Dig;
+                            //_stage = ExcavatorStage.Dig;
+                            _stage = ExcavatorStage.Rotate;
                         }
                         else
                         {
@@ -199,15 +231,12 @@ namespace VRC2.Scenarios.ScenarioFactory
                     if (ReachDestination(digPoint.position) && pt == part.nextTo)
                     {
                         _stage = ExcavatorStage.Stop;
-                    } else
-                    {
-                        //print("STILL FORWARD");
                     }
-
                     break;
+
                 case ExcavatorStage.Backward:
                     print("BACK BACK BACK");
-                    dirt.SetActive(false);
+                    //dirt.SetActive(false);
                     replay.Backward(true);
                     if (ReachDestination(startPoint.position))
                     {
@@ -217,35 +246,21 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case ExcavatorStage.Dig:
-                    //dirt.transform.localScale += scaleChange;
-                    dirt.SetActive(true);
-                    
+                    //dirt.SetActive(true);
+                    dirtCheck();
                     if (!isDigging)
                     {
                         print("diggin");
                         isDigging = true;
                         replay.Dig();
-                    }
-                    else
-                    {
+
+                    } else {
                         if (replay.DigFinished() && !digDone)
                         {
-                            if(pt == part.nextTo)
-                            {
-                                pt = part.into1;
-                                _stage = ExcavatorStage.Forward;
-                                isDigging = false;
-                                break;
-                            }
-                            if (pt == part.into1)
-                            {
-                                pt = part.into2;
-                                _stage = ExcavatorStage.Forward;
-                                isDigging = false;
-                                break;
-                            }
-                            digDone = true;
-                            _stage = ExcavatorStage.RRotate; 
+                            //done digging- rotate to dump
+                            dump = true;
+                            _stage = ExcavatorStage.RRotate;
+         
                         }
                     }
                     break;
@@ -301,8 +316,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             float dotProd = Vector3.Dot(dirFromAtoB, endPiece.forward);
             
             print(dotProd);
-            if (digDone)
+            if (digDone || dump)
             {
+                //straight ahead angle
                 if(dotProd < 0.20)
                 {
                     return true;
@@ -315,6 +331,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             
                 if (dotProd > 0.30)
                 {
+                //dig spot
                 // ObjA is looking mostly towards ObjB
                 print("real");
                     return true;
@@ -324,6 +341,57 @@ namespace VRC2.Scenarios.ScenarioFactory
             
             
         } 
+
+        void dirtCheck() {  
+            //if piece over x high - drop
+            if(endPiece.transform.position.y > 7.5f)
+            {
+                dirt.transform.SetParent(null);
+                dirt.GetComponent<Rigidbody>().useGravity = true;
+                dirt.GetComponent<MeshCollider>().convex = true;
+                //dirt.GetComponent<Rigidbody>().isKinematic = true;
+                return;
+            }
+            //if under x - spawn in
+            if (pt == part.into1 || pt == part.into2)
+            {
+                if (endPiece.transform.position.y < 0.50)
+                {
+
+                    
+                    dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
+                    dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
+                    //dirt.transform.rotation = Quaternion.Euler(75.0f, -100.0f, 175.0f);
+                    dirt.transform.SetParent(endPiece);
+                    dirt.GetComponent<Rigidbody>().useGravity = false;
+                    dirt.GetComponent<Rigidbody>().isKinematic = false;
+                    dirt.GetComponent<MeshCollider>().convex = false;
+                    dirt.GetComponent<MeshCollider>().convex = false;
+
+                    dirt.SetActive(true);
+                    return;
+                }
+            } else
+            {
+                if (endPiece.transform.position.y < 0)
+                {
+
+                    
+                    dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
+                    dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
+                    //dirt.transform.rotation = Quaternion.Euler(-254.0f, 85.0f, 2.0f);
+                    dirt.transform.SetParent(endPiece);
+                    dirt.GetComponent<Rigidbody>().useGravity = false;
+                    dirt.GetComponent<Rigidbody>().isKinematic = false;
+                    dirt.GetComponent<MeshCollider>().convex = false;
+                    dirt.GetComponent<MeshCollider>().convex = false;
+
+                    dirt.SetActive(true);
+                    return;
+                }
+            }
+        
+        }
 
 
         void StopVehicle()
