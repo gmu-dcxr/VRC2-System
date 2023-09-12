@@ -15,15 +15,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Header("Hammer")] public HammerController hammerController;
 
 
-        [Space(30)]
-        [Header("Recording/Replay")]
-        public GameObject forklift;
-
-        public ForkliftInputRecording recording;
-
-
-        public ForkliftInputReplay replay;
-
 
         private void Start()
         {
