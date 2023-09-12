@@ -18,6 +18,12 @@ public class Actions : MonoBehaviour {
 	{
 		animator.SetBool ("Idle1", true);
 	}
+
+	public bool IsIdle()
+	{
+		return animator.GetBool("Idle1");
+	}
+	
 	public void Idle2()
 	{
 		animator.SetBool ("Idle2", true);

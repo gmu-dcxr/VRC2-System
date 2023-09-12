@@ -16,16 +16,24 @@ namespace VRC2.Scenarios
             UpLift = 2,
             Back = 3,
             DownLift = 4,
+            Right = 5,
+            Left = 6,
         }
 
         public GameObject forklift;
         public GameObject good;
         public Transform destination;
+        public Transform turn;
+        public Transform turnEnd;
 
         private WSMVehicleController _vehicleController;
         private ForkliftController _forkliftController;
 
         private Vector3 destinationPos;
+
+        private Vector3 turnPos;
+
+        private Vector3 turnEndPos;
 
         private Vector3 startPos;
         private Quaternion startRotation;
@@ -34,7 +42,7 @@ namespace VRC2.Scenarios
         private Quaternion goodStartRotation;
 
         private WorkStage _stage;
-        private float liftHeightThreshold = 0.5f;
+        private float liftHeightThreshold = 0.65f;
 
         private bool moving = false;
         private float distanceThreshold = 3.0f;
@@ -50,6 +58,8 @@ namespace VRC2.Scenarios
             startPos = forklift.transform.position;
             startRotation = forklift.transform.rotation;
             destinationPos = destination.transform.position;
+            turnPos = turn.transform.position;
+            turnEndPos = turnEnd.transform.position;
 
             goodStartPos = good.transform.position;
             goodStartRotation = good.transform.rotation;
@@ -70,7 +80,7 @@ namespace VRC2.Scenarios
                 case WorkStage.UpLift:
                     if (ReachedLiftHeight(true))
                     {
-                        _stage = WorkStage.Forward;
+                        _stage = WorkStage.Back;
                     }
                     else
                     {
@@ -91,9 +101,39 @@ namespace VRC2.Scenarios
 
                     break;
                 case WorkStage.Back:
+                    if (ReachedTurn(true))
+                    {
+                        _stage = WorkStage.Left;
+                    }
+                    else
+                    {
+                        MoveForward(false);
+                    }
 
                     break;
                 case WorkStage.DownLift:
+                    break;
+                case WorkStage.Right:
+                    if (ReachedTurnEnd(true))
+                    {
+                        _stage = WorkStage.Forward;
+                    }
+                    else
+                    {
+                        TurnRightReversed(true);
+                    }
+
+                    break;
+                case WorkStage.Left:
+                    if (ReachedTurnEnd(true))
+                    {
+                        _stage = WorkStage.Forward;
+                    }
+                    else
+                    {
+                        TurnRightReversed(false);
+                    }
+
                     break;
             }
         }
@@ -155,6 +195,48 @@ namespace VRC2.Scenarios
             return false;
         }
 
+        bool ReachedTurn(bool _forward)
+        {
+            var d = turnPos; // forward
+            if (!_forward)
+            {
+                d = startPos; // back
+            }
+
+            // ignore y distance
+            var t = forklift.transform.position;
+            d.y = t.y;
+            var distance = Vector3.Distance(t, d);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        bool ReachedTurnEnd(bool _forward)
+        {
+            var d = turnEndPos; // forward
+            if (!_forward)
+            {
+                d = startPos; // back
+            }
+
+            // ignore y distance
+            var t = forklift.transform.position;
+            d.y = t.y;
+            var distance = Vector3.Distance(t, d);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         bool ReachedLiftHeight(bool up)
         {
             if (up)
@@ -185,16 +267,34 @@ namespace VRC2.Scenarios
 
         void MoveForward(bool forward)
         {
-            var _acceleration = 1.0f;
+            var _acceleration = 0.5f;
             if (!forward)
             {
-                _acceleration = -1.0f;
+                _acceleration = -0.5f;
             }
             _vehicleController.BrakesInput = 0;
             _vehicleController.HandBrakeInput = 0;
             _vehicleController.ClutchInput = 0;
-            
+            _vehicleController.SteeringInput = 0;
+
             _vehicleController.AccelerationInput = _acceleration;
+        }
+
+        void TurnRightReversed(bool Right)
+        {
+            var _acceleration = -0.25f;
+            var _steering = 1.0f;
+            if (!Right)
+            {
+                _steering = -1.0f;
+            }
+            _vehicleController.BrakesInput = 0;
+            _vehicleController.HandBrakeInput = 0;
+            _vehicleController.ClutchInput = 0;
+            _vehicleController.SteeringInput = 0;
+
+            _vehicleController.AccelerationInput = _acceleration;
+            _vehicleController.SteeringInput = _steering;
         }
 
         public void Animate()

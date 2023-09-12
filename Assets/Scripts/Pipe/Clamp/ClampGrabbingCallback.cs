@@ -35,7 +35,8 @@ namespace VRC2.Events
 
         private void OnSelect()
         {
-            clampManipulation.SetKinematic(false);
+            // make it not drop
+            clampManipulation.SetKinematic(true);
             // reset
             clampManipulation.collidingWall = false;
             clampManipulation.compensated = false;
@@ -43,7 +44,10 @@ namespace VRC2.Events
 
         private void OnRelease()
         {
-            
+            if (!clampManipulation.collidingWall)
+            {
+                clampManipulation.SetKinematic(false);
+            }
         }
     }
 }

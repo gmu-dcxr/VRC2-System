@@ -1,14 +1,17 @@
+using System;
+using System.Diagnostics;
+using Fusion;
 using UnityEngine.InputSystem;
 using UnityEngine;
+using VRC2.Events;
 
 namespace VRC2.Animations
 {
     public class RobotDogInputRecording : BaseInputRecording
     {
 
-        [Space(30)]
-        public string filename = "robotdogpickup";
-        
+        [Space(30)] public string filename = "robotdogpickup";
+
         [Space(30)] [Header("Body")]
         //Movement
         public float moveSpeed = 1f;
@@ -46,6 +49,14 @@ namespace VRC2.Animations
         private InputAction d3IA;
         private InputAction gripIA;
 
+        public System.Action OnCloseGripOnce;
+        public System.Action OnNeedReleasingOnce;
+
+        private bool onCloseGripped = false;
+        private bool onNeedReleasing = false;
+
+        [HideInInspector] public bool forceStop = false;
+
         public override void InitInputActions()
         {
             inputActions = new RobotDogInputActions();
@@ -82,11 +93,58 @@ namespace VRC2.Animations
         // Update is called once per frame
         void Update()
         {
+            if(Runner == null || !Runner.isActiveAndEnabled) return;
+            
             ControlRobotBody();
             ControlRobotArm();
         }
 
         #region Robot body control
+
+        #region RPC actions
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_Invoke(int index, RpcInfo info = default)
+        {
+            switch (index)
+            {
+                case 0:
+                    actions.Walk();
+                    walk = true;
+                    break;
+                case 1:
+                    actions.TurnLeft();
+                    turn = true;
+                    break;
+                case 2:
+                    actions.TurnRight();
+                    turn = true;
+                    break;
+                case 3:
+                    actions.Walk();
+                    walk = true;
+                    break;
+                case 4:
+                    actions.StrafeLeft();
+                    walk = true;
+                    break;
+                case 5:
+                    actions.StrafeRight();
+                    walk = true;
+                    break;
+                case 6:
+                    walk = false;
+                    turn = false;
+                    actions.Idle1();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+
+        #endregion
 
         void ControlRobotBody()
         {
@@ -96,8 +154,9 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.Walk();
-                    walk = true;
+                    // actions.Walk();
+                    // walk = true;  
+                    RPC_Invoke(0);
                 }
 
                 body.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
@@ -110,8 +169,10 @@ namespace VRC2.Animations
             {
                 if (turn == false)
                 {
-                    actions.TurnLeft();
-                    turn = true;
+                    // actions.TurnLeft();
+                    // turn = true;
+                    //
+                    RPC_Invoke(1);
                 }
 
                 body.Rotate(-1 * Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
@@ -123,8 +184,10 @@ namespace VRC2.Animations
             {
                 if (turn == false)
                 {
-                    actions.TurnRight();
-                    turn = true;
+                    // actions.TurnRight();
+                    // turn = true;
+
+                    RPC_Invoke(2);
                 }
 
                 body.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
@@ -136,8 +199,9 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.Walk();
-                    walk = true;
+                    // actions.Walk();
+                    // walk = true;
+                    RPC_Invoke(3);
                 }
 
                 body.Translate(new Vector3(0, 0, -1) * moveSpeed * Time.deltaTime);
@@ -149,8 +213,10 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.StrafeLeft();
-                    walk = true;
+                    // actions.StrafeLeft();
+                    // walk = true;
+                    RPC_Invoke(4);
+
                 }
 
                 body.Translate(new Vector3(-1, 0, 0) * moveSpeed * Time.deltaTime);
@@ -161,8 +227,10 @@ namespace VRC2.Animations
             {
                 if (walk == false)
                 {
-                    actions.StrafeRight();
-                    walk = true;
+                    // actions.StrafeRight();
+                    // walk = true;
+
+                    RPC_Invoke(5);
                 }
 
                 body.Translate(new Vector3(1, 0, 0) * moveSpeed * Time.deltaTime);
@@ -170,9 +238,11 @@ namespace VRC2.Animations
 
             if (stopIA.triggered)
             {
-                walk = false;
-                turn = false;
-                actions.Idle1();
+                // walk = false;
+                // turn = false;
+                // actions.Idle1();
+
+                RPC_Invoke(6);
             }
 
             //No button, go idle
@@ -187,7 +257,61 @@ namespace VRC2.Animations
             // }
         }
 
+        public bool IsIdle()
+        {
+            return actions.IsIdle();
+        }
+
         #endregion
+
+        #region RPC actions to change to arm
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_RotatePart(int index, float angle, RpcInfo info = default)
+        {
+            switch (index)
+            {
+                case 0:
+                    arm.rotatePart0(angle);
+                    break;
+                case 1:
+                    arm.rotatePart1(angle);
+                    break;
+                case 2:
+                    arm.rotatePart2(angle);
+                    break;
+                case 3:
+                    arm.rotatePart3(angle);
+                    break;
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_OperateGrip(bool open, float speed, RpcInfo info = default)
+        {
+            if (open)
+            {
+                arm.OpenGrip(speed);
+            }
+            else
+            {
+                arm.CloseGrip(speed);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_ResetArm(RpcInfo info = default)
+        {
+            angle0 = 0.0f;
+            angle1 = 0.0f;
+            angle2 = 0.0f;
+            angle3 = 0.25f;
+            arm.ResetRotations();
+        }
+
+
+        #endregion
+
 
         #region Control robot arm
 
@@ -197,70 +321,102 @@ namespace VRC2.Animations
             if (d0IA.ReadValue<Vector2>().x > 0)
             {
                 angle0 += armRotateSpeed;
-                arm.rotatePart0(angle0);
+                // arm.rotatePart0(angle0);
+                RPC_RotatePart(0, angle0);
             }
 
             //part0 down
             if (d0IA.ReadValue<Vector2>().x < 0)
             {
                 angle0 -= armRotateSpeed;
-                arm.rotatePart0(angle0);
+                // arm.rotatePart0(angle0);
+                RPC_RotatePart(0, angle0);
             }
 
             //part1 up
             if (d1IA.ReadValue<Vector2>().x > 0)
             {
                 angle1 += armRotateSpeed;
-                arm.rotatePart1(angle1);
+                // arm.rotatePart1(angle1);
+                RPC_RotatePart(1, angle1);
             }
 
             //part1 down
             if (d1IA.ReadValue<Vector2>().x < 0)
             {
                 angle1 -= armRotateSpeed;
-                arm.rotatePart1(angle1);
+                // arm.rotatePart1(angle1);
+                RPC_RotatePart(1, angle1);
             }
 
             //part2 up
             if (d2IA.ReadValue<Vector2>().x > 0)
             {
                 angle2 += armRotateSpeed;
-                arm.rotatePart2(angle2);
+                // arm.rotatePart2(angle2);
+                RPC_RotatePart(2, angle2);
             }
 
             //part2 down
             if (d2IA.ReadValue<Vector2>().x < 0)
             {
                 angle2 -= armRotateSpeed;
-                arm.rotatePart2(angle2);
+                // arm.rotatePart2(angle2);
+                RPC_RotatePart(2, angle2);
             }
 
             //part3 up
             if (d3IA.ReadValue<Vector2>().x > 0)
             {
                 angle3 += armRotateSpeed;
-                arm.rotatePart3(angle3);
+                // arm.rotatePart3(angle3);
+                RPC_RotatePart(3, angle3);
             }
 
             //part3 down
             if (d3IA.ReadValue<Vector2>().x < 0)
             {
                 angle3 -= armRotateSpeed;
-                arm.rotatePart3(angle3);
+                // arm.rotatePart3(angle3);
+                RPC_RotatePart(3, angle3);
             }
 
             // grip
             if (gripIA.ReadValue<Vector2>().x < 0)
             {
-                arm.CloseGrip(gripSpeed);
+                onNeedReleasing = false;
+                if (!onCloseGripped && OnCloseGripOnce != null)
+                {
+                    onCloseGripped = true;
+                    OnCloseGripOnce();
+                }
+
+                // arm.CloseGrip(gripSpeed);
+                RPC_OperateGrip(false, gripSpeed);
             }
 
             if (gripIA.ReadValue<Vector2>().x > 0)
             {
-                arm.OpenGrip(gripSpeed);
+                onCloseGripped = false;
+                // arm.OpenGrip(gripSpeed);
+                RPC_OperateGrip(true, gripSpeed);
+                if (!onNeedReleasing && arm.needReleasing && OnNeedReleasingOnce != null)
+                {
+                    onNeedReleasing = true;
+                    OnNeedReleasingOnce();
+                }
             }
         }
 
+        public void ResetArm()
+        {
+            // angle0 = 0.0f;
+            // angle1 = 0.0f;
+            // angle2 = 0.0f;
+            // angle3 = 0.25f;
+            // arm.ResetRotations();
+            RPC_ResetArm();
+        }
 
 
         #endregion

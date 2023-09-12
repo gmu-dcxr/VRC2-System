@@ -209,17 +209,20 @@ namespace VRC2
         {
             if (isSimplePipe && !heldByController)
             {
-                if (ShouldFall())
+                if (_rigidbody != null)
                 {
-                    _rigidbody.isKinematic = false;
-                    // make it interactable
-                    SetInteractable(true);
-                }
-                else
-                {
-                    _rigidbody.isKinematic = true;
-                    // make it not interactable
-                    SetInteractable(false);
+                    if (ShouldFall())
+                    {
+                        _rigidbody.isKinematic = false;
+                        // make it interactable
+                        SetInteractable(true);
+                    }
+                    else
+                    {
+                        _rigidbody.isKinematic = true;
+                        // make it not interactable
+                        SetInteractable(false);
+                    }
                 }
             }
         }

@@ -3,9 +3,10 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using System.IO;
+using Fusion;
 using UnityEngine.Serialization;
 
-public class BaseInputRecording : MonoBehaviour
+public class BaseInputRecording : NetworkBehaviour
 {
 
 	#region Buttons
