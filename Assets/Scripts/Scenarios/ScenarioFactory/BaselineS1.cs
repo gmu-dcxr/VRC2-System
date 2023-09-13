@@ -218,8 +218,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
+            // ResetCraneRotation(startAngle);
+            // ResetBoomCart(startBoomcart);
             SetActiveness(true, false);
 
             _craneStatus = CraneStatus.Pickup;
