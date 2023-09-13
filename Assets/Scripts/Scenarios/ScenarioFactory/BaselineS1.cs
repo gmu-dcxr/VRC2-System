@@ -27,7 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public CraneInputRecording recording;
         public CraneInputReplay replay;
 
-        public float startAngle = 180f;
+        // public float startAngle = 180f;
         public float endAngle = 120f;
         public float dropAngle = 150f; // when to drop the pipe
 
@@ -53,6 +53,12 @@ namespace VRC2.Scenarios.ScenarioFactory
         private bool enableDrop = false;
 
         private CraneStatus _craneStatus;
+
+        // the start rotation of the crane
+        private float startRotation
+        {
+            get => recording.startRotation;
+        }
 
 
         private void Start()
@@ -94,6 +100,13 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
                 case CraneStatus.Rotate:
                     RotateCrane(clockWise);
+                    if (NeedStoppingRotation())
+                    {
+                        // stop and reset 
+                        _craneStatus = CraneStatus.Idle;
+                        ResetCraneRotation(startRotation);
+                    }
+
                     break;
                 case CraneStatus.Dropoff:
                     replay.Dropoff();
@@ -106,8 +119,15 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
                 case CraneStatus.Idle:
                     StopRotating();
+
                     break;
             }
+        }
+
+        bool NeedStoppingRotation()
+        {
+            // stop when rotate back
+            return clockWise && Math.Abs(recording.GetCraneRotation() - startRotation) < 1f;
         }
 
         void ResetCraneRotation(float angle)
@@ -260,8 +280,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
+            // ResetCraneRotation(startAngle);
+            // ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
@@ -303,8 +323,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
+            // ResetCraneRotation(startAngle);
+            // ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
@@ -342,8 +362,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(7);
 
             Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
+            // ResetCraneRotation(startAngle);
+            // ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
@@ -368,8 +388,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
 
             Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
+            // ResetCraneRotation(startAngle);
+            // ResetBoomCart(startBoomcart);
             SetActiveness(true, true);
 
             StopRotating();
