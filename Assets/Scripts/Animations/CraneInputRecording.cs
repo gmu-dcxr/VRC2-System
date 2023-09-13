@@ -175,7 +175,8 @@ namespace VRC2.Animations
             CreateCableHook();
 
             // initialize crane rotation
-            // rotationElementCrane.localRotation = Quaternion.Euler(0, startRotation, 0);
+            floatRotCabin = startRotation;
+            rotationElementCrane.localRotation = Quaternion.Euler(0, startRotation, 0);
             Ready = true;
         }
 
