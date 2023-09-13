@@ -102,9 +102,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                     RotateCrane(clockWise);
                     if (NeedStoppingRotation())
                     {
-                        // stop and reset 
+                        recording.StopRotating = true;
                         _craneStatus = CraneStatus.Idle;
-                        ResetCraneRotation(startRotation);
                     }
 
                     break;
@@ -238,6 +237,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
+            recording.StopRotating = false;
             // ResetCraneRotation(startAngle);
             // ResetBoomCart(startBoomcart);
             SetActiveness(true, false);
@@ -259,6 +259,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
+            recording.StopRotating = false;
             ResetCraneRotation(endAngle);
 
             clockWise = true;
@@ -282,6 +283,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             Reset();
             // ResetCraneRotation(startAngle);
             // ResetBoomCart(startBoomcart);
+            recording.StopRotating = false;
             SetActiveness(true, true);
 
             StopRotating();
