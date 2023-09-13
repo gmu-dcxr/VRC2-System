@@ -148,6 +148,8 @@ namespace VRC2.Animations
         #region Crane status check
 
         [HideInInspector] public bool Ready { get; set; }
+        
+        [HideInInspector] public bool StopRotating { get; set; }
 
         #endregion
 
@@ -178,6 +180,8 @@ namespace VRC2.Animations
             floatRotCabin = startRotation;
             rotationElementCrane.localRotation = Quaternion.Euler(0, startRotation, 0);
             Ready = true;
+
+            StopRotating = false;
         }
 
         public override void InitInputActions()
@@ -587,9 +591,12 @@ namespace VRC2.Animations
                 blockPlayOneShot_RotationCrane = true;
             }
 
-            var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
-            rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
-                Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+            if (!StopRotating)
+            {
+                var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+                rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+                    Time.deltaTime * speedRotationCrane / smoothRotationCrane);   
+            }
             // var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
             // rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel,
             //     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
