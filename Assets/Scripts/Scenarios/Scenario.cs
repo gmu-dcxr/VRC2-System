@@ -219,7 +219,8 @@ namespace VRC2.Scenarios
         {
             // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
             var runner = GameObject.FindObjectOfType<NetworkRunner>();
-            if (runner != null && runner.IsRunning && scenariosManager.scenarios != null && scenariosManager.scenarios.Count > 0) return;
+            if (runner != null && runner.IsRunning && scenariosManager.scenarios != null &&
+                scenariosManager.scenarios.Count > 0) return;
 
             if (GUI.Button(new Rect(10, 10, 150, 30), $"Start {ClsName}"))
             {
@@ -271,8 +272,13 @@ namespace VRC2.Scenarios
             {
                 StartIncident(9);
             }
-            
-            if (GUI.Button(new Rect(10, 500, 150, 30), $"Normal"))
+
+            if (GUI.Button(new Rect(10, 500, 150, 30), $"Start {10}"))
+            {
+                StartIncident(10);
+            }
+
+            if (GUI.Button(new Rect(10, 550, 150, 30), $"Normal"))
             {
                 StartNormalIncident();
             }
@@ -320,6 +326,11 @@ namespace VRC2.Scenarios
             if (GUI.Button(new Rect(200, 450, 150, 30), $"End {9}"))
             {
                 EndIncident(9);
+            }
+
+            if (GUI.Button(new Rect(200, 500, 150, 30), $"End {10}"))
+            {
+                EndIncident(10);
             }
         }
 
@@ -488,10 +499,10 @@ namespace VRC2.Scenarios
                 AddIncident(incident);
             }
         }
-        
+
         public virtual void StartNormalIncident()
         {
-            
+
         }
 
         public virtual void OnIncidentFinish(int obj)
