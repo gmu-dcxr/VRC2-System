@@ -60,6 +60,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             get => recording.startRotation;
         }
 
+        // threshold to decide whether reaching the destination
+        private float rotationThreshold = 2f;
+
 
         private void Start()
         {
@@ -196,7 +199,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
-            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 2f)
+            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
             {
                 // force align the rotation
                 ResetCraneRotation(endAngle);
@@ -231,7 +234,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 ResetCraneRotation(endAngle);
             }
-            
+
             if (rot2start)
             {
                 ResetCraneRotation(startRotation);
