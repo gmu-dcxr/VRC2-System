@@ -196,7 +196,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
-            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 1f)
+            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 2f)
             {
                 // force align the rotation
                 ResetCraneRotation(endAngle);
