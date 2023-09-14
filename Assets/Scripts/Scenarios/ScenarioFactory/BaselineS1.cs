@@ -102,6 +102,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                     RotateCrane(clockWise);
                     if (NeedStoppingRotation())
                     {
+                        // force update the crane rotation
+                        ResetCraneRotation(startRotation);
                         recording.StopRotating = true;
                         _craneStatus = CraneStatus.Idle;
                     }
@@ -196,6 +198,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
             if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 1f)
             {
+                // force align the rotation
+                ResetCraneRotation(endAngle);
                 _craneStatus = CraneStatus.Dropoff;
             }
 
@@ -214,7 +218,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         // TODO: When scenario ends, start the normal event
         void StartCrane(bool pickup, bool clockwise, bool reset = false, bool unpackedpipe = false,
-            bool resetcrane = false)
+            bool rot2end = false, bool rot2start = false)
         {
             if (reset)
             {
@@ -223,9 +227,14 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             recording.StopRotating = false;
 
-            if (resetcrane)
+            if (rot2end)
             {
                 ResetCraneRotation(endAngle);
+            }
+            
+            if (rot2start)
+            {
+                ResetCraneRotation(startRotation);
             }
 
             SetActiveness(true, unpackedpipe);
@@ -282,7 +291,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            StartCrane(false, true, resetcrane: true);
+            StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_3_Finish()
@@ -299,7 +308,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(true, false, true, true);
+            StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -314,7 +323,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            StartCrane(false, true, resetcrane: true);
+            StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_5_Finish()
@@ -331,7 +340,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(true, false, true, true);
+            StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_6_Finish()
@@ -374,7 +383,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(false, true, resetcrane: true);
+            StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_8_Finish()
@@ -389,7 +398,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(true, false, true, true);
+            StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_9_Finish()
