@@ -17,6 +17,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject excav;
         public GameObject dirt;
         public Transform endPiece;
+        public GameObject hole;
         public Transform spawn;
 
         internal enum ExcavatorStage
@@ -95,9 +96,11 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool digDone = false;
 
-        public Vector3 scaleChange = new Vector3(1.0f, 1.0f, 1.0f);
+        private Vector3 scaleChange = new Vector3(0.05f, 0.0f, 0.05f);
 
         public bool dump = false;
+
+        private bool moved = false;
 
 
 
@@ -144,19 +147,20 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case ExcavatorStage.Rotate:
-                    print("rotaterotate");
+                    //print("rotaterotate");
                     replay.Turn(true);
-                    print("***check turn: ");
+                    //print("***check turn: ");
                     if (TurnCheck(rotatePoint))
                     {
-                        print("time to dig!");
+                        //print("time to dig!");
                         _stage = ExcavatorStage.Dig;
                     }
                     break;
 
                 case ExcavatorStage.Dump:
-                    print("DUMPERRR");
+                    //print("DUMPERRR");
                     dirtCheck();
+                    moved = false;
                     replay.Dump(true);
                     if (replay.DumpDone())
                     {
@@ -185,12 +189,12 @@ namespace VRC2.Scenarios.ScenarioFactory
                 case ExcavatorStage.RRotate:
                     //play replay
                     replay.TurnR(true);
-                    print("Checking turn digdone: ");
+                    //print("Checking turn digdone: ");
                     if (TurnCheck(ogPoint))
                     {
                         if (digDone)
                         {
-                            print("dig is done and its time to go back");
+                            //print("dig is done and its time to go back");
                             _stage = ExcavatorStage.Backward;
                         } else
                         {
@@ -202,11 +206,11 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case ExcavatorStage.Forward:
-                    print("FORWARD FORWARD FORWARD");
+                    //print("FORWARD FORWARD FORWARD");
                     replay.Forward(true);
                     if(pt == part.into1)
                     {
-                        print("into1!!!!!!!!!!!");
+                        //print("into1!!!!!!!!!!!");
                         if (ReachDestination(deep.position))
                         {
                             _stage = ExcavatorStage.Rotate;
@@ -235,9 +239,9 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case ExcavatorStage.Backward:
-                    print("BACK BACK BACK");
+                    //print("BACK BACK BACK");
                     //dirt.SetActive(false);
-                    replay.Backward(true);
+                    //replay.Backward(true);
                     if (ReachDestination(startPoint.position))
                     {
                         _stage = ExcavatorStage.Stop;
@@ -247,10 +251,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
                 case ExcavatorStage.Dig:
                     //dirt.SetActive(true);
-                    dirtCheck();
+                    dirtCheck();                    
                     if (!isDigging)
                     {
-                        print("diggin");
+                        //print("diggin");
                         isDigging = true;
                         replay.Dig();
 
@@ -259,6 +263,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                         {
                             //done digging- rotate to dump
                             dump = true;
+                            //make hole bigger
+                            //UpdateHole(hole);
                             _stage = ExcavatorStage.RRotate;
          
                         }
@@ -267,6 +273,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
             }
         
+        void UpdateHole(GameObject h)
+        {
+            h.transform.localScale -= scaleChange;
+            h.transform.position = new Vector3(h.transform.position.x - 0.3f, h.transform.position.y - 0.3f, h.transform.position.z - 0.3f);
+            
+        }
 
         void UpdateTransforms(Transform bc, GameObject rk, GameObject ds)
         {
@@ -350,6 +362,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                 dirt.GetComponent<Rigidbody>().useGravity = true;
                 dirt.GetComponent<MeshCollider>().convex = true;
                 //dirt.GetComponent<Rigidbody>().isKinematic = true;
+                
                 return;
             }
             //if under x - spawn in
@@ -367,13 +380,19 @@ namespace VRC2.Scenarios.ScenarioFactory
                     dirt.GetComponent<Rigidbody>().isKinematic = false;
                     dirt.GetComponent<MeshCollider>().convex = false;
                     dirt.GetComponent<MeshCollider>().convex = false;
+                    //make hole bigger
+                    if (!moved)
+                    {
+                        UpdateHole(hole);
+                        moved = true;
+                    }
 
                     dirt.SetActive(true);
                     return;
                 }
             } else
             {
-                if (endPiece.transform.position.y < 0)
+                if (endPiece.transform.position.y < -0.90f)
                 {
 
                     
@@ -385,6 +404,12 @@ namespace VRC2.Scenarios.ScenarioFactory
                     dirt.GetComponent<Rigidbody>().isKinematic = false;
                     dirt.GetComponent<MeshCollider>().convex = false;
                     dirt.GetComponent<MeshCollider>().convex = false;
+                    //make hole bigger
+                    if (!moved)
+                    {
+                        UpdateHole(hole);
+                        moved = true;
+                    }
 
                     dirt.SetActive(true);
                     return;
