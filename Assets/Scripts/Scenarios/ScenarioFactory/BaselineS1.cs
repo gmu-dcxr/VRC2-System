@@ -27,7 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public CraneInputRecording recording;
         public CraneInputReplay replay;
 
-        public float startAngle = 180f;
+        // public float startAngle = 180f;
         public float endAngle = 120f;
         public float dropAngle = 150f; // when to drop the pipe
 
@@ -50,9 +50,18 @@ namespace VRC2.Scenarios.ScenarioFactory
         // private bool triggered = false;
         private bool clockWise = false;
 
-        private bool enableDrop = false;
+        // private bool enableDrop = false;
 
         private CraneStatus _craneStatus;
+
+        // the start rotation of the crane
+        private float startRotation
+        {
+            get => recording.startRotation;
+        }
+
+        // threshold to decide whether reaching the destination
+        private float rotationThreshold = 2f;
 
 
         private void Start()
@@ -94,6 +103,14 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
                 case CraneStatus.Rotate:
                     RotateCrane(clockWise);
+                    if (NeedStoppingRotation())
+                    {
+                        // force update the crane rotation
+                        ResetCraneRotation(startRotation);
+                        recording.StopRotating = true;
+                        _craneStatus = CraneStatus.Idle;
+                    }
+
                     break;
                 case CraneStatus.Dropoff:
                     replay.Dropoff();
@@ -106,8 +123,15 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
                 case CraneStatus.Idle:
                     StopRotating();
+
                     break;
             }
+        }
+
+        bool NeedStoppingRotation()
+        {
+            // stop when rotate back
+            return clockWise && Math.Abs(recording.GetCraneRotation() - startRotation) < 1f;
         }
 
         void ResetCraneRotation(float angle)
@@ -175,25 +199,62 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
-            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < 1f)
+            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
             {
+                // force align the rotation
+                ResetCraneRotation(endAngle);
                 _craneStatus = CraneStatus.Dropoff;
             }
 
 
-            if (enableDrop)
-            {
-                if (Math.Abs(recording.GetCraneRotation() - dropAngle) < 1f)
-                {
-                    // drop pipe
-                    DropOffPipe();
-                }
-            }
+            // if (enableDrop)
+            // {
+            //     if (Math.Abs(recording.GetCraneRotation() - dropAngle) < 1f)
+            //     {
+            //         // drop pipe
+            //         DropOffPipe();
+            //     }
+            // }
         }
 
         #region Accident Events Callbacks
 
         // TODO: When scenario ends, start the normal event
+        void StartCrane(bool pickup, bool clockwise, bool reset = false, bool unpackedpipe = false,
+            bool rot2end = false, bool rot2start = false)
+        {
+            if (reset)
+            {
+                Reset();
+            }
+
+            recording.StopRotating = false;
+
+            if (rot2end)
+            {
+                ResetCraneRotation(endAngle);
+            }
+
+            if (rot2start)
+            {
+                ResetCraneRotation(startRotation);
+            }
+
+            SetActiveness(true, unpackedpipe);
+
+            if (pickup)
+            {
+                _craneStatus = CraneStatus.Pickup;
+                replay.RewindPickup();
+            }
+            else
+            {
+                _craneStatus = CraneStatus.Rotate;
+            }
+
+            clockWise = clockwise;
+        }
+
 
         // normal event
         public override void StartNormalIncident()
@@ -218,13 +279,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
-            SetActiveness(true, false);
-
-            _craneStatus = CraneStatus.Pickup;
-            replay.RewindPickup();
-            clockWise = false;
+            StartCrane(true, false);
         }
 
         public void On_BaselineS1_2_Finish()
@@ -239,10 +294,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            ResetCraneRotation(endAngle);
-
-            clockWise = true;
-            _craneStatus = CraneStatus.Rotate;
+            StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_3_Finish()
@@ -259,15 +311,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
-            SetActiveness(true, true);
-
-            StopRotating();
-            _craneStatus = CraneStatus.Pickup;
-            replay.RewindPickup();
-            clockWise = false;
+            StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -282,10 +326,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            ResetCraneRotation(endAngle);
-
-            clockWise = true;
-            _craneStatus = CraneStatus.Rotate;
+            StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_5_Finish()
@@ -302,15 +343,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
-            SetActiveness(true, true);
-
-            StopRotating();
-            _craneStatus = CraneStatus.Pickup;
-            replay.RewindPickup();
-            clockWise = false;
+            StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_6_Finish()
@@ -320,18 +353,13 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         void DropOffPipe()
         {
-            // // update pipe position so it'll drop from the player's head
-            // var pos = player.transform.position;
-            // pos.y = unpackedPipe.transform.position.y;
-            // unpackedPipe.transform.position = pos;
-
             // release it
             unpackedPipe.transform.parent = null;
             // add rigid body
             PipeHelper.EnsureRigidBody(ref unpackedPipe);
             // it will automatically fall
 
-            enableDrop = false;
+            // enableDrop = false;
         }
 
         public void On_BaselineS1_7_Start()
@@ -341,16 +369,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(7);
 
-            Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
-            SetActiveness(true, true);
-
-            StopRotating();
-            _craneStatus = CraneStatus.Pickup;
-            replay.RewindPickup();
-            clockWise = false;
-            enableDrop = true;
+            DropOffPipe();
         }
 
         public void On_BaselineS1_7_Finish()
@@ -361,36 +380,42 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS1_8_Start()
         {
             print("On_BaselineS1_8_Start");
-            // A load with an unpacked pipe is passing overhead.
+            // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(8);
             var warning = incident.Warning;
             print(warning);
 
-            Reset();
-            ResetCraneRotation(startAngle);
-            ResetBoomCart(startBoomcart);
-            SetActiveness(true, true);
-
-            StopRotating();
-            _craneStatus = CraneStatus.Pickup;
-            replay.RewindPickup();
-            clockWise = false;
+            StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_8_Finish()
         {
-            // A load with an unpacked pipe is passing overhead.
+
         }
 
         public void On_BaselineS1_9_Start()
         {
-            print("On_BaselineS1_9_Start");
+            // A load with an unpacked pipe is passing overhead.
+            var incident = GetIncident(9);
+            var warning = incident.Warning;
+            print(warning);
+
+            StartCrane(true, false, true, true, rot2start: true);
+        }
+
+        public void On_BaselineS1_9_Finish()
+        {
+
+        }
+
+        public void On_BaselineS1_10_Start()
+        {
             // SAGAT query
             ShowSAGAT();
         }
 
-        public void On_BaselineS1_9_Finish()
+        public void On_BaselineS1_10_Finish()
         {
             // SAGAT query
             HideSAGAT();

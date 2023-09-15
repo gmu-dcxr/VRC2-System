@@ -45,7 +45,7 @@ namespace VRC2.Scenarios
         private float liftHeightThreshold = 0.65f;
 
         private bool moving = false;
-        private float distanceThreshold = 3.0f;
+        private float distanceThreshold = 2.0f;
 
 
         private void Start()
@@ -80,7 +80,7 @@ namespace VRC2.Scenarios
                 case WorkStage.UpLift:
                     if (ReachedLiftHeight(true))
                     {
-                        _stage = WorkStage.Back;
+                        _stage = WorkStage.Forward;
                     }
                     else
                     {
@@ -93,6 +93,10 @@ namespace VRC2.Scenarios
                     {
                         // stop
                         _stage = WorkStage.Stop;
+                    }
+                    else if (ReachedTurn(true))
+                    {
+                        _stage = WorkStage.Left;
                     }
                     else
                     {
@@ -120,7 +124,7 @@ namespace VRC2.Scenarios
                     }
                     else
                     {
-                        TurnRightReversed(true);
+                        TurnRight(false);
                     }
 
                     break;
@@ -131,7 +135,7 @@ namespace VRC2.Scenarios
                     }
                     else
                     {
-                        TurnRightReversed(false);
+                        TurnRight(false);
                     }
 
                     break;
@@ -267,10 +271,10 @@ namespace VRC2.Scenarios
 
         void MoveForward(bool forward)
         {
-            var _acceleration = 0.5f;
+            var _acceleration = 0.25f;
             if (!forward)
             {
-                _acceleration = -0.5f;
+                _acceleration = -0.25f;
             }
             _vehicleController.BrakesInput = 0;
             _vehicleController.HandBrakeInput = 0;
@@ -280,13 +284,13 @@ namespace VRC2.Scenarios
             _vehicleController.AccelerationInput = _acceleration;
         }
 
-        void TurnRightReversed(bool Right)
+        void TurnRight(bool Right)
         {
-            var _acceleration = -0.25f;
-            var _steering = 1.0f;
+            var _acceleration = 0.25f;
+            var _steering = 0.75f;
             if (!Right)
             {
-                _steering = -1.0f;
+                _steering = -0.75f;
             }
             _vehicleController.BrakesInput = 0;
             _vehicleController.HandBrakeInput = 0;
