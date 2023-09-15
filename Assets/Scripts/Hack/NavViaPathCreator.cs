@@ -14,8 +14,8 @@ namespace VRC2.Hack
         [Header("Model")] public GameObject model;
 
 
-        [Header("NavAgent")] public float speed = 0.3f;
-        public float stoppingDistance = 0.1f;
+        [Header("NavAgent")] public float speed = 1f;
+        public float stoppingDistance = 0.5f;
 
         private NavMeshAgent _agent;
         private PathCreator pathCreator;
