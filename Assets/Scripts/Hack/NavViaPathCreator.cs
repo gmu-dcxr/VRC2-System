@@ -57,10 +57,10 @@ namespace VRC2.Hack
             for (int i = 0; i < path.NumPoints; i += 3)
             {
                 var p = path.GetPoint(i);
+
+                // transform it
+                p = MathUtility.TransformPoint(path.GetPoint(i), pathCreator.transform, path.Space);
                 anchorPoints.Add(p);
-                
-                // var p2 = GetPoint(i % 3);
-                // print($"{p.ToString("f5")} {p2.ToString("f5")}");
             }
         }
 
@@ -73,11 +73,6 @@ namespace VRC2.Hack
                 _agent.SetDestination(anchorPoints[dstIndex]);
                 print("change destination");
             }
-        }
-
-        public Vector3 GetPoint(int index)
-        {
-            return MathUtility.TransformPoint(anchorPoints[index], transform, path.Space);
         }
     }
 }
