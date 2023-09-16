@@ -107,18 +107,20 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Start()
         {
-            base.Start();
-            pt = part.nextTo;
-            dirt.transform.SetParent(endPiece);
-            dirt.GetComponent<Rigidbody>().useGravity = false;
-            dirt.GetComponent<Rigidbody>().isKinematic = false;
-            dirt.GetComponent<MeshCollider>().convex = false;
-            _stage = ExcavatorStage.Stop;
+            //print("START");
+            //base.Start();
+            //pt = part.nextTo;
+            //dirt.transform.SetParent(endPiece);
+            //dirt.GetComponent<Rigidbody>().useGravity = false;
+            //dirt.GetComponent<Rigidbody>().isKinematic = false;
+            //dirt.GetComponent<MeshCollider>().convex = false;
+            //_stage = ExcavatorStage.Stop;
+            //_stage = ExcavatorStage.Stop;
         }
 
         private void Update()
         {
-            var angle = Math.Abs(recording.getRotation() - endAngle);
+            //var angle = Math.Abs(recording.getRotation() - endAngle);
             
             switch (_stage)
             {
@@ -166,6 +168,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     {
                         if (pt == part.nextTo)
                         {
+                            print("dump1 done");
                             pt = part.into1;
                             _stage = ExcavatorStage.Forward;
                             dump = false;
@@ -174,12 +177,14 @@ namespace VRC2.Scenarios.ScenarioFactory
                         }
                         if (pt == part.into1)
                         {
+                            print("dump2 done");
                             pt = part.into2;
                             _stage = ExcavatorStage.Forward;
                             dump = false;
                             isDigging = false;
                             break;
                         }
+                        print("dump3 done");
                         digDone = true;
                         _stage = ExcavatorStage.Backward;
                     }
@@ -234,6 +239,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     }
                     if (ReachDestination(digPoint.position) && pt == part.nextTo)
                     {
+                        print("forward end");
                         _stage = ExcavatorStage.Stop;
                     }
                     break;
@@ -276,7 +282,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         void UpdateHole(GameObject h)
         {
             h.transform.localScale -= scaleChange;
-            h.transform.position = new Vector3(h.transform.position.x - 0.3f, h.transform.position.y - 0.3f, h.transform.position.z - 0.3f);
+            h.transform.position = new Vector3(h.transform.position.x - 0.2f, h.transform.position.y - 0.2f, h.transform.position.z - 0.2f);
             
         }
 
@@ -368,10 +374,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             //if under x - spawn in
             if (pt == part.into1 || pt == part.into2)
             {
-                if (endPiece.transform.position.y < 0.50)
+                if (endPiece.transform.position.y < 0.80)
                 {
-
-                    
                     dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
                     dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
                     //dirt.transform.rotation = Quaternion.Euler(75.0f, -100.0f, 175.0f);
@@ -452,6 +456,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             EnableSetting(0);
 
             //StartCoroutine(ExcavatorDig());
+            base.Start();
+            dirt.transform.SetParent(endPiece);
+            dirt.GetComponent<Rigidbody>().useGravity = false;
+            dirt.GetComponent<Rigidbody>().isKinematic = false;
+            dirt.GetComponent<MeshCollider>().convex = false;
             _stage = ExcavatorStage.Forward;
             replay.Forward();
         }
