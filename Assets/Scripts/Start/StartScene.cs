@@ -55,6 +55,12 @@ public class StartScene : MonoBehaviour
 
     public void HostButton()
     {
+        if (GlobalConstants.playerGender == PlayerGender.Undefined)
+        {
+            Debug.LogError("Please select gender first");
+            return;
+        }
+
         if (!gameStarted)
         {
             host = true;
@@ -64,6 +70,12 @@ public class StartScene : MonoBehaviour
 
     public void JoinButton()
     {
+        if (GlobalConstants.playerGender == PlayerGender.Undefined)
+        {
+            Debug.LogError("Please select gender first");
+            return;
+        }
+
         if (!gameStarted)
         {
             join = true;
@@ -79,10 +91,12 @@ public class StartScene : MonoBehaviour
         if (male)
         {
             maleTMP.color = selectedColor;
+            GlobalConstants.playerGender = PlayerGender.Male;
         }
         else
         {
             femaleTMP.color = selectedColor;
+            GlobalConstants.playerGender = PlayerGender.Female;
         }
     }
 
