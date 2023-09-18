@@ -8,6 +8,12 @@ using VRC2.Pipe;
 
 namespace VRC2
 {
+    public enum PlayerGender
+    {
+        Undefined = 0,
+        Male = 1,
+        Female = 2,
+    }
     public static class GlobalConstants
     {
         public static NetworkRunner networkRunner = null;
@@ -27,11 +33,15 @@ namespace VRC2
                 GlobalConstants.remotePlayer = PlayerRef.None;
             }
         }
+        
 
         public static bool IsNetworkReady()
         {
             return (GlobalConstants.networkRunner != null && !GlobalConstants.localPlayer.IsNone);
         }
+        
+        // player gender
+        public static PlayerGender playerGender = PlayerGender.Undefined;
 
         // P2, participant 2, check size, color, water level, etc.
         public static bool Checker = false;

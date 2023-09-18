@@ -8,6 +8,7 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC2;
+using VRC2.Character;
 
 namespace VRC2
 {
@@ -29,11 +30,15 @@ namespace VRC2
 
         private bool gameStarted = false;
 
+        private GenderSyncer _genderSyncer;
+
         // Start is called before the first frame update
         void Start()
         {
             _runner = gameObject.GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
+
+            _genderSyncer = FindObjectOfType<GenderSyncer>();
         }
 
         private void OnRequestStartGame(string obj)
@@ -103,7 +108,7 @@ namespace VRC2
                     runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, player);
                 // Keep track of the player avatars so we can remove it when they disconnect
                 _spawnedCharacters.Add(player, networkPlayerObject);
-                
+
                 // The first will be host (P1), all spawning actions will be done host
                 // The second will be client (P2)
 
@@ -116,6 +121,11 @@ namespace VRC2
                 {
                     // client
                     GlobalConstants.remotePlayer = player;
+
+                    print("Sync in server from host to client");
+                    // sync host to client of local player
+                    _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                        GlobalConstants.playerGender == PlayerGender.Male);
                 }
             }
             else
@@ -124,6 +134,11 @@ namespace VRC2
                 // p2 side
                 GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
+
+                print("Sync in client from client to host");
+                // sync client to host of local player
+                _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                    GlobalConstants.playerGender == PlayerGender.Male);
             }
 
             if (hideSelf)
