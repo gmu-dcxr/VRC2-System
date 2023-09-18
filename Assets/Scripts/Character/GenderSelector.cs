@@ -55,16 +55,17 @@ namespace VRC2.Character
 
         private void Start()
         {
-            ChangeToFemale();
+            //ChangeToFemale();
+            ChangeToMale();
         }
 
-        void ChangeToMale()
+        public void ChangeToMale()
         {
             renderer.materials = maleMaterials;
             hair.SetActive(false);
         }
 
-        void ChangeToFemale()
+        public void ChangeToFemale()
         {
             renderer.materials = femaleMaterials;
             hair.SetActive(true);
