@@ -55,13 +55,15 @@ namespace VRC2.Scenarios.ScenarioFactory
         private CraneStatus _craneStatus;
 
         // the start rotation of the crane
-        private float startRotation
+        private float startAngle
         {
             get => recording.startRotation;
         }
 
         // threshold to decide whether reaching the destination
         private float rotationThreshold = 2f;
+
+        private bool normalCondition = false;
 
 
         private void Start()
@@ -87,6 +89,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             // override cargo to avoid error
             recording.backupCargo = pipeStack;
+
+            normalCondition = false;
         }
 
         private void Update()
@@ -106,9 +110,19 @@ namespace VRC2.Scenarios.ScenarioFactory
                     if (NeedStoppingRotation())
                     {
                         // force update the crane rotation
-                        ResetCraneRotation(startRotation);
+                        ResetCraneRotation(startAngle);
+
                         recording.StopRotating = true;
-                        _craneStatus = CraneStatus.Idle;
+
+                        if (normalCondition)
+                        {
+                            StopRotating();
+                            StartCrane(true, false, reset: true, unpackedpipe: false);
+                        }
+                        else
+                        {
+                            _craneStatus = CraneStatus.Idle;
+                        }
                     }
 
                     break;
@@ -117,7 +131,14 @@ namespace VRC2.Scenarios.ScenarioFactory
                     if (replay.DropoffFinished())
                     {
                         clockWise = true;
-                        _craneStatus = CraneStatus.Idle;
+                        if (normalCondition)
+                        {
+                            StartCrane(false, true, rot2end: true);
+                        }
+                        else
+                        {
+                            _craneStatus = CraneStatus.Idle;
+                        }
                     }
 
                     break;
@@ -131,7 +152,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool NeedStoppingRotation()
         {
             // stop when rotate back
-            return clockWise && Math.Abs(recording.GetCraneRotation() - startRotation) < 1f;
+            return clockWise && Math.Abs(recording.GetCraneRotation() - startAngle) < 1f;
         }
 
         void ResetCraneRotation(float angle)
@@ -201,20 +222,13 @@ namespace VRC2.Scenarios.ScenarioFactory
             var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
             if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
             {
+                // rewind dropoff
+                replay.RewindDropoff();
+
                 // force align the rotation
                 ResetCraneRotation(endAngle);
                 _craneStatus = CraneStatus.Dropoff;
             }
-
-
-            // if (enableDrop)
-            // {
-            //     if (Math.Abs(recording.GetCraneRotation() - dropAngle) < 1f)
-            //     {
-            //         // drop pipe
-            //         DropOffPipe();
-            //     }
-            // }
         }
 
         #region Accident Events Callbacks
@@ -237,15 +251,15 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (rot2start)
             {
-                ResetCraneRotation(startRotation);
+                ResetCraneRotation(startAngle);
             }
 
             SetActiveness(true, unpackedpipe);
 
             if (pickup)
             {
-                _craneStatus = CraneStatus.Pickup;
                 replay.RewindPickup();
+                _craneStatus = CraneStatus.Pickup;
             }
             else
             {
@@ -260,6 +274,10 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S1");
+            // repeat #2 and #3
+            normalCondition = true;
+            ResetCraneRotation(startAngle);
+            StartCrane(true, false, reset: true, unpackedpipe: false);
         }
 
         public void On_BaselineS1_1_Start()
