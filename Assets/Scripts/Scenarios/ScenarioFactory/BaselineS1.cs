@@ -116,6 +116,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
                         if (normalCondition)
                         {
+                            StopRotating();
                             StartCrane(true, false, reset: true, unpackedpipe: false);
                         }
                         else
@@ -276,7 +277,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // repeat #2 and #3
             normalCondition = true;
             ResetCraneRotation(startAngle);
-            StartCrane(true, false, reset:true, unpackedpipe:false);
+            StartCrane(true, false, reset: true, unpackedpipe: false);
         }
 
         public void On_BaselineS1_1_Start()
