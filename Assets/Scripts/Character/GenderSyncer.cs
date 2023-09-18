@@ -19,7 +19,7 @@ namespace VRC2.Character
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(int playerid, bool male, RpcInfo info = default)
         {
-            print($"{playerid} {male}");
+            print($"GenderSyncer: {playerid} {male}");
         }
     }
 }
