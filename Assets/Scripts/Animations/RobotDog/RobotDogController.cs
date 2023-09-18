@@ -561,33 +561,33 @@ namespace VRC2.Animations
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 10, 100, 50), "Move"))
-            {
-                // move to target
-                MoveToTarget();
-            }
-
-            if (GUI.Button(new Rect(150, 10, 100, 50), "Rotate"))
-            {
-                replay.LeftTurn(false);
-            }
-
-            if (GUI.Button(new Rect(10, 100, 100, 50), "Pickup Prep"))
-            {
-                stage = RobotStage.PickupPrepare;
-            }
-
-            if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
-            {
-                stage = RobotStage.Default;
-                replay.RewindPickup();
-                replay.Pickup();
-            }
-
-            if (GUI.Button(new Rect(10, 150, 100, 50), "Dropoff"))
-            {
-                stage = RobotStage.Dropoff;
-            }
+            // if (GUI.Button(new Rect(10, 10, 100, 50), "Move"))
+            // {
+            //     // move to target
+            //     MoveToTarget();
+            // }
+            //
+            // if (GUI.Button(new Rect(150, 10, 100, 50), "Rotate"))
+            // {
+            //     replay.LeftTurn(false);
+            // }
+            //
+            // if (GUI.Button(new Rect(10, 100, 100, 50), "Pickup Prep"))
+            // {
+            //     stage = RobotStage.PickupPrepare;
+            // }
+            //
+            // if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
+            // {
+            //     stage = RobotStage.Default;
+            //     replay.RewindPickup();
+            //     replay.Pickup();
+            // }
+            //
+            // if (GUI.Button(new Rect(10, 150, 100, 50), "Dropoff"))
+            // {
+            //     stage = RobotStage.Dropoff;
+            // }
         }
 
         #endregion
