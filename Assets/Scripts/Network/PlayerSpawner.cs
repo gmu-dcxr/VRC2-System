@@ -28,9 +28,11 @@ namespace VRC2
 
         private bool isServer = false;
 
-        private bool gameStarted = false;
+        // private bool gameStarted = false;
 
         private GenderSyncer _genderSyncer;
+
+        public System.Action OnGameStarted;
 
         // Start is called before the first frame update
         void Start()
@@ -247,7 +249,10 @@ namespace VRC2
             {
                 // all good
                 GlobalConstants.networkRunner = _runner;
-                gameStarted = true;
+                GlobalConstants.GameStarted = true;
+                
+                // callback
+                OnGameStarted?.Invoke();
             }
             else
             {
@@ -255,24 +260,32 @@ namespace VRC2
             }
         }
 
+        public void StartHost()
+        {
+            GlobalConstants.Checker = false; // P1
+            StartGame(GameMode.Host);
+        }
+
+        public void StartClient()
+        {
+            GlobalConstants.Checker = true; // P2
+            StartGame(GameMode.Client);
+        }
+
         private void OnGUI()
         {
-            if (!gameStarted)
-            {
-                if (GUI.Button(new Rect(250, 10, 100, 40), "Host"))
-                {
-                    GlobalConstants.GameStarted = true;
-                    GlobalConstants.Checker = false; // P1
-                    StartGame(GameMode.Host);
-                }
-
-                if (GUI.Button(new Rect(350, 10, 100, 40), "Join"))
-                {
-                    GlobalConstants.GameStarted = true;
-                    GlobalConstants.Checker = true; // P2
-                    StartGame(GameMode.Client);
-                }
-            }
+            // if (!gameStarted)
+            // {
+            //     if (GUI.Button(new Rect(250, 10, 100, 40), "Host"))
+            //     {
+            //         StartHost();
+            //     }
+            //
+            //     if (GUI.Button(new Rect(350, 10, 100, 40), "Join"))
+            //     {
+            //         StartClient();
+            //     }
+            // }
         }
 
         private void OnApplicationQuit()

@@ -162,10 +162,10 @@ namespace VRC2.Animations
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 10, 100, 50), "Start"))
-            {
-                StartReplay(ref forwardController);
-            }
+            // if (GUI.Button(new Rect(10, 10, 100, 50), "Start"))
+            // {
+            //     StartReplay(ref forwardController);
+            // }
         }
 
         #endregion

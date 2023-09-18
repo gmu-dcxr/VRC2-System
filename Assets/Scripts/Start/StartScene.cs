@@ -12,18 +12,17 @@ using VRC2;
 
 public class StartScene : MonoBehaviour
 {
-    public string sceneToGoTo = "WIP";
-    private NetworkRunner _runner;
-    private bool gameStarted = false;
-    private bool host = false;
-    private bool join = false;
-
     [Space(30)] [Header("Gender")] public TextMeshProUGUI maleTMP;
     public TextMeshProUGUI femaleTMP;
 
     public Color selectedColor = Color.red;
 
     private Color normalColor;
+
+    private PlayerSpawner _playerSpawner;
+
+    [Space(30)] [Header("Gameobjects")] public GameObject canvas;
+    public GameObject lobby;
 
     private void Awake()
     {
@@ -33,24 +32,22 @@ public class StartScene : MonoBehaviour
     void Start()
     {
         normalColor = maleTMP.color;
+
+        _playerSpawner = FindObjectOfType<PlayerSpawner>();
+
+        _playerSpawner.OnGameStarted += OnGameStarted;
+    }
+
+    private void OnGameStarted()
+    {
+        // hide canvas and lobby
+        canvas.SetActive(false);
+        lobby.SetActive(false);
     }
 
     void Update()
     {
-        if (host)
-        {
-            GlobalConstants.GameStarted = true;
-            GlobalConstants.Checker = false; // P1
-            StartGame(GameMode.Host);
-            host = false;
-        }
-        else if (join)
-        {
-            GlobalConstants.GameStarted = true;
-            GlobalConstants.Checker = true; // P2
-            StartGame(GameMode.Client);
-            join = false;
-        }
+
     }
 
     public void HostButton()
@@ -61,11 +58,8 @@ public class StartScene : MonoBehaviour
             return;
         }
 
-        if (!gameStarted)
-        {
-            host = true;
-            SceneManager.LoadScene(sceneToGoTo);
-        }
+        _playerSpawner.StartHost();
+
     }
 
     public void JoinButton()
@@ -76,11 +70,7 @@ public class StartScene : MonoBehaviour
             return;
         }
 
-        if (!gameStarted)
-        {
-            join = true;
-            SceneManager.LoadScene(sceneToGoTo);
-        }
+        _playerSpawner.StartClient();
     }
 
     void UpdateTextColor(bool male)
@@ -109,30 +99,5 @@ public class StartScene : MonoBehaviour
     public void FemaleButton()
     {
         UpdateTextColor(false);
-    }
-
-    public async void StartGame(GameMode mode)
-    {
-        var result = await _runner.StartGame(new StartGameArgs()
-        {
-            GameMode = mode,
-            SessionName = "VRC2",
-            CustomLobbyName = "VRC2",
-            Scene = SceneManager.GetActiveScene().buildIndex,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
-            // PlayerCount = 2,
-            DisableClientSessionCreation = true
-        });
-
-        if (result.Ok)
-        {
-            // all good
-            GlobalConstants.networkRunner = _runner;
-            gameStarted = true;
-        }
-        else
-        {
-            Debug.LogError($"Failed to Start: {result.ShutdownReason}");
-        }
     }
 }
