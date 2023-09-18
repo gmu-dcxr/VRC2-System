@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Fusion;
 using Fusion.Sockets;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC2;
@@ -16,13 +17,22 @@ public class StartScene : MonoBehaviour
     private bool gameStarted = false;
     private bool host = false;
     private bool join = false;
+
+    [Space(30)] [Header("Gender")] public TextMeshProUGUI maleTMP;
+    public TextMeshProUGUI femaleTMP;
+
+    public Color selectedColor = Color.red;
+
+    private Color normalColor;
+
     private void Awake()
     {
         DontDestroyOnLoad(this);
     }
+
     void Start()
     {
-        
+        normalColor = maleTMP.color;
     }
 
     void Update()
@@ -51,6 +61,7 @@ public class StartScene : MonoBehaviour
             SceneManager.LoadScene(sceneToGoTo);
         }
     }
+
     public void JoinButton()
     {
         if (!gameStarted)
@@ -59,6 +70,33 @@ public class StartScene : MonoBehaviour
             SceneManager.LoadScene(sceneToGoTo);
         }
     }
+
+    void UpdateTextColor(bool male)
+    {
+        // back to normal color
+        maleTMP.color = normalColor;
+        femaleTMP.color = normalColor;
+        if (male)
+        {
+            maleTMP.color = selectedColor;
+        }
+        else
+        {
+            femaleTMP.color = selectedColor;
+        }
+    }
+
+    public void MaleButton()
+    {
+        // update color
+        UpdateTextColor(true);
+    }
+
+    public void FemaleButton()
+    {
+        UpdateTextColor(false);
+    }
+
     public async void StartGame(GameMode mode)
     {
         var result = await _runner.StartGame(new StartGameArgs()
