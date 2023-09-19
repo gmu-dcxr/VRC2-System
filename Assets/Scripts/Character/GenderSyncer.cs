@@ -35,6 +35,9 @@ namespace VRC2.Character
             // find gameobject by player id
             var pr = GetPlayerByPID(playerid);
             var go = Runner.GetPlayerObject(pr);
+
+            print($"network object id: {go.Id}");
+
             // get GenderSelector
             var gs = go.GetComponent<GenderSelector>();
 
