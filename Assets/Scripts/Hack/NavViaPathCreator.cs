@@ -12,6 +12,7 @@ namespace VRC2.Hack
     {
 
         [Header("Model")] public GameObject model;
+        public bool forceZRotation = true;
 
 
         [Header("NavAgent")] public float speed = 1f;
@@ -72,6 +73,13 @@ namespace VRC2.Hack
                 dstIndex = (dstIndex + 1) % anchorPoints.Count;
                 _agent.SetDestination(anchorPoints[dstIndex]);
                 print("change destination");
+            }
+
+            if (forceZRotation)
+            {
+                var rot = model.transform.rotation.eulerAngles;
+                rot.z = 0;
+                model.transform.rotation = Quaternion.Euler(rot);
             }
         }
     }
