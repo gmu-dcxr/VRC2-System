@@ -110,6 +110,9 @@ namespace VRC2
                     runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, player);
                 // Keep track of the player avatars so we can remove it when they disconnect
                 _spawnedCharacters.Add(player, networkPlayerObject);
+                
+                // set player object for updating character
+                runner.SetPlayerObject(player, networkPlayerObject);
 
                 // The first will be host (P1), all spawning actions will be done host
                 // The second will be client (P2)
