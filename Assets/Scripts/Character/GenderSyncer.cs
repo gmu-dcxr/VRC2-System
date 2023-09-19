@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using UnityEngine;
 
 namespace VRC2.Character
 {
@@ -16,10 +17,35 @@ namespace VRC2.Character
             }
         }
 
+        PlayerRef GetPlayerByPID(int pid)
+        {
+            var players = Runner.ActivePlayers;
+            foreach (var p in players)
+            {
+                if (p.PlayerId == pid) return p;
+            }
+
+            return PlayerRef.None;
+        }
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(int playerid, bool male, RpcInfo info = default)
         {
             print($"GenderSyncer: {playerid} {male}");
+            // find gameobject by player id
+            var pr = GetPlayerByPID(playerid);
+            var go = Runner.GetPlayerObject(pr);
+            // get GenderSelector
+            var gs = go.GetComponent<GenderSelector>();
+
+            if (male)
+            {
+                gs.ChangeToMale();
+            }
+            else
+            {
+                gs.ChangeToFemale();
+            }
         }
     }
 }
