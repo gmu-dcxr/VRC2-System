@@ -13,6 +13,7 @@ namespace VRC2.Hack
 
         [Header("Model")] public GameObject model;
         public bool forceZRotation = true;
+        public bool forceRelRotation = true;
 
 
         [Header("NavAgent")] public float speed = 1f;
@@ -25,6 +26,8 @@ namespace VRC2.Hack
         {
             get => pathCreator.bezierPath;
         }
+
+        private GameObject realModel;
 
         private List<Vector3> anchorPoints;
 
@@ -50,6 +53,9 @@ namespace VRC2.Hack
 
             // set the 1st destination
             _agent.SetDestination(anchorPoints[dstIndex]);
+
+            // the real model
+            realModel = model.transform.GetChild(0).gameObject;
         }
 
         void InitAnchorPoints()
@@ -80,6 +86,13 @@ namespace VRC2.Hack
                 var rot = model.transform.rotation.eulerAngles;
                 rot.z = 0;
                 model.transform.rotation = Quaternion.Euler(rot);
+            }
+
+            if (forceRelRotation)
+            {
+                var rot = realModel.transform.localRotation.eulerAngles;
+                rot.z = 0;
+                realModel.transform.localRotation = Quaternion.Euler(rot);
             }
         }
     }
