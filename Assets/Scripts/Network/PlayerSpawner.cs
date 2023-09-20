@@ -110,7 +110,7 @@ namespace VRC2
                     runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, player);
                 // Keep track of the player avatars so we can remove it when they disconnect
                 _spawnedCharacters.Add(player, networkPlayerObject);
-                
+
                 // set player object for updating character
                 runner.SetPlayerObject(player, networkPlayerObject);
 
@@ -129,8 +129,8 @@ namespace VRC2
 
                     print("Sync in server from host to client");
                     // sync host to client of local player
-                    _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
-                        GlobalConstants.playerGender == PlayerGender.Male);
+                    // _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                    //     GlobalConstants.playerGender == PlayerGender.Male);
                 }
             }
             else
@@ -141,10 +141,13 @@ namespace VRC2
                 GlobalConstants.localPlayer = player;
 
                 print("Sync in client from client to host");
-                // sync client to host of local player
-                _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
-                    GlobalConstants.playerGender == PlayerGender.Male);
+                // // sync client to host of local player
+                // _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                //     GlobalConstants.playerGender == PlayerGender.Male);
             }
+
+            _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                GlobalConstants.playerGender == PlayerGender.Male);
 
             if (hideSelf)
             {
@@ -253,7 +256,7 @@ namespace VRC2
                 // all good
                 GlobalConstants.networkRunner = _runner;
                 GlobalConstants.GameStarted = true;
-                
+
                 // callback
                 OnGameStarted?.Invoke();
             }
