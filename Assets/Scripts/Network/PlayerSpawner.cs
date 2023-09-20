@@ -75,7 +75,7 @@ namespace VRC2
             return objects;
         }
 
-        private GameObject GetSelfObject()
+        public GameObject GetSelfObject()
         {
             var objects = GetAllClones();
             foreach (var go in objects)
