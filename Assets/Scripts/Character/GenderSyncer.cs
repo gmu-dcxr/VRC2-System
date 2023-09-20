@@ -18,13 +18,7 @@ namespace VRC2.Character
         private void Start()
         {
             _playerSpawner = FindObjectOfType<PlayerSpawner>();
-        }
-
-        public void RequestSync(int pid, bool male)
-        {
             synchronized = false;
-            playerID = pid;
-            isMale = male;
         }
 
         bool TryToGetGameObject()
@@ -41,6 +35,8 @@ namespace VRC2.Character
 
             if (_playerSpawner.ReadyToSyncGender() && TryToGetGameObject())
             {
+                playerID = GlobalConstants.localPlayer.PlayerId;
+                isMale = GlobalConstants.playerGender == PlayerGender.Male;
                 // send message
                 RPC_SendMessage(playerID, isMale);
                 synchronized = true;
