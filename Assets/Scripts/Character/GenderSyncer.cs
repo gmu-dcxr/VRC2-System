@@ -7,14 +7,15 @@ namespace VRC2.Character
     {
         public void Synchronize(int pid, bool male)
         {
-            if (Runner != null && Runner.isActiveAndEnabled)
-            {
-                RPC_SendMessage(pid, male);
-            }
-            else
-            {
-                print("Runner is not valid");
-            }
+            // if (Runner != null && Runner.isActiveAndEnabled)
+            // {
+            //     RPC_SendMessage(pid, male);
+            // }
+            // else
+            // {
+            //     print("Runner is not valid");
+            // }
+            RPC_SendMessage(pid, male);
         }
 
         PlayerRef GetPlayerByPID(int pid)
@@ -31,6 +32,14 @@ namespace VRC2.Character
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(int playerid, bool male, RpcInfo info = default)
         {
+            if (info.IsInvokeLocal)
+            {
+                print("local invoke");
+            }
+            else
+            {
+                print("remote invoke");
+            }
             print($"GenderSyncer: {playerid} {male}");
             // find gameobject by player id
             var pr = GetPlayerByPID(playerid);
