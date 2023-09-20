@@ -34,6 +34,8 @@ namespace VRC2
 
         public System.Action OnGameStarted;
 
+        private bool genderSynced = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -41,6 +43,7 @@ namespace VRC2
             _runner.ProvideInput = true;
 
             _genderSyncer = FindObjectOfType<GenderSyncer>();
+            genderSynced = false;
         }
 
         private void OnRequestStartGame(string obj)
@@ -58,6 +61,24 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
+            if (!GlobalConstants.GameStarted) return;
+
+            if (genderSynced) return;
+
+            var clones = GetAllClones();
+            if (clones.ToList<GameObject>().Count < 2) return;
+
+            var so = GetSelfObject();
+
+            if (so != null)
+            {
+                // sync gender
+                _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                    GlobalConstants.playerGender == PlayerGender.Male);
+                
+                genderSynced = true;
+            }
+
         }
 
         private IEnumerable<GameObject> GetAllClones()
@@ -66,6 +87,21 @@ namespace VRC2
             // hide client self in client view
             var objects = Resources.FindObjectsOfTypeAll<GameObject>().Where(obj => obj.name == name);
             return objects;
+        }
+
+        private GameObject GetSelfObject()
+        {
+            var objects = GetAllClones();
+            foreach (var go in objects)
+            {
+                var nwo = go.GetComponent<NetworkObject>();
+                if (nwo.HasInputAuthority)
+                {
+                    return go;
+                }
+            }
+
+            return null;
         }
 
         private void HideSelfNetworkObject()
@@ -127,7 +163,7 @@ namespace VRC2
                     // client
                     GlobalConstants.remotePlayer = player;
 
-                    print("Sync in server from host to client");
+                    // print("Sync in server from host to client");
                     // sync host to client of local player
                     // _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
                     //     GlobalConstants.playerGender == PlayerGender.Male);
@@ -140,14 +176,14 @@ namespace VRC2
                 GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
 
-                print("Sync in client from client to host");
+                // print("Sync in client from client to host");
                 // // sync client to host of local player
                 // _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
                 //     GlobalConstants.playerGender == PlayerGender.Male);
             }
 
-            _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
-                GlobalConstants.playerGender == PlayerGender.Male);
+            // _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
+                // GlobalConstants.playerGender == PlayerGender.Male);
 
             if (hideSelf)
             {
