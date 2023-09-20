@@ -34,8 +34,6 @@ namespace VRC2
 
         public System.Action OnGameStarted;
 
-        private bool genderSynced = false;
-
         // Start is called before the first frame update
         void Start()
         {
@@ -43,7 +41,6 @@ namespace VRC2
             _runner.ProvideInput = true;
 
             _genderSyncer = FindObjectOfType<GenderSyncer>();
-            genderSynced = false;
         }
 
         private void OnRequestStartGame(string obj)
@@ -58,27 +55,16 @@ namespace VRC2
             }
         }
 
+        public bool ReadyToSyncGender()
+        {
+            var clones = GetAllClones();
+            if (clones.ToList<GameObject>().Count < 2) return false;
+            return true;
+        }
+
         // Update is called once per frame
         void Update()
         {
-            if (!GlobalConstants.GameStarted) return;
-
-            if (genderSynced) return;
-
-            var clones = GetAllClones();
-            if (clones.ToList<GameObject>().Count < 2) return;
-
-            var so = GetSelfObject();
-
-            if (so != null)
-            {
-                // sync gender
-                _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
-                    GlobalConstants.playerGender == PlayerGender.Male);
-                
-                genderSynced = true;
-            }
-
         }
 
         private IEnumerable<GameObject> GetAllClones()
@@ -182,8 +168,8 @@ namespace VRC2
                 //     GlobalConstants.playerGender == PlayerGender.Male);
             }
 
-            // _genderSyncer.Synchronize(GlobalConstants.localPlayer.PlayerId,
-                // GlobalConstants.playerGender == PlayerGender.Male);
+            _genderSyncer.RequestSync(GlobalConstants.localPlayer.PlayerId,
+                GlobalConstants.playerGender == PlayerGender.Male);
 
             if (hideSelf)
             {
