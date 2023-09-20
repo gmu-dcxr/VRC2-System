@@ -37,8 +37,6 @@ namespace VRC2.Character
 
         private void Update()
         {
-            if (Runner == null || !Runner.isActiveAndEnabled) return;
-
             if (synchronized) return;
 
             if (_playerSpawner.ReadyToSyncGender() && TryToGetGameObject())
