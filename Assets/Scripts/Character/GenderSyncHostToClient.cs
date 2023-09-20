@@ -22,6 +22,14 @@ namespace VRC2.Character
             timerStarted = false;
         }
 
+        // Note: The reason why we need a timer here is that
+        // 1) Fusion network process in the following order:
+        //  a) Host: host in the scene
+        //  b) Join: joiner joins the scene, the scene in the host end will have two clones first, and the scene in
+        //      the joiner end may not have two clones. 
+        // 2) It won't work in the remote end if we directly call rpc without waiting.
+        // 3) Joiner to host is different because when the joiner side has two clones, the remote side (host) must have
+        //      already two clones.
         void SetTimer(Action complete)
         {
             timerStarted = true;
