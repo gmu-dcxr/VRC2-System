@@ -1,5 +1,8 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using UnityEngine;
+
+using Timer = UnityTimer.Timer;
 
 namespace VRC2.Character
 {
@@ -8,6 +11,21 @@ namespace VRC2.Character
         private PlayerSpawner _playerSpawner;
 
         private bool synchronized = false;
+
+        private bool timerStarted = false;
+        private Timer _timer;
+
+        void SetTimer(Action complete)
+        {
+            timerStarted = true;
+
+            if (_timer != null)
+            {
+                Timer.Cancel(_timer);
+            }
+
+            _timer = Timer.Register(5.0f, complete, isLooped: false, useRealTime: true);
+        }
 
         private GameObject selfGameObject
         {
@@ -18,6 +36,7 @@ namespace VRC2.Character
         {
             _playerSpawner = FindObjectOfType<PlayerSpawner>();
             synchronized = false;
+            timerStarted = false;
         }
 
         private void Update()
@@ -26,11 +45,18 @@ namespace VRC2.Character
 
             if (_playerSpawner.ReadyToSyncGender() && Runner.IsServer)
             {
-                var pid = GlobalConstants.localPlayer.PlayerId;
-                var male = GlobalConstants.playerGender == PlayerGender.Male;
-                // send message
-                RPC_SendMessage(pid, male);
-                synchronized = true;
+                if (!timerStarted)
+                {
+                    print("start timer");
+                    SetTimer(() =>
+                    {
+                        var pid = GlobalConstants.localPlayer.PlayerId;
+                        var male = GlobalConstants.playerGender == PlayerGender.Male;
+                        // send message
+                        RPC_SendMessage(pid, male);
+                        synchronized = true;
+                    });
+                }
             }
         }
 
