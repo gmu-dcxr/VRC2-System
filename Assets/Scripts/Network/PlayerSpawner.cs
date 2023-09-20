@@ -30,7 +30,7 @@ namespace VRC2
 
         // private bool gameStarted = false;
 
-        private GenderSyncer _genderSyncer;
+        // private GenderSyncer _genderSyncer;
 
         public System.Action OnGameStarted;
 
@@ -40,7 +40,7 @@ namespace VRC2
             _runner = gameObject.GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
 
-            _genderSyncer = FindObjectOfType<GenderSyncer>();
+            // _genderSyncer = FindObjectOfType<GenderSyncer>();
         }
 
         private void OnRequestStartGame(string obj)
@@ -168,8 +168,8 @@ namespace VRC2
                 //     GlobalConstants.playerGender == PlayerGender.Male);
             }
 
-            _genderSyncer.RequestSync(GlobalConstants.localPlayer.PlayerId,
-                GlobalConstants.playerGender == PlayerGender.Male);
+            // _genderSyncer.RequestSync(GlobalConstants.localPlayer.PlayerId,
+                // GlobalConstants.playerGender == PlayerGender.Male);
 
             if (hideSelf)
             {
