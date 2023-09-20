@@ -10,11 +10,6 @@ namespace VRC2.Character
 
         private bool synchronized = false;
 
-        private GameObject selfGameObject
-        {
-            get => _playerSpawner.GetSelfObject();
-        }
-
         private void Start()
         {
             _playerSpawner = FindObjectOfType<PlayerSpawner>();
@@ -49,23 +44,8 @@ namespace VRC2.Character
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(int playerid, bool male, RpcInfo info = default)
         {
-            if (info.IsInvokeLocal)
-            {
-                print("GenderSyncClientToHost local invoke");
-            }
-            else
-            {
-                print("GenderSyncClientToHost remote invoke");
-            }
-
-            print($"GenderSyncClientToHost GenderSyncer: {playerid} {male}");
-            // find gameobject by player id
             var pr = GetPlayerByPID(playerid);
             var go = Runner.GetPlayerObject(pr);
-
-            print($"GenderSyncClientToHost network object id: {go.Id}");
-
-            // get GenderSelector
             var gs = go.GetComponent<GenderSelector>();
 
             if (male)

@@ -15,6 +15,13 @@ namespace VRC2.Character
         private bool timerStarted = false;
         private Timer _timer;
 
+        private void Start()
+        {
+            _playerSpawner = FindObjectOfType<PlayerSpawner>();
+            synchronized = false;
+            timerStarted = false;
+        }
+
         void SetTimer(Action complete)
         {
             timerStarted = true;
@@ -27,18 +34,6 @@ namespace VRC2.Character
             _timer = Timer.Register(5.0f, complete, isLooped: false, useRealTime: true);
         }
 
-        private GameObject selfGameObject
-        {
-            get => _playerSpawner.GetSelfObject();
-        }
-
-        private void Start()
-        {
-            _playerSpawner = FindObjectOfType<PlayerSpawner>();
-            synchronized = false;
-            timerStarted = false;
-        }
-
         private void Update()
         {
             if (synchronized) return;
@@ -47,7 +42,6 @@ namespace VRC2.Character
             {
                 if (!timerStarted)
                 {
-                    print("start timer");
                     SetTimer(() =>
                     {
                         var pid = GlobalConstants.localPlayer.PlayerId;
@@ -74,25 +68,10 @@ namespace VRC2.Character
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_SendMessage(int playerid, bool male, RpcInfo info = default)
         {
-            if (info.IsInvokeLocal)
-            {
-                print("GenderSyncHostToClient local invoke");
-            }
-            else
-            {
-                print("GenderSyncHostToClient remote invoke");
-            }
-
-            print($"GenderSyncHostToClient GenderSyncer: {playerid} {male}");
             // find gameobject by player id
             var pr = GetPlayerByPID(playerid);
             var go = Runner.GetPlayerObject(pr);
-
-            print($"GenderSyncHostToClient network object id: {go.Id}");
-
-            // get GenderSelector
             var gs = go.GetComponent<GenderSelector>();
-
             if (male)
             {
                 gs.ChangeToMale();
