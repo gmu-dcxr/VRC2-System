@@ -55,8 +55,8 @@ namespace VRC2.Character
 
         private void Start()
         {
-            //ChangeToFemale();
-            ChangeToMale();
+            ChangeToFemale();
+            // ChangeToMale();
         }
 
         public void ChangeToMale()
