@@ -1,21 +1,52 @@
-﻿using Fusion;
+﻿using System;
+using Fusion;
 using UnityEngine;
 
 namespace VRC2.Character
 {
     public class GenderSyncer : NetworkBehaviour
     {
-        public void Synchronize(int pid, bool male)
+        private PlayerSpawner _playerSpawner;
+
+        private bool synchronized = false;
+
+        private NetworkObject target;
+
+        private int playerID;
+        private bool isMale;
+
+        private void Start()
         {
-            // if (Runner != null && Runner.isActiveAndEnabled)
-            // {
-            //     RPC_SendMessage(pid, male);
-            // }
-            // else
-            // {
-            //     print("Runner is not valid");
-            // }
-            RPC_SendMessage(pid, male);
+            _playerSpawner = FindObjectOfType<PlayerSpawner>();
+        }
+
+        public void RequestSync(int pid, bool male)
+        {
+            synchronized = false;
+            playerID = pid;
+            isMale = male;
+        }
+
+        bool TryToGetGameObject()
+        {
+            var pr = GetPlayerByPID(playerID);
+            target = Runner.GetPlayerObject(pr);
+
+            return target != null;
+        }
+
+        private void Update()
+        {
+            if (Runner == null || !Runner.isActiveAndEnabled) return;
+
+            if (synchronized) return;
+
+            if (_playerSpawner.ReadyToSyncGender() && TryToGetGameObject())
+            {
+                // send message
+                RPC_SendMessage(playerID, isMale);
+                synchronized = true;
+            }
         }
 
         PlayerRef GetPlayerByPID(int pid)
@@ -40,6 +71,7 @@ namespace VRC2.Character
             {
                 print("remote invoke");
             }
+
             print($"GenderSyncer: {playerid} {male}");
             // find gameobject by player id
             var pr = GetPlayerByPID(playerid);
