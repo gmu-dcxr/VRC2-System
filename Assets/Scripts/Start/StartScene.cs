@@ -47,7 +47,23 @@ public class StartScene : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyUp(KeyCode.H))
+        {
+            HostButton();
+        }
+        else if (Input.GetKeyUp(KeyCode.J))
+        {
+            JoinButton();
+        }
 
+        else if (Input.GetKeyUp(KeyCode.M))
+        {
+            MaleButton();
+        }
+        else if (Input.GetKeyUp(KeyCode.F))
+        {
+            FemaleButton();
+        }
     }
 
     public void HostButton()
