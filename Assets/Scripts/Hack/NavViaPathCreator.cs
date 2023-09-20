@@ -12,12 +12,13 @@ namespace VRC2.Hack
     {
 
         [Header("Model")] public GameObject model;
-        public bool forceZRotation = true;
-        public bool forceRelRotation = true;
+        // public bool forceZRotation = true;
+        // public bool forceRelRotation = true;
 
 
         [Header("NavAgent")] public float speed = 1f;
         public float stoppingDistance = 0.5f;
+        public float radius = 0.5f;
 
         private NavMeshAgent _agent;
         private PathCreator pathCreator;
@@ -51,11 +52,12 @@ namespace VRC2.Hack
             // update stopping distance
             _agent.stoppingDistance = stoppingDistance;
 
+            // update radius
+            _agent.radius = radius;
+
+
             // set the 1st destination
             _agent.SetDestination(anchorPoints[dstIndex]);
-
-            // the real model
-            realModel = model.transform.GetChild(0).gameObject;
         }
 
         void InitAnchorPoints()
@@ -81,19 +83,19 @@ namespace VRC2.Hack
                 print("change destination");
             }
 
-            if (forceZRotation)
-            {
-                var rot = model.transform.rotation.eulerAngles;
-                rot.z = 0;
-                model.transform.rotation = Quaternion.Euler(rot);
-            }
+            // if (forceZRotation)
+            // {
+            //     var rot = model.transform.rotation.eulerAngles;
+            //     rot.z = 0;
+            //     model.transform.rotation = Quaternion.Euler(rot);
+            // }
 
-            if (forceRelRotation)
-            {
-                var rot = realModel.transform.localRotation.eulerAngles;
-                rot.z = 0;
-                realModel.transform.localRotation = Quaternion.Euler(rot);
-            }
+            // if (forceRelRotation)
+            // {
+            //     var rot = realModel.transform.localRotation.eulerAngles;
+            //     rot.z = 0;
+            //     realModel.transform.localRotation = Quaternion.Euler(rot);
+            // }
         }
     }
 }
