@@ -453,8 +453,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeToFemale
         m_Mode: 1
         m_Arguments:
@@ -586,8 +586,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeSkin
         m_Mode: 3
         m_Arguments:
@@ -1128,8 +1128,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeHair
         m_Mode: 3
         m_Arguments:
@@ -1343,8 +1343,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeSkin
         m_Mode: 3
         m_Arguments:
@@ -1476,8 +1476,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeHair
         m_Mode: 3
         m_Arguments:
@@ -1873,8 +1873,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeSkin
         m_Mode: 3
         m_Arguments:
@@ -2119,6 +2119,7 @@ GameObject:
   m_Component:
   - component: {fileID: 889116060}
   - component: {fileID: 889116059}
+  - component: {fileID: 889116061}
   m_Layer: 0
   m_Name: GameHandler
   m_TagString: Untagged
@@ -2133,7 +2134,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 889116058}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb50c87faaeddbf46a1014382791a411, type: 3}
   m_Name: 
@@ -2166,6 +2167,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &889116061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889116058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f313706c575b1bf4ea6bb963998f1922, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceRenderer: {fileID: 5503801981293095276}
+  handRenderer: {fileID: 3939589948308951496}
+  skinMale: {fileID: 2100000, guid: 45b249546fb1b904093f8707f8a377f0, type: 2}
+  skinMale2: {fileID: 2100000, guid: 6cd9714c647c9e749832327d48f9cec6, type: 2}
+  eyebrowMale: {fileID: 2100000, guid: 450c994960b596349b4445c9005f88d1, type: 2}
+  eyelashMale: {fileID: 2100000, guid: 83fe1c8fcefff3049ab720be0c827726, type: 2}
+  skinFemale: {fileID: 2100000, guid: f11e91263d0a10f4cba68b4d03991f1d, type: 2}
+  eyebrowFemale: {fileID: 2100000, guid: 450c994960b596349b4445c9005f88d1, type: 2}
+  eyelashFemale: {fileID: 2100000, guid: 83fe1c8fcefff3049ab720be0c827726, type: 2}
+  hair1: {fileID: 306410769}
+  hair2: {fileID: 303749087}
+  hand1: {fileID: 2100000, guid: a63caced3386f514f848b7da0ee325b2, type: 2}
+  hand2: {fileID: 2100000, guid: 336b39c4be2d3814aa0863acf85268af, type: 2}
+  handfemale: {fileID: 2100000, guid: e45541740b82d974fb2ea78ca34e7631, type: 2}
 --- !u!1 &900319066
 GameObject:
   m_ObjectHideFlags: 0
@@ -3421,8 +3448,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: ChangeToMale
         m_Mode: 1
         m_Arguments:
@@ -3866,8 +3893,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 889116059}
-        m_TargetAssemblyTypeName: VRC2.Character.GenderSelector, Assembly-CSharp
+      - m_Target: {fileID: 889116061}
+        m_TargetAssemblyTypeName: VRC2.Character.CharacterMaterialSelector, Assembly-CSharp
         m_MethodName: GoBald
         m_Mode: 1
         m_Arguments:
