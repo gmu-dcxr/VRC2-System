@@ -92,7 +92,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private Vector3 scaleChange = new Vector3(0.05f, 0.0f, 0.05f);
 
-        public bool dump = false;
+        private bool dump = false;
 
         private bool moved = false;
 
