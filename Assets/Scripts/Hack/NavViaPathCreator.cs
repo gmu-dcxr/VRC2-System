@@ -54,6 +54,9 @@ namespace VRC2.Hack
 
             // update radius
             _agent.radius = radius;
+            
+            // disable autobraking
+            _agent.autoBraking = false;
 
 
             // set the 1st destination
