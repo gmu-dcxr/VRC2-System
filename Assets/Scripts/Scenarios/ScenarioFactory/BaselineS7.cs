@@ -36,12 +36,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             nextTo = 0,
             into1 = 1,
             into2 = 2,
-            
+
         }
 
-        [Space(30)]  [Header("Recording/Replay")]
+        [Space(30)] [Header("Recording/Replay")]
         public ExcavatorInputRecording recording;
-               
+
 
         public ExcavatorInputReplay replay;
 
@@ -54,12 +54,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Transform deeper;
         public Transform deepR;
         public Transform deeperR;
-
-
-
-        [Header("Rock")] public GameObject rock1;
-        public GameObject rock2;
-        public GameObject rock3;
 
         // public GameObject excavator;
 
@@ -102,38 +96,23 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool moved = false;
 
-
-
-
-        private void Start()
-        {
-            //print("START");
-            //base.Start();
-            //pt = part.nextTo;
-            //dirt.transform.SetParent(endPiece);
-            //dirt.GetComponent<Rigidbody>().useGravity = false;
-            //dirt.GetComponent<Rigidbody>().isKinematic = false;
-            //dirt.GetComponent<MeshCollider>().convex = false;
-            //_stage = ExcavatorStage.Stop;
-            //_stage = ExcavatorStage.Stop;
-        }
-
         private void Update()
         {
             //var angle = Math.Abs(recording.getRotation() - endAngle);
-            
+
             switch (_stage)
             {
                 case ExcavatorStage.Stop:
                     dirt.SetActive(false);
-                    if (ReachDestination(digPoint.position) )
+                    if (ReachDestination(digPoint.position))
                     {
                         if (TurnCheck(rotatePoint))
                         {
                             isDigging = false;
                             // time to dig
                             _stage = ExcavatorStage.Dig;
-                        } else
+                        }
+                        else
                         {
                             if (replay.DigFinished())
                             {
@@ -142,6 +121,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                                     break;
                                 }
                             }
+
                             _stage = ExcavatorStage.Rotate;
                         }
                     }
@@ -157,6 +137,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                         //print("time to dig!");
                         _stage = ExcavatorStage.Dig;
                     }
+
                     break;
 
                 case ExcavatorStage.Dump:
@@ -175,6 +156,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                             isDigging = false;
                             break;
                         }
+
                         if (pt == part.into1)
                         {
                             print("dump2 done");
@@ -184,6 +166,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                             isDigging = false;
                             break;
                         }
+
                         print("dump3 done");
                         digDone = true;
                         _stage = ExcavatorStage.Backward;
@@ -201,31 +184,34 @@ namespace VRC2.Scenarios.ScenarioFactory
                         {
                             //print("dig is done and its time to go back");
                             _stage = ExcavatorStage.Backward;
-                        } else
+                        }
+                        else
                         {
                             _stage = ExcavatorStage.Dump;
                             //dump time
                         }
                     }
-                    
+
                     break;
 
                 case ExcavatorStage.Forward:
                     //print("FORWARD FORWARD FORWARD");
                     replay.Forward(true);
-                    if(pt == part.into1)
+                    if (pt == part.into1)
                     {
                         //print("into1!!!!!!!!!!!");
                         if (ReachDestination(deep.position))
                         {
                             _stage = ExcavatorStage.Rotate;
                             //_stage = ExcavatorStage.Dig;
-                        } else
+                        }
+                        else
                         {
                             break;
                         }
                     }
-                    if(pt == part.into2)
+
+                    if (pt == part.into2)
                     {
                         if (ReachDestination(deeper.position))
                         {
@@ -237,11 +223,13 @@ namespace VRC2.Scenarios.ScenarioFactory
                             break;
                         }
                     }
+
                     if (ReachDestination(digPoint.position) && pt == part.nextTo)
                     {
                         print("forward end");
                         _stage = ExcavatorStage.Stop;
                     }
+
                     break;
 
                 case ExcavatorStage.Backward:
@@ -257,14 +245,16 @@ namespace VRC2.Scenarios.ScenarioFactory
 
                 case ExcavatorStage.Dig:
                     //dirt.SetActive(true);
-                    dirtCheck();                    
+                    dirtCheck();
                     if (!isDigging)
                     {
                         //print("diggin");
                         isDigging = true;
                         replay.Dig();
 
-                    } else {
+                    }
+                    else
+                    {
                         if (replay.DigFinished() && !digDone)
                         {
                             //done digging- rotate to dump
@@ -272,40 +262,20 @@ namespace VRC2.Scenarios.ScenarioFactory
                             //make hole bigger
                             //UpdateHole(hole);
                             _stage = ExcavatorStage.RRotate;
-         
+
                         }
                     }
+
                     break;
             }
-            }
-        
+        }
+
         void UpdateHole(GameObject h)
         {
             h.transform.localScale -= scaleChange;
-            h.transform.position = new Vector3(h.transform.position.x - 0.2f, h.transform.position.y - 0.2f, h.transform.position.z - 0.2f);
-            
-        }
+            h.transform.position = new Vector3(h.transform.position.x - 0.2f, h.transform.position.y - 0.2f,
+                h.transform.position.z - 0.2f);
 
-        void UpdateTransforms(Transform bc, GameObject rk, GameObject ds)
-        {
-            // backHoe.SetActive(false);
-            excav.transform.position = bc.position;
-            excav.transform.rotation = bc.rotation;
-
-            // backHoe.SetActive(true);
-
-            rk.SetActive(true);
-            ds.SetActive(true);
-        }
-
-        void EnableSetting(int idx)
-        {
-        }
-
-        IEnumerator ExcavatorDig()
-        {
-            Start();
-            return null;
         }
 
         #region Driving Control
@@ -327,57 +297,63 @@ namespace VRC2.Scenarios.ScenarioFactory
             return false;
         }
 
-        bool TurnCheck(Transform des) 
+        bool TurnCheck(Transform des)
         {
-            
+
             Vector3 dirFromAtoB = (endPiece.position - des.position).normalized;
             float dotProd = Vector3.Dot(dirFromAtoB, endPiece.forward);
-            
+
             print(dotProd);
             if (digDone || dump)
             {
                 //straight ahead angle
-                if(dotProd < 0.20)
+                if (dotProd < 0.20)
                 {
                     return true;
-                } else
+                }
+                else
                 {
                     return false;
                 }
             }
-            
-            
-                if (dotProd > 0.30)
-                {
+
+
+            if (dotProd > 0.30)
+            {
                 //dig spot
                 // ObjA is looking mostly towards ObjB
                 print("real");
-                    return true;
-                }
-                //print(dotProd);
-                return false;
-            
-            
-        } 
+                return true;
+            }
 
-        void dirtCheck() {  
+            //print(dotProd);
+            return false;
+
+
+        }
+
+        void dirtCheck()
+        {
             //if piece over x high - drop
-            if(endPiece.transform.position.y > 7.5f)
+            if (endPiece.transform.position.y > 7.5f)
             {
                 dirt.transform.SetParent(null);
                 dirt.GetComponent<Rigidbody>().useGravity = true;
                 dirt.GetComponent<MeshCollider>().convex = true;
                 //dirt.GetComponent<Rigidbody>().isKinematic = true;
-                
+
                 return;
             }
+
             //if under x - spawn in
             if (pt == part.into1 || pt == part.into2)
             {
                 if (endPiece.transform.position.y < 0.80)
                 {
-                    dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
-                    dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
+                    dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y,
+                        spawn.transform.position.z);
+                    dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y,
+                        spawn.transform.rotation.z);
                     //dirt.transform.rotation = Quaternion.Euler(75.0f, -100.0f, 175.0f);
                     dirt.transform.SetParent(endPiece);
                     dirt.GetComponent<Rigidbody>().useGravity = false;
@@ -394,14 +370,17 @@ namespace VRC2.Scenarios.ScenarioFactory
                     dirt.SetActive(true);
                     return;
                 }
-            } else
+            }
+            else
             {
                 if (endPiece.transform.position.y < -0.90f)
                 {
 
-                    
-                    dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
-                    dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
+
+                    dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y,
+                        spawn.transform.position.z);
+                    dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y,
+                        spawn.transform.rotation.z);
                     //dirt.transform.rotation = Quaternion.Euler(-254.0f, 85.0f, 2.0f);
                     dirt.transform.SetParent(endPiece);
                     dirt.GetComponent<Rigidbody>().useGravity = false;
@@ -419,27 +398,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     return;
                 }
             }
-        
-        }
 
-
-        void StopVehicle()
-        {
-        }
-
-        void StartVehicle()
-        {
-        }
-
-        void MoveBackward()
-        {
-
-            if (ReachDestination(startPoint.position))
-            {
-                print("Truck reach destination");
-                moving = false;
-                return;
-            }
         }
 
         #endregion
@@ -451,12 +410,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("Start Normal Incident Baseline S7");
 
-            StopAllCoroutines();
-
-            EnableSetting(0);
-
-            //StartCoroutine(ExcavatorDig());
-            base.Start();
             dirt.transform.SetParent(endPiece);
             dirt.GetComponent<Rigidbody>().useGravity = false;
             dirt.GetComponent<Rigidbody>().isKinematic = false;
@@ -467,9 +420,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS7_1_Start()
         {
-            moving = true;
-            _stage = ExcavatorStage.Forward;
-            replay.Forward();
+            // moving = true;
+            // _stage = ExcavatorStage.Forward;
+            // replay.Forward();
         }
 
         public void On_BaselineS7_1_Finish()
@@ -485,18 +438,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-
-            StopAllCoroutines();
-
-            EnableSetting(1);
-
-            StartCoroutine(ExcavatorDig());
+            // TODO 
         }
 
         public void On_BaselineS7_2_Finish()
         {
             // An excavator is digging next to the participants.
-            StopAllCoroutines();
         }
 
         public void On_BaselineS7_3_Start()
@@ -507,17 +454,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(3);
             var warning = incident.Warning;
             print(warning);
-
-            StopAllCoroutines();
-            EnableSetting(2);
-
-            StartCoroutine(ExcavatorDig());
+            // TODO
         }
 
         public void On_BaselineS7_3_Finish()
         {
             // The excavator is digging into the working zone.
-            StopAllCoroutines();
         }
 
         public void On_BaselineS7_4_Start()
@@ -528,12 +470,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
-
-            StopAllCoroutines();
-
-            EnableSetting(3);
-
-            StartCoroutine(ExcavatorDig());
+            // TODO
         }
 
         public void On_BaselineS7_4_Finish()
