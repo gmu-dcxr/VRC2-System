@@ -107,6 +107,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
+            if (recording == null) return;
+            
             var angle = Math.Abs(recording.getRotation() - endAngle);
 
             switch (_stage)
