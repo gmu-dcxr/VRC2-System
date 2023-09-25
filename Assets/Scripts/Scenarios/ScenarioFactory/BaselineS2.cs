@@ -3,6 +3,7 @@ using PathCreation.Examples;
 using TMPro;
 using UnityEngine;
 using UnityTimer;
+using VRC2.Events;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
@@ -10,6 +11,13 @@ namespace VRC2.Scenarios.ScenarioFactory
     {
         [Header("Drone")] public GameObject drone;
         public float speed;
+
+        [Space(30)] [Header("Instruction Sheet")]
+        public GameObject sheetObject;
+
+        public InstructionSheetGrabbingCallback _sheetCallback;
+        public string title;
+        public string instruction;
 
         private GameObject player;
 
@@ -49,7 +57,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             drone.SetActive(true);
 
             _pathFollower = drone.GetComponent<PathFollower>();
-            
+
             // disable at the beginning
             _pathFollower.enabled = false;
 
@@ -115,10 +123,16 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         void UpdateInstruction()
         {
-            Debug.LogWarning("The plan of installment order changed");
+            print("The plan of installment order changed");
+
+            // update instruction sheet title and content
+            _sheetCallback.title = title;
+            _sheetCallback.content = instruction;
+            sheetObject.SetActive(true);
+
             _audioSource.Play();
         }
-        
+
         // normal event
         public override void StartNormalIncident()
         {
@@ -143,7 +157,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             // disable it
             _pathFollower.enabled = false;
-            
+
             // get incident
             var incident = GetIncident(2);
             var warning = incident;
