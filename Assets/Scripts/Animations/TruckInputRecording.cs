@@ -56,6 +56,10 @@ namespace VRC2.Animations
 
         public void ZeroSpeed()
         {
+            _acceleration = 0;
+            _steering = 0;
+            truckController.AccelerationInput = 0;
+            truckController.SteeringInput = 0;
             truckController.ZeroSpeed();
         }
     }

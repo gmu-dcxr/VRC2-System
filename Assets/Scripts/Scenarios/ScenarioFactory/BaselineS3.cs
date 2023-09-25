@@ -22,32 +22,10 @@ namespace VRC2.Scenarios.ScenarioFactory
     public class BaselineS3 : Scenario
     {
         [Header("Truck")] public GameObject truck;
-        public GameObject truckLoad;
+        // public GameObject truckLoad;
 
-        // truck destination
-        [Header("Markers")] public GameObject destination;
-
-        public GameObject closerStart;
-        public GameObject collisionStart;
-
-        [Header("Normal/Abnormal")] public Transform normalStart;
-        public Transform abnormalStart;
-        public Transform normalEnd;
-
-        private Vector3 startPos;
         private Vector3 destinationPos;
         private GameObject player;
-
-        // private float distanceThreshold = 5.0f;
-
-        private WSMVehicleController _vehicleController;
-
-        private Timer _timer;
-
-        private bool moving = false;
-        private bool back = false;
-
-        private bool loop = false;
 
         [Space(30)] [Header("Recording/Replay")]
         public TruckInputRecording recording;
@@ -64,6 +42,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Transform End3;
 
         [Space(30)] [Header("Settings")] public float distanceThreshold = 0.5f;
+        public bool autoCorrection = true;
 
 
         private TruckStatus _status;
@@ -134,9 +113,12 @@ namespace VRC2.Scenarios.ScenarioFactory
                         _status = TruckStatus.LeftTurnForward;
                         recording.ZeroSpeed();
 
-                        // force update position
-                        truck.transform.position = turnLeftDone.position;
-                        truck.transform.rotation = turnLeftDone.rotation;
+                        if (autoCorrection)
+                        {
+                            // force update position
+                            truck.transform.position = turnLeftDone.position;
+                            truck.transform.rotation = turnLeftDone.rotation;
+                        }
 
                         destinationPos = backStart.position;
                     }
@@ -155,9 +137,12 @@ namespace VRC2.Scenarios.ScenarioFactory
                         _status = TruckStatus.RightTurnBack;
                         recording.ZeroSpeed();
 
-                        // force update position
-                        truck.transform.position = turnRightDone.position;
-                        truck.transform.rotation = turnRightDone.rotation;
+                        if (autoCorrection)
+                        {
+                            // force update position
+                            truck.transform.position = turnRightDone.position;
+                            truck.transform.rotation = turnRightDone.rotation;
+                        }
 
                         destinationPos = backDst.position;
                     }
@@ -215,37 +200,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             return false;
         }
 
-        void ShowLoad(bool flag)
-        {
-            truckLoad.SetActive(flag);
-        }
-
-        void StopVehicle()
-        {
-            _vehicleController.BrakesInput = 1;
-            _vehicleController.HandBrakeInput = 1;
-            _vehicleController.ClutchInput = 1;
-        }
-
-        void StartVehicle()
-        {
-            _vehicleController.BrakesInput = 0;
-            _vehicleController.HandBrakeInput = 0;
-            _vehicleController.ClutchInput = 0;
-        }
-
-        void Disappear()
-        {
-            truckLoad.SetActive(false);
-            truck.SetActive(false);
-        }
-
-        void Appear()
-        {
-            truck.SetActive(true);
-            truckLoad.SetActive(true);
-        }
-
         #endregion
 
         #region Accident Events Callbacks
@@ -254,19 +208,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S3");
-
-            truck.transform.position = normalStart.position;
-            truck.transform.rotation = normalStart.rotation;
-
-            startPos = normalEnd.position;
-            destinationPos = normalStart.position;
-
-            moving = true;
-            back = false;
-
-            loop = true;
-
-            StartVehicle();
         }
 
         public void On_BaselineS3_1_Start()
@@ -279,18 +220,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         }
 
-        void StartTimer(float duration, Action oncomplete)
-        {
-            if (_timer != null)
-            {
-                Timer.Cancel(_timer);
-            }
-
-            _timer = Timer.Register(duration, oncomplete, isLooped: false, useRealTime: true);
-        }
-
         void ResetTruck()
         {
+            recording.ZeroSpeed();
             truck.transform.position = backStart.position;
             truck.transform.rotation = backStart.rotation;
         }
@@ -393,8 +325,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_7_Start()
         {
             print("On_BaselineS3_7_Start");
-
-            Disappear();
 
             // SAGAT query
             ShowSAGAT();
