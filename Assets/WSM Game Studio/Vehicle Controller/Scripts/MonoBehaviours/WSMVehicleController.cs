@@ -886,6 +886,11 @@ namespace WSMGameStudio.Vehicles
                 ToogleDoor(passengersDoors[index]);
         }
 
+        public void ZeroSpeed()
+        {
+            _rigidbody.velocity = Vector3.zero;
+        }
+
         #endregion
     }
 }
