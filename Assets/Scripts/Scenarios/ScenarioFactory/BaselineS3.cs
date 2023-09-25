@@ -13,9 +13,10 @@ namespace VRC2.Scenarios.ScenarioFactory
         Forward = 1,
         Backward = 2,
         LeftTurn = 3,
-        RightTurn = 4,
-        RightTurnBack = 5,
-        Waiting = 6,
+        LeftTurnForward = 4,
+        RightTurn = 5,
+        RightTurnBack = 6,
+        Waiting = 7,
     }
 
     public class BaselineS3 : Scenario
@@ -81,14 +82,34 @@ namespace VRC2.Scenarios.ScenarioFactory
             switch (_status)
             {
                 case TruckStatus.Stop:
-                    replay.Brake();
+                    replay.StopAll();
                     recording.ZeroSpeed();
                     break;
-                case TruckStatus.Backward:
-                    if (ReachDestination(destinationPos))
+                case TruckStatus.Forward:
+                    if (ReachDestination())
                     {
                         // stop it
-                        replay.Backward(false, true);
+                        replay.StopAll();
+                        recording.ZeroSpeed();
+                        
+                        // start turn left
+                        _status = TruckStatus.LeftTurn;
+
+                        // update destination
+                        destinationPos = turnLeftDone.position;
+                    }
+                    else
+                    {
+                        replay.Forward(true);
+                    }
+
+                    break;
+
+                case TruckStatus.Backward:
+                    if (ReachDestination())
+                    {
+                        // stop it
+                        replay.StopAll();
 
                         recording.ZeroSpeed();
 
@@ -105,9 +126,28 @@ namespace VRC2.Scenarios.ScenarioFactory
 
                     break;
 
-                case TruckStatus.RightTurn:
-                    if (ReachDestination(destinationPos))
+                case TruckStatus.LeftTurn:
+                    if (ReachDestination())
                     {
+                        replay.StopAll();
+
+                        _status = TruckStatus.LeftTurnForward;
+                        recording.ZeroSpeed();
+
+                        destinationPos = backStart.position;
+                    }
+                    else
+                    {
+                        replay.TurnLeft();
+                    }
+
+                    break;
+
+                case TruckStatus.RightTurn:
+                    if (ReachDestination())
+                    {
+                        replay.StopAll();
+
                         _status = TruckStatus.RightTurnBack;
                         recording.ZeroSpeed();
 
@@ -119,29 +159,43 @@ namespace VRC2.Scenarios.ScenarioFactory
                     }
 
                     break;
-                
+
                 case TruckStatus.RightTurnBack:
-                    if (ReachDestination(destinationPos))
+                    if (ReachDestination())
                     {
+                        recording.ZeroSpeed();
                         _status = TruckStatus.Stop;
                     }
                     else
                     {
                         replay.Backward(true);
                     }
-                    
+
+                    break;
+
+                case TruckStatus.LeftTurnForward:
+                    if (ReachDestination())
+                    {
+                        recording.ZeroSpeed();
+                        _status = TruckStatus.Stop;
+                    }
+                    else
+                    {
+                        replay.Forward(true);
+                    }
+
                     break;
             }
         }
 
         #region Truck Control
 
-        bool ReachDestination(Vector3 dest)
+        bool ReachDestination()
         {
             // ignore y distance
             var t = truck.transform.position;
-            dest.y = t.y;
-            var distance = Vector3.Distance(t, dest);
+            t.y = destinationPos.y;
+            var distance = Vector3.Distance(t, destinationPos);
 
             print(distance);
 
@@ -262,12 +316,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            ShowLoad(true);
+            destinationPos = turnLeft.position;
 
-            moving = true;
-            back = false;
-
-            StartVehicle();
+            _status = TruckStatus.Forward;
         }
 
         public void On_BaselineS3_3_Finish()

@@ -73,9 +73,18 @@ namespace VRC2.Animations
 
         #region APIs
 
-        public void Forward(bool loop = false)
+        public void StopAll()
         {
-            StartReplay(ref forwardController, loop: loop);
+            StopReplay(ref forwardController, true);
+            StopReplay(ref backwardController, true);
+            StopReplay(ref turnLeftController, true);
+            StopReplay(ref turnRightController, true);
+            Brake();
+        }
+
+        public void Forward(bool loop = false, bool stop = false)
+        {
+            StartReplay(ref forwardController, loop: loop, stop: stop);
         }
 
         public void Backward(bool loop = false, bool stop = false)
@@ -85,7 +94,7 @@ namespace VRC2.Animations
 
         public void TurnLeft()
         {
-            StartReplay(ref turnLeftController, loop: false);
+            StartReplay(ref turnLeftController, loop: true);
         }
 
         public void TurnRight()
