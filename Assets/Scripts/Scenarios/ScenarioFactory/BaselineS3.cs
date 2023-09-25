@@ -91,7 +91,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                         // stop it
                         replay.StopAll();
                         recording.ZeroSpeed();
-                        
+
                         // start turn left
                         _status = TruckStatus.LeftTurn;
 
@@ -127,12 +127,16 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case TruckStatus.LeftTurn:
-                    if (ReachDestination())
+                    if (replay.TurnLeftDone())
                     {
                         replay.StopAll();
 
                         _status = TruckStatus.LeftTurnForward;
                         recording.ZeroSpeed();
+
+                        // force update position
+                        truck.transform.position = turnLeftDone.position;
+                        truck.transform.rotation = turnLeftDone.rotation;
 
                         destinationPos = backStart.position;
                     }
@@ -144,12 +148,16 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case TruckStatus.RightTurn:
-                    if (ReachDestination())
+                    if (replay.TurnRightDone())
                     {
                         replay.StopAll();
 
                         _status = TruckStatus.RightTurnBack;
                         recording.ZeroSpeed();
+
+                        // force update position
+                        truck.transform.position = turnRightDone.position;
+                        truck.transform.rotation = turnRightDone.rotation;
 
                         destinationPos = backDst.position;
                     }
@@ -295,12 +303,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
+
+            replay.RewindAll();
             ResetTruck();
-
             destinationPos = turnRight.position;
-
             backDst = End1;
-
             _status = TruckStatus.Backward;
         }
 
@@ -317,7 +324,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(3);
 
             destinationPos = turnLeft.position;
-
             _status = TruckStatus.Forward;
         }
 
@@ -336,21 +342,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            Appear();
-
-            // update truck pos & rot
-            truck.transform.position = closerStart.transform.position;
-            truck.transform.rotation = closerStart.transform.rotation;
-
-            // overwrite start point
-            startPos = closerStart.transform.position;
-
-            ShowLoad(false);
-
-            moving = true;
-            back = true;
-
-            StartVehicle();
+            replay.RewindAll();
+            ResetTruck();
+            destinationPos = turnRight.position;
+            backDst = End2;
+            _status = TruckStatus.Backward;
         }
 
         public void On_BaselineS3_4_Finish()
@@ -365,12 +361,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            ShowLoad(true);
-
-            moving = true;
-            back = false;
-
-            StartVehicle();
+            destinationPos = turnLeft.position;
+            _status = TruckStatus.Forward;
         }
 
         public void On_BaselineS3_5_Finish()
@@ -386,21 +378,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(6);
 
-            Appear();
-
-            // update truck pos & rot
-            truck.transform.position = collisionStart.transform.position;
-            truck.transform.rotation = collisionStart.transform.rotation;
-
-            // overwrite start point
-            startPos = collisionStart.transform.position;
-
-            ShowLoad(false);
-
-            moving = true;
-            back = true;
-
-            StartVehicle();
+            replay.RewindAll();
+            ResetTruck();
+            destinationPos = turnRight.position;
+            backDst = End3;
+            _status = TruckStatus.Backward;
         }
 
         public void On_BaselineS3_6_Finish()

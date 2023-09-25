@@ -70,9 +70,10 @@ namespace VRC2.Animations
             return res;
         }
 
-        public void ForceRewind(ref InputEventTrace.ReplayController controller)
+        public void ForceRewind(ref InputEventTrace.ReplayController controller, bool pause=false)
         {
             controller.Rewind();
+            controller.paused = pause;
         }
 
         public void StopReplay(ref InputEventTrace.ReplayController controller, bool rewind)
