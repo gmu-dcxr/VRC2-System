@@ -79,7 +79,16 @@ namespace VRC2.Animations
             StopReplay(ref backwardController, true);
             StopReplay(ref turnLeftController, true);
             StopReplay(ref turnRightController, true);
-            Brake();
+            StopReplay(ref brakeController, true);
+        }
+
+        public void RewindAll()
+        {
+            ForceRewind(ref forwardController, true);
+            ForceRewind(ref backwardController, true);
+            ForceRewind(ref turnLeftController, true);
+            ForceRewind(ref turnRightController, true);
+            ForceRewind(ref brakeController, true);
         }
 
         public void Forward(bool loop = false, bool stop = false)
@@ -94,12 +103,22 @@ namespace VRC2.Animations
 
         public void TurnLeft()
         {
-            StartReplay(ref turnLeftController, loop: true);
+            StartReplay(ref turnLeftController);
+        }
+
+        public bool TurnLeftDone()
+        {
+            return turnLeftController.finished && turnLeftController.position != 0;
         }
 
         public void TurnRight()
         {
-            StartReplay(ref turnRightController, loop: true);
+            StartReplay(ref turnRightController);
+        }
+
+        public bool TurnRightDone()
+        {
+            return turnRightController.finished && turnRightController.position != 0;
         }
 
         public void Brake()
