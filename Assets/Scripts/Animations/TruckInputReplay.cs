@@ -90,7 +90,7 @@ namespace VRC2.Animations
 
         public void TurnRight()
         {
-            StartReplay(ref turnRightController, loop: false);
+            StartReplay(ref turnRightController, loop: true);
         }
 
         public void Brake()

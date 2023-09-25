@@ -14,7 +14,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         Backward = 2,
         LeftTurn = 3,
         RightTurn = 4,
-        Waiting = 5,
+        RightTurnBack = 5,
+        Waiting = 6,
     }
 
     public class BaselineS3 : Scenario
@@ -57,11 +58,16 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Transform turnLeftDone;
         public Transform turnRight;
         public Transform turnRightDone;
+        public Transform End1;
+        public Transform End2;
+        public Transform End3;
 
         [Space(30)] [Header("Settings")] public float distanceThreshold = 0.5f;
 
 
         private TruckStatus _status;
+
+        private Transform backDst;
 
         private void Start()
         {
@@ -102,13 +108,28 @@ namespace VRC2.Scenarios.ScenarioFactory
                 case TruckStatus.RightTurn:
                     if (ReachDestination(destinationPos))
                     {
-                        _status = TruckStatus.Stop;
+                        _status = TruckStatus.RightTurnBack;
+                        recording.ZeroSpeed();
+
+                        destinationPos = backDst.position;
                     }
                     else
                     {
                         replay.TurnRight();
                     }
 
+                    break;
+                
+                case TruckStatus.RightTurnBack:
+                    if (ReachDestination(destinationPos))
+                    {
+                        _status = TruckStatus.Stop;
+                    }
+                    else
+                    {
+                        replay.Backward(true);
+                    }
+                    
                     break;
             }
         }
@@ -224,32 +245,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             destinationPos = turnRight.position;
 
+            backDst = End1;
+
             _status = TruckStatus.Backward;
-
-
-            // Appear();
-            //
-            // moving = false;
-            //
-            // // need some time to make truck fully stop and then change its position
-            // StartTimer(3.0f, () =>
-            // {
-            //     // reset 
-            //     truck.transform.position = abnormalStart.position;
-            //     truck.transform.rotation = abnormalStart.rotation;
-            //
-            //     startPos = truck.transform.position;
-            //     destinationPos = destination.transform.position;
-            //
-            //     ShowLoad(false);
-            //
-            //     loop = false;
-            //
-            //     moving = true;
-            //     back = true;
-            //
-            //     StartVehicle();
-            // });
         }
 
         public void On_BaselineS3_2_Finish()
