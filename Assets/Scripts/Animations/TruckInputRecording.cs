@@ -53,5 +53,10 @@ namespace VRC2.Animations
             // truckController.HandBrakeInput = brakeAction.triggered ? 1f : 0f;
             // truckController.ClutchInput = brakeAction.triggered ? 1f : 0f;
         }
+
+        public void ZeroSpeed()
+        {
+            truckController.ZeroSpeed();
+        }
     }
 }

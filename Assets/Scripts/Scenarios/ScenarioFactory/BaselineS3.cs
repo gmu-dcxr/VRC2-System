@@ -3,9 +3,20 @@ using UnityEngine;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 using UnityTimer;
+using VRC2.Animations;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
+    public enum TruckStatus
+    {
+        Stop = 0,
+        Forward = 1,
+        Backward = 2,
+        LeftTurn = 3,
+        RightTurn = 4,
+        Waiting = 5,
+    }
+
     public class BaselineS3 : Scenario
     {
         [Header("Truck")] public GameObject truck;
@@ -25,7 +36,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Vector3 destinationPos;
         private GameObject player;
 
-        private float distanceThreshold = 5.0f;
+        // private float distanceThreshold = 5.0f;
 
         private WSMVehicleController _vehicleController;
 
@@ -36,42 +47,80 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool loop = false;
 
+        [Space(30)] [Header("Recording/Replay")]
+        public TruckInputRecording recording;
+
+        public TruckInputReplay replay;
+
+        [Space(30)] [Header("Markers")] public Transform backStart;
+        public Transform turnLeft;
+        public Transform turnLeftDone;
+        public Transform turnRight;
+        public Transform turnRightDone;
+
+        [Space(30)] [Header("Settings")] public float distanceThreshold = 0.5f;
+
+
+        private TruckStatus _status;
+
         private void Start()
         {
             base.Start();
 
-            startPos = truck.transform.position;
-            destinationPos = destination.transform.position;
-
-            _vehicleController = truck.GetComponent<WSMVehicleController>();
+            _status = TruckStatus.Stop;
         }
 
         private void Update()
         {
-            if (!moving)
+            switch (_status)
             {
-                StopVehicle();
-            }
-            else
-            {
-                MoveForward(!back, loop);
+                case TruckStatus.Stop:
+                    replay.Brake();
+                    recording.ZeroSpeed();
+                    break;
+                case TruckStatus.Backward:
+                    if (ReachDestination(destinationPos))
+                    {
+                        // stop it
+                        replay.Backward(false, true);
+
+                        recording.ZeroSpeed();
+
+                        // start turn right
+                        _status = TruckStatus.RightTurn;
+
+                        // update destination
+                        destinationPos = turnRightDone.position;
+                    }
+                    else
+                    {
+                        replay.Backward(true);
+                    }
+
+                    break;
+
+                case TruckStatus.RightTurn:
+                    if (ReachDestination(destinationPos))
+                    {
+                        _status = TruckStatus.Stop;
+                    }
+                    else
+                    {
+                        replay.TurnRight();
+                    }
+
+                    break;
             }
         }
 
         #region Truck Control
 
-        bool ReachDestination(bool forward)
+        bool ReachDestination(Vector3 dest)
         {
-            var d = destinationPos; // backward
-            if (forward)
-            {
-                d = startPos;
-            }
-
             // ignore y distance
             var t = truck.transform.position;
-            d.y = t.y;
-            var distance = Vector3.Distance(t, d);
+            dest.y = t.y;
+            var distance = Vector3.Distance(t, dest);
 
             print(distance);
 
@@ -112,37 +161,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             truck.SetActive(true);
             truckLoad.SetActive(true);
-        }
-
-        void MoveForward(bool forward, bool autoloop = false)
-        {
-            if (ReachDestination(forward))
-            {
-                print("Truck reach destination");
-                if (autoloop)
-                {
-                    back = !back;
-                    forward = !forward;
-                }
-                else
-                {
-                    if (forward)
-                    {
-                        // make truck disappear, simulating out-of-site
-                        Disappear();   
-                    }
-                    moving = false;
-                    return;
-                }
-            }
-
-            var _acceleration = 1.0f;
-            if (!forward)
-            {
-                _acceleration = -1.0f;
-            }
-
-            _vehicleController.AccelerationInput = _acceleration;
         }
 
         #endregion
@@ -188,6 +206,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             _timer = Timer.Register(duration, oncomplete, isLooped: false, useRealTime: true);
         }
 
+        void ResetTruck()
+        {
+            truck.transform.position = backStart.position;
+            truck.transform.rotation = backStart.rotation;
+        }
+
         public void On_BaselineS3_2_Start()
         {
             print("On_BaselineS3_2_Start");
@@ -196,30 +220,36 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-            
-            Appear();
+            ResetTruck();
 
-            moving = false;
+            destinationPos = turnRight.position;
 
-            // need some time to make truck fully stop and then change its position
-            StartTimer(3.0f, () =>
-            {
-                // reset 
-                truck.transform.position = abnormalStart.position;
-                truck.transform.rotation = abnormalStart.rotation;
+            _status = TruckStatus.Backward;
 
-                startPos = truck.transform.position;
-                destinationPos = destination.transform.position;
 
-                ShowLoad(false);
-
-                loop = false;
-
-                moving = true;
-                back = true;
-
-                StartVehicle();
-            });
+            // Appear();
+            //
+            // moving = false;
+            //
+            // // need some time to make truck fully stop and then change its position
+            // StartTimer(3.0f, () =>
+            // {
+            //     // reset 
+            //     truck.transform.position = abnormalStart.position;
+            //     truck.transform.rotation = abnormalStart.rotation;
+            //
+            //     startPos = truck.transform.position;
+            //     destinationPos = destination.transform.position;
+            //
+            //     ShowLoad(false);
+            //
+            //     loop = false;
+            //
+            //     moving = true;
+            //     back = true;
+            //
+            //     StartVehicle();
+            // });
         }
 
         public void On_BaselineS3_2_Finish()
@@ -256,7 +286,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
-            
+
             Appear();
 
             // update truck pos & rot
@@ -306,7 +336,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // Another truck is backing up nearby, and it is going to collide with the participants.
             // get incident
             var incident = GetIncident(6);
-            
+
             Appear();
 
             // update truck pos & rot
@@ -332,7 +362,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_7_Start()
         {
             print("On_BaselineS3_7_Start");
-            
+
             Disappear();
 
             // SAGAT query

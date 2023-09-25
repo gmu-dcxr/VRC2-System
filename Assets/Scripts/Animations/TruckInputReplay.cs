@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 
 namespace VRC2.Animations
@@ -77,9 +78,9 @@ namespace VRC2.Animations
             StartReplay(ref forwardController, loop: loop);
         }
 
-        public void Backward(bool loop = false)
+        public void Backward(bool loop = false, bool stop = false)
         {
-            StartReplay(ref backwardController, loop: loop);
+            StartReplay(ref backwardController, loop: loop, stop: stop);
         }
 
         public void TurnLeft()
