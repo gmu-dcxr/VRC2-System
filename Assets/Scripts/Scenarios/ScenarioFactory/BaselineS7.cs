@@ -90,6 +90,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool moved = false;
 
+        private bool dirtSpawned = false;
+
         private void Update()
         {
             switch (_stage)
@@ -306,26 +308,29 @@ namespace VRC2.Scenarios.ScenarioFactory
             //if piece over x high - drop
             if (endPiece.transform.position.y > 7.5f)
             {
-                GameObject dupe = Instantiate(dirt);
+                if (!dirtSpawned)
+                {
+                    GameObject dupe = Instantiate(dirt);
+                    dirtSpawned = true;
 
-                dupe.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
-                dupe.transform.SetParent(endPiece);
-                dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
-                dupe.GetComponent<Rigidbody>().useGravity = false;
-                dupe.GetComponent<Rigidbody>().isKinematic = false;
-                dupe.GetComponent<MeshCollider>().convex = false;
-                dupe.GetComponent<MeshCollider>().convex = false;
-                dupe.transform.localScale = initScale;
+                    dupe.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
+                    dupe.transform.SetParent(endPiece);
+                    dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
+                    dupe.GetComponent<Rigidbody>().useGravity = false;
+                    dupe.GetComponent<Rigidbody>().isKinematic = false;
+                    dupe.GetComponent<MeshCollider>().convex = false;
+                    dupe.transform.localScale = initScale;
 
 
-                dupe.transform.SetParent(null);
-                dupe.GetComponent<Rigidbody>().useGravity = true;
-                dupe.GetComponent<MeshCollider>().convex = true;
-                dirt.SetActive(false);                
+                    dupe.transform.SetParent(null);
+                    dupe.GetComponent<Rigidbody>().useGravity = true;
+                    dupe.GetComponent<MeshCollider>().convex = true;
+                    dirt.SetActive(false);
 
-                dirt.transform.SetParent(null);
-                dirt.GetComponent<Rigidbody>().useGravity = true;
-                dirt.GetComponent<MeshCollider>().convex = true;
+                    dirt.transform.SetParent(null);
+                    dirt.GetComponent<Rigidbody>().useGravity = true;
+                    dirt.GetComponent<MeshCollider>().convex = true;
+                }
                 return;
             }
 
@@ -334,6 +339,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 if (endPiece.transform.position.y < 0.75)
                 {
+                    dirtSpawned = false;
                     dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
                     dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
 
@@ -361,6 +367,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 if (endPiece.transform.position.y < -1.50f)
                 {
+                    dirtSpawned = false;
                     dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
                     dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
                     dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y,
