@@ -17,6 +17,9 @@ namespace VRC2.Scenarios
 
     public class Scenario : MonoBehaviour
     {
+
+        [Header("Debug UI")] public bool showDebugUI = true;
+        
         [HideInInspector] public List<Incident> incidents = null;
 
         [HideInInspector] public int startInSec;
@@ -217,6 +220,8 @@ namespace VRC2.Scenarios
 
         public virtual void OnGUI()
         {
+            if (!showDebugUI) return;
+            
             // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
             var runner = GameObject.FindObjectOfType<NetworkRunner>();
             if (runner != null && runner.IsRunning && scenariosManager.scenarios != null &&

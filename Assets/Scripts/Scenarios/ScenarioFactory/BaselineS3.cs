@@ -62,7 +62,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             {
                 case TruckStatus.Stop:
                     replay.StopAll();
-                    recording.ZeroSpeed();
+                    replay.Brake();
                     break;
                 case TruckStatus.Forward:
                     if (ReachDestination())
