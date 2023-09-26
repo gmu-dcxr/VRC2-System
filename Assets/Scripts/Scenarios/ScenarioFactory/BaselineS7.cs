@@ -337,7 +337,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             //if under x - spawn in
             if (pt == part.into1 || pt == part.into2)
             {
-                if (endPiece.transform.position.y < 0.75)
+                if (endPiece.transform.position.y < 0.2)
                 {
                     dirtSpawned = false;
                     dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
@@ -365,7 +365,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
             else
             {
-                if (endPiece.transform.position.y < -1.50f)
+                if (endPiece.transform.position.y < -0.8f)
                 {
                     dirtSpawned = false;
                     dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
