@@ -452,6 +452,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
             // TODO
             pt = part.into1;
+            _stage = ExcavatorStage.Wait;
         }
 
         public void On_BaselineS7_3_Finish()
@@ -469,6 +470,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
             // TODO
             pt = part.into2;
+            _stage = ExcavatorStage.Wait;
         }
 
         public void On_BaselineS7_4_Finish()
