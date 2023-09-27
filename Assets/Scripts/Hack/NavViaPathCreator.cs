@@ -54,13 +54,16 @@ namespace VRC2.Hack
 
             // update radius
             _agent.radius = radius;
-            
+
             // disable autobraking
             _agent.autoBraking = false;
 
 
             // set the 1st destination
-            _agent.SetDestination(anchorPoints[dstIndex]);
+            if (_agent.isActiveAndEnabled)
+            {
+                _agent.SetDestination(anchorPoints[dstIndex]);
+            }
         }
 
         void InitAnchorPoints()
@@ -78,6 +81,7 @@ namespace VRC2.Hack
 
         private void Update()
         {
+            if (!_agent.isActiveAndEnabled) return;
             if (AgentHelper.ReachDestination(_agent))
             {
                 // change to next destination
