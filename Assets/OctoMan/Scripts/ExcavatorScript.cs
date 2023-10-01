@@ -53,15 +53,15 @@ public class ExcavatorScript : MonoBehaviour {
 	void Update() 
 	{
 		return;
-		if(!InDriveMode)
-		{
+		//if(!InDriveMode)
+		//{
 			//-------------------------------------------------BIG ARM-----------------------------------------------------------------
-			if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition")!=2)
+			if (Input.GetKey(KeyCode.Alpha0) && !Input.GetKey(KeyCode.Alpha9) && anim.GetInteger("BigArmPosition")!=2)
 			{
 				anim.SetInteger("BigArmPosition",1);
 				anim.SetFloat("BigArmSpeed",1f);
 			}
-			else if (!Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition")!=0)
+			else if (!Input.GetKey(KeyCode.Alpha9) && Input.GetKey(KeyCode.Alpha0) && anim.GetInteger("BigArmPosition")!=0)
 			{
 				anim.SetInteger("BigArmPosition",1);
 				anim.SetFloat("BigArmSpeed", -1f);
@@ -104,7 +104,7 @@ public class ExcavatorScript : MonoBehaviour {
 			}
 
 			//---------------------------------------------------------ROTATE BODY----------------------------------------------------------
-			if (Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+			if (Input.GetKey(KeyCode.Alpha1) && !Input.GetKey(KeyCode.Alpha2))
 			{
 				anim.SetFloat("RotateSpeed", 0.5f);
 			}
@@ -117,11 +117,11 @@ public class ExcavatorScript : MonoBehaviour {
 				anim.SetFloat("RotateSpeed", 0f);
 			}
 		
-		}
+		//}
 
 		//---------------------------------------------------------DRIVE MODE--------------------------------------------------------------
-		if (InDriveMode)
-		{
+		//if (InDriveMode)
+		//{
 			//ANIMATE RIGHT TREAD
 			if (Input.GetKey(KeyCode.Q) && !Input.GetKey(KeyCode.A))
 			{
@@ -156,7 +156,7 @@ public class ExcavatorScript : MonoBehaviour {
 				WheelFrontLeft.transform.Rotate(Vector3.forward * Time.deltaTime *rotSpeed *4);
 				WheelBackLeft.transform.Rotate(Vector3.forward * Time.deltaTime *rotSpeed *4);
 			}
-		}
+		//}
 
 		//------------------------------------------------------DOOR OPEN / CLOSE-----------------------------------------------------
 		if (Input.GetKeyDown(KeyCode.F))
