@@ -162,8 +162,8 @@ namespace VRC2.Animations
 
 		public override void UpdateLogic()
 		{
-			if (!InDriveMode)
-			{
+			//if (!InDriveMode)
+			//{
 				//-------------------------------------------------BIG ARM-----------------------------------------------------------------
 				// if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S) && anim.GetInteger("BigArmPosition") != 2)
 				if (bigArmInput.ReadValue<Vector2>().y > 0 && anim.GetInteger("BigArmPosition") != 2)
@@ -230,11 +230,11 @@ namespace VRC2.Animations
 					anim.SetFloat("RotateSpeed", 0f);
 				}
 
-			}
+			//}
 
 			//---------------------------------------------------------DRIVE MODE--------------------------------------------------------------
-			if (InDriveMode)
-			{
+			//if (InDriveMode)
+			//{
 				//ANIMATE RIGHT TREAD
 				if (moveInput.ReadValue<Vector2>().y > 0)
 				{
@@ -269,7 +269,7 @@ namespace VRC2.Animations
 					WheelFrontLeft.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 4);
 					WheelBackLeft.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 4);
 				}
-			}
+			//}
 
 			//------------------------------------------------------DOOR OPEN / CLOSE-----------------------------------------------------
 			if (doorInput.triggered)

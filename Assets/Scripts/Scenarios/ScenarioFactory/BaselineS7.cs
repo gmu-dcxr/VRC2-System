@@ -19,6 +19,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Transform endPiece;
         public GameObject hole;
         public Transform spawn;
+        private Animator anim;
 
         internal enum ExcavatorStage
         {
@@ -51,6 +52,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Transform straightAngle;
         public Transform digPoint2;
         public Transform digPoint3;
+
+        private Transform pos;
         
         private Vector3 destinationPos;
 
@@ -92,6 +95,16 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool dirtSpawned = false;
 
+        private void saveNew()
+        {
+            pos = excav.transform;
+        }
+
+        private void set()
+        {
+            excav.transform.position = pos.position;
+        }
+
         private void Update()
         {
             switch (_stage)
@@ -108,22 +121,27 @@ namespace VRC2.Scenarios.ScenarioFactory
                         }
                         else
                         {
-                            if (replay.DigFinished())
-                            {
+                            //if (replay.DigFinished())
+                            //{
                                 if (TurnCheck(straightAngle))
                                 {
                                     break;
                                 }
-                            }
+                            //}
                             _stage = ExcavatorStage.Rotate;
                         }
                     }
                     break;
 
                 case ExcavatorStage.Rotate:
-                    replay.Turn(true);
+                    //replay.Turn(true);
+                    //set();
+                    //saveNew();
+                    anim.SetBool("Left", true);
+                    //set();
                     if (TurnCheck(digAngle))
                     {
+                        anim.SetBool("Left", false);
                         _stage = ExcavatorStage.Dig;
                     }
                     break;
@@ -193,11 +211,14 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
 
                 case ExcavatorStage.Forward:
-                    replay.Forward(true);
+                    //replay.Forward(true);
+                    anim.SetBool("Forward", true);
+                    dirt.SetActive(false);
                     if (pt == part.into1)
                     {
                         if (ReachDestination(digPoint2.position))
                         {
+                            anim.SetBool("Forward", false);
                             _stage = ExcavatorStage.Rotate;
                         }
                         else
@@ -209,6 +230,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     {
                         if (ReachDestination(digPoint3.position))
                         {
+                            anim.SetBool("Forward", false);
                             _stage = ExcavatorStage.Rotate;
                         }
                         else
@@ -218,6 +240,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                     }
                     if (ReachDestination(digPoint1.position) && pt == part.nextTo)
                     {
+                        anim.SetBool("Forward", false);
+                        //saveNew();
                         _stage = ExcavatorStage.Stop;
                     }
                     break;
@@ -425,11 +449,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             print("On_BaselineS7_2_Start");
             // An excavator is digging next to the participants.
             // get incident
+            dirt.SetActive(false);
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
             // TODO 
-
+            anim = excav.GetComponent<Animator>();
             dirt.transform.SetParent(endPiece);
             dirt.GetComponent<Rigidbody>().useGravity = false;
             dirt.GetComponent<Rigidbody>().isKinematic = false;
@@ -450,6 +475,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(3);
             var warning = incident.Warning;
             print(warning);
+            dirt.SetActive(false);
             // TODO
             pt = part.into1;
             _stage = ExcavatorStage.Wait;
@@ -470,6 +496,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print(warning);
             // TODO
             pt = part.into2;
+            dirt.SetActive(false);
             _stage = ExcavatorStage.Wait;
         }
 
