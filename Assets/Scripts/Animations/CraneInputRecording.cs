@@ -688,7 +688,7 @@ namespace VRC2.Animations
         {
             if (addPhysicsHook_Bool == true)
             {
-                hook.SetParent(null);
+               // hook.SetParent(null);
                 hook.gameObject.AddComponent<Rigidbody>();
                 hook.gameObject.GetComponent<Rigidbody>().mass = massHook;
                 hook.gameObject.GetComponent<Rigidbody>().drag = 1.1f;
