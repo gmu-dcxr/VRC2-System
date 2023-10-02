@@ -43,9 +43,17 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public GameObject unpackedPipe;
 
+        public GameObject craneGroup;
+        public GameObject hook;
+
 
         private Vector3 pipeStackPos;
         private Quaternion pipeStackRot;
+
+        [Header("Animators")]
+        public Animator craneAnim;
+        public Animator hookAnim;
+        public RecordTransformHierarchy recorder;
 
         // private bool triggered = false;
         private bool clockWise = false;
@@ -65,11 +73,14 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool normalCondition = false;
 
-
+        private void Awake() 
+        {
+            
+        }
         private void Start()
         {
             base.Start();
-
+           
             if (localPlayer != null)
             {
                 player = localPlayer;
@@ -95,6 +106,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
+            
             switch (_craneStatus)
             {
                 case CraneStatus.Pickup:
@@ -148,7 +160,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     break;
             }
         }
-
+ 
         bool NeedStoppingRotation()
         {
             // stop when rotate back
@@ -296,8 +308,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
+           
+           craneAnim.SetBool("pickup", true); 
 
-            StartCrane(true, false);
+           //StartCrane(true, false);
         }
 
         public void On_BaselineS1_2_Finish()
@@ -311,8 +325,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(3);
-
-            StartCrane(false, true, rot2end: true);
+            craneAnim.SetBool("pickup", false);
+            craneAnim.SetBool("MoveClockWise", true);
+            //StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_3_Finish()
@@ -328,8 +343,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
-
-            StartCrane(true, false, true, true, rot2start: true);
+            SetActiveness(true, true);
+            craneAnim.SetBool("pickup", true);
+            craneAnim.SetBool("MoveClockWise", false);
+            //StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -343,8 +360,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(5);
-
-            StartCrane(false, true, rot2end: true);
+            craneAnim.SetBool("pickup", false);
+            craneAnim.SetBool("MoveClockWise", true);
+           // StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_5_Finish()
