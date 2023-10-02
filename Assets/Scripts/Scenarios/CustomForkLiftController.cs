@@ -22,6 +22,8 @@ namespace VRC2.Scenarios
             Left = 6,
         }
 
+        
+
         public GameObject forklift;
         public GameObject good;
         public Transform destination;
@@ -71,9 +73,7 @@ namespace VRC2.Scenarios
         private void Start()
         {
             _stage = WorkStage.Stop;
-
-            moving = false;
-
+            
             //Find positions
             startPos = forklift.transform.position;
             startRotation = forklift.transform.rotation;
