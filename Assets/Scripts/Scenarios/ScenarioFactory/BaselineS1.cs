@@ -309,9 +309,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
            
-           craneAnim.SetBool("pickup", true); 
+           craneAnim.SetTrigger("CounterClockWise");
+           
 
-           //StartCrane(true, false);
+            //StartCrane(true, false);
         }
 
         public void On_BaselineS1_2_Finish()
@@ -325,8 +326,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(3);
-            craneAnim.SetBool("pickup", false);
-            craneAnim.SetBool("MoveClockWise", true);
+            craneAnim.SetTrigger("ClockWise");
             //StartCrane(false, true, rot2end: true);
         }
 
@@ -344,8 +344,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
             SetActiveness(true, true);
-            craneAnim.SetBool("pickup", true);
-            craneAnim.SetBool("MoveClockWise", false);
+            craneAnim.SetTrigger("CounterClockWise");
             //StartCrane(true, false, true, true, rot2start: true);
         }
 
@@ -360,9 +359,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(5);
-            craneAnim.SetBool("pickup", false);
-            craneAnim.SetBool("MoveClockWise", true);
-           // StartCrane(false, true, rot2end: true);
+            craneAnim.SetTrigger("ClockWise");
+            // StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_5_Finish()
@@ -379,6 +377,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            SetActiveness(true, true);
+            craneAnim.SetTrigger("pipeFall");
             StartCrane(true, false, true, true, rot2start: true);
         }
 
@@ -421,8 +421,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(8);
             var warning = incident.Warning;
             print(warning);
-
-            StartCrane(false, true, rot2end: true);
+            craneAnim.SetTrigger("ClockWise");
+            // StartCrane(false, true, rot2end: true);
         }
 
         public void On_BaselineS1_8_Finish()
@@ -436,8 +436,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(9);
             var warning = incident.Warning;
             print(warning);
-
-            StartCrane(true, false, true, true, rot2start: true);
+            SetActiveness(true, true);
+            craneAnim.SetTrigger("CounterClockWise");
+            //StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_9_Finish()
