@@ -8,6 +8,7 @@ using Fusion.Sockets;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using VRC2;
 
 public class StartScene : MonoBehaviour
@@ -21,28 +22,29 @@ public class StartScene : MonoBehaviour
 
     private PlayerSpawner _playerSpawner;
 
-    [Space(30)] [Header("Gameobjects")] public GameObject canvas;
-    public GameObject lobby;
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(this);
-    }
+    [Space(30)] [Header("Gameobjects")] public GameObject startMenu;
+    public GameObject mainEventSystem;
+    public Button hostButton;
+    public Button joinButton;
 
     void Start()
     {
+        mainEventSystem.SetActive(false);
+
         normalColor = maleTMP.color;
 
         _playerSpawner = FindObjectOfType<PlayerSpawner>();
 
         _playerSpawner.OnGameStarted += OnGameStarted;
+
+        hostButton.onClick.AddListener(HostButton);
+        joinButton.onClick.AddListener(JoinButton);
     }
 
     private void OnGameStarted()
     {
-        // hide canvas and lobby
-        canvas.SetActive(false);
-        lobby.SetActive(false);
+        mainEventSystem.SetActive(true);
+        startMenu.SetActive(false);
     }
 
     void Update()
@@ -68,24 +70,12 @@ public class StartScene : MonoBehaviour
 
     public void HostButton()
     {
-        if (GlobalConstants.playerGender == PlayerGender.Undefined)
-        {
-            Debug.LogError("Please select gender first");
-            return;
-        }
-
         _playerSpawner.StartHost();
 
     }
 
     public void JoinButton()
     {
-        if (GlobalConstants.playerGender == PlayerGender.Undefined)
-        {
-            Debug.LogError("Please select gender first");
-            return;
-        }
-
         _playerSpawner.StartClient();
     }
 
