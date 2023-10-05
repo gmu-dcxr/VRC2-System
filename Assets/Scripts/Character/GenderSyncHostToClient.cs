@@ -6,16 +6,12 @@ using Timer = UnityTimer.Timer;
 
 namespace VRC2.Character
 {
-    public class GenderSyncHostToClient : NetworkBehaviour
+    public class GenderSyncHostToClient : GenderSyncBase
     {
-        private PlayerSpawner _playerSpawner;
-
-        private bool synchronized = false;
-
         private bool timerStarted = false;
         private Timer _timer;
 
-        private void Start()
+        public void Start()
         {
             _playerSpawner = FindObjectOfType<PlayerSpawner>();
             synchronized = false;
@@ -42,7 +38,7 @@ namespace VRC2.Character
             _timer = Timer.Register(5.0f, complete, isLooped: false, useRealTime: true);
         }
 
-        private void Update()
+        public void Update()
         {
             if (synchronized) return;
 
@@ -53,40 +49,17 @@ namespace VRC2.Character
                     SetTimer(() =>
                     {
                         var pid = GlobalConstants.localPlayer.PlayerId;
-                        var male = GlobalConstants.playerGender == PlayerGender.Male;
+                        var female = GlobalConstants.playerGender == PlayerGender.Female;
+                        var hair = GlobalConstants.playerHairIndex;
+                        var skin = GlobalConstants.playerSkinIndex;
+                        
+                        print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
                         // send message
-                        RPC_SendMessage(pid, male);
+                        RPC_SendMessage(pid, female, hair, skin);
+
                         synchronized = true;
                     });
                 }
-            }
-        }
-
-        PlayerRef GetPlayerByPID(int pid)
-        {
-            var players = Runner.ActivePlayers;
-            foreach (var p in players)
-            {
-                if (p.PlayerId == pid) return p;
-            }
-
-            return PlayerRef.None;
-        }
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_SendMessage(int playerid, bool male, RpcInfo info = default)
-        {
-            // find gameobject by player id
-            var pr = GetPlayerByPID(playerid);
-            var go = Runner.GetPlayerObject(pr);
-            var gs = go.GetComponent<GenderSelector>();
-            if (male)
-            {
-                gs.ChangeToMale();
-            }
-            else
-            {
-                gs.ChangeToFemale();
             }
         }
     }
