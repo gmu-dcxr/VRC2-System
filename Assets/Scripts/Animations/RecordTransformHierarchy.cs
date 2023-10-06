@@ -10,6 +10,8 @@ public class RecordTransformHierarchy : MonoBehaviour
 
     private GameObjectRecorder m_Recorder;
 
+    public bool started = true;
+
     void Start()
     {
         // Create recorder and record the script GameObject.
@@ -21,34 +23,28 @@ public class RecordTransformHierarchy : MonoBehaviour
 
     void LateUpdate()
     {
-        if (clip == null)
+        if (clip == null || !started)
             return;
 
         // Take a snapshot and record all the bindings values for this frame.
         m_Recorder.TakeSnapshot(Time.deltaTime);
     }
 
-    void OnDisable()
-    {
-        // if (clip == null)
-        //     return;
-        //
-        // if (m_Recorder.isRecording)
-        // {
-        //     // Save the recorded session to the clip.
-        //     m_Recorder.SaveToClip(clip);
-        // }
-    }
-
     private void OnGUI()
     {
+        if (GUI.Button(new Rect(100, 10, 100, 50), "Start"))
+        {
+            started = true;
+            print("Start recording");
+        }
+
         if (GUI.Button(new Rect(200, 10, 100, 50), "Save"))
         {
             if (m_Recorder.isRecording)
             {
                 // Save the recorded session to the clip.
                 m_Recorder.SaveToClip(clip);
-                print("saved");
+                print("Saved");
             }
         }
     }
