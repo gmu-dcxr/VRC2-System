@@ -393,12 +393,25 @@ namespace VRC2.Pipe
             if (pm.angle != PipeBendAngles.Angle_0) return false;
             return pm.IsNotCut();
         }
-        
+
         public static bool IsSimplePipe(GameObject go)
         {
             var root = GetRoot(go);
             var pm = root.GetComponent<PipeManipulation>();
             return pm != null;
+        }
+
+        public static void UpdateBoxColliders(GameObject pipe, bool enable)
+        {
+            var colliders = Utils.GetChildren<BoxCollider>(pipe);
+
+            foreach (var go in colliders)
+            {
+                if (go.GetComponent<BoxCollider>() != null)
+                {
+                    go.GetComponent<BoxCollider>().enabled = enable;
+                }
+            }
         }
 
         #region Material
@@ -479,7 +492,7 @@ namespace VRC2.Pipe
         #endregion
 
         #region Pipe Fall Logic
-        
+
         // return true only if all clamps are visible
         public static bool ShouldPipeFall(GameObject root)
         {
