@@ -97,9 +97,12 @@ public class RoboticArm : MonoBehaviour
 	{
 		if (gripped)
 		{
+			print("gripped");
 			var go = attachPoint.transform.GetChild(0);
 			// force local position
 			go.localPosition = Vector3.zero;
+			// force local rotation
+			go.localRotation = Quaternion.identity;
 		}
 	}
 

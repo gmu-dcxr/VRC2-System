@@ -93,8 +93,8 @@ namespace VRC2.Animations
         // Update is called once per frame
         void Update()
         {
-            if(Runner == null || !Runner.isActiveAndEnabled) return;
-            
+            // if(Runner == null || !Runner.isActiveAndEnabled) return;
+
             ControlRobotBody();
             ControlRobotArm();
         }
@@ -103,8 +103,7 @@ namespace VRC2.Animations
 
         #region RPC actions
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_Invoke(int index, RpcInfo info = default)
+        private void InvokeAction_Impl(int index)
         {
             switch (index)
             {
@@ -140,6 +139,25 @@ namespace VRC2.Animations
                 default:
                     break;
             }
+        }
+
+        private void RPC_Invoke(int index)
+        {
+            if (Runner == null || !Runner.isActiveAndEnabled)
+            {
+                // run locally
+                InvokeAction_Impl(index);
+            }
+            else
+            {
+                RPC_Invoke_Impl(index);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_Invoke_Impl(int index, RpcInfo info = default)
+        {
+            InvokeAction_Impl(index);
         }
 
 
@@ -266,8 +284,7 @@ namespace VRC2.Animations
 
         #region RPC actions to change to arm
 
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_RotatePart(int index, float angle, RpcInfo info = default)
+        private void RotatePart_Impl(int index, float angle)
         {
             switch (index)
             {
@@ -286,8 +303,26 @@ namespace VRC2.Animations
             }
         }
 
+        private void RPC_RotatePart(int index, float angle)
+        {
+            if (Runner == null || !Runner.isActiveAndEnabled)
+            {
+                // run locally
+                RotatePart_Impl(index, angle);
+            }
+            else
+            {
+                RPC_RotatePart_Impl(index, angle);
+            }
+        }
+
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_OperateGrip(bool open, float speed, RpcInfo info = default)
+        private void RPC_RotatePart_Impl(int index, float angle, RpcInfo info = default)
+        {
+            RotatePart_Impl(index, angle);
+        }
+
+        private void OperateGrip_Impl(bool open, float speed)
         {
             if (open)
             {
@@ -299,8 +334,49 @@ namespace VRC2.Animations
             }
         }
 
+        private void RPC_OperateGrip(bool open, float speed)
+        {
+            if (Runner == null || !Runner.isActiveAndEnabled)
+            {
+                // run locally
+                OperateGrip_Impl(open, speed);
+            }
+            else
+            {
+                RPC_OperateGrip_Impl(open, speed);
+            }
+        }
+
         [Rpc(RpcSources.All, RpcTargets.All)]
-        private void RPC_ResetArm(RpcInfo info = default)
+        private void RPC_OperateGrip_Impl(bool open, float speed, RpcInfo info = default)
+        {
+            OperateGrip_Impl(open, speed);
+        }
+
+        private void ResetArm_Impl()
+        {
+            angle0 = 0.0f;
+            angle1 = 0.0f;
+            angle2 = 0.0f;
+            angle3 = 0.25f;
+            arm.ResetRotations();
+        }
+
+        private void RPC_ResetArm()
+        {
+            if (Runner == null || !Runner.isActiveAndEnabled)
+            {
+                // run locally
+                ResetArm_Impl();
+            }
+            else
+            {
+                RPC_ResetArm_Impl();
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_ResetArm_Impl(RpcInfo info = default)
         {
             angle0 = 0.0f;
             angle1 = 0.0f;
