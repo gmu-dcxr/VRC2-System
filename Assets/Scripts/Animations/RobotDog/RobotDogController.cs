@@ -50,16 +50,15 @@ namespace VRC2.Animations
 
         #region Targets
 
-        [Space(30)]
-        [Header("Target")]
-        public Transform bendcutInput;
+        [Space(30)] [Header("Target")] public Transform bendcutInput;
         public Transform bendcutOutput;
         public Transform deliveryPoint;
         public Transform standbyPoint;
-        
+
         private Transform targetTransform;
 
         [Space(30)] [Header("Arm")] public RoboticArm roboticArm;
+        public Animator robotDogAnimator;
 
         #endregion
 
@@ -108,7 +107,7 @@ namespace VRC2.Animations
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
             recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
-            
+
             roboticArm.ReadyToPickup += ReadyToPickup;
 
         }
@@ -117,12 +116,12 @@ namespace VRC2.Animations
         {
             print("ReadyToPickup");
             var pipe = GlobalConstants.lastSpawnedPipe;
-            
+
             // remove rigid body
             PipeHelper.BeforeMove(ref pipe);
             // update box colliders
             PipeHelper.UpdateBoxColliders(pipe, false);
-            
+
             pipe.transform.parent = attachePoint.transform;
             pipe.transform.localPosition = Vector3.zero;
             pipe.transform.localRotation = Quaternion.identity;
@@ -145,12 +144,12 @@ namespace VRC2.Animations
             // pos.y = targetTransform.transform.position.y;
             // targetGameObject.transform.position = pos;
             var pipe = GlobalConstants.lastSpawnedPipe;
-            
+
             // remove rigid body
             PipeHelper.BeforeMove(ref pipe);
             // update box colliders
             PipeHelper.UpdateBoxColliders(pipe, false);
-            
+
             pipe.transform.parent = attachePoint.transform;
             pipe.transform.localPosition = Vector3.zero;
             pipe.transform.localRotation = Quaternion.identity;
@@ -619,23 +618,46 @@ namespace VRC2.Animations
             // {
             //     stage = RobotStage.Dropoff;
             // }
+            
+            if (GUI.Button(new Rect(10, 10, 100, 50), "Pickup"))
+            {
+                StartPickupAnimation();
+            }
+            
+            if (GUI.Button(new Rect(150, 10, 100, 50), "Idle"))
+            {
+                StopAnimation();
+            }
+            
+            if (GUI.Button(new Rect(10, 100, 100, 50), "Dropoff"))
+            {
+                StartDropoffAnimation();
+            }
         }
 
         #endregion
 
         private void Update()
         {
-            
+
         }
 
-        #region Animation monitor
+        #region RobotArm Animation Control
 
-        void MonitorAnimation()
+        void StartPickupAnimation()
         {
-            
+            robotDogAnimator.SetBool("Pickup", true);
         }
 
-        
+        void StopAnimation()
+        {
+            robotDogAnimator.SetBool("Idle", true);
+        }
+
+        void StartDropoffAnimation()
+        {
+            robotDogAnimator.SetBool("Dropoff", true);
+        }
 
         #endregion
     }
