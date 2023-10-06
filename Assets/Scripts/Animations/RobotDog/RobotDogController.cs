@@ -145,6 +145,9 @@ namespace VRC2.Animations
             // targetGameObject.transform.position = pos;
             var pipe = GlobalConstants.lastSpawnedPipe;
 
+            if (pipe == null) return;
+
+
             // remove rigid body
             PipeHelper.BeforeMove(ref pipe);
             // update box colliders
@@ -618,18 +621,18 @@ namespace VRC2.Animations
             // {
             //     stage = RobotStage.Dropoff;
             // }
-            
-            if (GUI.Button(new Rect(10, 10, 100, 50), "Pickup"))
+
+            if (GUI.Button(new Rect(10, 200, 100, 50), "Pickup"))
             {
                 StartPickupAnimation();
             }
-            
-            if (GUI.Button(new Rect(150, 10, 100, 50), "Idle"))
+
+            if (GUI.Button(new Rect(150, 200, 100, 50), "Idle"))
             {
                 StopAnimation();
             }
-            
-            if (GUI.Button(new Rect(10, 100, 100, 50), "Dropoff"))
+
+            if (GUI.Button(new Rect(300, 200, 100, 50), "Dropoff"))
             {
                 StartDropoffAnimation();
             }
@@ -644,19 +647,27 @@ namespace VRC2.Animations
 
         #region RobotArm Animation Control
 
+        void UpdateAnimator(bool idle, bool pickup, bool dropoff)
+        {
+            robotDogAnimator.SetBool("Idle", idle);
+            robotDogAnimator.SetBool("Pickup", pickup);
+            robotDogAnimator.SetBool("Dropoff", dropoff);
+        }
+
+
         void StartPickupAnimation()
         {
-            robotDogAnimator.SetBool("Pickup", true);
+            UpdateAnimator(false, true, false);
         }
 
         void StopAnimation()
         {
-            robotDogAnimator.SetBool("Idle", true);
+            UpdateAnimator(true, false, false);
         }
 
         void StartDropoffAnimation()
         {
-            robotDogAnimator.SetBool("Dropoff", true);
+            UpdateAnimator(false, false, true);
         }
 
         #endregion
