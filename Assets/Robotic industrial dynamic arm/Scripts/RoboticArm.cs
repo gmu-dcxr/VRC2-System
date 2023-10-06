@@ -37,6 +37,8 @@ public class RoboticArm : MonoBehaviour
 	#region Monitor Grip
 
 	[FormerlySerializedAs("readyToPickup")] public System.Action ReadyToPickup;
+
+	private bool pickedUp = false;
 	
 	[HideInInspector]
 	public float rightGripYAngle
@@ -88,6 +90,7 @@ public class RoboticArm : MonoBehaviour
 
 	void Start()
 	{
+		pickedUp = false;
 		rotation0 = Quaternion.Euler(270,0,0);
 		rotation1 = Quaternion.Euler(0,270,0);
 		rotation2 = Quaternion.Euler(0,0,0);
@@ -122,11 +125,12 @@ public class RoboticArm : MonoBehaviour
 			go.localRotation = Quaternion.identity;
 		}
         
-		if (rightGripYAngle <= rightGripYThreshold)
+		if (!pickedUp && rightGripYAngle <= rightGripYThreshold)
 		{
 			if (ReadyToPickup != null)
 			{
 				print("RobotArm pick up");
+				pickedUp = true;
 				ReadyToPickup();
 			}
 		}
