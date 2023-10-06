@@ -120,9 +120,19 @@ namespace VRC2.Animations
         {
             // sometimes, it can not precisely grab the pipe
             print("manually fix grapping");
-            var pos = attachePoint.transform.position;
-            pos.y = targetTransform.transform.position.y;
-            targetGameObject.transform.position = pos;
+            // var pos = attachePoint.transform.position;
+            // pos.y = targetTransform.transform.position.y;
+            // targetGameObject.transform.position = pos;
+            var pipe = GlobalConstants.lastSpawnedPipe;
+            
+            // remove rigid body
+            PipeHelper.BeforeMove(ref pipe);
+            // update box colliders
+            PipeHelper.UpdateBoxColliders(pipe, false);
+            
+            pipe.transform.parent = attachePoint.transform;
+            pipe.transform.localPosition = Vector3.zero;
+            pipe.transform.localRotation = Quaternion.identity;
         }
 
         #endregion

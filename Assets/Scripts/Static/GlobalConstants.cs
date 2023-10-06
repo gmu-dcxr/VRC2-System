@@ -10,7 +10,6 @@ namespace VRC2
 {
     public enum PlayerGender
     {
-        Undefined = 0,
         Male = 1,
         Female = 2,
     }
@@ -39,9 +38,14 @@ namespace VRC2
         {
             return (GlobalConstants.networkRunner != null && !GlobalConstants.localPlayer.IsNone);
         }
-        
-        // player gender
-        public static PlayerGender playerGender = PlayerGender.Undefined;
+
+        #region Character Synchronization
+        // player gender // default mode
+        public static PlayerGender playerGender = PlayerGender.Female;
+        public static int playerHairIndex = 0;
+        public static int playerSkinIndex = 0;
+
+        #endregion
 
         // P2, participant 2, check size, color, water level, etc.
         public static bool Checker = false;
