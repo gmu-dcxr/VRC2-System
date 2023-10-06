@@ -17,7 +17,7 @@ public class RoboticArm : MonoBehaviour
 	public Transform part3;
 	public Transform gripLeft;
 	public Transform gripRight;
-	
+
 	public Transform attachPoint;
 
 	// this is the audio source to play the arm sound
@@ -31,15 +31,17 @@ public class RoboticArm : MonoBehaviour
 	private Quaternion rotation3;
 	private Quaternion rotationLeft;
 	private Quaternion rotationRight;
-    
+
 	#endregion
 
 	#region Monitor Grip
 
-	[FormerlySerializedAs("readyToPickup")] public System.Action ReadyToPickup;
+	public System.Action ReadyToPickup;
+	public System.Action ReadyToDropoff;
 
 	private bool pickedUp = false;
-	
+	private bool droppedOff = true;
+
 	[HideInInspector]
 	public float rightGripYAngle
 	{
@@ -47,10 +49,8 @@ public class RoboticArm : MonoBehaviour
 	}
 
 	// start to pickup once it's less then the threshold.
-	private float rightGripYThreshold = 160f;
-	
-	
-	
+	private float rightGripCloseYThreshold = 160f;
+	private float rightGripOpenYThreshold = 170f;
 
 	#endregion
 
@@ -77,26 +77,27 @@ public class RoboticArm : MonoBehaviour
 	{
 		get => attachPoint.childCount != 0;
 	}
-	
+
 
 	[HideInInspector]
 	public bool needReleasing
 	{
 		get => attachPoint.childCount != 0 && rightYRot >= 180;
 	}
-    
+
 
 	#endregion
 
 	void Start()
 	{
 		pickedUp = false;
-		rotation0 = Quaternion.Euler(270,0,0);
-		rotation1 = Quaternion.Euler(0,270,0);
-		rotation2 = Quaternion.Euler(0,0,0);
-		rotation3 = Quaternion.Euler(90,90,0);
-		rotationLeft = Quaternion.Euler(270,0,0);
-		rotationRight = Quaternion.Euler(90,180,0);
+		droppedOff = true;
+		rotation0 = Quaternion.Euler(270, 0, 0);
+		rotation1 = Quaternion.Euler(0, 270, 0);
+		rotation2 = Quaternion.Euler(0, 0, 0);
+		rotation3 = Quaternion.Euler(90, 90, 0);
+		rotationLeft = Quaternion.Euler(270, 0, 0);
+		rotationRight = Quaternion.Euler(90, 180, 0);
 	}
 
 	// Update is called once per frame
@@ -124,17 +125,30 @@ public class RoboticArm : MonoBehaviour
 			// force local rotation
 			go.localRotation = Quaternion.identity;
 		}
-        
-		if (!pickedUp && rightGripYAngle <= rightGripYThreshold)
+
+		print(rightGripYAngle);
+
+		if (!pickedUp && rightGripYAngle <= rightGripCloseYThreshold)
 		{
 			if (ReadyToPickup != null)
 			{
 				print("RobotArm pick up");
 				pickedUp = true;
+				droppedOff = false;
 				ReadyToPickup();
 			}
 		}
-		
+
+		if (!droppedOff && rightGripYAngle >= rightGripOpenYThreshold)
+		{
+			if (ReadyToDropoff != null)
+			{
+				print("RobotArm drop off");
+				pickedUp = false;
+				droppedOff = true;
+				ReadyToDropoff();
+			}
+		}
 	}
 
 	public void rotatePart0(float val)
@@ -220,7 +234,7 @@ public class RoboticArm : MonoBehaviour
 
 		left.z -= step;
 		right.z -= step;
-		
+
 		// make it not too big
 		if (right.y > 230) return;
 
