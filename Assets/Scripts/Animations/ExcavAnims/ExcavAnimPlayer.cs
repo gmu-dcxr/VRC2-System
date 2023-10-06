@@ -10,13 +10,33 @@ public class ExcavAnimPlayer : MonoBehaviour
     public Transform digPoint3;
     private Transform destination;
 
+    //dirt spawning/spawning
     public Transform spawn;
     public Transform endPiece;
     private bool awake;
     public GameObject dirt;
     public GameObject hole;
 
+    public GameObject spill;
+
+    //treads
+    private float offsetL;
+    private float offsetR;
+    public Material matL;
+    public Material matR;
+    public GameObject TreadsL;
+    public GameObject TreadsR;
+    public GameObject leftTread;
+    public GameObject rightTread;
+
+    public GameObject WheelFrontLeft;
+    public GameObject WheelFrontRight;
+    private float rotSpeed = 30f;
+    public GameObject WheelBackLeft;
+    public GameObject WheelBackRight;
+
     public float NumberOfDigs;
+    private bool done;
 
     private Vector3 scaleChange = new Vector3(0.03f, 0.0f, 0.03f);
     private Vector3 initScale = new Vector3(0.05f, 0.05f, 0.05f);
@@ -38,12 +58,27 @@ public class ExcavAnimPlayer : MonoBehaviour
         awake = false;
         destination = digPoint1;
         anim = GetComponent<Animator>();
+        matL = TreadsL.GetComponent<Renderer>().material;
+        matR = TreadsR.GetComponent<Renderer>().material;
+        done = false;
         //anim.SetBool("Dig", true);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
+        {
+            //animate the treads
+            offsetR = Time.time * (0.75f) % 1;
+            offsetL = Time.time * (0.75f) % 1;
+            matL.mainTextureOffset = new Vector2(0, offsetL);
+            matR.mainTextureOffset = new Vector2(0, offsetR);
+            WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+        }
         if (!awake)
         {
             //play wakeup animation
@@ -60,16 +95,17 @@ public class ExcavAnimPlayer : MonoBehaviour
         //{
         if (ReachDestination(destination.position))
             {
+            if (!done)
+            {
                 anim.SetBool("Forward", false);
-                //anim.enabled = false;
                 anim.SetBool("Dig", true);
-            //anim.enabled = true;
+            }
+
             if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
             {
-                print("STOP33");
                 anim.SetBool("Dig", false);
-
-                anim.enabled = false;
+                done = true;
+                //anim.enabled = false;
             }
         }
         //}
@@ -95,9 +131,10 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 2
         //then dig
         //then dump
-            pt = part.nextTo;
-            destination = digPoint1;
-            anim.SetBool("Forward", true);
+        done = false;
+        pt = part.nextTo;
+        destination = digPoint1;
+        anim.SetBool("Forward", true);
     }
 
     public void start_3()
@@ -105,6 +142,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 3
         //then dig
         //then dump
+        done = false;
         anim.enabled = true;
         anim.SetBool("Dig",false);
         pt = part.into1;
@@ -117,6 +155,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 4
         //then dig
         //then dump
+        done = false;
         anim.enabled = true;
         anim.SetBool("Dig", false);
         pt = part.into2;
@@ -126,11 +165,6 @@ public class ExcavAnimPlayer : MonoBehaviour
 
     public void makeDirt()
     {
-        //dirtSpawned = false;
-        //dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z);
-        //dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y, spawn.transform.rotation.z);
-
-        
         dirt.transform.SetParent(endPiece);
         dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y,
             spawn.transform.position.z);
@@ -140,12 +174,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         dirt.GetComponent<Rigidbody>().isKinematic = false;
         dirt.GetComponent<MeshCollider>().convex = false;
         dirt.GetComponent<MeshCollider>().convex = false;
-        //make hole bigger
-        //if (!moved)
-        //{
         UpdateHole(hole);
-            //moved = true;
-        //}
         dirt.SetActive(true);
     }
 
@@ -178,6 +207,11 @@ public class ExcavAnimPlayer : MonoBehaviour
         dirt.transform.SetParent(null);
         dirt.GetComponent<Rigidbody>().useGravity = true;
         dirt.GetComponent<MeshCollider>().convex = true;
+    }
+
+    public void spillUpdate()
+    {
+        spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y+0.045f, spill.transform.position.z);
     }
 
 }
