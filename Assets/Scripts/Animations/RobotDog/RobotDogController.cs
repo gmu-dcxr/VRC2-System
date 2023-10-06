@@ -50,12 +50,16 @@ namespace VRC2.Animations
 
         #region Targets
 
+        [Space(30)]
+        [Header("Target")]
         public Transform bendcutInput;
         public Transform bendcutOutput;
         public Transform deliveryPoint;
         public Transform standbyPoint;
         
         private Transform targetTransform;
+
+        [Space(30)] [Header("Arm")] public RoboticArm roboticArm;
 
         #endregion
 
@@ -104,7 +108,24 @@ namespace VRC2.Animations
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
             recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
+            
+            roboticArm.ReadyToPickup += ReadyToPickup;
 
+        }
+
+        private void ReadyToPickup()
+        {
+            print("ReadyToPickup");
+            var pipe = GlobalConstants.lastSpawnedPipe;
+            
+            // remove rigid body
+            PipeHelper.BeforeMove(ref pipe);
+            // update box colliders
+            PipeHelper.UpdateBoxColliders(pipe, false);
+            
+            pipe.transform.parent = attachePoint.transform;
+            pipe.transform.localPosition = Vector3.zero;
+            pipe.transform.localRotation = Quaternion.identity;
         }
 
         #region Gripper one-time callback
@@ -599,6 +620,22 @@ namespace VRC2.Animations
             //     stage = RobotStage.Dropoff;
             // }
         }
+
+        #endregion
+
+        private void Update()
+        {
+            
+        }
+
+        #region Animation monitor
+
+        void MonitorAnimation()
+        {
+            
+        }
+
+        
 
         #endregion
     }

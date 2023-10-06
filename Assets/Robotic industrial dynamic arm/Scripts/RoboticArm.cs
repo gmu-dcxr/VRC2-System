@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC2.Extention;
 
 public class RoboticArm : MonoBehaviour
@@ -30,8 +31,24 @@ public class RoboticArm : MonoBehaviour
 	private Quaternion rotation3;
 	private Quaternion rotationLeft;
 	private Quaternion rotationRight;
+    
+	#endregion
 
+	#region Monitor Grip
 
+	[FormerlySerializedAs("readyToPickup")] public System.Action ReadyToPickup;
+	
+	[HideInInspector]
+	public float rightGripYAngle
+	{
+		get => gripRight.localRotation.eulerAngles.y;
+	}
+
+	// start to pickup once it's less then the threshold.
+	private float rightGripYThreshold = 160f;
+	
+	
+	
 
 	#endregion
 
@@ -104,6 +121,16 @@ public class RoboticArm : MonoBehaviour
 			// force local rotation
 			go.localRotation = Quaternion.identity;
 		}
+        
+		if (rightGripYAngle <= rightGripYThreshold)
+		{
+			if (ReadyToPickup != null)
+			{
+				print("RobotArm pick up");
+				ReadyToPickup();
+			}
+		}
+		
 	}
 
 	public void rotatePart0(float val)
