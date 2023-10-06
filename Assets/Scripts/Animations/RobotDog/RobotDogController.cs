@@ -109,7 +109,19 @@ namespace VRC2.Animations
             recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
 
             roboticArm.ReadyToPickup += ReadyToPickup;
+            roboticArm.ReadyToDropoff += ReadyToDropoff;
 
+        }
+
+        private void ReadyToDropoff()
+        {
+            print("ReadyToDropoff");
+            var pipe = GlobalConstants.lastSpawnedPipe;
+
+            // Add rigid body, etc.
+            PipeHelper.AfterMove(ref pipe);
+            // update box colliders
+            PipeHelper.UpdateBoxColliders(pipe, true);
         }
 
         private void ReadyToPickup()
