@@ -346,7 +346,8 @@ namespace VRC2.Animations
                     {
                         if (recording.IsIdle())
                         {
-                            replay.Pickup();
+                            // replay.Pickup();
+                            StartPickupAnimation();
                             pickingup = true;
                         }
                         else
@@ -356,7 +357,8 @@ namespace VRC2.Animations
                     }
                     else
                     {
-                        if (replay.PickupDone())
+                        // if (replay.PickupDone())
+                        if (IsPickupDone())
                         {
                             // move to target
                             print("pickup is done");
@@ -680,6 +682,21 @@ namespace VRC2.Animations
         void StartDropoffAnimation()
         {
             UpdateAnimator(false, false, true);
+        }
+
+        bool IsAnimationStatePlaying(Animator anim, int animLayer, string stateName)
+        {
+            if (anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName) &&
+                anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime < 1.0f)
+                return true;
+            else
+                return false;
+        }
+
+        bool IsPickupDone()
+        {
+            return robotDogAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogPickup") &&
+                   robotDogAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
 
         #endregion
