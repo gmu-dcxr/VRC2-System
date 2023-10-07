@@ -18,11 +18,17 @@ namespace VRC2.Pipe
 
             // remove its rigid body
             var rb = interactablePipe.GetComponent<Rigidbody>();
-            GameObject.Destroy(rb);
+            if (rb != null)
+            {
+                GameObject.Destroy(rb);   
+            }
 
             // disable its interactable ability
             var reticle = interactablePipe.GetComponentInChildren<ReticleDataIcon>();
-            reticle.gameObject.SetActive(false);
+            if (reticle != null)
+            {
+                reticle.gameObject.SetActive(false);   
+            }
         }
 
         public static void EnsureRigidBody(ref GameObject obj)

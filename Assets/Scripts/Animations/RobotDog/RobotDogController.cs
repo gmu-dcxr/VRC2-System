@@ -149,8 +149,8 @@ namespace VRC2.Animations
             replay.arm = recording.arm;
             replay.recording = recording;
 
-            recording.OnCloseGripOnce += OnCloseGripOnce;
-            recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
+            // recording.OnCloseGripOnce += OnCloseGripOnce;
+            // recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
 
             armAnimator = robotArmRoot.GetComponent<Animator>();
             roboticArm = robotArmRoot.GetComponent<RoboticArm>();
@@ -165,6 +165,8 @@ namespace VRC2.Animations
             print("ReadyToDropoff");
             var pipe = GlobalConstants.lastSpawnedPipe;
 
+            pipe.transform.parent = null;
+            
             // Add rigid body, etc.
             PipeHelper.AfterMove(ref pipe);
             // update box colliders
@@ -175,6 +177,9 @@ namespace VRC2.Animations
         {
             print("ReadyToPickup");
             var pipe = GlobalConstants.lastSpawnedPipe;
+            
+            PipeHelper.BeforeMove(ref pipe);
+            PipeHelper.UpdateBoxColliders(pipe, false);
 
             pipe.transform.parent = attachePoint.transform;
             pipe.transform.localPosition = Vector3.zero;
@@ -419,7 +424,16 @@ namespace VRC2.Animations
             switch (stage)
             {
                 case RobotStage.Stop:
-                    replay.Stop(true);
+                    if (armAnimator.enabled)
+                    {
+                        armAnimator.enabled = false;
+                    }
+
+                    if (!dogAnimator.enabled)
+                    {
+                        dogAnimator.enabled = true;
+                    }
+                    Idle();
                     break;
 
                 case RobotStage.Forward:
@@ -451,14 +465,14 @@ namespace VRC2.Animations
                         }
                         else if (targetTransform == deliveryPoint)
                         {
+                            print("delivery point");
                             stage = RobotStage.Dropoff;
                             droppingoff = false;
                         }
                         else if (targetTransform == standbyPoint)
                         {
+                            print("standby point");
                             stage = RobotStage.Stop;
-                            // reset arm
-                            recording.ResetArm();
                         }
                     }
 
@@ -633,7 +647,10 @@ namespace VRC2.Animations
                             print("dropoff done");
                             droppingoff = false;
                             // reset arm
-                            UpdateAnimator(true, false, false);
+                            roboticArm.ResetRotations();
+                            
+                            dogAnimator.enabled = true;
+                            armAnimator.enabled = false;
 
                             turn = false;
                             walk = false;
@@ -839,7 +856,10 @@ namespace VRC2.Animations
         {
             // move to pick result
             print("pickup result");
-            PipeHelper.BeforeMove(ref go);
+            
+            // update global constant
+            GlobalConstants.lastSpawnedPipe = go;
+            
             targetGameObject = go;
             targetTransform = t;
 
