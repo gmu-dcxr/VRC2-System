@@ -23,9 +23,8 @@ namespace VRC2.Animations
         Stop = 0,
         Forward = 1,
         Left = 2,
-        Right = 3,
-        PickupRotate = 41,
-        PickupStrafe = 42,
+        PickupRotate = 3,
+        PickupStrafe = 4,
         Pickup = 5,
         Dropoff = 6,
     }
@@ -299,7 +298,9 @@ namespace VRC2.Animations
 
         bool TurnLeft()
         {
-            if (Math.Abs(GetForwardAngleDiff()) < angleThreshold)
+            var diff = Math.Abs(GetForwardAngleDiff());
+            print($"turnleft diff: {diff}");
+            if (diff < angleThreshold)
             {
                 print("TurnLeft is done");
                 actions.Idle1();
@@ -321,13 +322,17 @@ namespace VRC2.Animations
             pos1.y = 0;
             pos2.y = 0;
 
+            // update directly to speed up rotating
             var targetRot = Quaternion.LookRotation(pos2 - pos1, body.transform.up);
 
             var rb = body.transform.rotation;
 
-            var newRb = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
+            if (diff > 10 * angleThreshold)
+            {
+                targetRot = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
+            }
 
-            body.transform.rotation = newRb;
+            body.transform.rotation = targetRot;
 
             return false;
 
@@ -484,20 +489,6 @@ namespace VRC2.Animations
                     {
                         print("turn left is done");
                         stage = RobotStage.Forward;
-                    }
-
-                    break;
-                case RobotStage.Right:
-                    var angle = Math.Abs(GetForwardAngleDiff());
-                    print($"right: {angle}");
-                    if (angle < angleThreshold)
-                    {
-                        Idle();
-                        stage = RobotStage.Forward;
-                    }
-                    else
-                    {
-                        TurnRight();
                     }
 
                     break;
