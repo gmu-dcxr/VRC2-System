@@ -30,6 +30,13 @@ namespace VRC2.Animations
         Dropoff = 6,
     }
 
+    internal enum StrafeDirection
+    {
+        Unknown = -1,
+        Left = 1,
+        Right = 2,
+    }
+
     public class RobotDogController : MonoBehaviour
     {
         public GameObject robotDog;
@@ -43,7 +50,7 @@ namespace VRC2.Animations
         private RobotStage stage;
 
         private float angleThreshold = 1f;
-        private float distanceThreshold = 0.5f;
+        private float distanceThreshold = 0.1f;
 
         private bool pickingup = false;
         private bool droppingoff = false;
@@ -68,7 +75,7 @@ namespace VRC2.Animations
 
         #region For network
 
-        public GameObject currentPipe;
+        public GameObject currentPipe { get; set; }
 
         private PipeParameters parameters;
 
@@ -101,6 +108,11 @@ namespace VRC2.Animations
         private bool turn = false;
 
         private float rotationOffset = 90; // pipe.y - dog.y
+
+        // private bool pickupDone = false;
+        // private bool dropoffDone = false;
+
+        private StrafeDirection strafeDirection = StrafeDirection.Unknown;
 
         #endregion
 
@@ -151,9 +163,7 @@ namespace VRC2.Animations
         private void ReadyToDropoff()
         {
             print("ReadyToDropoff");
-            
-            // TODO: REPLACE WITH THE REAL PIPE
-            var pipe = currentPipe;
+            var pipe = GlobalConstants.lastSpawnedPipe;
 
             // Add rigid body, etc.
             PipeHelper.AfterMove(ref pipe);
@@ -164,15 +174,7 @@ namespace VRC2.Animations
         private void ReadyToPickup()
         {
             print("ReadyToPickup");
-            // var pipe = GlobalConstants.lastSpawnedPipe;
-
-            // TODO: REPLACE WITH THE REAL PIPE
-            var pipe = currentPipe;
-
-            // // remove rigid body
-            // PipeHelper.BeforeMove(ref pipe);
-            // // update box colliders
-            // PipeHelper.UpdateBoxColliders(pipe, false);
+            var pipe = GlobalConstants.lastSpawnedPipe;
 
             pipe.transform.parent = attachePoint.transform;
             pipe.transform.localPosition = Vector3.zero;
@@ -219,23 +221,6 @@ namespace VRC2.Animations
         {
             // make it only turn left
             stage = RobotStage.Left;
-
-            // // calculate the angle
-            // var angle = GetForwardAngleDiff();
-            // if (angle < 0)
-            // {
-            //     print("left turn");
-            //     // left turn
-            //     stage = RobotStage.Left;
-            //     // replay.LeftTurn(true);
-            // }
-            // else
-            // {
-            //     print("right turn");
-            //     // right turn
-            //     stage = RobotStage.Right;
-            //     // replay.RightTurn(true);
-            // }
         }
 
         float GetDistance(Transform t)
@@ -250,7 +235,7 @@ namespace VRC2.Animations
 
         #region Robot dog body control
 
-        void RobotStrafe(bool left)
+        void RobotStrafe()
         {
             if (!walk)
             {
@@ -258,17 +243,43 @@ namespace VRC2.Animations
                 actions.Walk();
             }
 
-            actions.StrafeLeft();
-            var x = -1;
-            if (!left)
+            if (strafeDirection == StrafeDirection.Unknown)
             {
+                var forward = body.transform.forward;
+
+                var vec = targetTransform.position - body.transform.position;
+
+                vec.y = 0;
+
+                var angel = Vector3.Angle(forward, vec);
+
+                if (angel < 45)
+                {
+                    strafeDirection = StrafeDirection.Right;
+                }
+                else
+                {
+                    strafeDirection = StrafeDirection.Left;
+                }
+            }
+
+            var x = -1;
+            if (strafeDirection == StrafeDirection.Right)
+            {
+                // right
+                actions.StrafeRight();
                 x = 1;
+            }
+            else if (strafeDirection == StrafeDirection.Left)
+            {
+                // left
+                actions.StrafeLeft();
             }
 
             body.Translate(new Vector3(x, 0, 0) * strafeSpeed * Time.deltaTime);
         }
 
-        bool StrafeLeft()
+        bool StrafeRobot()
         {
             var distance = GetDistance(targetTransform);
             // 0.15 is to make robot is just above the pipe
@@ -277,19 +288,7 @@ namespace VRC2.Animations
                 return true;
             }
 
-            RobotStrafe(true);
-            return false;
-        }
-
-        bool StrafeRight()
-        {
-            var distance = GetDistance(targetTransform);
-            if (distance < distanceThreshold)
-            {
-                return true;
-            }
-
-            RobotStrafe(false);
+            RobotStrafe();
             return false;
         }
 
@@ -445,22 +444,22 @@ namespace VRC2.Animations
                             // droppingoff = false;
                             stage = RobotStage.Dropoff;
                         }
-                        // else if (targetTransform == bendcutOutput)
-                        // {
-                        //     print("forward to bend cut output");
-                        //     stage = RobotStage.PickupRotate;
-                        // }
-                        // else if (targetTransform == deliveryPoint)
-                        // {
-                        //     stage = RobotStage.Dropoff;
-                        //     droppingoff = false;
-                        // }
-                        // else if (targetTransform == standbyPoint)
-                        // {
-                        //     stage = RobotStage.Stop;
-                        //     // reset arm
-                        //     recording.ResetArm();
-                        // }
+                        else if (targetTransform == bendcutOutput)
+                        {
+                            print("forward to bend cut output");
+                            stage = RobotStage.PickupRotate;
+                        }
+                        else if (targetTransform == deliveryPoint)
+                        {
+                            stage = RobotStage.Dropoff;
+                            droppingoff = false;
+                        }
+                        else if (targetTransform == standbyPoint)
+                        {
+                            stage = RobotStage.Stop;
+                            // reset arm
+                            recording.ResetArm();
+                        }
                     }
 
                     break;
@@ -491,12 +490,13 @@ namespace VRC2.Animations
 
                 case RobotStage.PickupStrafe:
 
-                    if (StrafeLeft())
+                    if (StrafeRobot())
                     {
                         print("strafe is done");
                         // force update position and rotation for precise grap
                         FinetuneRobotPosition(targetTransform);
                         Idle();
+                        pickingup = false;
                         stage = RobotStage.Pickup;
                     }
 
@@ -516,6 +516,7 @@ namespace VRC2.Animations
                     if (TurnLeftUntil(f1, rotationOffset))
                     {
                         print("TurnLeftUntil is done");
+                        strafeDirection = StrafeDirection.Unknown;
                         // strafe
                         stage = RobotStage.PickupStrafe;
                     }
@@ -568,13 +569,13 @@ namespace VRC2.Animations
                         // disable dog animator, otherwise arm animator won't work.
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
-                        
+
                         StartPickupAnimation();
                     }
                     else
                     {
-                        // if (replay.PickupDone())
                         if (IsPickupDone())
+                        // if (pickupDone)
                         {
                             // move to target
                             print("pickup is done");
@@ -609,10 +610,10 @@ namespace VRC2.Animations
                     {
                         print("drop off");
                         droppingoff = true;
-                        
+
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
-                        
+
                         StartDropoffAnimation();
                         // if (recording.IsIdle())
                         // {
@@ -627,15 +628,12 @@ namespace VRC2.Animations
                     else
                     {
                         if (IsDropoffDone())
+                        // if (dropoffDone)
                         {
                             print("dropoff done");
                             droppingoff = false;
                             // reset arm
-                            // recording.ResetArm();
-                            
-                            // enable dog animator, disable arm animator
-                            armAnimator.enabled = false;
-                            dogAnimator.enabled = true;
+                            UpdateAnimator(true, false, false);
 
                             turn = false;
                             walk = false;
@@ -844,6 +842,11 @@ namespace VRC2.Animations
             PipeHelper.BeforeMove(ref go);
             targetGameObject = go;
             targetTransform = t;
+
+            // enable dog animator, disable arm animator
+            armAnimator.enabled = false;
+            dogAnimator.enabled = true;
+
             MoveToTarget();
         }
 
@@ -926,15 +929,15 @@ namespace VRC2.Animations
         {
             UpdateAnimator(false, false, true);
         }
+        // bool IsAnimationStatePlaying(Animator anim, int animLayer, string stateName)
+        // {
+        //     if (anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName) &&
+        //         anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime < 1.0f)
+        //         return true;
+        //     else
+        //         return false;
+        // }
 
-        bool IsAnimationStatePlaying(Animator anim, int animLayer, string stateName)
-        {
-            if (anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName) &&
-                anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime < 1.0f)
-                return true;
-            else
-                return false;
-        }
 
         bool IsPickupDone()
         {
@@ -946,7 +949,7 @@ namespace VRC2.Animations
             return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmDropoff") &&
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
-        
+
 
         #endregion
     }
