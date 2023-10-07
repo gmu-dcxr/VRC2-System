@@ -151,7 +151,9 @@ namespace VRC2.Animations
         private void ReadyToDropoff()
         {
             print("ReadyToDropoff");
-            var pipe = GlobalConstants.lastSpawnedPipe;
+            
+            // TODO: REPLACE WITH THE REAL PIPE
+            var pipe = currentPipe;
 
             // Add rigid body, etc.
             PipeHelper.AfterMove(ref pipe);
@@ -365,6 +367,7 @@ namespace VRC2.Animations
         bool MoveForward()
         {
             var distance = GetDistance(targetTransform);
+            print($"distance {distance}");
             if (distance < distanceThreshold)
             {
                 return true;
@@ -435,13 +438,13 @@ namespace VRC2.Animations
                             // make it ready for pickup
                             stage = RobotStage.PickupRotate;
                         }
-                        // else if (targetTransform == bendcutInput)
-                        // {
-                        //     // // make it dropoff
-                        //     // stage = RobotStage.Dropoff;
-                        //     // droppingoff = false;
-                        //     stage = RobotStage.Dropoff;
-                        // }
+                        else if (targetTransform == bendcutInput)
+                        {
+                            // // make it dropoff
+                            // stage = RobotStage.Dropoff;
+                            // droppingoff = false;
+                            stage = RobotStage.Dropoff;
+                        }
                         // else if (targetTransform == bendcutOutput)
                         // {
                         //     print("forward to bend cut output");
@@ -564,6 +567,8 @@ namespace VRC2.Animations
                         pickingup = true;
                         // disable dog animator, otherwise arm animator won't work.
                         dogAnimator.enabled = false;
+                        armAnimator.enabled = true;
+                        
                         StartPickupAnimation();
                     }
                     else
@@ -602,24 +607,38 @@ namespace VRC2.Animations
                 case RobotStage.Dropoff:
                     if (!droppingoff)
                     {
-                        if (recording.IsIdle())
-                        {
-                            replay.Dropoff();
-                            droppingoff = true;
-                        }
-                        else
-                        {
-                            replay.Stop(true);
-                        }
+                        print("drop off");
+                        droppingoff = true;
+                        
+                        dogAnimator.enabled = false;
+                        armAnimator.enabled = true;
+                        
+                        StartDropoffAnimation();
+                        // if (recording.IsIdle())
+                        // {
+                        //     replay.Dropoff();
+                        //     droppingoff = true;
+                        // }
+                        // else
+                        // {
+                        //     replay.Stop(true);
+                        // }
                     }
                     else
                     {
-                        if (replay.DropoffDone())
+                        if (IsDropoffDone())
                         {
                             print("dropoff done");
-                            pickingup = false;
+                            droppingoff = false;
                             // reset arm
-                            recording.ResetArm();
+                            // recording.ResetArm();
+                            
+                            // enable dog animator, disable arm animator
+                            armAnimator.enabled = false;
+                            dogAnimator.enabled = true;
+
+                            turn = false;
+                            walk = false;
 
                             if (targetTransform == bendcutInput)
                             {
@@ -922,6 +941,12 @@ namespace VRC2.Animations
             return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmPickup") &&
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
+        bool IsDropoffDone()
+        {
+            return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmDropoff") &&
+                   armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
+        }
+        
 
         #endregion
     }
