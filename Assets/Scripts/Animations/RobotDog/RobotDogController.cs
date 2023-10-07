@@ -23,7 +23,8 @@ namespace VRC2.Animations
         Forward = 1,
         Left = 2,
         Right = 3,
-        PickupPrepare = 4,
+        PickupRotate = 41,
+        PickupStrafe = 42,
         Pickup = 5,
         Dropoff = 6,
     }
@@ -80,6 +81,8 @@ namespace VRC2.Animations
         //Movement
         public float moveSpeed = 1f;
 
+        public float strafeSpeed = 0.1f;
+
         public float rotateSpeed = 1f;
 
         //
@@ -92,7 +95,7 @@ namespace VRC2.Animations
 
         private bool walk = false;
         private bool turn = false;
-        
+
         private float rotationOffset = 90; // pipe.y - dog.y
 
         #endregion
@@ -204,7 +207,7 @@ namespace VRC2.Animations
         {
             // make it only turn left
             stage = RobotStage.Left;
-            
+
             // // calculate the angle
             // var angle = GetForwardAngleDiff();
             // if (angle < 0)
@@ -234,6 +237,49 @@ namespace VRC2.Animations
         }
 
         #region Robot dog body control
+
+        void RobotStrafe(bool left)
+        {
+            if (!walk)
+            {
+                walk = true;
+                actions.Walk();
+            }
+
+            actions.StrafeLeft();
+            var x = -1;
+            if (!left)
+            {
+                x = 1;
+            }
+
+            body.Translate(new Vector3(x, 0, 0) * strafeSpeed * Time.deltaTime);
+        }
+
+        bool StrafeLeft()
+        {
+            var distance = GetDistance(targetTransform);
+            // 0.12 is to make robot is just above the pipe
+            if (distance < 0.12f)
+            {
+                return true;
+            }
+
+            RobotStrafe(true);
+            return false;
+        }
+
+        bool StrafeRight()
+        {
+            var distance = GetDistance(targetTransform);
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            RobotStrafe(false);
+            return false;
+        }
 
         bool TurnLeft()
         {
@@ -287,10 +333,9 @@ namespace VRC2.Animations
             var newRot = Quaternion.RotateTowards(body.transform.rotation, rot, Time.deltaTime * rotateSpeed);
             body.transform.rotation = newRot;
 
-            var f2 = body.transform.forward;
-            var rotDiff = Vector3.Angle(angle, f2);
+            var diff = Vector3.SignedAngle(body.transform.forward, targetTransform.forward, Vector3.up);
 
-            if (Math.Abs(rotDiff - rotationOffset) < angleThreshold)
+            if (Math.Abs(Math.Abs(diff) - rotationOffset) < angleThreshold)
             {
                 return true;
             }
@@ -368,18 +413,18 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.Forward:
-                    
+
                     ForceRobotTowards(targetTransform);
                     if (MoveForward())
                     {
                         print("MoveForward is done");
                         Idle();
-                        
+
                         if (currentPipe != null && targetTransform == currentPipe.transform)
                         {
                             // pickup
                             // make it ready for pickup
-                            stage = RobotStage.PickupPrepare;
+                            stage = RobotStage.PickupRotate;
                         }
                         // else if (targetTransform == bendcutInput)
                         // {
@@ -391,7 +436,7 @@ namespace VRC2.Animations
                         // else if (targetTransform == bendcutOutput)
                         // {
                         //     print("forward to bend cut output");
-                        //     stage = RobotStage.PickupPrepare;
+                        //     stage = RobotStage.PickupRotate;
                         // }
                         // else if (targetTransform == deliveryPoint)
                         // {
@@ -405,6 +450,7 @@ namespace VRC2.Animations
                         //     recording.ResetArm();
                         // }
                     }
+
                     break;
 
                 case RobotStage.Left:
@@ -430,24 +476,36 @@ namespace VRC2.Animations
 
                     break;
 
-                case RobotStage.PickupPrepare:
-                    
+                case RobotStage.PickupStrafe:
+
+                    if (StrafeLeft())
+                    {
+                        print("strafe is done");
+                        Idle();
+                    }
+
+                    break;
+
+                case RobotStage.PickupRotate:
+
                     // make turn left again
                     // var f1 = targetTransform.forward;
                     print("prepare");
                     var f1 = GetCompensateForward(targetGameObject.transform);
                     // var f2 = robotDog.transform.forward;
-                    
+
                     // f1.y = 0;
                     // f2.y = 0;
 
                     if (TurnLeftUntil(f1))
                     {
                         print("TurnLeftUntil is done");
+                        // strafe
+                        stage = RobotStage.PickupStrafe;
                     }
-                    
-                    
-                    
+
+
+
                     // var rotDiff = Vector3.Angle(f1, f2);
                     // var yoffset = replay.rotationOffset;
                     // if (rotDiff < yoffset)
@@ -766,7 +824,7 @@ namespace VRC2.Animations
             //
             // if (GUI.Button(new Rect(10, 100, 100, 50), "Pickup Prep"))
             // {
-            //     stage = RobotStage.PickupPrepare;
+            //     stage = RobotStage.PickupRotate;
             // }
             //
             // if (GUI.Button(new Rect(150, 100, 100, 50), "Pickup"))
