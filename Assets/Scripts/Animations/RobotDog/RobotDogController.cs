@@ -59,10 +59,8 @@ namespace VRC2.Animations
 
         private Transform targetTransform;
 
-        [Space(30)] [Header("Arm")]
+        [Space(30)] [Header("Arm")] public GameObject robotArmRoot;
 
-        public GameObject robotArmRoot;
-        
         private RoboticArm roboticArm;
         private Animator armAnimator;
 
@@ -165,7 +163,7 @@ namespace VRC2.Animations
         {
             print("ReadyToPickup");
             // var pipe = GlobalConstants.lastSpawnedPipe;
-            
+
             // TODO: REPLACE WITH THE REAL PIPE
             var pipe = currentPipe;
 
@@ -317,21 +315,19 @@ namespace VRC2.Animations
             pos1.y = 0;
             pos2.y = 0;
 
-            var targetRot = Quaternion.Euler(pos2 - pos1);
+            var targetRot = Quaternion.LookRotation(pos2 - pos1, body.transform.up);
 
             var rb = body.transform.rotation;
 
             var newRb = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
 
             body.transform.rotation = newRb;
-            // rigidbody can not work with animation together
-            // rigidbody.MoveRotation(newRb);
 
             return false;
 
         }
 
-        bool TurnLeftUntil(Vector3 angle)
+        bool TurnLeftUntil(Vector3 angle, float yoffset)
         {
             if (!turn)
             {
@@ -340,7 +336,7 @@ namespace VRC2.Animations
             }
 
             // add y offset
-            angle.y += rotationOffset;
+            angle.y += yoffset;
             var rot = Quaternion.Euler(angle);
             var newRot = Quaternion.RotateTowards(body.transform.rotation, rot, Time.deltaTime * rotateSpeed);
             body.transform.rotation = newRot;
@@ -426,6 +422,7 @@ namespace VRC2.Animations
 
                 case RobotStage.Forward:
 
+                    print("forward");
                     // qForceRobotTowards(targetTransform);
                     if (MoveForward())
                     {
@@ -466,9 +463,10 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.Left:
-
+                    print("left");
                     if (TurnLeft())
                     {
+                        print("turn left is done");
                         stage = RobotStage.Forward;
                     }
 
@@ -512,7 +510,7 @@ namespace VRC2.Animations
                     // f1.y = 0;
                     // f2.y = 0;
 
-                    if (TurnLeftUntil(f1))
+                    if (TurnLeftUntil(f1, rotationOffset))
                     {
                         print("TurnLeftUntil is done");
                         // strafe
@@ -575,13 +573,16 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
-                            
+
                             // enable dog animator, disable arm animator
                             armAnimator.enabled = false;
                             dogAnimator.enabled = true;
-                            
+
+                            turn = false;
+                            walk = false;
+
                             droppingoff = false;
-                    
+
                             if (currentPipe != null && targetTransform == currentPipe.transform)
                             {
                                 // change target to bendcut machine
@@ -591,7 +592,7 @@ namespace VRC2.Animations
                             {
                                 targetTransform = deliveryPoint;
                             }
-                    
+
                             MoveToTarget();
                         }
                     }
@@ -690,7 +691,7 @@ namespace VRC2.Animations
             pos.z = t.position.z;
             body.transform.position = pos;
         }
-        
+
 
         #endregion
 
