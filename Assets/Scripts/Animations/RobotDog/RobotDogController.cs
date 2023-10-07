@@ -40,7 +40,7 @@ namespace VRC2.Animations
 
         private RobotStage stage;
 
-        private float angleThreshold = 10f;
+        private float angleThreshold = 1f;
         private float distanceThreshold = 0.5f;
 
         private bool pickingup = false;
@@ -64,13 +64,34 @@ namespace VRC2.Animations
 
         #region For network
 
-        [HideInInspector] public GameObject currentPipe { get; set; }
+        public GameObject currentPipe;
 
         private PipeParameters parameters;
 
         private NetworkObject spawnedPipe;
 
         public System.Action<PipeBendAngles> ReadyToOperate;
+
+        #endregion
+
+        #region Robot body control
+
+        [Space(30)] [Header("Body")]
+        //Movement
+        public float moveSpeed = 1f;
+
+        public float rotateSpeed = 1f;
+
+        //
+        public Transform body;
+
+        public Rigidbody rigidbody;
+
+        //Scripts
+        public Actions actions;
+
+        private bool walk = false;
+        private bool turn = false;
 
         #endregion
 
@@ -100,6 +121,8 @@ namespace VRC2.Animations
         private void Start()
         {
             stage = RobotStage.Default;
+
+            rigidbody = body.GetComponent<Rigidbody>();
 
             // set arm reference
             replay.arm = recording.arm;
@@ -183,13 +206,13 @@ namespace VRC2.Animations
             {
                 // left turn
                 stage = RobotStage.Left;
-                replay.LeftTurn(true);
+                // replay.LeftTurn(true);
             }
             else
             {
                 // right turn
                 stage = RobotStage.Right;
-                replay.RightTurn(true);
+                // replay.RightTurn(true);
             }
         }
 
@@ -203,8 +226,89 @@ namespace VRC2.Animations
             return Vector3.Distance(pos1, pos2);
         }
 
+        #region Robot dog body control
+
+        bool TurnLeft()
+        {
+            if (Math.Abs(GetForwardAngleDiff()) < angleThreshold)
+            {
+                print("rotation is done");
+                actions.Idle1();
+                turn = false;
+
+                // return true is turn is done
+                return true;
+            }
+
+            if (!turn)
+            {
+                turn = true;
+                actions.TurnLeft();
+            }
+
+            // rotate rigid body
+            var pos1 = robotDog.transform.position;
+            var pos2 = targetTransform.position;
+            pos1.y = 0;
+            pos2.y = 0;
+
+            var targetRot = Quaternion.Euler(pos2 - pos1);
+
+            var rb = rigidbody.rotation;
+
+            var newRb = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
+
+            rigidbody.MoveRotation(newRb);
+
+            return false;
+
+        }
+
+        void TurnRight()
+        {
+            if (!turn)
+            {
+                turn = true;
+                actions.TurnRight();
+            }
+
+            body.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
+        }
+
+        void MoveForward()
+        {
+            if (!walk)
+            {
+                walk = true;
+                actions.Walk();
+            }
+
+            body.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
+        }
+
+        void MoveBackward()
+        {
+            if (!walk)
+            {
+                walk = true;
+                actions.Walk();
+            }
+
+            body.Translate(new Vector3(0, 0, -1) * moveSpeed * Time.deltaTime);
+        }
+
+        void Idle()
+        {
+            walk = false;
+            turn = false;
+            actions.Idle1();
+        }
+
+        #endregion
+
+
         // Tip: better to use FixedUpdate than Update for animation replaying
-        public void FixedUpdate()
+        private void Update()
         {
             if (stage == RobotStage.Default) return;
 
@@ -221,10 +325,7 @@ namespace VRC2.Animations
 
                     if (distance < distanceThreshold)
                     {
-                        replay.Forward(false, true);
-                        // stage = RobotStage.Stop;
-                        // force update position
-                        // ForceRobotPosition(target);
+                        Idle();
 
                         if (currentPipe != null && targetTransform == currentPipe.transform)
                         {
@@ -258,40 +359,30 @@ namespace VRC2.Animations
                     }
                     else
                     {
-                        replay.Forward(true);
+                        MoveForward();
                     }
 
                     break;
 
                 case RobotStage.Left:
-                    var angle = Math.Abs(GetForwardAngleDiff());
-                    // print($"left: {angle}");
-                    if (angle < angleThreshold)
+
+                    if (TurnLeft())
                     {
-                        // stop and force updating the rotation
-                        replay.LeftTurn(false, true);
-                        // ForceRobotTowards(targetTransform);
                         stage = RobotStage.Forward;
-                    }
-                    else
-                    {
-                        replay.LeftTurn(true, false);
                     }
 
                     break;
                 case RobotStage.Right:
-                    angle = Math.Abs(GetForwardAngleDiff());
-                    // print($"right: {angle}");
+                    var angle = Math.Abs(GetForwardAngleDiff());
+                    print($"right: {angle}");
                     if (angle < angleThreshold)
                     {
-                        // stop and force updating the rotation
-                        replay.RightTurn(false, true);
-                        // ForceRobotTowards(targetTransform);
+                        Idle();
                         stage = RobotStage.Forward;
                     }
                     else
                     {
-                        replay.RightTurn(true, false);
+                        TurnRight();
                     }
 
                     break;
@@ -638,7 +729,8 @@ namespace VRC2.Animations
 
             if (GUI.Button(new Rect(10, 200, 100, 50), "Pickup"))
             {
-                StartPickupAnimation();
+                // StartPickupAnimation();
+                PickUp();
             }
 
             if (GUI.Button(new Rect(150, 200, 100, 50), "Idle"))
@@ -654,16 +746,11 @@ namespace VRC2.Animations
 
         #endregion
 
-        private void Update()
-        {
-
-        }
-
         #region RobotArm Animation Control
 
         void UpdateAnimator(bool idle, bool pickup, bool dropoff)
         {
-            robotDogAnimator.SetBool("Idle", idle);
+            robotDogAnimator.SetBool("ArmIdle", idle);
             robotDogAnimator.SetBool("Pickup", pickup);
             robotDogAnimator.SetBool("Dropoff", dropoff);
         }

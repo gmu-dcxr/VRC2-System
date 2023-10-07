@@ -102,15 +102,10 @@ public class Actions : MonoBehaviour {
 	 
 		//animator.SetBool ("Attack", true);
 		animator.SetLayerWeight(1,1);
- 
-
 	}
 	public void StopAttack()
 	{
- 
- 
 		animator.SetLayerWeight(1,0);
-
 	} 
 
 }
