@@ -155,12 +155,15 @@ namespace VRC2.Animations
         private void ReadyToPickup()
         {
             print("ReadyToPickup");
-            var pipe = GlobalConstants.lastSpawnedPipe;
+            // var pipe = GlobalConstants.lastSpawnedPipe;
+            
+            // TODO: REPLACE WITH THE REAL PIPE
+            var pipe = currentPipe;
 
-            // remove rigid body
-            PipeHelper.BeforeMove(ref pipe);
-            // update box colliders
-            PipeHelper.UpdateBoxColliders(pipe, false);
+            // // remove rigid body
+            // PipeHelper.BeforeMove(ref pipe);
+            // // update box colliders
+            // PipeHelper.UpdateBoxColliders(pipe, false);
 
             pipe.transform.parent = attachePoint.transform;
             pipe.transform.localPosition = Vector3.zero;
@@ -259,8 +262,8 @@ namespace VRC2.Animations
         bool StrafeLeft()
         {
             var distance = GetDistance(targetTransform);
-            // 0.12 is to make robot is just above the pipe
-            if (distance < 0.12f)
+            // 0.15 is to make robot is just above the pipe
+            if (distance < 0.15f)
             {
                 return true;
             }
@@ -481,7 +484,10 @@ namespace VRC2.Animations
                     if (StrafeLeft())
                     {
                         print("strafe is done");
+                        // force update position and rotation for precise grap
+                        FinetuneRobotPosition(targetTransform);
                         Idle();
+                        stage = RobotStage.Pickup;
                     }
 
                     break;
@@ -547,39 +553,42 @@ namespace VRC2.Animations
                 case RobotStage.Pickup:
                     if (!pickingup)
                     {
-                        if (recording.IsIdle())
-                        {
-                            // replay.Pickup();
-                            StartPickupAnimation();
-                            pickingup = true;
-                        }
-                        else
-                        {
-                            replay.Stop(true);
-                        }
+                        print("start pickup");
+                        pickingup = true;
+                        StartPickupAnimation();
+                        // // if (recording.IsIdle())
+                        // // {
+                        //     // replay.Pickup();
+                        //     StartPickupAnimation();
+                        //     pickingup = true;
+                        // }
+                        // else
+                        // {
+                        //     replay.Stop(true);
+                        // }
                     }
-                    else
-                    {
-                        // if (replay.PickupDone())
-                        if (IsPickupDone())
-                        {
-                            // move to target
-                            print("pickup is done");
-                            droppingoff = false;
-
-                            if (currentPipe != null && targetTransform == currentPipe.transform)
-                            {
-                                // change target to bendcut machine
-                                targetTransform = bendcutInput;
-                            }
-                            else if (targetTransform == bendcutOutput)
-                            {
-                                targetTransform = deliveryPoint;
-                            }
-
-                            MoveToTarget();
-                        }
-                    }
+                    // else
+                    // {
+                    //     // if (replay.PickupDone())
+                    //     if (IsPickupDone())
+                    //     {
+                    //         // move to target
+                    //         print("pickup is done");
+                    //         droppingoff = false;
+                    //
+                    //         if (currentPipe != null && targetTransform == currentPipe.transform)
+                    //         {
+                    //             // change target to bendcut machine
+                    //             targetTransform = bendcutInput;
+                    //         }
+                    //         else if (targetTransform == bendcutOutput)
+                    //         {
+                    //             targetTransform = deliveryPoint;
+                    //         }
+                    //
+                    //         MoveToTarget();
+                    //     }
+                    // }
 
                     break;
 
@@ -668,6 +677,14 @@ namespace VRC2.Animations
             robotDog.transform.position = pos;
             robotDog.transform.Translate(0, 0, -zoffset, Space.Self);
         }
+
+        void FinetuneRobotPosition(Transform t)
+        {
+            var pos = body.transform.position;
+            pos.z = t.position.z;
+            body.transform.position = pos;
+        }
+        
 
         #endregion
 
@@ -768,6 +785,7 @@ namespace VRC2.Animations
             // remove rigidbody
             targetGameObject = currentPipe;
             PipeHelper.BeforeMove(ref targetGameObject);
+            PipeHelper.UpdateBoxColliders(targetGameObject, false);
 
             // get the pipe from P1, and move to pickup the pipe
             targetTransform = targetGameObject.transform;
