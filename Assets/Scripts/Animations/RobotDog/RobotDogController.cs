@@ -6,6 +6,7 @@ using Fusion;
 using Oculus.Interaction.DistanceReticles;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using VRC2.Events;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -32,7 +33,7 @@ namespace VRC2.Animations
     public class RobotDogController : MonoBehaviour
     {
         public GameObject robotDog;
-        // public GameObject pipe;
+        private Animator dogAnimator;
 
         public GameObject attachePoint;
 
@@ -58,8 +59,12 @@ namespace VRC2.Animations
 
         private Transform targetTransform;
 
-        [Space(30)] [Header("Arm")] public RoboticArm roboticArm;
-        public Animator robotDogAnimator;
+        [Space(30)] [Header("Arm")]
+
+        public GameObject robotArmRoot;
+        
+        private RoboticArm roboticArm;
+        private Animator armAnimator;
 
         #endregion
 
@@ -86,9 +91,10 @@ namespace VRC2.Animations
         public float rotateSpeed = 1f;
 
         //
-        public Transform body;
-
-        public Rigidbody rigidbody;
+        private Transform body
+        {
+            get => robotDog.transform;
+        }
 
         //Scripts
         public Actions actions;
@@ -127,7 +133,7 @@ namespace VRC2.Animations
         {
             stage = RobotStage.Default;
 
-            rigidbody = body.GetComponent<Rigidbody>();
+            dogAnimator = robotDog.GetComponent<Animator>();
 
             // set arm reference
             replay.arm = recording.arm;
@@ -135,6 +141,9 @@ namespace VRC2.Animations
 
             recording.OnCloseGripOnce += OnCloseGripOnce;
             recording.OnNeedReleasingOnce += OnNeedReleasingOnce;
+
+            armAnimator = robotArmRoot.GetComponent<Animator>();
+            roboticArm = robotArmRoot.GetComponent<RoboticArm>();
 
             roboticArm.ReadyToPickup += ReadyToPickup;
             roboticArm.ReadyToDropoff += ReadyToDropoff;
@@ -555,6 +564,8 @@ namespace VRC2.Animations
                     {
                         print("start pickup");
                         pickingup = true;
+                        // disable dog animator, otherwise arm animator won't work.
+                        dogAnimator.enabled = false;
                         StartPickupAnimation();
                     }
                     else
@@ -564,6 +575,11 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
+                            
+                            // enable dog animator, disable arm animator
+                            armAnimator.enabled = false;
+                            dogAnimator.enabled = true;
+                            
                             droppingoff = false;
                     
                             if (currentPipe != null && targetTransform == currentPipe.transform)
@@ -870,9 +886,9 @@ namespace VRC2.Animations
 
         void UpdateAnimator(bool idle, bool pickup, bool dropoff)
         {
-            robotDogAnimator.SetBool("ArmIdle", idle);
-            robotDogAnimator.SetBool("Pickup", pickup);
-            robotDogAnimator.SetBool("Dropoff", dropoff);
+            armAnimator.SetBool("ArmIdle", idle);
+            armAnimator.SetBool("Pickup", pickup);
+            armAnimator.SetBool("Dropoff", dropoff);
         }
 
 
@@ -902,8 +918,8 @@ namespace VRC2.Animations
 
         bool IsPickupDone()
         {
-            return robotDogAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogPickup") &&
-                   robotDogAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
+            return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmPickup") &&
+                   armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
 
         #endregion
