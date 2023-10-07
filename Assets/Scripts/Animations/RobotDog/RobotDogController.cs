@@ -417,7 +417,7 @@ namespace VRC2.Animations
 
                 case RobotStage.Forward:
 
-                    ForceRobotTowards(targetTransform);
+                    // qForceRobotTowards(targetTransform);
                     if (MoveForward())
                     {
                         print("MoveForward is done");
