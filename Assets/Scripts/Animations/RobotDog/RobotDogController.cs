@@ -92,6 +92,8 @@ namespace VRC2.Animations
 
         private bool walk = false;
         private bool turn = false;
+        
+        private float rotationOffset = 90; // pipe.y - dog.y
 
         #endregion
 
@@ -200,20 +202,25 @@ namespace VRC2.Animations
 
         void MoveToTarget()
         {
-            // calculate the angle
-            var angle = GetForwardAngleDiff();
-            if (angle < 0)
-            {
-                // left turn
-                stage = RobotStage.Left;
-                // replay.LeftTurn(true);
-            }
-            else
-            {
-                // right turn
-                stage = RobotStage.Right;
-                // replay.RightTurn(true);
-            }
+            // make it only turn left
+            stage = RobotStage.Left;
+            
+            // // calculate the angle
+            // var angle = GetForwardAngleDiff();
+            // if (angle < 0)
+            // {
+            //     print("left turn");
+            //     // left turn
+            //     stage = RobotStage.Left;
+            //     // replay.LeftTurn(true);
+            // }
+            // else
+            // {
+            //     print("right turn");
+            //     // right turn
+            //     stage = RobotStage.Right;
+            //     // replay.RightTurn(true);
+            // }
         }
 
         float GetDistance(Transform t)
@@ -232,7 +239,7 @@ namespace VRC2.Animations
         {
             if (Math.Abs(GetForwardAngleDiff()) < angleThreshold)
             {
-                print("rotation is done");
+                print("TurnLeft is done");
                 actions.Idle1();
                 turn = false;
 
@@ -254,14 +261,41 @@ namespace VRC2.Animations
 
             var targetRot = Quaternion.Euler(pos2 - pos1);
 
-            var rb = rigidbody.rotation;
+            var rb = body.transform.rotation;
 
             var newRb = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
 
-            rigidbody.MoveRotation(newRb);
+            body.transform.rotation = newRb;
+            // rigidbody can not work with animation together
+            // rigidbody.MoveRotation(newRb);
 
             return false;
 
+        }
+
+        bool TurnLeftUntil(Vector3 angle)
+        {
+            if (!turn)
+            {
+                turn = true;
+                actions.TurnLeft();
+            }
+
+            // add y offset
+            angle.y += rotationOffset;
+            var rot = Quaternion.Euler(angle);
+            var newRot = Quaternion.RotateTowards(body.transform.rotation, rot, Time.deltaTime * rotateSpeed);
+            body.transform.rotation = newRot;
+
+            var f2 = body.transform.forward;
+            var rotDiff = Vector3.Angle(angle, f2);
+
+            if (Math.Abs(rotDiff - rotationOffset) < angleThreshold)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         void TurnRight()
@@ -275,15 +309,30 @@ namespace VRC2.Animations
             body.Rotate(Vector3.up * Time.deltaTime * rotateSpeed, Space.Self);
         }
 
-        void MoveForward()
+        bool MoveForward()
         {
+            var distance = GetDistance(targetTransform);
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
             if (!walk)
             {
                 walk = true;
                 actions.Walk();
             }
 
-            body.Translate(new Vector3(0, 0, 1) * moveSpeed * Time.deltaTime);
+            // rotate rigid body
+            var pos1 = robotDog.transform.position;
+            var pos2 = targetTransform.position;
+            pos2.y = pos1.y;
+
+            var newPos = Vector3.MoveTowards(pos1, pos2, Time.deltaTime * moveSpeed);
+
+            body.transform.position = newPos;
+
+            return false;
         }
 
         void MoveBackward()
@@ -319,49 +368,43 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.Forward:
-                    var distance = GetDistance(targetTransform);
-
+                    
                     ForceRobotTowards(targetTransform);
-
-                    if (distance < distanceThreshold)
+                    if (MoveForward())
                     {
+                        print("MoveForward is done");
                         Idle();
-
+                        
                         if (currentPipe != null && targetTransform == currentPipe.transform)
                         {
                             // pickup
                             // make it ready for pickup
                             stage = RobotStage.PickupPrepare;
                         }
-                        else if (targetTransform == bendcutInput)
-                        {
-                            // // make it dropoff
-                            // stage = RobotStage.Dropoff;
-                            // droppingoff = false;
-                            stage = RobotStage.Dropoff;
-                        }
-                        else if (targetTransform == bendcutOutput)
-                        {
-                            print("forward to bend cut output");
-                            stage = RobotStage.PickupPrepare;
-                        }
-                        else if (targetTransform == deliveryPoint)
-                        {
-                            stage = RobotStage.Dropoff;
-                            droppingoff = false;
-                        }
-                        else if (targetTransform == standbyPoint)
-                        {
-                            stage = RobotStage.Stop;
-                            // reset arm
-                            recording.ResetArm();
-                        }
+                        // else if (targetTransform == bendcutInput)
+                        // {
+                        //     // // make it dropoff
+                        //     // stage = RobotStage.Dropoff;
+                        //     // droppingoff = false;
+                        //     stage = RobotStage.Dropoff;
+                        // }
+                        // else if (targetTransform == bendcutOutput)
+                        // {
+                        //     print("forward to bend cut output");
+                        //     stage = RobotStage.PickupPrepare;
+                        // }
+                        // else if (targetTransform == deliveryPoint)
+                        // {
+                        //     stage = RobotStage.Dropoff;
+                        //     droppingoff = false;
+                        // }
+                        // else if (targetTransform == standbyPoint)
+                        // {
+                        //     stage = RobotStage.Stop;
+                        //     // reset arm
+                        //     recording.ResetArm();
+                        // }
                     }
-                    else
-                    {
-                        MoveForward();
-                    }
-
                     break;
 
                 case RobotStage.Left:
@@ -388,47 +431,58 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.PickupPrepare:
+                    
+                    // make turn left again
                     // var f1 = targetTransform.forward;
+                    print("prepare");
                     var f1 = GetCompensateForward(targetGameObject.transform);
-                    var f2 = robotDog.transform.forward;
+                    // var f2 = robotDog.transform.forward;
+                    
+                    // f1.y = 0;
+                    // f2.y = 0;
 
-                    f1.y = 0;
-                    f2.y = 0;
-
-                    var rotDiff = Vector3.Angle(f1, f2);
-                    var yoffset = replay.rotationOffset;
-                    if (rotDiff < yoffset)
+                    if (TurnLeftUntil(f1))
                     {
-                        if (yoffset - rotDiff < angleThreshold)
-                        {
-                            // pickup
-                            stage = RobotStage.Pickup;
-                            pickingup = false;
-                            replay.RightTurn(false, true);
-                            ForceRobotPosition(targetTransform);
-                        }
-                        else
-                        {
-                            // right turn
-                            replay.RightTurn(true);
-                        }
+                        print("TurnLeftUntil is done");
                     }
-                    else
-                    {
-                        if (rotDiff - yoffset < angleThreshold)
-                        {
-                            // stop
-                            stage = RobotStage.Pickup;
-                            pickingup = false;
-                            replay.LeftTurn(false, true);
-                            ForceRobotPosition(targetTransform);
-                        }
-                        else
-                        {
-                            // left turn
-                            replay.LeftTurn(true);
-                        }
-                    }
+                    
+                    
+                    
+                    // var rotDiff = Vector3.Angle(f1, f2);
+                    // var yoffset = replay.rotationOffset;
+                    // if (rotDiff < yoffset)
+                    // {
+                    //     if (yoffset - rotDiff < angleThreshold)
+                    //     {
+                    //         // pickup
+                    //         stage = RobotStage.Pickup;
+                    //         pickingup = false;
+                    //         // replay.RightTurn(false, true);
+                    //         ForceRobotPosition(targetTransform);
+                    //     }
+                    //     else
+                    //     {
+                    //         // // right turn
+                    //         // replay.RightTurn(true);
+                    //         TurnLeft();
+                    //     }
+                    // }
+                    // else
+                    // {
+                    //     if (rotDiff - yoffset < angleThreshold)
+                    //     {
+                    //         // stop
+                    //         stage = RobotStage.Pickup;
+                    //         pickingup = false;
+                    //         replay.LeftTurn(false, true);
+                    //         ForceRobotPosition(targetTransform);
+                    //     }
+                    //     else
+                    //     {
+                    //         // left turn
+                    //         replay.LeftTurn(true);
+                    //     }
+                    // }
 
                     break;
 
