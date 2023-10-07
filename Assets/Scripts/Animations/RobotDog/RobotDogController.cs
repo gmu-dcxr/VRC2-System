@@ -444,7 +444,6 @@ namespace VRC2.Animations
                 case RobotStage.Forward:
 
                     print("forward");
-                    // qForceRobotTowards(targetTransform);
                     if (MoveForward())
                     {
                         print("MoveForward is done");
@@ -458,9 +457,7 @@ namespace VRC2.Animations
                         }
                         else if (targetTransform == bendcutInput)
                         {
-                            // // make it dropoff
-                            // stage = RobotStage.Dropoff;
-                            // droppingoff = false;
+                            // make it dropoff
                             stage = RobotStage.Dropoff;
                         }
                         else if (targetTransform == bendcutOutput)
@@ -508,15 +505,8 @@ namespace VRC2.Animations
                     break;
 
                 case RobotStage.PickupRotate:
-
-                    // make turn left again
-                    // var f1 = targetTransform.forward;
                     print("prepare");
                     var f1 = GetCompensateForward(targetGameObject.transform);
-                    // var f2 = robotDog.transform.forward;
-
-                    // f1.y = 0;
-                    // f2.y = 0;
 
                     if (TurnLeftUntil(f1, rotationOffset))
                     {
@@ -525,44 +515,6 @@ namespace VRC2.Animations
                         // strafe
                         stage = RobotStage.PickupStrafe;
                     }
-
-
-
-                    // var rotDiff = Vector3.Angle(f1, f2);
-                    // var yoffset = replay.rotationOffset;
-                    // if (rotDiff < yoffset)
-                    // {
-                    //     if (yoffset - rotDiff < angleThreshold)
-                    //     {
-                    //         // pickup
-                    //         stage = RobotStage.Pickup;
-                    //         pickingup = false;
-                    //         // replay.RightTurn(false, true);
-                    //         ForceRobotPosition(targetTransform);
-                    //     }
-                    //     else
-                    //     {
-                    //         // // right turn
-                    //         // replay.RightTurn(true);
-                    //         TurnLeft();
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     if (rotDiff - yoffset < angleThreshold)
-                    //     {
-                    //         // stop
-                    //         stage = RobotStage.Pickup;
-                    //         pickingup = false;
-                    //         replay.LeftTurn(false, true);
-                    //         ForceRobotPosition(targetTransform);
-                    //     }
-                    //     else
-                    //     {
-                    //         // left turn
-                    //         replay.LeftTurn(true);
-                    //     }
-                    // }
 
                     break;
 
@@ -620,15 +572,6 @@ namespace VRC2.Animations
                         armAnimator.enabled = true;
 
                         StartDropoffAnimation();
-                        // if (recording.IsIdle())
-                        // {
-                        //     replay.Dropoff();
-                        //     droppingoff = true;
-                        // }
-                        // else
-                        // {
-                        //     replay.Stop(true);
-                        // }
                     }
                     else
                     {
