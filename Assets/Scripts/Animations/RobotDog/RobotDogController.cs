@@ -556,39 +556,29 @@ namespace VRC2.Animations
                         print("start pickup");
                         pickingup = true;
                         StartPickupAnimation();
-                        // // if (recording.IsIdle())
-                        // // {
-                        //     // replay.Pickup();
-                        //     StartPickupAnimation();
-                        //     pickingup = true;
-                        // }
-                        // else
-                        // {
-                        //     replay.Stop(true);
-                        // }
                     }
-                    // else
-                    // {
-                    //     // if (replay.PickupDone())
-                    //     if (IsPickupDone())
-                    //     {
-                    //         // move to target
-                    //         print("pickup is done");
-                    //         droppingoff = false;
-                    //
-                    //         if (currentPipe != null && targetTransform == currentPipe.transform)
-                    //         {
-                    //             // change target to bendcut machine
-                    //             targetTransform = bendcutInput;
-                    //         }
-                    //         else if (targetTransform == bendcutOutput)
-                    //         {
-                    //             targetTransform = deliveryPoint;
-                    //         }
-                    //
-                    //         MoveToTarget();
-                    //     }
-                    // }
+                    else
+                    {
+                        // if (replay.PickupDone())
+                        if (IsPickupDone())
+                        {
+                            // move to target
+                            print("pickup is done");
+                            droppingoff = false;
+                    
+                            if (currentPipe != null && targetTransform == currentPipe.transform)
+                            {
+                                // change target to bendcut machine
+                                targetTransform = bendcutInput;
+                            }
+                            else if (targetTransform == bendcutOutput)
+                            {
+                                targetTransform = deliveryPoint;
+                            }
+                    
+                            MoveToTarget();
+                        }
+                    }
 
                     break;
 
