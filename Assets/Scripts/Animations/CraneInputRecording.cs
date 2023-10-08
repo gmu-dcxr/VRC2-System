@@ -801,7 +801,7 @@ namespace VRC2.Animations
                 _cargo.GetComponent<HingeJoint>().connectedBody = hook.GetComponent<Rigidbody>();
                 _cargo.GetComponent<HingeJoint>().anchor = new Vector3(0, distanceCargo, 0);
                 _cargo.GetComponent<HingeJoint>().autoConfigureConnectedAnchor = false;
-                _cargo.GetComponent<HingeJoint>().connectedAnchor = new Vector3(0, -1.2f, 0);
+                _cargo.GetComponent<HingeJoint>().connectedAnchor = new Vector3(0, -2f, 0);
                 _cargo.gameObject.layer = 2;
                 decayHookOn.gameObject.SetActive(false);
                 pointRayDecay.gameObject.AddComponent<LineRenderer>();
