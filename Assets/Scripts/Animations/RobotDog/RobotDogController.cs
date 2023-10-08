@@ -154,6 +154,10 @@ namespace VRC2.Animations
             print("ReadyToDropoff");
             var pipe = GlobalConstants.lastSpawnedPipe;
 
+            // this will happen in Client side (p2)
+            if (pipe == null) return;
+
+
             pipe.transform.parent = null;
 
             // Add rigid body, etc.
@@ -166,6 +170,9 @@ namespace VRC2.Animations
         {
             print("ReadyToPickup");
             var pipe = GlobalConstants.lastSpawnedPipe;
+
+            // this will happen in Client side (p2)
+            if (pipe == null) return;
 
             PipeHelper.BeforeMove(ref pipe);
             PipeHelper.UpdateBoxColliders(pipe, false);

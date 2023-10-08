@@ -155,7 +155,7 @@ namespace VRC2
 
         private void SetInteractable(bool enabled)
         {
-            if(distanceGrabInteractable.enabled == enabled) return;
+            if(distanceGrabInteractable == null || distanceGrabInteractable.enabled == enabled) return;
             
             distanceGrabInteractable.enabled = enabled;
         }
