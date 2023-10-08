@@ -36,7 +36,7 @@ namespace VRC2.Animations
         Right = 2,
     }
 
-    public class RobotDogController : MonoBehaviour
+    public class RobotDogController : NetworkBehaviour
     {
         public GameObject robotDog;
         private Animator dogAnimator;
@@ -459,6 +459,8 @@ namespace VRC2.Animations
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
 
+                        RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+
                         StartPickupAnimation();
                     }
                     else
@@ -472,6 +474,8 @@ namespace VRC2.Animations
                             // enable dog animator, disable arm animator
                             armAnimator.enabled = false;
                             dogAnimator.enabled = true;
+
+                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                             turn = false;
                             walk = false;
@@ -503,6 +507,8 @@ namespace VRC2.Animations
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
 
+                        RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+
                         StartDropoffAnimation();
                     }
                     else
@@ -517,6 +523,8 @@ namespace VRC2.Animations
 
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
+
+                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                             turn = false;
                             walk = false;
@@ -805,6 +813,21 @@ namespace VRC2.Animations
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
 
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_UpdateAnimatorStatus(bool dog, bool arm, RpcInfo info = default)
+        {
+            if (info.IsInvokeLocal)
+            {
+                print($"Sync animator status: {dog} - {arm}");
+            }
+            else
+            {
+                print($"Update animator status: {dog} - {arm}");
+                dogAnimator.enabled = dog;
+                armAnimator.enabled = arm;
+            }
+        }
 
         #endregion
     }
