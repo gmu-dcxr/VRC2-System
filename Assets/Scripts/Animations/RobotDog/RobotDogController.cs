@@ -290,7 +290,7 @@ namespace VRC2.Animations
 
             var rb = body.transform.rotation;
 
-            if (diff > 10 * angleThreshold)
+            if (diff > 15 * angleThreshold)
             {
                 targetRot = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
             }
