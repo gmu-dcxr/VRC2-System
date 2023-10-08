@@ -13,14 +13,14 @@ using VRC2;
 
 public class StartScene : MonoBehaviour
 {
-    [Space(30)] [Header("Gender")] public TextMeshProUGUI maleTMP;
-    public TextMeshProUGUI femaleTMP;
+    // [Space(30)] [Header("Gender")] public TextMeshProUGUI maleTMP;
+    // public TextMeshProUGUI femaleTMP;
+    //
+    // public Color selectedColor = Color.red;
+    //
+    // private Color normalColor;
 
-    public Color selectedColor = Color.red;
-
-    private Color normalColor;
-
-    private PlayerSpawner _playerSpawner;
+    [Space(30)] [Header("PlayerSpawner")] public PlayerSpawner _playerSpawner;
 
     [Space(30)] [Header("Gameobjects")] public GameObject startMenu;
     public GameObject mainEventSystem;
@@ -31,9 +31,9 @@ public class StartScene : MonoBehaviour
     {
         mainEventSystem.SetActive(false);
 
-        normalColor = maleTMP.color;
+        // normalColor = maleTMP.color;
 
-        _playerSpawner = FindObjectOfType<PlayerSpawner>();
+        // _playerSpawner = FindObjectOfType<PlayerSpawner>();
 
         _playerSpawner.OnGameStarted += OnGameStarted;
 
@@ -49,23 +49,23 @@ public class StartScene : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.H))
-        {
-            HostButton();
-        }
-        else if (Input.GetKeyUp(KeyCode.J))
-        {
-            JoinButton();
-        }
-
-        else if (Input.GetKeyUp(KeyCode.M))
-        {
-            MaleButton();
-        }
-        else if (Input.GetKeyUp(KeyCode.F))
-        {
-            FemaleButton();
-        }
+        // if (Input.GetKeyUp(KeyCode.H))
+        // {
+        //     HostButton();
+        // }
+        // else if (Input.GetKeyUp(KeyCode.J))
+        // {
+        //     JoinButton();
+        // }
+        //
+        // else if (Input.GetKeyUp(KeyCode.M))
+        // {
+        //     MaleButton();
+        // }
+        // else if (Input.GetKeyUp(KeyCode.F))
+        // {
+        //     FemaleButton();
+        // }
     }
 
     public void HostButton()
@@ -79,31 +79,31 @@ public class StartScene : MonoBehaviour
         _playerSpawner.StartClient();
     }
 
-    void UpdateTextColor(bool male)
-    {
-        // back to normal color
-        maleTMP.color = normalColor;
-        femaleTMP.color = normalColor;
-        if (male)
-        {
-            maleTMP.color = selectedColor;
-            GlobalConstants.playerGender = PlayerGender.Male;
-        }
-        else
-        {
-            femaleTMP.color = selectedColor;
-            GlobalConstants.playerGender = PlayerGender.Female;
-        }
-    }
-
-    public void MaleButton()
-    {
-        // update color
-        UpdateTextColor(true);
-    }
-
-    public void FemaleButton()
-    {
-        UpdateTextColor(false);
-    }
+    // void UpdateTextColor(bool male)
+    // {
+    //     // back to normal color
+    //     maleTMP.color = normalColor;
+    //     femaleTMP.color = normalColor;
+    //     if (male)
+    //     {
+    //         maleTMP.color = selectedColor;
+    //         GlobalConstants.playerGender = PlayerGender.Male;
+    //     }
+    //     else
+    //     {
+    //         femaleTMP.color = selectedColor;
+    //         GlobalConstants.playerGender = PlayerGender.Female;
+    //     }
+    // }
+    //
+    // public void MaleButton()
+    // {
+    //     // update color
+    //     UpdateTextColor(true);
+    // }
+    //
+    // public void FemaleButton()
+    // {
+    //     UpdateTextColor(false);
+    // }
 }
