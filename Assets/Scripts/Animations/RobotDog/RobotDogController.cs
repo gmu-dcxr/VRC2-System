@@ -36,7 +36,7 @@ namespace VRC2.Animations
         Right = 2,
     }
 
-    public class RobotDogController : MonoBehaviour
+    public class RobotDogController : NetworkBehaviour
     {
         public GameObject robotDog;
         private Animator dogAnimator;
@@ -360,15 +360,16 @@ namespace VRC2.Animations
             switch (stage)
             {
                 case RobotStage.Stop:
-                    if (armAnimator.enabled)
-                    {
-                        armAnimator.enabled = false;
-                    }
-
-                    if (!dogAnimator.enabled)
-                    {
-                        dogAnimator.enabled = true;
-                    }
+                    // if (armAnimator.enabled)
+                    // {
+                    //     armAnimator.enabled = false;
+                    // }
+                    //
+                    // if (!dogAnimator.enabled)
+                    // {
+                    //     dogAnimator.enabled = true;
+                    // }
+                    RPC_SetAnimators(true, false);
 
                     Idle();
                     break;
@@ -456,8 +457,9 @@ namespace VRC2.Animations
                         print("start pickup");
                         pickingup = true;
                         // disable dog animator, otherwise arm animator won't work.
-                        dogAnimator.enabled = false;
-                        armAnimator.enabled = true;
+                        // dogAnimator.enabled = false;
+                        // armAnimator.enabled = true;
+                        RPC_SetAnimators(false, true);
 
                         StartPickupAnimation();
                     }
@@ -470,8 +472,9 @@ namespace VRC2.Animations
                             print("pickup is done");
 
                             // enable dog animator, disable arm animator
-                            armAnimator.enabled = false;
-                            dogAnimator.enabled = true;
+                            // armAnimator.enabled = false;
+                            // dogAnimator.enabled = true;
+                            RPC_SetAnimators(false, true);
 
                             turn = false;
                             walk = false;
@@ -500,8 +503,10 @@ namespace VRC2.Animations
                         print("drop off");
                         droppingoff = true;
 
-                        dogAnimator.enabled = false;
-                        armAnimator.enabled = true;
+                        // dogAnimator.enabled = false;
+                        // armAnimator.enabled = true;
+
+                        RPC_SetAnimators(false, true);
 
                         StartDropoffAnimation();
                     }
@@ -515,8 +520,10 @@ namespace VRC2.Animations
                             // reset arm
                             roboticArm.ResetRotations();
 
-                            dogAnimator.enabled = true;
-                            armAnimator.enabled = false;
+                            // dogAnimator.enabled = true;
+                            // armAnimator.enabled = false;
+
+                            RPC_SetAnimators(true, false);
 
                             turn = false;
                             walk = false;
@@ -707,8 +714,10 @@ namespace VRC2.Animations
             targetTransform = t;
 
             // enable dog animator, disable arm animator
-            armAnimator.enabled = false;
-            dogAnimator.enabled = true;
+            // armAnimator.enabled = false;
+            // dogAnimator.enabled = true;
+
+            RPC_SetAnimators(true, false);
 
             MoveToTarget();
         }
@@ -803,6 +812,43 @@ namespace VRC2.Animations
         {
             return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmDropoff") &&
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
+        }
+
+
+        #endregion
+
+        #region Synchronization
+
+        private void RPC_SetAnimators(bool robot, bool arm)
+        {
+            if (Runner == null || !Runner.isActiveAndEnabled)
+            {
+                // run locally
+                SetAnimators_Impl(robot, arm);
+            }
+            else
+            {
+                RPC_SetAnimators_Impl(robot, arm);
+            }
+        }
+
+        void SetAnimators_Impl(bool robot, bool arm)
+        {
+            if (dogAnimator.enabled != robot)
+            {
+                dogAnimator.enabled = robot;
+            }
+
+            if (armAnimator.enabled != arm)
+            {
+                armAnimator.enabled = arm;
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SetAnimators_Impl(bool robot, bool arm, RpcInfo info = default)
+        {
+            SetAnimators_Impl(robot, arm);
         }
 
 
