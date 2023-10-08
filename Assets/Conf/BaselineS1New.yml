@@ -1,0 +1,65 @@
+﻿name: "BaselineS1New"
+desc: "BaselineNew for scenario 1"
+start: "0:00"
+end: "07:40"
+taskStart: 1
+taskEnd: 1
+incidents:
+  - id: 1
+    time: "0:00~5:30"
+    incident: "Participants work on the installment."
+    warning: ""
+  - id: 2
+    time: "0:30"
+    incident: "A load is passing overhead."
+    warning: "Warning: A load is approaching overhead, please avoid working beneath the load"
+  - id: 3
+    time: "1:30"
+    incident: "A hook (without a load) is passing overhead in the opposite direction."
+    warning: ""
+  - id: 4
+    time: "2:30"
+    incident: "A load with an unpacked pipe is passing overhead."
+    warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling."
+  - id: 5
+    time: "3:30"
+    incident: "A hook (without a load) is passing overhead in the opposite direction."
+    warning: ""
+  - id: 6
+    time: "4:30"
+    incident: "A load with an unpacked pipe is passing overhead."
+    warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling."
+  - id: 7
+    time: "4:40"
+    incident: "The unpacked pipe drops next to the participants. And the load is still passing overhead."
+    warning: ""
+  - id: 8
+    time: "5:40"
+    incident: "A hook (without a load) is passing overhead in the opposite direction."
+    warning: ""
+  - id: 9
+    time: "6:40"
+    incident: "A load with an unpacked pipe is passing overhead."
+    warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling."
+  - id: 10
+    time: "6:40~7:40"
+    incident: "SAGAT query"
+    warning: ""
+context:
+  - id: 2
+    warning: "5 piles of wire mesh will arrive at the north gate at 17:00 today."
+  - id: 4
+    warning: "Warning: A supervising drone is approaching"
+  - id: 6
+    warning: "Warning: please be aware of the pit."
+  - id: 9
+    warning: "Warning: please be aware of the unloading crane truck."
+amount:
+  - id: 2
+    warning: "Warning: A load is approaching overhead, please avoid working beneath the load. Warning: A truck is backing up next to you. 5 piles of wire mesh will arrive at the north gate at 17:00 today."
+  - id: 4
+    warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling. Warning: A supervising drone is approaching."
+  - id: 6
+    warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling. Warning: please be aware of the pit."
+  - id: 9
+    warning: "Warning: A load with an unpacked pipe is approaching overhead, please be aware of the falling. Warning: please be aware of the unloading crane truck."
