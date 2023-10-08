@@ -143,12 +143,13 @@ namespace VRC2.Animations
 
         #endregion
 
-        [Header("Hack")] [HideInInspector] public GameObject backupCargo; // sometime automatic detecting cargo doesn't work.
+        [Header("Hack")] [HideInInspector]
+        public GameObject backupCargo; // sometime automatic detecting cargo doesn't work.
 
         #region Crane status check
 
         [HideInInspector] public bool Ready { get; set; }
-        
+
         [HideInInspector] public bool StopRotating { get; set; }
 
         #endregion
@@ -314,91 +315,18 @@ namespace VRC2.Animations
             // if (Input.GetKey(forwardBoomCart))
             if (cartInput.ReadValue<Vector2>().x > 0)
             {
-                blockSound_A = false;
-                if (!soundCrane.isPlaying)
-                {
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(startMotorCrane);
-                    soundCrane.Play();
-                }
-                else
-                {
-                    boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, maxMovingBoomCart,
-                        speedBoomCart * Time.deltaTime);
-                }
-
-                if (boomCart.localPosition == maxMovingBoomCart)
-                {
-                    if (blockSound_C == true && blockSound_B == true)
-                    {
-                        soundCrane.Stop();
-                    }
-
-                    if (blockPlayOneShot_BoomCart == true)
-                    {
-                        soundCrane.PlayOneShot(detaliClip, 0.45f);
-                        blockPlayOneShot_BoomCart = false;
-                    }
-                }
-
-            }
-            // else if (Input.GetKeyUp(forwardBoomCart))
-            else if (cartInput.ReadValue<Vector2>().x == 0)
-            {
-                if (blockSound_B == true && blockSound_C == true)
-                {
-                    soundCrane.Stop();
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(stopMotorCrane);
-                }
-
-                blockPlayOneShot_BoomCart = true;
-                blockSound_A = true;
+                ForwardBoomCart();
             }
 
-            // if (Input.GetKey(backBoomCart))
-            if (cartInput.ReadValue<Vector2>().x < 0)
+            else if (cartInput.ReadValue<Vector2>().x < 0)
             {
-                blockSound_A = false;
-                if (!soundCrane.isPlaying)
-                {
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(startMotorCrane);
-                    soundCrane.Play();
-                }
-                else
-                {
-                    boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, minMovingBoomCart,
-                        speedBoomCart * Time.deltaTime);
-                }
-
-                if (boomCart.localPosition == minMovingBoomCart)
-                {
-                    if (blockSound_C == true && blockSound_B == true)
-                    {
-                        soundCrane.Stop();
-                    }
-
-                    if (blockPlayOneShot_BoomCart == true)
-                    {
-                        soundCrane.PlayOneShot(detaliClip, 0.45f);
-                        blockPlayOneShot_BoomCart = false;
-                    }
-                }
+                BackwardBoomCart();
 
             }
-            // else if (Input.GetKeyUp(backBoomCart))
-            else if (cartInput.ReadValue<Vector2>().x == 0)
+            // else if (cartInput.ReadValue<Vector2>().x == 0)
+            else
             {
-                if (blockSound_B == true && blockSound_C == true)
-                {
-                    soundCrane.Stop();
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(stopMotorCrane);
-                }
-
-                blockPlayOneShot_BoomCart = true;
-                blockSound_A = true;
+                StopBoomCart();
             }
         }
 
@@ -407,78 +335,19 @@ namespace VRC2.Animations
             // if (Input.GetKey(upMovingHook))
             if (hookInput.ReadValue<Vector2>().y > 0)
             {
-                if (offsetAnchor > minUpHook)
-                {
-                    blockSound_C = false;
-                    if (!soundCrane.isPlaying)
-                    {
-                        soundCrane.PlayOneShot(detaliClip);
-                        soundCrane.PlayOneShot(startMotorCrane);
-                        soundCrane.Play();
-                    }
-                    else
-                    {
-                        offsetAnchor -= speedMovingHook * Time.deltaTime;
-                    }
-
-                    if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
-                    {
-                        soundCrane.pitch += Time.deltaTime * 0.35f;
-                    }
-                }
-
+                UpHook();
             }
-            // else if (Input.GetKeyUp(upMovingHook))
-            else if (hookInput.ReadValue<Vector2>().y == 0)
+            else if (hookInput.ReadValue<Vector2>().y < 0)
             {
-                if (blockSound_A == true && blockSound_B == true)
-                {
-                    soundCrane.Stop();
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(stopMotorCrane);
-                }
-
-                blockSound_C = true;
+                DownHook();
             }
-
-            // if (Input.GetKey(downMovingHook))
-            if (hookInput.ReadValue<Vector2>().y < 0)
+            else
             {
-                if (minDownHook < maxOffset)
-                {
-                    blockSound_C = false;
-                    if (!soundCrane.isPlaying)
-                    {
-                        soundCrane.PlayOneShot(detaliClip);
-                        soundCrane.PlayOneShot(startMotorCrane);
-                        soundCrane.Play();
-                    }
-                    else
-                    {
-                        offsetAnchor += speedMovingHook * Time.deltaTime;
-                    }
-
-                    if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
-                    {
-                        soundCrane.pitch += Time.deltaTime * 0.35f;
-                    }
-                }
-
-            }
-            // else if (Input.GetKeyUp(downMovingHook))
-            else if (hookInput.ReadValue<Vector2>().y == 0)
-            {
-                if (blockSound_A == true && blockSound_B == true)
-                {
-                    soundCrane.Stop();
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(stopMotorCrane);
-                }
-
-                blockSound_C = true;
+                StopHook();
             }
 
-            jointHook.anchor = new Vector3(0, offsetAnchor, 0);
+            // jointHook.anchor = new Vector3(0, offsetAnchor, 0);
+
             // if ((Input.GetKey(rotationCargo_Press) && Input.GetKey(leftRotationCargo)))
             if (cargoInput.ReadValue<Vector2>().x < 0)
             {
@@ -505,7 +374,6 @@ namespace VRC2.Animations
             if (soundCrane.pitch > 1 && blockSound_C == true)
             {
                 soundCrane.pitch -= Time.deltaTime * 0.85f;
-
             }
         }
 
@@ -514,89 +382,28 @@ namespace VRC2.Animations
             // if (Input.GetKey(leftCrane))
             if (craneInput.ReadValue<Vector2>().x < 0)
             {
-                blockSound_B = false;
-                if (!soundCrane.isPlaying)
-                {
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(startMotorCrane);
-                    soundCrane.Play();
-                }
-                else
-                {
-                    floatRotCabin -= Time.deltaTime * speedRotationCrane;
-                }
-
-                if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
-                {
-                    if (blockPlayOneShot_RotationCrane == true)
-                    {
-                        soundCrane.PlayOneShot(detaliClip, 0.45f);
-                        blockPlayOneShot_RotationCrane = false;
-                    }
-                }
-
+                TurnLeft();
             }
 //______________________________________________________________________________________________________________________________________
-            // else if (Input.GetKeyUp(leftCrane))
-            else if (craneInput.ReadValue<Vector2>().x == 0)
-            {
-                if (blockSound_A == true && blockSound_C == true)
-                {
-                    soundCrane.Stop();
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(stopMotorCrane);
-                }
-
-                blockPlayOneShot_RotationCrane = true;
-                blockSound_B = true;
-            }
 
             // if (Input.GetKey(rightCrane))
-            if (craneInput.ReadValue<Vector2>().x > 0)
+            else if (craneInput.ReadValue<Vector2>().x > 0)
             {
-                blockSound_B = false;
-                if (!soundCrane.isPlaying)
-                {
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(startMotorCrane);
-                    soundCrane.Play();
-                }
-                else
-                {
-                    floatRotCabin += Time.deltaTime * speedRotationCrane;
-                }
-
-                if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
-                {
-                    if (blockPlayOneShot_RotationCrane == true)
-                    {
-                        soundCrane.PlayOneShot(detaliClip, 0.45f);
-                        blockPlayOneShot_RotationCrane = false;
-                    }
-                }
-
+                TurnRight();
             }
 //______________________________________________________________________________________________________________________________________
             // else if (Input.GetKeyUp(rightCrane))
             else if (craneInput.ReadValue<Vector2>().x == 0)
             {
-                if (blockSound_A == true && blockSound_C == true)
-                {
-                    soundCrane.Stop();
-                    soundCrane.PlayOneShot(detaliClip);
-                    soundCrane.PlayOneShot(stopMotorCrane);
-                }
-
-                blockSound_B = true;
-                blockPlayOneShot_RotationCrane = true;
+                TurnStop();
             }
 
-            if (!StopRotating)
-            {
-                var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
-                rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
-                    Time.deltaTime * speedRotationCrane / smoothRotationCrane);   
-            }
+            // if (!StopRotating)
+            // {
+            //     var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+            //     rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+            //         Time.deltaTime * speedRotationCrane / smoothRotationCrane);   
+            // }
             // var cranePanel = Quaternion.AngleAxis(floatRotCabin, Vector3.forward);
             // rotationCrane_D.rotation = Quaternion.Lerp(rotationCrane_D.rotation, cranePanel,
             //     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
@@ -688,7 +495,7 @@ namespace VRC2.Animations
         {
             if (addPhysicsHook_Bool == true)
             {
-               // hook.SetParent(null);
+                // hook.SetParent(null);
                 hook.gameObject.AddComponent<Rigidbody>();
                 hook.gameObject.GetComponent<Rigidbody>().mass = massHook;
                 hook.gameObject.GetComponent<Rigidbody>().drag = 1.1f;
@@ -783,7 +590,7 @@ namespace VRC2.Animations
                 {
                     _cargo = backupCargo;
                 }
-                
+
                 if (_cargo.GetComponent<ConstantForce>() != null)
                 {
                     DestroyImmediate(_cargo.GetComponent<ConstantForce>());
@@ -896,6 +703,229 @@ namespace VRC2.Animations
                 }
             }
         }
+
+        #endregion
+
+        #region API
+
+        public void ForwardBoomCart()
+        {
+            blockSound_A = false;
+            if (!soundCrane.isPlaying)
+            {
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(startMotorCrane);
+                soundCrane.Play();
+            }
+            else
+            {
+                boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, maxMovingBoomCart,
+                    speedBoomCart * Time.deltaTime);
+            }
+
+            if (boomCart.localPosition == maxMovingBoomCart)
+            {
+                if (blockSound_C == true && blockSound_B == true)
+                {
+                    soundCrane.Stop();
+                }
+
+                if (blockPlayOneShot_BoomCart == true)
+                {
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
+                    blockPlayOneShot_BoomCart = false;
+                }
+            }
+        }
+
+        public void BackwardBoomCart()
+        {
+            blockSound_A = false;
+            if (!soundCrane.isPlaying)
+            {
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(startMotorCrane);
+                soundCrane.Play();
+            }
+            else
+            {
+                boomCart.localPosition = Vector3.MoveTowards(boomCart.localPosition, minMovingBoomCart,
+                    speedBoomCart * Time.deltaTime);
+            }
+
+            if (boomCart.localPosition == minMovingBoomCart)
+            {
+                if (blockSound_C == true && blockSound_B == true)
+                {
+                    soundCrane.Stop();
+                }
+
+                if (blockPlayOneShot_BoomCart == true)
+                {
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
+                    blockPlayOneShot_BoomCart = false;
+                }
+            }
+        }
+
+        public void StopBoomCart()
+        {
+            if (blockSound_B == true && blockSound_C == true)
+            {
+                soundCrane.Stop();
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(stopMotorCrane);
+            }
+
+            blockPlayOneShot_BoomCart = true;
+            blockSound_A = true;
+        }
+
+        public void UpHook()
+        {
+            if (offsetAnchor > minUpHook)
+            {
+                blockSound_C = false;
+                if (!soundCrane.isPlaying)
+                {
+                    soundCrane.PlayOneShot(detaliClip);
+                    soundCrane.PlayOneShot(startMotorCrane);
+                    soundCrane.Play();
+                }
+                else
+                {
+                    offsetAnchor -= speedMovingHook * Time.deltaTime;
+                }
+
+                if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
+                {
+                    soundCrane.pitch += Time.deltaTime * 0.35f;
+                }
+            }
+
+            jointHook.anchor = new Vector3(0, offsetAnchor, 0);
+
+        }
+
+        public void DownHook()
+        {
+            if (minDownHook < maxOffset)
+            {
+                blockSound_C = false;
+                if (!soundCrane.isPlaying)
+                {
+                    soundCrane.PlayOneShot(detaliClip);
+                    soundCrane.PlayOneShot(startMotorCrane);
+                    soundCrane.Play();
+                }
+                else
+                {
+                    offsetAnchor += speedMovingHook * Time.deltaTime;
+                }
+
+                if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
+                {
+                    soundCrane.pitch += Time.deltaTime * 0.35f;
+                }
+            }
+
+            jointHook.anchor = new Vector3(0, offsetAnchor, 0);
+        }
+
+        public void StopHook()
+        {
+            if (blockSound_A == true && blockSound_B == true)
+            {
+                soundCrane.Stop();
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(stopMotorCrane);
+            }
+
+            blockSound_C = true;
+        }
+
+        public void TurnLeft()
+        {
+            blockSound_B = false;
+            if (!soundCrane.isPlaying)
+            {
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(startMotorCrane);
+                soundCrane.Play();
+            }
+            else
+            {
+                floatRotCabin -= Time.deltaTime * speedRotationCrane;
+            }
+
+            if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
+            {
+                if (blockPlayOneShot_RotationCrane == true)
+                {
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
+                    blockPlayOneShot_RotationCrane = false;
+                }
+            }
+
+            if (!StopRotating)
+            {
+                var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+                rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+                    Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+            }
+        }
+
+        public void TurnRight()
+        {
+            blockSound_B = false;
+            if (!soundCrane.isPlaying)
+            {
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(startMotorCrane);
+                soundCrane.Play();
+            }
+            else
+            {
+                floatRotCabin += Time.deltaTime * speedRotationCrane;
+            }
+
+            if (soundCrane.isPlaying && blockSound_A == false || blockSound_C == false)
+            {
+                if (blockPlayOneShot_RotationCrane == true)
+                {
+                    soundCrane.PlayOneShot(detaliClip, 0.45f);
+                    blockPlayOneShot_RotationCrane = false;
+                }
+            }
+
+            if (!StopRotating)
+            {
+                var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+                rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+                    Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+            }
+        }
+
+        public void TurnStop()
+        {
+            if (blockSound_A == true && blockSound_C == true)
+            {
+                soundCrane.Stop();
+                soundCrane.PlayOneShot(detaliClip);
+                soundCrane.PlayOneShot(stopMotorCrane);
+            }
+
+            blockPlayOneShot_RotationCrane = true;
+            blockSound_B = true;
+
+            if (!StopRotating)
+            {
+                var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
+                rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
+                    Time.deltaTime * speedRotationCrane / smoothRotationCrane);
+            }
+        }
+
 
         #endregion
     }
