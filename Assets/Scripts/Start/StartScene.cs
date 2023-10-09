@@ -27,6 +27,8 @@ public class StartScene : MonoBehaviour
     public Button hostButton;
     public Button joinButton;
 
+    [Space(30)] [Header("Debug")] public bool enableDebug = false;
+
     void Start()
     {
         mainEventSystem.SetActive(false);
@@ -49,23 +51,27 @@ public class StartScene : MonoBehaviour
 
     void Update()
     {
-        // if (Input.GetKeyUp(KeyCode.H))
-        // {
-        //     HostButton();
-        // }
-        // else if (Input.GetKeyUp(KeyCode.J))
-        // {
-        //     JoinButton();
-        // }
-        //
-        // else if (Input.GetKeyUp(KeyCode.M))
-        // {
-        //     MaleButton();
-        // }
-        // else if (Input.GetKeyUp(KeyCode.F))
-        // {
-        //     FemaleButton();
-        // }
+        if (!enableDebug) return;
+
+        if (Input.GetKeyUp(KeyCode.H))
+        {
+            HostButton();
+        }
+        else if (Input.GetKeyUp(KeyCode.J))
+        {
+            JoinButton();
+        }
+
+        else if (Input.GetKeyUp(KeyCode.M))
+        {
+            // MaleButton();
+            GlobalConstants.playerGender = PlayerGender.Male;
+        }
+        else if (Input.GetKeyUp(KeyCode.F))
+        {
+            // FemaleButton();
+            GlobalConstants.playerGender = PlayerGender.Female;
+        }
     }
 
     public void HostButton()
