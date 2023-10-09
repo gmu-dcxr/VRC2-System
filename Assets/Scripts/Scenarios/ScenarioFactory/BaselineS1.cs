@@ -9,12 +9,22 @@ using Random = UnityEngine.Random;
 namespace VRC2.Scenarios.ScenarioFactory
 {
 
-    enum CraneStatus
+    internal enum CraneStatus
     {
         Idle = 0,
         Pickup = 1,
         Rotate = 2,
         Dropoff = 3,
+        // refactor
+        Init,
+        DownHookPickup,
+        SeizePickup,
+        PickupUpHook,
+        RotateLeft,
+        DownHookDropoff,
+        SeizeDropoff,
+        DropoffUpHook,
+        RotateRight,
     }
 
     public class BaselineS1 : Scenario
