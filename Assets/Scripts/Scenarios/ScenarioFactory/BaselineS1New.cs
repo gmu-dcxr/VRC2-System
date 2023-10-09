@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
-    
+
     // internal enum CraneStatus
     // {
     //     Idle = 0,
@@ -66,10 +66,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         private bool normalCondition = false;
 
         #region Crane action control
+
         private string initDistanceCart;
         private string initDistanceHook = "5.4";
         private string initRotationCrane;
-        
+
 
         [Space(30)] [Header("Markers")] public float pickupDownHook = 20.5f; // pick up at this distance
         public float dropoffDownHook = 6.9f; // drop off at this distance
@@ -84,7 +85,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             return Mathf.RoundToInt(r).ToString();
         }
-        
+
         #endregion
 
 
@@ -102,9 +103,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             craneStatus = CraneStatus.Init;
-            
+
             recording.OnReady += OnReady;
-            
+
 
             BackupTransforms();
 
@@ -135,40 +136,72 @@ namespace VRC2.Scenarios.ScenarioFactory
                     {
                         craneStatus = CraneStatus.DownHookPickup;
                     }
+
                     break;
                 case CraneStatus.DownHookPickup:
-                    if (DownHookUntilReadyPickup())
+                    if (DownHookUntil(pickupDownHook))
                     {
                         craneStatus = CraneStatus.SeizePickup;
                     }
+
                     break;
                 case CraneStatus.SeizePickup:
                     // connect cargo
                     recording.SeizeCargo();
                     craneStatus = CraneStatus.PickupUpHook;
-                    
+
                     break;
                 case CraneStatus.PickupUpHook:
+                    if (UpHookUntilInit())
+                    {
+                        craneStatus = CraneStatus.RotateLeft;
+                    }
+
                     break;
                 case CraneStatus.RotateLeft:
+                    if (RotateLeftUntilDropoff())
+                    {
+                        craneStatus = CraneStatus.DownHookDropoff;
+                    }
+
                     break;
                 case CraneStatus.DownHookDropoff:
+                    if (DownHookUntil(dropoffDownHook))
+                    {
+                        craneStatus = CraneStatus.SeizeDropoff;
+                    }
+
                     break;
                 case CraneStatus.SeizeDropoff:
+                    // release cargo
+                    recording.SeizeCargo();
+                    craneStatus = CraneStatus.DropoffUpHook;
                     break;
                 case CraneStatus.DropoffUpHook:
+                    if (UpHookUntilInit())
+                    {
+                        craneStatus = CraneStatus.RotateRight;
+                    }
+
                     break;
                 case CraneStatus.RotateRight:
+                    if (RotateRightUntilInit())
+                    {
+                        craneStatus = CraneStatus.LoopDone;
+                    }
+
+                    break;
+                case CraneStatus.LoopDone:
                     break;
                 default:
                     break;
             }
         }
 
-        bool DownHookUntilReadyPickup()
+        bool DownHookUntil(float target)
         {
             var hook = recording.DistanceHook;
-            if (hook != Distance2String(pickupDownHook))
+            if (hook != Distance2String(target))
             {
                 recording.DownHook();
                 return false;
@@ -182,10 +215,40 @@ namespace VRC2.Scenarios.ScenarioFactory
             return recording.DistanceHook == target;
         }
 
-        bool NeedStoppingRotation()
+        bool UpHookUntilInit()
         {
-            // stop when rotate back
-            return clockWise && Math.Abs(recording.GetCraneRotation() - startAngle) < 1f;
+            var hook = recording.DistanceHook;
+            if (hook != initDistanceHook)
+            {
+                recording.UpHook();
+                return false;
+            }
+
+            return true;
+        }
+
+        bool RotateLeftUntilDropoff()
+        {
+            var rotation = recording.RotationCrane;
+            if (rotation != Rotation2String(dropoffRotation))
+            {
+                recording.TurnLeft();
+                return false;
+            }
+
+            return WaitUntilHookSteady(initDistanceHook);
+        }
+
+        bool RotateRightUntilInit()
+        {
+            var rotation = recording.RotationCrane;
+            if (rotation != initRotationCrane)
+            {
+                recording.TurnRight();
+                return false;
+            }
+
+            return WaitUntilHookSteady(initDistanceHook);
         }
 
         void ResetCraneRotation(float angle)

@@ -25,6 +25,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         SeizeDropoff,
         DropoffUpHook,
         RotateRight,
+        LoopDone,
     }
 
     public class BaselineS1 : Scenario
