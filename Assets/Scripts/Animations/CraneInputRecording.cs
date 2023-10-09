@@ -1,4 +1,5 @@
-﻿using UnityEngine.InputSystem;
+﻿using System;
+using UnityEngine.InputSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -103,16 +104,16 @@ namespace VRC2.Animations
         private Transform pointLineCargo_2;
         private Transform pointLineCargo_3;
         private Transform pointLineCargo_4;
-        [HideInInspector] public Transform pointCheckDistanceUI;
+        public Transform pointCheckDistanceUI;
 
-        [Space(30)] [Header("Settings UI Panel")]
-        public Text distanceCartUI;
-
-        public Text hookCargoMassUI;
-        public Text distanceHookUI;
-        public Text rotationCraneUI;
-        public Text counterweightUI;
-        public Image rotationCrane_DUI;
+        // [Space(30)] [Header("Settings UI Panel")]
+        // public Text distanceCartUI;
+        //
+        // public Text hookCargoMassUI;
+        // public Text distanceHookUI;
+        // public Text rotationCraneUI;
+        // public Text counterweightUI;
+        // public Image rotationCrane_DUI;
         private RectTransform rotationCrane_D;
         [HideInInspector] public int counterweightUI_Int = 0;
         private bool blockSound_A = true;
@@ -152,6 +153,8 @@ namespace VRC2.Animations
 
         [HideInInspector] public bool StopRotating { get; set; }
 
+        public System.Action OnReady;
+
         #endregion
 
         public void Start()
@@ -183,6 +186,11 @@ namespace VRC2.Animations
             Ready = true;
 
             StopRotating = false;
+
+            if (OnReady != null)
+            {
+                OnReady();
+            }
         }
 
         public override void InitInputActions()
@@ -219,7 +227,7 @@ namespace VRC2.Animations
             if (true)
             {
                 AnimationBoomCart();
-                RotationCrane();
+                RotateCrane();
                 MovingHook();
                 CheckCargo();
             }
@@ -377,7 +385,7 @@ namespace VRC2.Animations
             }
         }
 
-        private void RotationCrane()
+        private void RotateCrane()
         {
             // if (Input.GetKey(leftCrane))
             if (craneInput.ReadValue<Vector2>().x < 0)
@@ -567,16 +575,7 @@ namespace VRC2.Animations
                 // if (Input.GetKeyDown(seizeTheCargo)) // Connected Cargo
                 if (seizeInput.triggered) // Connected Cargo
                 {
-                    if (connectedCargo_Bool == true)
-                    {
-                        ConnectedCargo();
-                        connectedCargo_Bool = false;
-                    }
-                    else if (connectedCargo_Bool == false)
-                    {
-                        ConnectedCargo();
-                        connectedCargo_Bool = true;
-                    }
+                    SeizeCargo();
                 }
             }
         }
@@ -926,6 +925,56 @@ namespace VRC2.Animations
             }
         }
 
+        public void SeizeCargo()
+        {
+            if (connectedCargo_Bool == true)
+            {
+                ConnectedCargo();
+                connectedCargo_Bool = false;
+            }
+            else if (connectedCargo_Bool == false)
+            {
+                ConnectedCargo();
+                connectedCargo_Bool = true;
+            }
+        }
+
+
+        #endregion
+
+        #region UI Panel
+
+        public void UIPanelCrane()
+        {
+            // Boom Cart
+            var distanceCart = Vector3.Distance(pointCheckDistanceUI.position, boomCart.position).ToString("0.0") + "m";
+            // Hook Distance
+            // var distanceHook = Vector3.Distance(pointRayDecay.position, decayHookPoint.position).ToString("0.0") + "m";
+            var distanceHook = Math.Abs(pointCheckDistanceUI.position.y - pointRayDecay.position.y).ToString("0.0") + "m";
+            // Rotation Crane
+            var rotationCrane = Mathf.RoundToInt(rotationElementCrane.localEulerAngles.y).ToString();
+            
+            print($"{distanceCart} - {distanceHook} - {rotationCrane}");
+        }
+
+        [HideInInspector]
+        public string DistanceCart
+        {
+            get => Vector3.Distance(pointCheckDistanceUI.position, boomCart.position).ToString("0.0");
+        }
+
+        [HideInInspector]
+        public string DistanceHook
+        {
+            get => Math.Abs(pointCheckDistanceUI.position.y - pointRayDecay.position.y).ToString("0.0");
+        }
+
+        [HideInInspector]
+        public string RotationCrane
+        {
+            get => Mathf.RoundToInt(rotationElementCrane.localEulerAngles.y).ToString();
+        }
+        
 
         #endregion
     }

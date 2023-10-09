@@ -8,8 +8,8 @@ using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
-    //
-    // enum CraneStatus
+    
+    // internal enum CraneStatus
     // {
     //     Idle = 0,
     //     Pickup = 1,
@@ -52,7 +52,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         // private bool enableDrop = false;
 
-        private CraneStatus _craneStatus;
+        private CraneStatus craneStatus;
 
         // the start rotation of the crane
         private float startAngle
@@ -64,6 +64,28 @@ namespace VRC2.Scenarios.ScenarioFactory
         private float rotationThreshold = 2f;
 
         private bool normalCondition = false;
+
+        #region Crane action control
+        private string initDistanceCart;
+        private string initDistanceHook = "5.4";
+        private string initRotationCrane;
+        
+
+        [Space(30)] [Header("Markers")] public float pickupDownHook = 20.5f; // pick up at this distance
+        public float dropoffDownHook = 6.9f; // drop off at this distance
+        public float dropoffRotation = 100f; // drop off at this rotation
+
+        string Distance2String(float d)
+        {
+            return d.ToString("0.0");
+        }
+
+        string Rotation2String(float r)
+        {
+            return Mathf.RoundToInt(r).ToString();
+        }
+        
+        #endregion
 
 
         private void Start()
@@ -79,7 +101,10 @@ namespace VRC2.Scenarios.ScenarioFactory
                 player = playerIndicator;
             }
 
-            _craneStatus = CraneStatus.Idle;
+            craneStatus = CraneStatus.Init;
+            
+            recording.OnReady += OnReady;
+            
 
             BackupTransforms();
 
@@ -93,60 +118,68 @@ namespace VRC2.Scenarios.ScenarioFactory
             normalCondition = false;
         }
 
+        private void OnReady()
+        {
+            initDistanceCart = recording.DistanceCart;
+            // initial is 5.4, but it got 4.9
+            // initDistanceHook = recording.DistanceHook;
+            initRotationCrane = recording.RotationCrane;
+        }
+
         private void Update()
         {
-            switch (_craneStatus)
+            switch (craneStatus)
             {
-                case CraneStatus.Pickup:
-                    replay.Pickup();
-                    if (replay.PickupFinished())
+                case CraneStatus.Init:
+                    if (WaitUntilHookSteady(initDistanceHook))
                     {
-                        _craneStatus = CraneStatus.Rotate;
+                        craneStatus = CraneStatus.DownHookPickup;
                     }
-
                     break;
-                case CraneStatus.Rotate:
-                    RotateCrane(clockWise);
-                    if (NeedStoppingRotation())
+                case CraneStatus.DownHookPickup:
+                    if (DownHookUntilReadyPickup())
                     {
-                        // force update the crane rotation
-                        ResetCraneRotation(startAngle);
-
-                        recording.StopRotating = true;
-
-                        if (normalCondition)
-                        {
-                            StopRotating();
-                            StartCrane(true, false, reset: true, unpackedpipe: false);
-                        }
-                        else
-                        {
-                            _craneStatus = CraneStatus.Idle;
-                        }
+                        craneStatus = CraneStatus.SeizePickup;
                     }
-
                     break;
-                case CraneStatus.Dropoff:
-                    replay.Dropoff();
-                    if (replay.DropoffFinished())
-                    {
-                        clockWise = true;
-                        if (normalCondition)
-                        {
-                            StartCrane(false, true, rot2end: true);
-                        }
-                        else
-                        {
-                            _craneStatus = CraneStatus.Idle;
-                        }
-                    }
-
+                case CraneStatus.SeizePickup:
+                    // connect cargo
+                    recording.SeizeCargo();
+                    craneStatus = CraneStatus.PickupUpHook;
+                    
                     break;
-                case CraneStatus.Idle:
-                    StopRotating();
-
+                case CraneStatus.PickupUpHook:
+                    break;
+                case CraneStatus.RotateLeft:
+                    break;
+                case CraneStatus.DownHookDropoff:
+                    break;
+                case CraneStatus.SeizeDropoff:
+                    break;
+                case CraneStatus.DropoffUpHook:
+                    break;
+                case CraneStatus.RotateRight:
+                    break;
+                default:
                     break;
             }
+        }
+
+        bool DownHookUntilReadyPickup()
+        {
+            var hook = recording.DistanceHook;
+            if (hook != Distance2String(pickupDownHook))
+            {
+                recording.DownHook();
+                return false;
+            }
+
+            return true;
+        }
+
+        bool WaitUntilHookSteady(string target)
+        {
+            return recording.DistanceHook == target;
         }
 
         bool NeedStoppingRotation()
@@ -220,14 +253,14 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
-            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
+            if (craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
             {
                 // rewind dropoff
                 replay.RewindDropoff();
 
                 // force align the rotation
                 ResetCraneRotation(endAngle);
-                _craneStatus = CraneStatus.Dropoff;
+                craneStatus = CraneStatus.Dropoff;
             }
         }
 
@@ -259,11 +292,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             if (pickup)
             {
                 replay.RewindPickup();
-                _craneStatus = CraneStatus.Pickup;
+                craneStatus = CraneStatus.Pickup;
             }
             else
             {
-                _craneStatus = CraneStatus.Rotate;
+                craneStatus = CraneStatus.Rotate;
             }
 
             clockWise = clockwise;
