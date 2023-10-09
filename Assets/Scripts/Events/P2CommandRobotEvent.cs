@@ -58,6 +58,9 @@ namespace VRC2.Events
                 // 
                 var go = GameObject.Find(GlobalConstants.BendCutRobot);
                 var rdc = go.GetComponent<RobotDogController>();
+                // update current pipe
+                rdc.currentPipe = GlobalConstants.lastSpawnedPipe;
+                
                 rdc.InitParameters(angle, a, b);
                 rdc.Execute();
             }
