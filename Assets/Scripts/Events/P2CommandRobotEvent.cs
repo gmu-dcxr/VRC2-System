@@ -1,6 +1,7 @@
 ﻿using Fusion;
 using NodeCanvas.Tasks.Actions;
 using UnityEngine;
+using VRC2.Animations;
 using VRC2.Pipe;
 
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -56,9 +57,9 @@ namespace VRC2.Events
                 message = $"Some other player said:  {angle} - {a} - {b}\n";
                 // 
                 var go = GameObject.Find(GlobalConstants.BendCutRobot);
-                var rbc = go.GetComponent<RobotBendCut>();
-                rbc.InitParameters(angle, a, b);
-                rbc.Execute();
+                var rdc = go.GetComponent<RobotDogController>();
+                rdc.InitParameters(angle, a, b);
+                rdc.Execute();
             }
 
             Debug.LogWarning(message);
