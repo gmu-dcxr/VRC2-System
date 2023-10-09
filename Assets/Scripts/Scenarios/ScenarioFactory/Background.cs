@@ -15,6 +15,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [Header("Forklift")] public CustomForkLiftController customForkLiftController;
         public Animator anim;
+        
 
         [Header("Hammer")] public HammerController hammerController;
 
@@ -108,6 +109,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
+            
+
             if (recording == null) return;
             
             var angle = Math.Abs(recording.getRotation() - endAngle);
@@ -382,13 +385,13 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_Background_1_Finish()
         {
-            anim.SetBool("Moving", true);
+            
         }
 
         public void On_Background_2_Start()
         {
             customForkLiftController.Animate();
-            anim.SetBool("Moving", false);
+            anim.SetTrigger("Moving");
         }
 
         public void On_Background_2_Finish()
