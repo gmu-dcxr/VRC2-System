@@ -25,14 +25,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Quaternion _pipeLocalRot;
 
         public CraneInputRecording recording;
-        public CraneInputReplay replay;
-
-        // public float startAngle = 180f;
-        public float endAngle = 120f;
-        public float dropAngle = 150f; // when to drop the pipe
-
-        public float startBoomcart = -22.40558f; //x
-        public float endBoomcart = -10;
 
         private GameObject crane;
 
@@ -46,11 +38,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private Vector3 pipeStackPos;
         private Quaternion pipeStackRot;
-
-        // private bool triggered = false;
-        private bool clockWise = false;
-
-        // private bool enableDrop = false;
 
         private CraneStatus craneStatus;
 
@@ -102,14 +89,12 @@ namespace VRC2.Scenarios.ScenarioFactory
                 player = playerIndicator;
             }
 
-            craneStatus = CraneStatus.Init;
+            craneStatus = CraneStatus.Waiting;
 
             recording.OnReady += OnReady;
 
 
             BackupTransforms();
-
-            clockWise = false;
 
             SetActiveness(true, false);
 
@@ -180,19 +165,43 @@ namespace VRC2.Scenarios.ScenarioFactory
                 case CraneStatus.DropoffUpHook:
                     if (UpHookUntilInit())
                     {
-                        craneStatus = CraneStatus.RotateRight;
+                        if (normalCondition)
+                        {
+                            // directly into the next state
+                            craneStatus = CraneStatus.RotateRight;
+                        }
+                        else
+                        {
+                            // waiting for next event
+                            craneStatus = CraneStatus.Waiting;   
+                        }
                     }
 
                     break;
                 case CraneStatus.RotateRight:
                     if (RotateRightUntilInit())
                     {
-                        craneStatus = CraneStatus.LoopDone;
+                        if (normalCondition)
+                        {
+                            // auto loop
+                            SetActiveness(true, false);
+                            
+                            // start over
+                            craneStatus = CraneStatus.Init;
+                        }
+                        else
+                        {
+                            craneStatus = CraneStatus.LoopDone;
+                        }
                     }
 
                     break;
                 case CraneStatus.LoopDone:
                     break;
+
+                case CraneStatus.Waiting:
+                    break;
+
                 default:
                     break;
             }
@@ -251,15 +260,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             return WaitUntilHookSteady(initDistanceHook);
         }
 
-        void ResetCraneRotation(float angle)
-        {
-            recording.ForceUpdateRotation(angle);
-        }
-
-        void ResetBoomCart(float x)
-        {
-            recording.ForceUpdateBoomCart(x);
-        }
 
         void BackupTransforms()
         {
@@ -290,90 +290,24 @@ namespace VRC2.Scenarios.ScenarioFactory
             pipeStack.transform.rotation = pipeStackRot;
         }
 
-        void SetActiveness(bool pipestack, bool unpackedpipe)
-        {
-            pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
-            unpackedPipe.SetActive(unpackedpipe);
-        }
-
-        void StopRotating()
-        {
-            replay.Left(true);
-            replay.Right(true);
-        }
-
-        void RotateCrane(bool clockWise)
-        {
-            if (clockWise)
-            {
-                replay.Left(true);
-                replay.Right(false, true);
-            }
-            else
-            {
-                replay.Right(true);
-                replay.Left(false, true);
-            }
-
-            var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
-            if (craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
-            {
-                // rewind dropoff
-                replay.RewindDropoff();
-
-                // force align the rotation
-                ResetCraneRotation(endAngle);
-                craneStatus = CraneStatus.Dropoff;
-            }
-        }
-
-        #region Accident Events Callbacks
-
-        // TODO: When scenario ends, start the normal event
-        void StartCrane(bool pickup, bool clockwise, bool reset = false, bool unpackedpipe = false,
-            bool rot2end = false, bool rot2start = false)
+        void SetActiveness(bool reset = false, bool unpackedpipe = false)
         {
             if (reset)
             {
                 Reset();
             }
-
-            recording.StopRotating = false;
-
-            if (rot2end)
-            {
-                ResetCraneRotation(endAngle);
-            }
-
-            if (rot2start)
-            {
-                ResetCraneRotation(startAngle);
-            }
-
-            SetActiveness(true, unpackedpipe);
-
-            if (pickup)
-            {
-                replay.RewindPickup();
-                craneStatus = CraneStatus.Pickup;
-            }
-            else
-            {
-                craneStatus = CraneStatus.Rotate;
-            }
-
-            clockWise = clockwise;
+            // pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
+            unpackedPipe.SetActive(unpackedpipe);
         }
 
-
+        #region Accident Events Callbacks
+        
         // normal event
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S1");
             // repeat #2 and #3
             normalCondition = true;
-            ResetCraneRotation(startAngle);
-            StartCrane(true, false, reset: true, unpackedpipe: false);
         }
 
         public void On_BaselineS1_1_Start()
@@ -393,7 +327,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
-            StartCrane(true, false);
+            craneStatus = CraneStatus.Init;
+            SetActiveness(true, false);
         }
 
         public void On_BaselineS1_2_Finish()
@@ -408,7 +343,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            StartCrane(false, true, rot2end: true);
+            craneStatus = CraneStatus.RotateRight;
+            SetActiveness(false, true);
         }
 
         public void On_BaselineS1_3_Finish()
@@ -425,7 +361,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(true, false, true, true, rot2start: true);
+            craneStatus = CraneStatus.Init;
+
+            SetActiveness(true, true);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -440,7 +378,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            StartCrane(false, true, rot2end: true);
+            craneStatus = CraneStatus.RotateRight;
+            SetActiveness(false, true);
         }
 
         public void On_BaselineS1_5_Finish()
@@ -457,7 +396,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(true, false, true, true, rot2start: true);
+            craneStatus = CraneStatus.Init;
+
+            SetActiveness(true, true);
         }
 
         public void On_BaselineS1_6_Finish()
@@ -472,8 +413,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             // add rigid body
             PipeHelper.EnsureRigidBody(ref unpackedPipe);
             // it will automatically fall
-
-            // enableDrop = false;
         }
 
         public void On_BaselineS1_7_Start()
@@ -500,7 +439,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(false, true, rot2end: true);
+            craneStatus = CraneStatus.RotateRight;
+            SetActiveness(false, true);
         }
 
         public void On_BaselineS1_8_Finish()
@@ -515,7 +455,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            StartCrane(true, false, true, true, rot2start: true);
+            craneStatus = CraneStatus.Init;
+            SetActiveness(true, true);
         }
 
         public void On_BaselineS1_9_Finish()

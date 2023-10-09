@@ -24,6 +24,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         DownHookDropoff,
         SeizeDropoff,
         DropoffUpHook,
+        Waiting, // waiting for next action
         RotateRight,
         LoopDone,
     }
