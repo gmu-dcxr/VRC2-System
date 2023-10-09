@@ -61,9 +61,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Crane action control
 
-        private string initDistanceCart;
-        private string initDistanceHook = "5.4";
-        private string initRotationCrane;
+        // private string initDistanceCart;
+        private string distanceHook = "5.4";
+        private int initRotationCrane = 176;
 
 
         [Space(30)] [Header("Markers")] public float pickupDownHook = 20.5f; // pick up at this distance
@@ -98,9 +98,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             craneStatus = CraneStatus.Waiting;
 
-            recording.OnReady += OnReady;
-
-
             BackupTransforms();
 
             SetActiveness(true, false);
@@ -111,23 +108,16 @@ namespace VRC2.Scenarios.ScenarioFactory
             normalCondition = false;
         }
 
-        private void OnReady()
-        {
-            initDistanceCart = recording.DistanceCart;
-            // initial is 5.4, but it got 4.9
-            // initDistanceHook = recording.DistanceHook;
-            initRotationCrane = recording.RotationCrane;
-        }
-
         private void Update()
         {
             switch (craneStatus)
             {
                 case CraneStatus.Init:
-                    if (WaitUntilHookSteady(initDistanceHook))
-                    {
-                        craneStatus = CraneStatus.DownHookPickup;
-                    }
+                    // if (WaitUntilHookSteady())
+                    // {
+                    //     craneStatus = CraneStatus.DownHookPickup;
+                    // }
+                    craneStatus = CraneStatus.DownHookPickup;
 
                     break;
                 case CraneStatus.DownHookPickup:
@@ -172,6 +162,9 @@ namespace VRC2.Scenarios.ScenarioFactory
                 case CraneStatus.DropoffUpHook:
                     if (UpHookUntilInit())
                     {
+                        //update distance hook
+                        distanceHook = Distance2String(recording.DistanceHook);
+                        
                         if (normalCondition)
                         {
                             // directly into the next state
@@ -217,7 +210,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool DownHookUntil(float target)
         {
             var hook = recording.DistanceHook;
-            if (hook != Distance2String(target))
+            print($"DownHookUntil: {hook} {target}");
+            if (hook < target)
             {
                 recording.DownHook();
                 return false;
@@ -226,46 +220,61 @@ namespace VRC2.Scenarios.ScenarioFactory
             return true;
         }
 
-        bool WaitUntilHookSteady(string target)
+        bool WaitUntilHookSteady()
         {
-            print($"{recording.DistanceHook} {target}");
-            return recording.DistanceHook == target;
+            // print($"WaitUntilHookSteady: {recording.DistanceHook} {target}");
+            var s1 = Distance2String(recording.DistanceHook);
+            return s1 == distanceHook;
         }
 
         bool UpHookUntilInit()
         {
             var hook = recording.DistanceHook;
-            if (hook != initDistanceHook)
+            print($"UpHookUntilInit: {recording.DistanceHook} {distanceHook}");
+
+            if (Distance2String(hook) == distanceHook)
             {
-                recording.UpHook();
+                return true;
+            }
+            else
+            {
+                if (hook > float.Parse(distanceHook))
+                {
+                    recording.UpHook();
+                }
+                else
+                {
+                    recording.DownHook();
+                }
+
                 return false;
             }
-
-            return true;
         }
 
         bool RotateLeftUntilDropoff()
         {
             var rotation = recording.RotationCrane;
-            if (rotation != Rotation2String(dropoffRotation))
+            print($"RotateLeftUntilDropoff: {rotation} {Rotation2String(dropoffRotation)}");
+            if (rotation > dropoffRotation)
             {
                 recording.TurnLeft();
                 return false;
             }
 
-            return WaitUntilHookSteady(initDistanceHook);
+            return WaitUntilHookSteady();
         }
 
         bool RotateRightUntilInit()
         {
             var rotation = recording.RotationCrane;
-            if (rotation != initRotationCrane)
+            print($"RotateRightUntilInit: {rotation} {initRotationCrane}");
+            if (rotation < initRotationCrane)
             {
                 recording.TurnRight();
                 return false;
             }
 
-            return WaitUntilHookSteady(initDistanceHook);
+            return WaitUntilHookSteady();
         }
 
 
@@ -471,7 +480,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            normalCondition = false;
+            // make it auto return back
+            normalCondition = true;
             craneStatus = CraneStatus.Init;
             SetActiveness(true, true);
         }
