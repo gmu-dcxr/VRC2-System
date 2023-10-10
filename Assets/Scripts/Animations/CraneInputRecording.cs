@@ -5,11 +5,8 @@ using UnityEngine.UI;
 
 namespace VRC2.Animations
 {
-    public class CraneInputRecording : BaseInputRecording
+    public class CraneInputRecording : MonoBehaviour
     {
-
-        [Header("Output Settings")] public string filename = "CraneInputRecording";
-
         [Header("Crane Settings")] public float startRotation;
         public float endRotation;
 
@@ -186,14 +183,14 @@ namespace VRC2.Animations
             Ready = true;
 
             StopRotating = false;
-
-            if (OnReady != null)
-            {
-                OnReady();
-            }
         }
 
-        public override void InitInputActions()
+        private void Awake()
+        {
+            InitInputActions();
+        }
+
+        public void InitInputActions()
         {
             craneIA = new CraneInputActions();
             craneIA.Enable();
@@ -206,24 +203,12 @@ namespace VRC2.Animations
             seizeInput = craneIA.Crane.Seize;
         }
 
-        public override void DisposeInputActions()
-        {
-            craneIA.Dispose();
-        }
-
-        public override void UpdateLogic()
-        {
-        }
-
-        public override string GetFilename()
-        {
-            return filename;
-        }
-
         public void Update()
         {
             // if (blockController_Int == 3 && scriptTPL.blockArrowIfBoomCartActive == false &&
             // blockControllerCrane == true)
+            // UIPanelCrane();
+            
             if (true)
             {
                 AnimationBoomCart();
@@ -958,21 +943,21 @@ namespace VRC2.Animations
         }
 
         [HideInInspector]
-        public string DistanceCart
+        public float DistanceCart
         {
-            get => Vector3.Distance(pointCheckDistanceUI.position, boomCart.position).ToString("0.0");
+            get => Vector3.Distance(pointCheckDistanceUI.position, boomCart.position);
         }
 
         [HideInInspector]
-        public string DistanceHook
+        public float DistanceHook
         {
-            get => Math.Abs(pointCheckDistanceUI.position.y - pointRayDecay.position.y).ToString("0.0");
+            get => Math.Abs(pointCheckDistanceUI.position.y - pointRayDecay.position.y);
         }
 
         [HideInInspector]
-        public string RotationCrane
+        public int RotationCrane
         {
-            get => Mathf.RoundToInt(rotationElementCrane.localEulerAngles.y).ToString();
+            get => Mathf.RoundToInt(rotationElementCrane.localEulerAngles.y);
         }
         
 
