@@ -24,6 +24,7 @@ namespace VRC2.Scenarios.ScenarioFactory
     {
         [Header("Gameobjects")] public GameObject craneTruck;
         public GameObject cargo;
+        public Animator anim;
 
         [Space(30)] [Header("Recording/Replay")]
         public CraneTruckInputRecording recording;

@@ -15,7 +15,16 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [Header("Forklift")] public CustomForkLiftController customForkLiftController;
         public Animator anim;
-        
+
+        public GameObject forklift;
+        public GameObject good;
+        public GameObject good2;
+
+        public Transform destination;
+
+        private bool reachedDes = false;
+        private bool reachedStart = false;
+
 
         [Header("Hammer")] public HammerController hammerController;
 
@@ -37,6 +46,14 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public Transform deep;
         public Transform deeper;
+
+        private Vector3 startPos;
+        private Quaternion startRotation;
+
+        private Vector3 goodStartPos;
+        private Quaternion goodStartRotation;
+        private Vector3 goodStartPos2;
+        private Quaternion goodStartRotation2;
 
         private Vector3 destinationPos;
 
@@ -97,6 +114,14 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             base.Start();
 
+            startPos = forklift.transform.position;
+            startRotation = forklift.transform.rotation;
+
+            goodStartPos = good.transform.position;
+            goodStartRotation = good.transform.rotation;
+            goodStartPos2 = good2.transform.position;
+            goodStartRotation2 = good2.transform.rotation;
+
             //Initialize excavator things
             base.Start();
             pt = part.nextTo;
@@ -109,7 +134,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
-            
+            if (ForkliftReachDestination(destinationPos))
+            {
+                
+            }
 
             if (recording == null) return;
             
@@ -264,6 +292,23 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool ReachDestination(Vector3 des)
         {
             var t = excav.transform.position;
+
+            // use the same y
+            des.y = 0;
+            t.y = 0;
+            var distance = Vector3.Distance(t, des);
+
+            if (distance < distanceThreshold)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        bool ForkliftReachDestination(Vector3 des)
+        {
+            var t = forklift.transform.position;
 
             // use the same y
             des.y = 0;
