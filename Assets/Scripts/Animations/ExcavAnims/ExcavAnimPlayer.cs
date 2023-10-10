@@ -142,6 +142,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 3
         //then dig
         //then dump
+        print("33");
         done = false;
         anim.enabled = true;
         anim.SetBool("Dig",false);
@@ -156,6 +157,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         //then dig
         //then dump
         done = false;
+        print("44");
         anim.enabled = true;
         anim.SetBool("Dig", false);
         pt = part.into2;
