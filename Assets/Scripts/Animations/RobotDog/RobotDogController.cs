@@ -178,8 +178,10 @@ namespace VRC2.Animations
             PipeHelper.UpdateBoxColliders(pipe, false);
 
             pipe.transform.parent = attachePoint.transform;
-            pipe.transform.localPosition = Vector3.zero;
-            pipe.transform.localRotation = Quaternion.identity;
+            
+            // don't change the local position and local rotation
+            // pipe.transform.localPosition = Vector3.zero;
+            // pipe.transform.localRotation = Quaternion.identity;
         }
 
         #region Animation control
