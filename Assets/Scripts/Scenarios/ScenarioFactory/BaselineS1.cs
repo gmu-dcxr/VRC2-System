@@ -11,11 +11,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
     internal enum CraneStatus
     {
-        Idle = 0,
-        Pickup = 1,
-        Rotate = 2,
-        Dropoff = 3,
-        // refactor
         Init,
         DownHookPickup,
         SeizePickup,
@@ -24,6 +19,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         DownHookDropoff,
         SeizeDropoff,
         DropoffUpHook,
+        Waiting, // waiting for next action
         RotateRight,
         LoopDone,
     }
@@ -36,14 +32,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Quaternion _pipeLocalRot;
 
         public CraneInputRecording recording;
-        public CraneInputReplay replay;
-
-        // public float startAngle = 180f;
-        public float endAngle = 120f;
-        public float dropAngle = 150f; // when to drop the pipe
-
-        public float startBoomcart = -22.40558f; //x
-        public float endBoomcart = -10;
 
         private GameObject crane;
 
@@ -54,24 +42,11 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public GameObject unpackedPipe;
 
-        public GameObject craneGroup;
-        public GameObject hook;
-
 
         private Vector3 pipeStackPos;
         private Quaternion pipeStackRot;
 
-        [Header("Animators")]
-        public Animator craneAnim;
-        public Animator hookAnim;
-        public RecordTransformHierarchy recorder;
-
-        // private bool triggered = false;
-        private bool clockWise = false;
-
-        // private bool enableDrop = false;
-
-        private CraneStatus _craneStatus;
+        private CraneStatus craneStatus;
 
         // the start rotation of the crane
         private float startAngle
@@ -84,14 +59,34 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private bool normalCondition = false;
 
-        private void Awake() 
+        #region Crane action control
+
+        // private string initDistanceCart;
+        private string distanceHook = "5.4";
+        private int initRotationCrane = 176;
+
+
+        [Space(30)] [Header("Markers")] public float pickupDownHook = 20.5f; // pick up at this distance
+        public float dropoffDownHook = 6.9f; // drop off at this distance
+        public float dropoffRotation = 100f; // drop off at this rotation
+
+        string Distance2String(float d)
         {
-            
+            return d.ToString("0.0");
         }
+
+        string Rotation2String(float r)
+        {
+            return Mathf.RoundToInt(r).ToString();
+        }
+
+        #endregion
+
+
         private void Start()
         {
             base.Start();
-           
+
             if (localPlayer != null)
             {
                 player = localPlayer;
@@ -101,11 +96,9 @@ namespace VRC2.Scenarios.ScenarioFactory
                 player = playerIndicator;
             }
 
-            _craneStatus = CraneStatus.Idle;
+            craneStatus = CraneStatus.Waiting;
 
             BackupTransforms();
-
-            clockWise = false;
 
             SetActiveness(true, false);
 
@@ -117,76 +110,173 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
-            
-            switch (_craneStatus)
+            switch (craneStatus)
             {
-                case CraneStatus.Pickup:
-                    replay.Pickup();
-                    if (replay.PickupFinished())
+                case CraneStatus.Init:
+                    // if (WaitUntilHookSteady())
+                    // {
+                    //     craneStatus = CraneStatus.DownHookPickup;
+                    // }
+                    craneStatus = CraneStatus.DownHookPickup;
+
+                    break;
+                case CraneStatus.DownHookPickup:
+                    if (DownHookUntil(pickupDownHook))
                     {
-                        _craneStatus = CraneStatus.Rotate;
+                        craneStatus = CraneStatus.SeizePickup;
                     }
 
                     break;
-                case CraneStatus.Rotate:
-                    RotateCrane(clockWise);
-                    if (NeedStoppingRotation())
+                case CraneStatus.SeizePickup:
+                    // connect cargo
+                    recording.SeizeCargo();
+                    craneStatus = CraneStatus.PickupUpHook;
+
+                    break;
+                case CraneStatus.PickupUpHook:
+                    if (UpHookUntilInit())
                     {
-                        // force update the crane rotation
-                        ResetCraneRotation(startAngle);
+                        craneStatus = CraneStatus.RotateLeft;
+                    }
 
-                        recording.StopRotating = true;
+                    break;
+                case CraneStatus.RotateLeft:
+                    if (RotateLeftUntilDropoff())
+                    {
+                        craneStatus = CraneStatus.DownHookDropoff;
+                    }
 
+                    break;
+                case CraneStatus.DownHookDropoff:
+                    if (DownHookUntil(dropoffDownHook))
+                    {
+                        craneStatus = CraneStatus.SeizeDropoff;
+                    }
+
+                    break;
+                case CraneStatus.SeizeDropoff:
+                    // release cargo
+                    recording.SeizeCargo();
+                    craneStatus = CraneStatus.DropoffUpHook;
+                    break;
+                case CraneStatus.DropoffUpHook:
+                    if (UpHookUntilInit())
+                    {
+                        //update distance hook
+                        distanceHook = Distance2String(recording.DistanceHook);
+                        
                         if (normalCondition)
                         {
-                            StopRotating();
-                            StartCrane(true, false, reset: true, unpackedpipe: false);
+                            // directly into the next state
+                            craneStatus = CraneStatus.RotateRight;
                         }
                         else
                         {
-                            _craneStatus = CraneStatus.Idle;
+                            // waiting for next event
+                            craneStatus = CraneStatus.Waiting;
                         }
                     }
 
                     break;
-                case CraneStatus.Dropoff:
-                    replay.Dropoff();
-                    if (replay.DropoffFinished())
+                case CraneStatus.RotateRight:
+                    if (RotateRightUntilInit())
                     {
-                        clockWise = true;
                         if (normalCondition)
                         {
-                            StartCrane(false, true, rot2end: true);
+                            // auto loop
+                            SetActiveness(true, false);
+
+                            // start over
+                            craneStatus = CraneStatus.Init;
                         }
                         else
                         {
-                            _craneStatus = CraneStatus.Idle;
+                            craneStatus = CraneStatus.LoopDone;
                         }
                     }
 
                     break;
-                case CraneStatus.Idle:
-                    StopRotating();
+                case CraneStatus.LoopDone:
+                    break;
 
+                case CraneStatus.Waiting:
+                    break;
+
+                default:
                     break;
             }
         }
- 
-        bool NeedStoppingRotation()
+
+        bool DownHookUntil(float target)
         {
-            // stop when rotate back
-            return clockWise && Math.Abs(recording.GetCraneRotation() - startAngle) < 1f;
+            var hook = recording.DistanceHook;
+            print($"DownHookUntil: {hook} {target}");
+            if (hook < target)
+            {
+                recording.DownHook();
+                return false;
+            }
+
+            return true;
         }
 
-        void ResetCraneRotation(float angle)
+        bool WaitUntilHookSteady()
         {
-            recording.ForceUpdateRotation(angle);
+            // print($"WaitUntilHookSteady: {recording.DistanceHook} {target}");
+            var s1 = Distance2String(recording.DistanceHook);
+            return s1 == distanceHook;
         }
 
-        void ResetBoomCart(float x)
+        bool UpHookUntilInit()
         {
-            recording.ForceUpdateBoomCart(x);
+            var hook = recording.DistanceHook;
+            print($"UpHookUntilInit: {recording.DistanceHook} {distanceHook}");
+
+            if (Distance2String(hook) == distanceHook)
+            {
+                return true;
+            }
+            else
+            {
+                if (hook > float.Parse(distanceHook))
+                {
+                    recording.UpHook();
+                }
+                else
+                {
+                    recording.DownHook();
+                }
+
+                return false;
+            }
         }
+
+        bool RotateLeftUntilDropoff()
+        {
+            var rotation = recording.RotationCrane;
+            print($"RotateLeftUntilDropoff: {rotation} {Rotation2String(dropoffRotation)}");
+            if (rotation > dropoffRotation)
+            {
+                recording.TurnLeft();
+                return false;
+            }
+
+            return WaitUntilHookSteady();
+        }
+
+        bool RotateRightUntilInit()
+        {
+            var rotation = recording.RotationCrane;
+            print($"RotateRightUntilInit: {rotation} {initRotationCrane}");
+            if (rotation < initRotationCrane)
+            {
+                recording.TurnRight();
+                return false;
+            }
+
+            return WaitUntilHookSteady();
+        }
+
 
         void BackupTransforms()
         {
@@ -217,81 +307,18 @@ namespace VRC2.Scenarios.ScenarioFactory
             pipeStack.transform.rotation = pipeStackRot;
         }
 
-        void SetActiveness(bool pipestack, bool unpackedpipe)
-        {
-            pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
-            unpackedPipe.SetActive(unpackedpipe);
-        }
-
-        void StopRotating()
-        {
-            replay.Left(true);
-            replay.Right(true);
-        }
-
-        void RotateCrane(bool clockWise)
-        {
-            if (clockWise)
-            {
-                replay.Left(true);
-                replay.Right(false, true);
-            }
-            else
-            {
-                replay.Right(true);
-                replay.Left(false, true);
-            }
-
-            var angle = Math.Abs(recording.GetCraneRotation() - endAngle);
-            if (_craneStatus == CraneStatus.Rotate && !clockWise && angle < rotationThreshold)
-            {
-                // rewind dropoff
-                replay.RewindDropoff();
-
-                // force align the rotation
-                ResetCraneRotation(endAngle);
-                _craneStatus = CraneStatus.Dropoff;
-            }
-        }
-
-        #region Accident Events Callbacks
-
-        // TODO: When scenario ends, start the normal event
-        void StartCrane(bool pickup, bool clockwise, bool reset = false, bool unpackedpipe = false,
-            bool rot2end = false, bool rot2start = false)
+        void SetActiveness(bool reset = false, bool unpackedpipe = false)
         {
             if (reset)
             {
                 Reset();
             }
 
-            recording.StopRotating = false;
-
-            if (rot2end)
-            {
-                ResetCraneRotation(endAngle);
-            }
-
-            if (rot2start)
-            {
-                ResetCraneRotation(startAngle);
-            }
-
-            SetActiveness(true, unpackedpipe);
-
-            if (pickup)
-            {
-                replay.RewindPickup();
-                _craneStatus = CraneStatus.Pickup;
-            }
-            else
-            {
-                _craneStatus = CraneStatus.Rotate;
-            }
-
-            clockWise = clockwise;
+            // pipeStack.GetComponent<MeshRenderer>().enabled = pipestack;
+            unpackedPipe.SetActive(unpackedpipe);
         }
 
+        #region Accident Events Callbacks
 
         // normal event
         public override void StartNormalIncident()
@@ -299,8 +326,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print("Start Normal Incident Baseline S1");
             // repeat #2 and #3
             normalCondition = true;
-            ResetCraneRotation(startAngle);
-            StartCrane(true, false, reset: true, unpackedpipe: false);
+            craneStatus = CraneStatus.Init;
         }
 
         public void On_BaselineS1_1_Start()
@@ -319,11 +345,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
-           
-           craneAnim.SetTrigger("CounterClockWise");
-           
 
-            //StartCrane(true, false);
+            normalCondition = false;
+
+            craneStatus = CraneStatus.Init;
+            SetActiveness(true, false);
         }
 
         public void On_BaselineS1_2_Finish()
@@ -337,8 +363,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(3);
-            craneAnim.SetTrigger("ClockWise");
-            //StartCrane(false, true, rot2end: true);
+
+            normalCondition = false;
+            craneStatus = CraneStatus.RotateRight;
         }
 
         public void On_BaselineS1_3_Finish()
@@ -354,9 +381,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
             print(warning);
+
+            normalCondition = false;
+
+            craneStatus = CraneStatus.Init;
+
             SetActiveness(true, true);
-            craneAnim.SetTrigger("CounterClockWise");
-            //StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_4_Finish()
@@ -370,8 +400,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // A hook (without a load) is passing overhead in the opposite direction.
             // get incident
             var incident = GetIncident(5);
-            craneAnim.SetTrigger("ClockWise");
-            // StartCrane(false, true, rot2end: true);
+
+            normalCondition = false;
+
+            craneStatus = CraneStatus.RotateRight;
         }
 
         public void On_BaselineS1_5_Finish()
@@ -388,9 +420,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            normalCondition = false;
+            craneStatus = CraneStatus.Init;
+
             SetActiveness(true, true);
-            craneAnim.SetTrigger("pipeFall");
-            StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_6_Finish()
@@ -405,8 +438,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             // add rigid body
             PipeHelper.EnsureRigidBody(ref unpackedPipe);
             // it will automatically fall
-
-            // enableDrop = false;
         }
 
         public void On_BaselineS1_7_Start()
@@ -432,8 +463,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(8);
             var warning = incident.Warning;
             print(warning);
-            craneAnim.SetTrigger("ClockWise");
-            // StartCrane(false, true, rot2end: true);
+
+            normalCondition = false;
+            craneStatus = CraneStatus.RotateRight;
         }
 
         public void On_BaselineS1_8_Finish()
@@ -447,9 +479,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(9);
             var warning = incident.Warning;
             print(warning);
+
+            // make it auto return back
+            normalCondition = true;
+            craneStatus = CraneStatus.Init;
             SetActiveness(true, true);
-            craneAnim.SetTrigger("CounterClockWise");
-            //StartCrane(true, false, true, true, rot2start: true);
         }
 
         public void On_BaselineS1_9_Finish()
