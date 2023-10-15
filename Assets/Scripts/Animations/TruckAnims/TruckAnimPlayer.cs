@@ -24,6 +24,16 @@ public class TruckAnimPlayer : MonoBehaviour
             anim.SetBool("FirstBackup", false);
             anim.SetBool("FirstForward", true);
         }
+        if (!(SecondBackup.active) && anim.GetBool("SecondBackup"))
+        {
+            anim.SetBool("SecondBackup", false);
+            anim.SetBool("SecondForward", true);
+        }
+        if (!(ThirdBackup.active) && anim.GetBool("ThirdBackup"))
+        {
+            anim.SetBool("ThirdBackup", false);
+            anim.SetBool("ThirdForward", true);
+        }
     }
 
     public void Backup1()
