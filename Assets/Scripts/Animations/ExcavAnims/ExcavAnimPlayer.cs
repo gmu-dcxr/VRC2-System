@@ -87,6 +87,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         {
             //play wakeup animation
             anim.SetBool("Wakeup", true);
+        
             if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f) && anim.GetCurrentAnimatorStateInfo(0).IsName("Wakeup"))
             {
                 print("STOP");
@@ -94,6 +95,7 @@ public class ExcavAnimPlayer : MonoBehaviour
                 anim.SetBool("Wakeup", false);
                 awake = true;
             }
+            
         }
         //if(pt == part.nextTo)
         //{
