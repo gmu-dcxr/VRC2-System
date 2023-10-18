@@ -63,7 +63,7 @@ public class HookManip : MonoBehaviour
 						.transform.GetChild(0).transform.GetChild(0).transform.GetChild(1);
 					lineRen1B = transform.GetChild(0);
 					lineRen2B = transform.GetChild(1);
-					transform.parent = m_ScriptHook_1.arrowForward4;
+					//transform.parent = m_ScriptHook_1.arrowForward4;
 					decalHook = transform.GetChild(3);
 				}
 				else if (m_ScriptHook_1.checkManip == 3)
@@ -74,7 +74,7 @@ public class HookManip : MonoBehaviour
 						.transform.GetChild(0).transform.GetChild(0).transform.GetChild(0).transform.GetChild(1);
 					lineRen1B = transform.GetChild(0);
 					lineRen2B = transform.GetChild(1);
-					transform.parent = m_ScriptHook_1.arrowForward5;
+					//transform.parent = m_ScriptHook_1.arrowForward5;
 					decalHook = transform.GetChild(3);
 				}
 
@@ -222,7 +222,7 @@ public class HookManip : MonoBehaviour
 	{
 		if (hook_Bool == true)
 		{
-			transform.parent = m_ScriptHook_2.transform;
+			// transform.parent = m_ScriptHook_2.transform;
 			Rigidbody rig = gameObject.AddComponent<Rigidbody>();
 			rig.mass = 20;
 			rig.drag = 1.1f;
@@ -258,11 +258,11 @@ public class HookManip : MonoBehaviour
 			decalHook.gameObject.SetActive(false);
 			if (m_ScriptHook_1.checkManip == 1 || m_ScriptHook_1.checkManip == 2)
 			{
-				transform.parent = m_ScriptHook_1.arrowForward4;
+				//transform.parent = m_ScriptHook_1.arrowForward4;
 			}
 			else if (m_ScriptHook_1.checkManip == 3)
 			{
-				transform.parent = m_ScriptHook_1.arrowForward5;
+				//transform.parent = m_ScriptHook_1.arrowForward5;
 			}
 
 			hook_Bool = true;
