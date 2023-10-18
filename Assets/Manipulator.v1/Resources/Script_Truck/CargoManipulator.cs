@@ -13,6 +13,8 @@ public class CargoManipulator : MonoBehaviour {
 	public Transform hook;
 	[HideInInspector]
 	public Transform pointHook;
+    [HideInInspector]
+    public GameObject cargoLine;
 	[HideInInspector]
 	public float distanceHook = 0;
 	public float massCagro;
@@ -53,8 +55,11 @@ public class CargoManipulator : MonoBehaviour {
 		// initialize input actions
 		craneTIA = new CraneTruckInputActions();
 		craneTIA.Enable();
-		
-		craneSeizeInput = craneTIA.Crane.Seize;
+
+		cargoLine = GameObject.Find("PointCargo");
+
+
+        craneSeizeInput = craneTIA.Crane.Seize;
 		
 		if (gameObject.GetComponent<Rigidbody> () == null) {
 			gameObject.AddComponent<Rigidbody> ();
@@ -63,18 +68,25 @@ public class CargoManipulator : MonoBehaviour {
 		lineMaterial = Resources.Load ("Material/LineMat", typeof(Material))as Material;
 	}
 	void Update(){
-		if (hook != null)
+       
+
+        if (hook != null)
 		{
 			if (recording.truckMode) return;
 			
 			// if (Input.GetKeyDown (connectedCargo) && hook.GetComponent<HookManip> ().m_ScriptHook_2.connectedCargoIm.enabled == true && gameObject.GetComponent<HingeJoint>() == null) {
 			if (craneSeizeInput.triggered && hook.GetComponent<HookManip> ().m_ScriptHook_2.connectedCargoIm.enabled == true && gameObject.GetComponent<HingeJoint>() == null) {
 				ConnectedCargoToHook ();
-			}else
+                cargoLine.SetActive(true);
+            }
+            else
 			// if (Input.GetKeyDown (connectedCargo) && gameObject.GetComponent<HingeJoint>() != null) {
 			if (craneSeizeInput.triggered && gameObject.GetComponent<HingeJoint>() != null) {
 				ConnectedCargoToHook ();
-			}
+                
+
+            }
+			
 		}
 		RotationCargo ();
 		if (lineRen1 != null || lineRen2 != null || lineRen3 != null || lineRen4 != null) {
@@ -102,9 +114,9 @@ public class CargoManipulator : MonoBehaviour {
 		}
 	}
 	public void ConnectedCargoToHook(){
-		if (hook.GetComponent<HookManip>().nameCargo == gameObject.name && connectedCargoToHook_Bool == true) {
-				transform.parent = null;
-				if (gameObject.GetComponent<Rigidbody> () == null) {
+        if (hook.GetComponent<HookManip>().nameCargo == gameObject.name && connectedCargoToHook_Bool == true) {
+            //transform.parent = null;
+            if (gameObject.GetComponent<Rigidbody> () == null) {
 					Rigidbody rig = gameObject.AddComponent<Rigidbody> ();
 					rig.mass = massCagro;
 				}
@@ -126,7 +138,7 @@ public class CargoManipulator : MonoBehaviour {
 				}
 				if (lineRen1 != null || lineRen2 != null || lineRen3 != null || lineRen4 != null) {
 					pointHook.gameObject.AddComponent<LineRenderer> ();
-					m_lineCargo = pointHook.GetComponent<LineRenderer> ();
+                m_lineCargo = pointHook.GetComponent<LineRenderer> ();
 				}
 				if (hook.GetComponent<HookManip> () != null) {
 					hook.GetComponent<HookManip> ().m_Cargo = gameObject.GetComponent<CargoManipulator> ();
@@ -140,7 +152,11 @@ public class CargoManipulator : MonoBehaviour {
 			} else if (connectedCargoToHook_Bool == false) {
 			m_lineCargo = null;
 			hook.GetComponent<HookManip>().m_ScriptHook_2.blockOnManip_Cargo = true;
-			Destroy (pointHook.GetComponent<LineRenderer> ());
+			if (pointHook.GetComponent<LineRenderer>().enabled)
+			{
+                cargoLine.SetActive(false);
+                //pointHook.GetComponent<LineRenderer>().enabled = false;
+            }
 			Destroy (gameObject.GetComponent<HingeJoint> ());
 			ConstantForce cons = gameObject.AddComponent<ConstantForce> ();
 			cons.force = new Vector3 (0, -0.02f, 0);
