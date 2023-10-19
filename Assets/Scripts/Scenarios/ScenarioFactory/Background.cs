@@ -20,6 +20,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject good;
         public GameObject good2;
 
+
         public Transform destination;
 
         private bool reachedDes = false;
