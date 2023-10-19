@@ -31,6 +31,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public CraneTruckInputReplay replay;
 
+        public GameObject good;
+        public GameObject good2;
+        public GameObject good3;
+
         public Transform startPoint;
         public Transform dropoffPoint;
 
@@ -129,21 +133,21 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         IEnumerator WaitForUnload()
         {
-            yield return new WaitForSeconds(25f);
+            yield return new WaitForSeconds(15f);
             anim.SetBool("Unload", true);
             yield return null;
         }
 
         IEnumerator WaitForTilt()
         {
-            yield return new WaitForSeconds(25f);
+            yield return new WaitForSeconds(15f);
             anim.SetBool("Tilt", true);
             yield return null;
         }
 
         IEnumerator WaitForOverturn()
         {
-            yield return new WaitForSeconds(25f);
+            yield return new WaitForSeconds(15f);
             anim.SetBool("Overturn", true);
             yield return null;
         }
@@ -218,6 +222,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", false);
             anim.SetBool("Unload", false);
             anim.SetBool("Forward", true);
+        
             // it already automatically moves forward
             // _stage = CraneTruckStage.Forward;
         }
@@ -238,7 +243,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            anim.SetBool("Reverse", true);
+            good2.SetActive(true);
+            anim.SetBool("Reverse2", true);
             anim.SetBool("Forward", false);
             StartCoroutine(WaitForTilt());
             ResetTransforms();
@@ -259,9 +265,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            anim.SetBool("Reverse", false);
+            anim.SetBool("Reverse2", false);
             anim.SetBool("Tilt", false);
-            anim.SetBool("Forward", true);
+            anim.SetBool("Forward2", true);
+       
 
             // _stage = CraneTruckStage.Forward;
         }
@@ -282,8 +289,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            anim.SetBool("Reverse", true);
-            anim.SetBool("Forward", false);
+            good3.SetActive(true);
+            anim.SetBool("Reverse3", true);
+            anim.SetBool("Forward2", false);
             StartCoroutine(WaitForOverturn());
             ResetTransforms();
             _stage = CraneTruckStage.Backward;
@@ -300,7 +308,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS5_7_Start");
 
-            anim.SetBool("Reverse", false);
+            anim.SetBool("Reverse3", false);
             anim.SetBool("Overturn", false);
 
             // SAGAT query
