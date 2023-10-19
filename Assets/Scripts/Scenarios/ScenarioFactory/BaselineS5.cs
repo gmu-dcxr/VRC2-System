@@ -24,11 +24,16 @@ namespace VRC2.Scenarios.ScenarioFactory
     {
         [Header("Gameobjects")] public GameObject craneTruck;
         public GameObject cargo;
+        public Animator anim;
 
         [Space(30)] [Header("Recording/Replay")]
         public CraneTruckInputRecording recording;
 
         public CraneTruckInputReplay replay;
+
+        public GameObject good;
+        public GameObject good2;
+        public GameObject good3;
 
         public Transform startPoint;
         public Transform dropoffPoint;
@@ -126,6 +131,27 @@ namespace VRC2.Scenarios.ScenarioFactory
             _timer = Timer.Register(second, oncomplete, isLooped: false, useRealTime: true);
         }
 
+        IEnumerator WaitForUnload()
+        {
+            yield return new WaitForSeconds(15f);
+            anim.SetBool("Unload", true);
+            yield return null;
+        }
+
+        IEnumerator WaitForTilt()
+        {
+            yield return new WaitForSeconds(15f);
+            anim.SetBool("Tilt", true);
+            yield return null;
+        }
+
+        IEnumerator WaitForOverturn()
+        {
+            yield return new WaitForSeconds(15f);
+            anim.SetBool("Overturn", true);
+            yield return null;
+        }
+
         #region craneTruck control
 
         bool ReachedDestination(Vector3 des)
@@ -174,7 +200,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
-
+            
+            anim.SetBool("Reverse", true);
+            StartCoroutine(WaitForUnload());
             _stage = CraneTruckStage.Backward;
             replay.Backward(true);
         }
@@ -191,6 +219,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
+            anim.SetBool("Reverse", false);
+            anim.SetBool("Unload", false);
+            anim.SetBool("Forward", true);
+        
             // it already automatically moves forward
             // _stage = CraneTruckStage.Forward;
         }
@@ -211,6 +243,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            good2.SetActive(true);
+            anim.SetBool("Reverse2", true);
+            anim.SetBool("Forward", false);
+            StartCoroutine(WaitForTilt());
             ResetTransforms();
             _stage = CraneTruckStage.Backward;
             replay.Backward(true);
@@ -228,6 +264,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The unload finishes and the crane truck leaves.
             // get incident
             var incident = GetIncident(5);
+
+            anim.SetBool("Reverse2", false);
+            anim.SetBool("Tilt", false);
+            anim.SetBool("Forward2", true);
+       
 
             // _stage = CraneTruckStage.Forward;
         }
@@ -248,6 +289,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            good3.SetActive(true);
+            anim.SetBool("Reverse3", true);
+            anim.SetBool("Forward2", false);
+            StartCoroutine(WaitForOverturn());
             ResetTransforms();
             _stage = CraneTruckStage.Backward;
             replay.Backward(true);
@@ -262,6 +307,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS5_7_Start()
         {
             print("On_BaselineS5_7_Start");
+
+            anim.SetBool("Reverse3", false);
+            anim.SetBool("Overturn", false);
 
             // SAGAT query
             ShowSAGAT();

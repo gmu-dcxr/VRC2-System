@@ -47,6 +47,7 @@ namespace VRC2.Animations
 
         private float angleThreshold = 1f;
         private float distanceThreshold = 0.1f;
+        public float pickupOffset = 1f;
 
         private bool pickingup = false;
         private bool droppingoff = false;
@@ -87,7 +88,7 @@ namespace VRC2.Animations
 
         public float strafeSpeed = 0.1f;
 
-        public float rotateSpeed = 1f;
+        public float rotateSpeed = 0.5f;
 
         //
         private Transform body
@@ -178,10 +179,8 @@ namespace VRC2.Animations
             PipeHelper.UpdateBoxColliders(pipe, false);
 
             pipe.transform.parent = attachePoint.transform;
-            
-            // don't change the local position and local rotation
-            // pipe.transform.localPosition = Vector3.zero;
-            // pipe.transform.localRotation = Quaternion.identity;
+            pipe.transform.localPosition = Vector3.zero;
+            pipe.transform.localRotation = Quaternion.identity;
         }
 
         #region Animation control
@@ -360,6 +359,26 @@ namespace VRC2.Animations
             actions.Idle1();
         }
 
+        //NEW for picking up from side
+        void strafeForPickup() 
+        {
+            print("PickUp Strafing");
+            actions.StrafeRight();
+            body.Translate(new Vector3(1, 0, 0) * strafeSpeed * Time.deltaTime);
+        }
+        bool pickUpStrafe() 
+        {
+            var diff = body.transform.position.z - targetTransform.position.z;
+       
+            print(diff);
+            if (pickupOffset - Math.Abs(diff) <= 0) 
+            {
+                
+                return false;
+            }
+            return true;
+        }
+
         #endregion
 
         private void Update()
@@ -463,14 +482,24 @@ namespace VRC2.Animations
                     if (!pickingup)
                     {
                         print("start pickup");
-                        pickingup = true;
-                        // disable dog animator, otherwise arm animator won't work.
-                        dogAnimator.enabled = false;
-                        armAnimator.enabled = true;
+                       
+                        
+                        //Adjust for picking up pipe from side of dog
+                        if (pickUpStrafe())
+                        {
+                            strafeForPickup();                           
+                        }
+                        else
+                        {
+                            pickingup = true;
+                            // disable dog animator, otherwise arm animator won't work.
+                            dogAnimator.enabled = false;
+                            armAnimator.enabled = true;
 
-                        RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
-                        StartPickupAnimation();
+                            StartPickupAnimation();
+                        }
                     }
                     else
                     {
@@ -528,8 +557,9 @@ namespace VRC2.Animations
                             print("dropoff done");
                             droppingoff = false;
                             // reset arm
-                            roboticArm.ResetRotations();
-
+                            // roboticArm.ResetRotations();
+                            //armAnimator.SetTrigger("ResetArm");
+                           // while (!IsResetDone()) { }
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
 
@@ -558,6 +588,7 @@ namespace VRC2.Animations
                                 targetTransform = standbyPoint;
                                 MoveToTarget();
                             }
+                            
                         }
                     }
 
@@ -819,6 +850,11 @@ namespace VRC2.Animations
         bool IsDropoffDone()
         {
             return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmDropoff") &&
+                   armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
+        } 
+        bool IsResetDone()
+        {
+            return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("ArmResetSimple") &&
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
 
