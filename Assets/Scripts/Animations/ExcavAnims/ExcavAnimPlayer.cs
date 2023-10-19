@@ -99,14 +99,15 @@ public class ExcavAnimPlayer : MonoBehaviour
         }
         //if(pt == part.nextTo)
         //{
-        //print(destination.position);
-        //print(transform.position);
+        print(destination.position);
+        print(transform.position);
         if (ReachDestination(destination.position))
             {
             if (!done)
             {
                 anim.SetBool("Forward", false);
                 anim.SetBool("Dig", true);
+                done = true;
             }
 
             if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
@@ -214,7 +215,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         GameObject dupe = Instantiate(dirt);
         //dirtSpawned = true;
 
-        dupe.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z-1.0f);
+        dupe.transform.position = new Vector3(spawn.transform.position.x-1.0f, spawn.transform.position.y, spawn.transform.position.z-0.5f);
         dupe.transform.SetParent(endPiece);
         dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
         dupe.GetComponent<Rigidbody>().useGravity = false;
