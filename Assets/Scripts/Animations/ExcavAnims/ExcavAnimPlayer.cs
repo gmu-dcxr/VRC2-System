@@ -9,6 +9,7 @@ public class ExcavAnimPlayer : MonoBehaviour
     public Transform digPoint2;
     public Transform digPoint3;
     private Transform destination;
+    private bool ready;
 
     //dirt spawning/spawning
     public Transform spawn;
@@ -18,6 +19,7 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject hole;
 
     public GameObject spill;
+    public GameObject truck;
 
     //treads
     private float offsetL;
@@ -41,6 +43,8 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject FirstBackup;
     public GameObject SecondBackup;
     public GameObject ThirdBackup;
+
+    public GameObject truckCheck;
 
     private Vector3 scaleChange = new Vector3(0.03f, 0.0f, 0.03f);
     private Vector3 initScale = new Vector3(0.05f, 0.05f, 0.05f);
@@ -71,23 +75,11 @@ public class ExcavAnimPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
-        {
-            //animate the treads
-            offsetR = Time.time * (0.75f) % 1;
-            offsetL = Time.time * (0.75f) % 1;
-            matL.mainTextureOffset = new Vector2(0, offsetL);
-            matR.mainTextureOffset = new Vector2(0, offsetR);
-            WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
-            WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
-            WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
-            WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
-        }
         if (!awake)
         {
             //play wakeup animation
             anim.SetBool("Wakeup", true);
-        
+
             if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f) && anim.GetCurrentAnimatorStateInfo(0).IsName("Wakeup"))
             {
                 print("STOP");
@@ -95,43 +87,60 @@ public class ExcavAnimPlayer : MonoBehaviour
                 anim.SetBool("Wakeup", false);
                 awake = true;
             }
-            
-        }
-        //if(pt == part.nextTo)
-        //{
-        print(destination.position);
-        print(transform.position);
-        if (ReachDestination(destination.position))
-            {
-            if (!done)
-            {
-                anim.SetBool("Forward", false);
-                anim.SetBool("Dig", true);
-                done = true;
-            }
-
-            if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
-            {
-                anim.SetBool("Dig", false);
-                done = true;
-                //anim.enabled = false;
-
-                if(pt == part.nextTo)
-                {
-                    FirstBackup.SetActive(false);
-                }
-                if (pt == part.into1)
-                {
-                    SecondBackup.SetActive(false);
-                }
-                if (pt == part.into2)
-                {
-                    ThirdBackup.SetActive(false);
-                }
-            }
 
         }
-        //}
+        if (ready && truckCheck.active)
+        {
+            anim.SetBool("Dig", false);
+            anim.SetBool("Forward", true);
+            ready = false;
+        }
+
+
+            if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
+            {
+                //animate the treads
+                offsetR = Time.time * (0.75f) % 1;
+                offsetL = Time.time * (0.75f) % 1;
+                matL.mainTextureOffset = new Vector2(0, offsetL);
+                matR.mainTextureOffset = new Vector2(0, offsetR);
+                WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+                WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+                WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+                WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            }
+
+            if (ReachDestination(destination.position))
+            {
+                if (!done)
+                {
+                    anim.SetBool("Forward", false);
+                    anim.SetBool("Dig", true);
+                    done = true;
+                }
+
+                if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
+                {
+                    anim.SetBool("Dig", false);
+                    done = true;
+                    //anim.enabled = false;
+
+                    if (pt == part.nextTo)
+                    {
+                        FirstBackup.SetActive(false);
+                    }
+                    if (pt == part.into1)
+                    {
+                        SecondBackup.SetActive(false);
+                    }
+                    if (pt == part.into2)
+                    {
+                        ThirdBackup.SetActive(false);
+                    }
+                }
+
+            }
+            //}
     }
 
     bool ReachDestination(Vector3 des)
@@ -154,10 +163,10 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 2
         //then dig
         //then dump
+        ready = true;
         done = false;
         pt = part.nextTo;
         destination = digPoint1;
-        anim.SetBool("Forward", true);
     }
 
     public void start_3()
@@ -165,13 +174,11 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 3
         //then dig
         //then dump
-        print("33");
+        ready = true;
         done = false;
         anim.enabled = true;
-        anim.SetBool("Dig",false);
         pt = part.into1;
         destination = digPoint2;
-        anim.SetBool("Forward", true);
     }
 
     public void start_4()
@@ -179,13 +186,11 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 4
         //then dig
         //then dump
+        ready = true;
         done = false;
-        print("44");
         anim.enabled = true;
-        anim.SetBool("Dig", false);
         pt = part.into2;
         destination = digPoint3;
-        anim.SetBool("Forward", true);
     }
 
     public void makeDirt()
@@ -214,8 +219,17 @@ public class ExcavAnimPlayer : MonoBehaviour
     {
         GameObject dupe = Instantiate(dirt);
         //dirtSpawned = true;
-
-        dupe.transform.position = new Vector3(spawn.transform.position.x-1.0f, spawn.transform.position.y, spawn.transform.position.z-0.5f);
+        if(pt == part.into2)
+        {
+            dupe.transform.position = new Vector3(spawn.transform.position.x-0.75f, spawn.transform.position.y, spawn.transform.position.z-0.2f);
+        }
+        if (pt == part.into1)
+        {
+            dupe.transform.position = new Vector3(spawn.transform.position.x - 0.60f, spawn.transform.position.y, spawn.transform.position.z - 0.3f);
+        }
+        if(pt == part.nextTo) {
+            dupe.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z - 0.3f);
+        }
         dupe.transform.SetParent(endPiece);
         dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
         dupe.GetComponent<Rigidbody>().useGravity = false;
@@ -227,6 +241,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         dupe.transform.SetParent(null);
         dupe.GetComponent<Rigidbody>().useGravity = true;
         dupe.GetComponent<MeshCollider>().convex = true;
+        dupe.transform.SetParent(truck.transform);
         dirt.SetActive(false);
 
         dirt.transform.SetParent(null);
@@ -236,7 +251,7 @@ public class ExcavAnimPlayer : MonoBehaviour
 
     public void spillUpdate()
     {
-        spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y+0.045f, spill.transform.position.z);
+        spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y+0.030f, spill.transform.position.z);
     }
 
 }
