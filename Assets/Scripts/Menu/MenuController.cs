@@ -21,6 +21,8 @@ namespace VRC2.Menu
         CheckClamp = 52,
         CheckPipeLengthAngle = 6,
         CheckLevel = 7,
+        Supervisor = 8,
+        SafetyManager = 9,
     }
 
     internal static class MenuString
@@ -28,16 +30,21 @@ namespace VRC2.Menu
         public static string empty = "";
         public static string VoiceControl = "Voice Control";
         public static string GiveInstruction = "Give Instruction";
-        public static string CheckStorage = "Lack of Storage";
+        public static string CheckStorage = "AI Drone";
         public static string Deprecate = "Deprecate";
         public static string PickupPipe = "Pickup Pipe";
         public static string CheckPipeSizeColor = "Check Size/Color";
         public static string MeasureDistance = "Measure Distance";
-        public static string CommandRobot = "Bend/Cut Pipe";
-        public static string CheckGlue = "Lack of Glue";
-        public static string CheckClamp = "Lack of Clamp";
+        public static string CommandRobot = "RobotDog";
+        public static string CheckGlue = "Glue";
+        public static string CheckClamp = "Clamp";
         public static string CheckPipeLengthAngle = "Check Length/Angle";
+
         public static string CheckLevel = "Check Level";
+
+        // newly added
+        public static string Supervisor = "Supervisor";
+        public static string SafetyManager = "Safety Manager";
     }
 
     public class MenuInitializer
@@ -53,7 +60,10 @@ namespace VRC2.Menu
             // MenuItem.Deprecate, // disable 
             // check glue and clamp
             MenuItem.CheckGlue,
-            MenuItem.CheckClamp
+            MenuItem.CheckClamp,
+            // supervisor and safety manager
+            MenuItem.Supervisor,
+            MenuItem.SafetyManager,
         };
 
         private List<MenuItem> P2MenuItems = new List<MenuItem>()
@@ -65,6 +75,9 @@ namespace VRC2.Menu
             MenuItem.CommandRobot,
             // MenuItem.CheckPipeLengthAngle, // disable
             // MenuItem.CheckLevel // disable
+            // supervisor and safety manager
+            MenuItem.Supervisor,
+            MenuItem.SafetyManager,
         };
 
         public List<MenuItem> P1Menu
@@ -89,7 +102,7 @@ namespace VRC2.Menu
             menuItemNames = new Dictionary<MenuItem, string>();
             nameMenuItems = new Dictionary<string, MenuItem>();
             // add menu items
-            
+
             // voice control
             AddPair(MenuItem.VoiceControl, MenuString.VoiceControl);
             // check storage
@@ -114,6 +127,10 @@ namespace VRC2.Menu
             AddPair(MenuItem.CheckPipeLengthAngle, MenuString.CheckPipeLengthAngle);
             // check level
             AddPair(MenuItem.CheckLevel, MenuString.CheckLevel);
+            // add supervisor
+            AddPair(MenuItem.Supervisor, MenuString.Supervisor);
+            // add safety manager
+            AddPair(MenuItem.SafetyManager, MenuString.SafetyManager);
         }
 
         public MenuItem getMenuItemByString(string name)
@@ -157,7 +174,7 @@ namespace VRC2.Menu
         // Update is called once per frame
         void Update()
         {
-            if(_menuInitialized || !GlobalConstants.GameStarted)
+            if (_menuInitialized || !GlobalConstants.GameStarted)
                 return;
             // initialize menu and actions after game started
             if (!_menuInitialized)
@@ -280,6 +297,12 @@ namespace VRC2.Menu
                         break;
                     case MenuItem.CheckLevel:
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckLevel);
+                        break;
+                    case MenuItem.Supervisor:
+                        puew.WhenRelease.AddListener(_menuHandler.OnSupervisor);
+                        break;
+                    case MenuItem.SafetyManager:
+                        puew.WhenRelease.AddListener(_menuHandler.OnSafetyManager);
                         break;
                     default:
                         break;
