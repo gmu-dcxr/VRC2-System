@@ -1,9 +1,10 @@
 ﻿using System;
-using Unity.VisualScripting;
+// using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC2.Animations;
 using VRC2.Pipe;
+using UnityTimer;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
@@ -14,10 +15,12 @@ namespace VRC2.Scenarios.ScenarioFactory
         Init,
         DownHookPickup,
         SeizePickup,
+        ActionPickup,
         PickupUpHook,
         RotateLeft,
         DownHookDropoff,
         SeizeDropoff,
+        ActionDropoff,
         DropoffUpHook,
         Waiting, // waiting for next action
         RotateRight,
@@ -82,6 +85,33 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #endregion
 
+        #region Timer to make a pause for the animation
+
+        [Space(30)] [Header("Pauses in second")]
+        public int beforePickup = 3;
+
+        public int afterPickup = 3;
+        public int beforeDropOff = 3;
+        public int afterDropoff = 3;
+
+        private Timer _timer;
+
+        private bool _timerRunning = false;
+
+        void StartTimer(int second, Action oncomplete)
+        {
+            if (_timerRunning) return;
+            // if (_timer != null)
+            // {
+            //     Timer.Cancel(_timer);
+            // }
+            _timer = Timer.Register(second, oncomplete, isLooped: false, useRealTime: true);
+
+            _timerRunning = true;
+        }
+
+        #endregion
+
 
         private void Start()
         {
@@ -123,14 +153,29 @@ namespace VRC2.Scenarios.ScenarioFactory
                 case CraneStatus.DownHookPickup:
                     if (DownHookUntil(pickupDownHook))
                     {
-                        craneStatus = CraneStatus.SeizePickup;
+                        // add a timer to make it wait for a while
+                        StartTimer(beforePickup, () =>
+                        {
+                            _timerRunning = false;
+                            craneStatus = CraneStatus.ActionPickup;
+                        });
                     }
 
                     break;
-                case CraneStatus.SeizePickup:
+
+                case CraneStatus.ActionPickup:
                     // connect cargo
                     recording.SeizeCargo();
-                    craneStatus = CraneStatus.PickupUpHook;
+                    craneStatus = CraneStatus.SeizePickup;
+
+                    break;
+
+                case CraneStatus.SeizePickup:
+                    StartTimer(afterPickup, () =>
+                    {
+                        _timerRunning = false;
+                        craneStatus = CraneStatus.PickupUpHook;
+                    });
 
                     break;
                 case CraneStatus.PickupUpHook:
@@ -147,24 +192,40 @@ namespace VRC2.Scenarios.ScenarioFactory
                     }
 
                     break;
+
                 case CraneStatus.DownHookDropoff:
                     if (DownHookUntil(dropoffDownHook))
                     {
-                        craneStatus = CraneStatus.SeizeDropoff;
+                        StartTimer(beforeDropOff, () =>
+                        {
+                            _timerRunning = false;
+                            craneStatus = CraneStatus.ActionDropoff;
+                        });
                     }
 
                     break;
-                case CraneStatus.SeizeDropoff:
+
+                case CraneStatus.ActionDropoff:
                     // release cargo
                     recording.SeizeCargo();
-                    craneStatus = CraneStatus.DropoffUpHook;
+                    craneStatus = CraneStatus.SeizeDropoff;
+
+                    break;
+
+                case CraneStatus.SeizeDropoff:
+                    StartTimer(afterDropoff, () =>
+                    {
+                        _timerRunning = false;
+                        craneStatus = CraneStatus.DropoffUpHook;
+                    });
+
                     break;
                 case CraneStatus.DropoffUpHook:
                     if (UpHookUntilInit())
                     {
                         //update distance hook
                         distanceHook = Distance2String(recording.DistanceHook);
-                        
+
                         if (normalCondition)
                         {
                             // directly into the next state
