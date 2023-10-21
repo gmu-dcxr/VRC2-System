@@ -37,8 +37,7 @@ namespace VRC2.Record
                 var count = voiceLinks.Count;
                 if (count < 3)
                 {
-                    Debug.LogError("Supervisor or SafetyManager not joined");
-                    voiceLinkDetermined = true;
+                    Debug.LogWarning($"Supervisor or SafetyManager not joined [{count}]");
                 }
                 else
                 {
