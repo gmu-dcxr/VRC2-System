@@ -39,6 +39,7 @@
         {
             int bitsPerSample = 32;
             string filePath = this.GetFilePath(remoteVoiceLink);
+            Debug.Log($"Write voice recording to: {filePath}");
             this.Logger.LogInfo("Incoming stream {0}, output file path: {1}", remoteVoiceLink.VoiceInfo, filePath);
             WaveWriter waveWriter = new WaveWriter(filePath, remoteVoiceLink.VoiceInfo.SamplingRate, bitsPerSample, remoteVoiceLink.VoiceInfo.Channels);
             remoteVoiceLink.FloatFrameDecoded += f => { waveWriter.WriteSamples(f.Buf, 0, f.Buf.Length); };
@@ -54,7 +55,9 @@
             string filename = string.Format("in_{0}_{1}_{2}_{3}_{4}.wav",
                 System.DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-ffff"), Random.Range(0, 1000),
                 remoteVoiceLink.ChannelId, remoteVoiceLink.PlayerId, remoteVoiceLink.VoiceId);
-            return Path.Combine(Application.persistentDataPath, filename);
+            
+            return Path.Combine(Path.GetDirectoryName(Application.dataPath), "VoiceRecordings", filename);
+            // return Path.Combine(Application.persistentDataPath, filename);
         }
     }
 }
