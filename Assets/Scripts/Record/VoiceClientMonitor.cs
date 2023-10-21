@@ -32,7 +32,7 @@ namespace VRC2.Record
         {
             if (voiceLinkDetermined) return;
 
-            if (runner != null && runner.isActiveAndEnabled)
+            if (runner != null && runner.IsRunning)
             {
                 var count = voiceLinks.Count;
                 if (count < 3)
