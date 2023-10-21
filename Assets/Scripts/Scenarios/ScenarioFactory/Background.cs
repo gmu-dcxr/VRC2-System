@@ -3,6 +3,7 @@ using VRC2.Animations;
 using WSMGameStudio.HeavyMachinery;
 using WSMGameStudio.Vehicles;
 using System;
+using System.Collections;
 
 using static VRC2.Scenarios.ScenarioFactory.BaselineS7;
 
@@ -17,6 +18,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public Animator anim;
 
         public GameObject forklift;
+        public float timeBetweenDeliveries;
         public GameObject good;
         public GameObject good2;
 
@@ -358,6 +360,15 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         }
 
+        IEnumerator WaitForDelivery()
+        {
+            yield return new WaitForSeconds(38f + timeBetweenDeliveries);
+            anim.SetTrigger("Moving2");
+            yield return null;
+        }
+
+
+
         #region Excav Anim Controls
         void dirtCheck()
         {
@@ -438,6 +449,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             customForkLiftController.Animate();
             anim.SetTrigger("Moving");
+            StartCoroutine(WaitForDelivery());
         }
 
         public void On_Background_2_Finish()

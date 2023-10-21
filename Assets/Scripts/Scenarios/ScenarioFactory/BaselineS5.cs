@@ -9,6 +9,7 @@ using UnityTimer;
 using VRC2.Animations.CraneTruck;
 using VRC2.Extention;
 using Timer = UnityTimer.Timer;
+using static RootMotion.Demos.CharacterMeleeDemo.Action;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
