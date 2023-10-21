@@ -192,12 +192,12 @@ namespace Photon.Voice.Unity
             set => this.speakerPrefab = value;
         }
 
-#if UNITY_EDITOR
+// #if UNITY_EDITOR
         public List<RemoteVoiceLink> CachedRemoteVoices
         {
             get { return this.cachedRemoteVoices; }
         }
-#endif
+// #endif
 
         /// <summary>
         /// Primary Recorder to be used by VoiceConnection implementations directly or via integration objects.
