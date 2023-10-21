@@ -187,15 +187,15 @@ namespace VRC2
             // ShowModalDialog(true);
         }
 
-        public void OnSupervisor()
-        {
-            print("OnSupervisor");
-        }
-
-        public void OnSafetyManager()
-        {
-            print("OnSafetyManager");
-        }
+        // public void OnSupervisor()
+        // {
+        //     print("OnSupervisor");
+        // }
+        //
+        // public void OnSafetyManager()
+        // {
+        //     print("OnSafetyManager");
+        // }
 
         #endregion
 

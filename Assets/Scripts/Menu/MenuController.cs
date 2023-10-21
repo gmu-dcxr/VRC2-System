@@ -8,21 +8,35 @@ namespace VRC2.Menu
 {
     public enum MenuItem
     {
-        Zero = 0,
-        VoiceControl = 1001,
-        GiveInstruction = 1,
-        CheckStorage = 11,
-        Deprecate = 12,
-        PickupPipe = 2,
-        CheckPipeSizeColor = 3,
-        MeasureDistance = 4,
-        CommandRobot = 5,
-        CheckGlue = 51,
-        CheckClamp = 52,
-        CheckPipeLengthAngle = 6,
-        CheckLevel = 7,
-        Supervisor = 8,
-        SafetyManager = 9,
+        Zero,
+        VoiceControl,
+        GiveInstruction,
+        CheckStorage,
+        Deprecate,
+        PickupPipe,
+        CheckPipeSizeColor,
+        MeasureDistance,
+        CommandRobot,
+        CheckGlue,
+        CheckClamp,
+        CheckPipeLengthAngle,
+        CheckLevel,
+        Supervisor,
+        SafetyManager,
+
+        // supervisor submenu
+        ReportDog,
+        ReportInstruction,
+        ReportClamp,
+        ReportGlue,
+        ReportPipe,
+        Back, // back to above menu
+
+        // safety manager submenu
+        ReportFall,
+        ReportStruck,
+        ReportElectrified,
+        ReportCollision
     }
 
     internal static class MenuString
@@ -45,6 +59,21 @@ namespace VRC2.Menu
         // newly added
         public static string Supervisor = "Supervisor";
         public static string SafetyManager = "Safety Manager";
+
+        // supervisor level 2 menu
+        public static string ReportDog = "Report Dog";
+        public static string ReportInstruction = "Report Instruction";
+        public static string ReportClamp = "Report Clamp";
+        public static string ReportGlue = "Report Glue";
+        public static string ReportPipe = "Report Pipe";
+        public static string Back = "Back"; // shared by the following
+
+        // safety manager level 2 menu
+        public static string ReportFall = "Report Fall";
+        public static string ReportStruck = "Report Struck";
+        public static string ReportElectrified = "Report Electrified";
+        public static string ReportCollision = "Report Collision";
+
     }
 
     public class MenuInitializer
@@ -80,14 +109,43 @@ namespace VRC2.Menu
             MenuItem.SafetyManager,
         };
 
+        private List<MenuItem> SupervisorItems = new List<MenuItem>()
+        {
+            MenuItem.ReportDog,
+            MenuItem.ReportInstruction,
+            MenuItem.ReportClamp,
+            MenuItem.ReportGlue,
+            MenuItem.ReportPipe,
+            MenuItem.Back,
+        };
+
+        private List<MenuItem> SafetyManagerItems = new List<MenuItem>()
+        {
+            MenuItem.ReportFall,
+            MenuItem.ReportStruck,
+            MenuItem.ReportElectrified,
+            MenuItem.ReportCollision,
+            MenuItem.Back,
+        };
+
         public List<MenuItem> P1Menu
         {
-            get { return P1MenuItems; }
+            get => P1MenuItems;
         }
 
         public List<MenuItem> P2Meu
         {
-            get { return P2MenuItems; }
+            get => P2MenuItems;
+        }
+
+        public List<MenuItem> SupervisorMenu
+        {
+            get => SupervisorItems;
+        }
+
+        public List<MenuItem> SafetyManagerMenu
+        {
+            get => SafetyManagerItems;
         }
 
         internal void AddPair(MenuItem item, string name)
@@ -131,6 +189,19 @@ namespace VRC2.Menu
             AddPair(MenuItem.Supervisor, MenuString.Supervisor);
             // add safety manager
             AddPair(MenuItem.SafetyManager, MenuString.SafetyManager);
+
+            // add supervisor submenu
+            AddPair(MenuItem.ReportDog, MenuString.ReportDog);
+            AddPair(MenuItem.ReportInstruction, MenuString.ReportInstruction);
+            AddPair(MenuItem.ReportClamp, MenuString.ReportClamp);
+            AddPair(MenuItem.ReportGlue, MenuString.ReportGlue);
+            AddPair(MenuItem.ReportPipe, MenuString.ReportPipe);
+            AddPair(MenuItem.Back, MenuString.Back);
+            // add safety manager submenu
+            AddPair(MenuItem.ReportFall, MenuString.ReportFall);
+            AddPair(MenuItem.ReportStruck, MenuString.ReportStruck);
+            AddPair(MenuItem.ReportElectrified, MenuString.ReportElectrified);
+            AddPair(MenuItem.ReportCollision, MenuString.ReportCollision);
         }
 
         public MenuItem getMenuItemByString(string name)
@@ -163,6 +234,8 @@ namespace VRC2.Menu
 
         private bool _menuInitialized = false;
 
+        private List<MenuItem> _initializedMenuItems = null;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -189,24 +262,9 @@ namespace VRC2.Menu
 
         # region Initialize Menu
 
-        // blank_remaining: leave unused menus blank or not
-        void InitializeMenuText(bool blank_remaining)
+        void InitializeMenuText(List<MenuItem> items, bool blank_remaining)
         {
             var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
-
-            List<MenuItem> items = null;
-
-            if (GlobalConstants.Checkee)
-            {
-                // P1 Menu
-                items = _menuInitializer.P1Menu;
-            }
-            else
-            {
-                // P2 Menu
-                items = _menuInitializer.P2Meu;
-            }
-
             var count = 0;
 
             foreach (var go in allTextGameObject)
@@ -236,11 +294,34 @@ namespace VRC2.Menu
                 else
                 {
                     var s = _menuInitializer.getStringByMenuItem(items[count]);
+                    go.transform.parent.parent.gameObject.SetActive(true);
                     tmp.text = s;
                 }
 
                 count += 1;
             }
+        }
+
+        // blank_remaining: leave unused menus blank or not
+        void InitializeMenuText(bool blank_remaining)
+        {
+            if (GlobalConstants.Checkee)
+            {
+                // P1 Menu
+                _initializedMenuItems = _menuInitializer.P1Menu;
+            }
+            else
+            {
+                // P2 Menu
+                _initializedMenuItems = _menuInitializer.P2Meu;
+            }
+
+            InitializeMenuText(_initializedMenuItems, blank_remaining);
+        }
+
+        void RevertMainMenuText()
+        {
+            InitializeMenuText(_initializedMenuItems, leaveUnusedBlank);
         }
 
         void InitializeMenuAction()
@@ -260,6 +341,8 @@ namespace VRC2.Menu
 
                 var puew = menu.GetComponent<PointableUnityEventWrapper>();
 
+                // remove all listeners first
+                puew.WhenRelease.RemoveAllListeners();
                 switch (item)
                 {
                     case MenuItem.VoiceControl:
@@ -299,16 +382,133 @@ namespace VRC2.Menu
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckLevel);
                         break;
                     case MenuItem.Supervisor:
-                        puew.WhenRelease.AddListener(_menuHandler.OnSupervisor);
+                        puew.WhenRelease.AddListener(OnSupervisor);
                         break;
                     case MenuItem.SafetyManager:
-                        puew.WhenRelease.AddListener(_menuHandler.OnSafetyManager);
+                        puew.WhenRelease.AddListener(OnSafetyManager);
+                        break;
+                    case MenuItem.ReportDog:
+                        puew.WhenRelease.AddListener(OnReportDog);
+                        break;
+                    case MenuItem.ReportInstruction:
+                        puew.WhenRelease.AddListener(OnReportInstruction);
+                        break;
+                    case MenuItem.ReportClamp:
+                        puew.WhenRelease.AddListener(OnReportClamp);
+                        break;
+                    case MenuItem.ReportGlue:
+                        puew.WhenRelease.AddListener(OnReportGlue);
+                        break;
+                    case MenuItem.ReportPipe:
+                        puew.WhenRelease.AddListener(OnReportPipe);
+                        break;
+                    case MenuItem.ReportFall:
+                        puew.WhenRelease.AddListener(OnReportFall);
+                        break;
+                    case MenuItem.ReportStruck:
+                        puew.WhenRelease.AddListener(OnReportStruck);
+                        break;
+                    case MenuItem.ReportElectrified:
+                        puew.WhenRelease.AddListener(OnReportElectrified);
+                        break;
+                    case MenuItem.ReportCollision:
+                        puew.WhenRelease.AddListener(OnReportCollision);
+                        break;
+                    case MenuItem.Back:
+                        puew.WhenRelease.AddListener(OnBack);
                         break;
                     default:
                         break;
                 }
             }
         }
+
+        #endregion
+
+
+        #region SubMenus Actions
+
+        public void OnSupervisor()
+        {
+            print("OnSupervisor");
+            InitializeMenuText(_menuInitializer.SupervisorMenu, leaveUnusedBlank);
+            InitializeMenuAction();
+        }
+
+        public void OnSafetyManager()
+        {
+            print("OnSafetyManager");
+            InitializeMenuText(_menuInitializer.SafetyManagerMenu, leaveUnusedBlank);
+            InitializeMenuAction();
+        }
+
+        void OnBack()
+        {
+            print("OnBack");
+            RevertMainMenuText();
+            InitializeMenuAction();
+        }
+
+        #region Supervisor
+
+        void OnReportDog()
+        {
+            print("OnReportDog");
+        }
+
+        void OnReportInstruction()
+        {
+
+        }
+
+        void OnReportClamp()
+        {
+
+        }
+
+
+        void OnReportGlue()
+        {
+
+        }
+
+        void OnReportPipe()
+        {
+
+        }
+
+        #endregion
+
+        #region Safety Manager
+
+        void OnReportFall()
+        {
+
+        }
+
+        void OnReportStruck()
+        {
+
+        }
+
+        void OnReportElectrified()
+        {
+
+        }
+
+        void OnReportCollision()
+        {
+
+        }
+
+        // void OnBack()
+        // {
+        //     
+        // }
+
+        #endregion
+
+
 
         #endregion
     }
