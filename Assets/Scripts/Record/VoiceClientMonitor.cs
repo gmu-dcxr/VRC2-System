@@ -20,7 +20,7 @@ namespace VRC2.Record
 
         [HideInInspector] public RemoteVoiceLink supervisorVoiceLink;
         [HideInInspector] public RemoteVoiceLink safetyManagerVoiceLink;
-        
+
         private void Start()
         {
             _unityVoiceClient = GetComponent<UnityVoiceClient>();
@@ -35,20 +35,21 @@ namespace VRC2.Record
             if (runner != null && runner.IsRunning)
             {
                 var count = voiceLinks.Count;
-                if (count < 3)
+                // here the count doesn't consider itself
+                if (count < 2)
                 {
                     Debug.LogWarning($"Supervisor or SafetyManager not joined [{count}]");
                 }
                 else
                 {
-                    if (count > 3)
+                    if (count > 2)
                     {
-                        supervisorVoiceLink = voiceLinks[2];
-                        safetyManagerVoiceLink = voiceLinks[3];
+                        supervisorVoiceLink = voiceLinks[1];
+                        safetyManagerVoiceLink = voiceLinks[2];
                     }
-                    else if (count == 3)
+                    else if (count == 2)
                     {
-                        supervisorVoiceLink = voiceLinks[2];
+                        supervisorVoiceLink = voiceLinks[1];
                         safetyManagerVoiceLink = null;
                     }
 

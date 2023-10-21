@@ -15,9 +15,7 @@ namespace VRC2.Record
 
         private void OnVoiceLinkDetermined()
         {
-            print("OnVoiceLinkDetermined");
-            
-            print($"Supervisor {monitor.supervisorVoiceLink.PlayerId} {monitor.supervisorVoiceLink.VoiceId}");
+            print($"OnVoiceLinkDetermined: Supervisor {monitor.supervisorVoiceLink.PlayerId} {monitor.supervisorVoiceLink.VoiceId}");
         }
     }
 }
