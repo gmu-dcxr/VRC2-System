@@ -6,12 +6,19 @@ using UnityEngine;
 using VRC2.Animations;
 using VRC2.Events;
 using VRC2.Pipe;
+using VRC2.Record;
 
 namespace VRC2
 {
     [RequireComponent(typeof(ModalDialogManager))]
     public class PipeMenuHandler : MonoBehaviour
     {
+        [Space(30)] [Header("Voice Recording")]
+        public SaveLocalVoiceStream saveLocalVoiceStream;
+
+        public SaveRemoteVoiceStream saveRemoteVoiceStream;
+
+
         private ModalDialog modalDialog;
 
         private ModalDialogManager dialogManager;
@@ -172,7 +179,7 @@ namespace VRC2
         public void OnCheckLevel()
         {
             Debug.Log("You clicked check level");
-        
+
             // // get water level value
             // var value = P2CheckLevelEvent.GetWaterLevelValue();
             // if (value < 0)
@@ -546,6 +553,7 @@ namespace VRC2
                 Debug.LogError("Last spawned pipe is null, can not bend/cut");
                 return;
             }
+
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
             var rbc = go.GetComponent<RobotDogController>();
             // update current pipe
@@ -564,6 +572,72 @@ namespace VRC2
         {
             var cge = gameObject.GetComponent<P1CheckGlueEvent>();
             cge.Execute();
+        }
+
+        public void Simulate_OnReportDog()
+        {
+            OnReportDog();
+        }
+
+        #endregion
+
+        #region Supervisor
+
+        public void OnBack()
+        {
+            // stop recording
+            saveLocalVoiceStream.StopRecording();
+        }
+
+        public void OnReportDog()
+        {
+            print("OnReportDog");
+            saveLocalVoiceStream.StartRecording();
+        }
+
+        public void OnReportInstruction()
+        {
+
+        }
+
+        public void OnReportClamp()
+        {
+
+        }
+
+
+        public void OnReportGlue()
+        {
+
+        }
+
+        public void OnReportPipe()
+        {
+
+        }
+
+        #endregion
+
+        #region Safety Manager
+
+        public void OnReportFall()
+        {
+
+        }
+
+        public void OnReportStruck()
+        {
+
+        }
+
+        public void OnReportElectrified()
+        {
+
+        }
+
+        public void OnReportCollision()
+        {
+
         }
 
         #endregion

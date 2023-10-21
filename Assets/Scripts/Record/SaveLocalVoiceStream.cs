@@ -7,33 +7,75 @@ using Photon.Voice.Unity.UtilityScripts;
 namespace VRC2.Record
 {
 
+    enum AudioFormat
+    {
+        Unknown,
+        Float,
+        Short
+    }
+
     [RequireComponent(typeof(Recorder))]
     [DisallowMultipleComponent]
     public class SaveLocalVoiceStream : VoiceComponent
     {
         private WaveWriter wavWriter;
 
+        private AudioFormat _audioFormat = AudioFormat.Unknown;
+
+        private LocalVoice _localVoice;
+        private VoiceInfo voiceInfo;
+
         private void PhotonVoiceCreated(PhotonVoiceCreatedParams photonVoiceCreatedParams)
         {
-            VoiceInfo voiceInfo = photonVoiceCreatedParams.Voice.Info;
-            string filePath = this.GetFilePath();
+            Debug.Log($"PhotonVoiceCreated");
 
-            Debug.Log($"Write voice recording to: {filePath}");
-
+            voiceInfo = photonVoiceCreatedParams.Voice.Info;
             if (photonVoiceCreatedParams.Voice is LocalVoiceAudioFloat)
             {
-                this.wavWriter = new WaveWriter(filePath, voiceInfo.SamplingRate, 32, voiceInfo.Channels);
-                this.Logger.LogInfo("Outgoing 32 bit stream {0}, output file path: {1}", voiceInfo, filePath);
-                LocalVoiceAudioFloat localVoiceAudioFloat = photonVoiceCreatedParams.Voice as LocalVoiceAudioFloat;
-                localVoiceAudioFloat.AddPostProcessor(new OutgoingStreamSaverFloat(this.wavWriter));
+                _audioFormat = AudioFormat.Float;
+
             }
             else if (photonVoiceCreatedParams.Voice is LocalVoiceAudioShort)
             {
+                _audioFormat = AudioFormat.Short;
+            }
+
+            _localVoice = photonVoiceCreatedParams.Voice;
+        }
+
+        public void StartRecording()
+        {
+            print("StartRecording");
+            // close previous one
+            if (this.wavWriter != null)
+            {
+                this.wavWriter.Dispose();
+            }
+
+            var filePath = GetFilePath();
+            // create new writer
+            if (_audioFormat == AudioFormat.Float)
+            {
+                this.wavWriter = new WaveWriter(filePath, voiceInfo.SamplingRate, 32, voiceInfo.Channels);
+
+                this.Logger.LogInfo("Outgoing 32 bit stream {0}, output file path: {1}", voiceInfo, filePath);
+                LocalVoiceAudioFloat localVoiceAudioFloat = _localVoice as LocalVoiceAudioFloat;
+                localVoiceAudioFloat.AddPostProcessor(new OutgoingStreamSaverFloat(this.wavWriter));
+            }
+            else if (_audioFormat == AudioFormat.Short)
+            {
                 this.wavWriter = new WaveWriter(filePath, voiceInfo.SamplingRate, 16, voiceInfo.Channels);
                 this.Logger.LogInfo("Outgoing 16 bit stream {0}, output file path: {1}", voiceInfo, filePath);
-                LocalVoiceAudioShort localVoiceAudioShort = photonVoiceCreatedParams.Voice as LocalVoiceAudioShort;
+                LocalVoiceAudioShort localVoiceAudioShort = _localVoice as LocalVoiceAudioShort;
                 localVoiceAudioShort.AddPostProcessor(new OutgoingStreamSaverShort(this.wavWriter));
             }
+        }
+
+        public void StopRecording()
+        {
+            print("StopRecording");
+            this.wavWriter.Dispose();
+            this.wavWriter = null;
         }
 
 
@@ -49,6 +91,7 @@ namespace VRC2.Record
         private void PhotonVoiceRemoved()
         {
             this.wavWriter.Dispose();
+            this.wavWriter = null;
             this.Logger.LogInfo("Recording stopped: Saving wav file.");
         }
 

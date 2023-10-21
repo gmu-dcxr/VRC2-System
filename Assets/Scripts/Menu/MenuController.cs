@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Oculus.Interaction;
 using TMPro;
 using UnityEngine;
+using VRC2.Record;
 
 namespace VRC2.Menu
 {
@@ -388,31 +389,31 @@ namespace VRC2.Menu
                         puew.WhenRelease.AddListener(OnSafetyManager);
                         break;
                     case MenuItem.ReportDog:
-                        puew.WhenRelease.AddListener(OnReportDog);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportDog);
                         break;
                     case MenuItem.ReportInstruction:
-                        puew.WhenRelease.AddListener(OnReportInstruction);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportInstruction);
                         break;
                     case MenuItem.ReportClamp:
-                        puew.WhenRelease.AddListener(OnReportClamp);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportClamp);
                         break;
                     case MenuItem.ReportGlue:
-                        puew.WhenRelease.AddListener(OnReportGlue);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportGlue);
                         break;
                     case MenuItem.ReportPipe:
-                        puew.WhenRelease.AddListener(OnReportPipe);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportPipe);
                         break;
                     case MenuItem.ReportFall:
-                        puew.WhenRelease.AddListener(OnReportFall);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportFall);
                         break;
                     case MenuItem.ReportStruck:
-                        puew.WhenRelease.AddListener(OnReportStruck);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportStruck);
                         break;
                     case MenuItem.ReportElectrified:
-                        puew.WhenRelease.AddListener(OnReportElectrified);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportElectrified);
                         break;
                     case MenuItem.ReportCollision:
-                        puew.WhenRelease.AddListener(OnReportCollision);
+                        puew.WhenRelease.AddListener(_menuHandler.OnReportCollision);
                         break;
                     case MenuItem.Back:
                         puew.WhenRelease.AddListener(OnBack);
@@ -445,70 +446,13 @@ namespace VRC2.Menu
         void OnBack()
         {
             print("OnBack");
+
+            // call to stop voice recording
+            _menuHandler.OnBack();
+
             RevertMainMenuText();
             InitializeMenuAction();
         }
-
-        #region Supervisor
-
-        void OnReportDog()
-        {
-            print("OnReportDog");
-        }
-
-        void OnReportInstruction()
-        {
-
-        }
-
-        void OnReportClamp()
-        {
-
-        }
-
-
-        void OnReportGlue()
-        {
-
-        }
-
-        void OnReportPipe()
-        {
-
-        }
-
-        #endregion
-
-        #region Safety Manager
-
-        void OnReportFall()
-        {
-
-        }
-
-        void OnReportStruck()
-        {
-
-        }
-
-        void OnReportElectrified()
-        {
-
-        }
-
-        void OnReportCollision()
-        {
-
-        }
-
-        // void OnBack()
-        // {
-        //     
-        // }
-
-        #endregion
-
-
 
         #endregion
     }
