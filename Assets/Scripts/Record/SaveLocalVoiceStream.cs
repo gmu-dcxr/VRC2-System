@@ -45,14 +45,14 @@ namespace VRC2.Record
 
         public void StartRecording()
         {
-            print("StartRecording");
+            var filePath = GetFilePath();
+            print($"StartRecording [Local]: {filePath}");
             // close previous one
             if (this.wavWriter != null)
             {
                 this.wavWriter.Dispose();
             }
 
-            var filePath = GetFilePath();
             // create new writer
             if (_audioFormat == AudioFormat.Float)
             {
@@ -82,7 +82,7 @@ namespace VRC2.Record
         private string GetFilePath()
         {
             string filename = string.Format("out_{0}_{1}.wav",
-                System.DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-ffff"),
+                System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-ffff"),
                 Random.Range(0, 1000));
             // return Path.Combine(Application.persistentDataPath, filename);
             return Path.Combine(Path.GetDirectoryName(Application.dataPath), "VoiceRecordings", filename);

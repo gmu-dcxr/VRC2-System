@@ -593,6 +593,7 @@ namespace VRC2
         {
             print("OnReportDog");
             saveLocalVoiceStream.StartRecording();
+            saveRemoteVoiceStream.StartRecording();
         }
 
         public void OnReportInstruction()
