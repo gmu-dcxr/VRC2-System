@@ -13,6 +13,8 @@
         {
             VoiceInfo voiceInfo = photonVoiceCreatedParams.Voice.Info;
             string filePath = this.GetFilePath();
+            
+            Debug.Log($"Write voice recording to: {filePath}");
 
             if (photonVoiceCreatedParams.Voice is LocalVoiceAudioFloat)
             {
@@ -33,7 +35,8 @@
         private string GetFilePath()
         {
             string filename = string.Format("out_{0}_{1}.wav", System.DateTime.UtcNow.ToString("yyyy-MM-dd_HH-mm-ss-ffff"), Random.Range(0, 1000));
-            return Path.Combine(Application.persistentDataPath, filename);
+            // return Path.Combine(Application.persistentDataPath, filename);
+            return Path.Combine(Path.GetDirectoryName(Application.dataPath), "VoiceRecordings", filename);
         }
 
         private void PhotonVoiceRemoved()
