@@ -8,6 +8,7 @@ namespace VRC2.Menu
         [SerializeField] private PipeMenuHandler _handler;
 
         [Space(30)] [Header("Pipe Spawning")] public Transform spawnPoint;
+
         private void Start()
         {
         }
@@ -70,9 +71,15 @@ namespace VRC2.Menu
                 {
                     _handler.Simulate_RefillClamp();
                 }
+
                 if (Input.GetKeyUp(KeyCode.Keypad5))
                 {
                     _handler.Simulate_RefillGlue();
+                }
+
+                if (Input.GetKeyUp(KeyCode.Keypad6))
+                {
+                    _handler.Simulate_OnReportDog();
                 }
             }
         }
@@ -98,6 +105,7 @@ namespace VRC2.Menu
                 GUI.Button(new Rect(10, 110, 200, 30), "3 - Simulate Robot");
                 GUI.Button(new Rect(10, 160, 200, 30), "4 - Refill Clamp");
                 GUI.Button(new Rect(10, 210, 200, 30), "5 - Refill Glue");
+                GUI.Button(new Rect(10, 260, 200, 30), "6 - Report Dog");
             }
         }
     }
