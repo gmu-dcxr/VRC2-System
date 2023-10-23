@@ -27,6 +27,7 @@ namespace VRC2.Animations
         PickupStrafe = 4,
         Pickup = 5,
         Dropoff = 6,
+        Reset = 7,
     }
 
     internal enum StrafeDirection
@@ -51,6 +52,7 @@ namespace VRC2.Animations
 
         private bool pickingup = false;
         private bool droppingoff = false;
+        private bool reset = false;
 
         private GameObject targetGameObject;
 
@@ -558,8 +560,10 @@ namespace VRC2.Animations
                             droppingoff = false;
                             // reset arm
                             // roboticArm.ResetRotations();
-                            //armAnimator.SetTrigger("ResetArm");
-                           // while (!IsResetDone()) { }
+
+                          
+                            //currentPipe.transform.parent = null;
+                                                                                       
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
 
@@ -589,9 +593,38 @@ namespace VRC2.Animations
                                 MoveToTarget();
                             }
                             
+                            stage = RobotStage.Reset;
                         }
                     }
+                    break;
+                case RobotStage.Reset:
+                    if (!reset)
+                    {
+                        print("Resetting");
+                        reset = true;
+                        
+                        dogAnimator.enabled = false;
+                        armAnimator.enabled = true;
 
+                        RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+
+                        turn = false;
+                        walk = false;
+                        armAnimator.SetBool("ResetArm", true);
+                    }
+                    else 
+                    {
+                        if (IsResetDone()) 
+                        {
+                            armAnimator.SetBool("ResetArm", false);
+                            dogAnimator.enabled = true;
+                            armAnimator.enabled = false;
+
+                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                            MoveToTarget();
+                            reset = false;
+                        }
+                    }
                     break;
             }
         }
