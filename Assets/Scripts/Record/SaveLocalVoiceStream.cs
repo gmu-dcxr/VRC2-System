@@ -14,6 +14,25 @@ namespace VRC2.Record
         Short
     }
 
+    public class VideoLogWriter
+    {
+        private static string folder = "VoiceRecordings";
+        public static string GetFilename()
+        {
+            string filename = string.Format("{0}.log",System.DateTime.Now.ToString("yyyy-MM-dd"));   
+            return Path.Combine(Path.GetDirectoryName(Application.dataPath), VideoLogWriter.folder, filename);
+        }
+        public static void Write(string text)
+        {
+            using (var writer = new StreamWriter(GetFilename()))
+            {
+                writer.Write(text);
+                writer.Write('\n');
+            }
+        }
+    }
+    
+
     [RequireComponent(typeof(Recorder))]
     [DisallowMultipleComponent]
     public class SaveLocalVoiceStream : VoiceComponent
@@ -24,6 +43,8 @@ namespace VRC2.Record
 
         private LocalVoice _localVoice;
         private VoiceInfo voiceInfo;
+
+        private string outputFolder = "VoiceRecordings";
 
         private void PhotonVoiceCreated(PhotonVoiceCreatedParams photonVoiceCreatedParams)
         {
@@ -43,10 +64,12 @@ namespace VRC2.Record
             _localVoice = photonVoiceCreatedParams.Voice;
         }
 
-        public void StartRecording()
+        public void StartRecording(string type)
         {
             var filePath = GetFilePath();
-            print($"StartRecording [Local]: {filePath}");
+            print($"StartRecording [Local] [{type}]: {filePath}");
+            // write log
+            VideoLogWriter.Write($"{type}, {filePath}");
             // close previous one
             if (this.wavWriter != null)
             {
@@ -85,7 +108,7 @@ namespace VRC2.Record
                 System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-ffff"),
                 Random.Range(0, 1000));
             // return Path.Combine(Application.persistentDataPath, filename);
-            return Path.Combine(Path.GetDirectoryName(Application.dataPath), "VoiceRecordings", filename);
+            return Path.Combine(Path.GetDirectoryName(Application.dataPath), this.outputFolder, filename);
         }
 
         private void PhotonVoiceRemoved()

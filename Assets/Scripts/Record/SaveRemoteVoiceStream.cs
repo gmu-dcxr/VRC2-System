@@ -102,10 +102,12 @@ namespace VRC2.Record
             // return Path.Combine(Application.persistentDataPath, filename);
         }
 
-        public void StartRecording()
+        public void StartRecording(string type)
         {
             var filePath = this.GetFilePath(supervisorVoiceLink);
-            print($"StartRecording [Remote]: {filePath}");
+            print($"StartRecording [Remote] [{type}]: {filePath}");
+            // write log
+            VideoLogWriter.Write($"{type}, {filePath}");
             // close previous one
             if (this.wavWriter != null)
             {

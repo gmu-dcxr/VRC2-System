@@ -592,29 +592,37 @@ namespace VRC2
         public void OnReportDog()
         {
             print("OnReportDog");
-            saveLocalVoiceStream.StartRecording();
-            saveRemoteVoiceStream.StartRecording();
+            saveLocalVoiceStream.StartRecording("Dog");
+            saveRemoteVoiceStream.StartRecording("Dog");
         }
 
         public void OnReportInstruction()
         {
-
+            print("OnReportInstruction");
+            saveLocalVoiceStream.StartRecording("Instruction");
+            saveRemoteVoiceStream.StartRecording("Instruction");
         }
 
         public void OnReportClamp()
         {
-
+            print("OnReportClamp");
+            saveLocalVoiceStream.StartRecording("Clamp");
+            saveRemoteVoiceStream.StartRecording("Clamp");
         }
 
 
         public void OnReportGlue()
         {
-
+            print("OnReportGlue");
+            saveLocalVoiceStream.StartRecording("Glue");
+            saveRemoteVoiceStream.StartRecording("Glue");
         }
 
         public void OnReportPipe()
         {
-
+            print("OnReportPipe");
+            saveLocalVoiceStream.StartRecording("Pipe");
+            saveRemoteVoiceStream.StartRecording("Pipe");
         }
 
         #endregion
@@ -623,22 +631,30 @@ namespace VRC2
 
         public void OnReportFall()
         {
-
+            print("OnReportFall");
+            saveLocalVoiceStream.StartRecording("Fall");
+            saveRemoteVoiceStream.StartRecording("Fall");
         }
 
         public void OnReportStruck()
         {
-
+            print("OnReportStruck");
+            saveLocalVoiceStream.StartRecording("Struck");
+            saveRemoteVoiceStream.StartRecording("Struck");
         }
 
         public void OnReportElectrified()
         {
-
+            print("OnReportElectrified");
+            saveLocalVoiceStream.StartRecording("Electrified");
+            saveRemoteVoiceStream.StartRecording("Electrified");
         }
 
         public void OnReportCollision()
         {
-
+            print("OnReportCollision");
+            saveLocalVoiceStream.StartRecording("Collision");
+            saveRemoteVoiceStream.StartRecording("Collision");
         }
 
         #endregion
