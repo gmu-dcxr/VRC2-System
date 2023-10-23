@@ -17,7 +17,9 @@ namespace VRC2.Record
 
         [Header("Monitor")] public VoiceClientMonitor monitor;
         private RemoteVoiceLink supervisorVoiceLink;
-        private WaveWriter wavWriter;
+        private RemoteVoiceLink safetyManagerVoiceLink;
+        private WaveWriter supervisorWriter;
+        private WaveWriter safetyManagerWriter;
 
         private VoiceConnection voiceConnection;
 
@@ -41,23 +43,43 @@ namespace VRC2.Record
         {
             print(
                 $"OnVoiceLinkDetermined: Supervisor {monitor.supervisorVoiceLink.PlayerId} {monitor.supervisorVoiceLink.VoiceId}");
+            print(
+                $"OnVoiceLinkDetermined: SafetyManager {monitor.safetyManagerVoiceLink.PlayerId} {monitor.safetyManagerVoiceLink.VoiceId}");
             supervisorVoiceLink = monitor.supervisorVoiceLink;
+            safetyManagerVoiceLink = monitor.safetyManagerVoiceLink;
 
             supervisorVoiceLink.FloatFrameDecoded += SupervisorVoiceLinkOnFloatFrameDecoded;
             supervisorVoiceLink.RemoteVoiceRemoved += SupervisorVoiceLinkOnRemoteVoiceRemoved;
+
+            safetyManagerVoiceLink.FloatFrameDecoded += SafetyManagerVoiceLinkOnFloatFrameDecoded;
+            safetyManagerVoiceLink.RemoteVoiceRemoved += SafetyManagerVoiceLinkOnRemoteVoiceRemoved;
+        }
+
+        private void SafetyManagerVoiceLinkOnRemoteVoiceRemoved()
+        {
+            this.Logger.LogInfo("Remote voice stream removed: Saving wav file.");
+            safetyManagerWriter.Dispose();
+        }
+
+        private void SafetyManagerVoiceLinkOnFloatFrameDecoded(FrameOut<float> f)
+        {
+            if (safetyManagerWriter != null)
+            {
+                safetyManagerWriter.WriteSamples(f.Buf, 0, f.Buf.Length);
+            }
         }
 
         private void SupervisorVoiceLinkOnRemoteVoiceRemoved()
         {
             this.Logger.LogInfo("Remote voice stream removed: Saving wav file.");
-            wavWriter.Dispose();
+            supervisorWriter.Dispose();
         }
 
         private void SupervisorVoiceLinkOnFloatFrameDecoded(FrameOut<float> f)
         {
-            if (wavWriter != null)
+            if (supervisorWriter != null)
             {
-                wavWriter.WriteSamples(f.Buf, 0, f.Buf.Length);
+                supervisorWriter.WriteSamples(f.Buf, 0, f.Buf.Length);
             }
         }
 
@@ -102,29 +124,60 @@ namespace VRC2.Record
             // return Path.Combine(Application.persistentDataPath, filename);
         }
 
-        public void StartRecording(string type)
+        public void StartRecording(string type, bool supervisor)
         {
-            var filePath = this.GetFilePath(supervisorVoiceLink);
+            var filePath = this.GetFilePath(safetyManagerVoiceLink);
+
+            if (supervisor)
+            {
+                filePath = this.GetFilePath(supervisorVoiceLink);
+
+                // close previous one
+                if (this.supervisorWriter != null)
+                {
+                    this.supervisorWriter.Dispose();
+                }
+
+                this.Logger.LogInfo("Incoming stream {0}, output file path: {1}", supervisorVoiceLink.VoiceInfo,
+                    filePath);
+            }
+            else
+            {
+                // close previous one
+                if (this.safetyManagerWriter != null)
+                {
+                    this.safetyManagerWriter.Dispose();
+                }
+
+                this.Logger.LogInfo("Incoming stream {0}, output file path: {1}", safetyManagerVoiceLink.VoiceInfo,
+                    filePath);
+            }
+
             print($"StartRecording [Remote] [{type}]: {filePath}");
             // write log
             VideoLogWriter.Write($"{type}, {filePath}");
-            // close previous one
-            if (this.wavWriter != null)
-            {
-                this.wavWriter.Dispose();
-            }
 
             int bitsPerSample = 32;
-            this.Logger.LogInfo("Incoming stream {0}, output file path: {1}", supervisorVoiceLink.VoiceInfo, filePath);
 
-            wavWriter = new WaveWriter(filePath, supervisorVoiceLink.VoiceInfo.SamplingRate, bitsPerSample,
-                supervisorVoiceLink.VoiceInfo.Channels);
+            if (supervisor)
+            {
+                supervisorWriter = new WaveWriter(filePath, supervisorVoiceLink.VoiceInfo.SamplingRate, bitsPerSample,
+                    supervisorVoiceLink.VoiceInfo.Channels);
+            }
+            else
+            {
+                safetyManagerWriter = new WaveWriter(filePath, safetyManagerVoiceLink.VoiceInfo.SamplingRate,
+                    bitsPerSample,
+                    safetyManagerVoiceLink.VoiceInfo.Channels);
+            }
         }
 
         public void StopRecording()
         {
-            this.wavWriter.Dispose();
-            this.wavWriter = null;
+            this.safetyManagerWriter.Dispose();
+            this.safetyManagerWriter = null;
+            this.supervisorWriter.Dispose();
+            this.supervisorWriter = null;
         }
     }
 }

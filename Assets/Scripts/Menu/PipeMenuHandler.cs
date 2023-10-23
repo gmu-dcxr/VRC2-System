@@ -593,21 +593,21 @@ namespace VRC2
         {
             print("OnReportDog");
             saveLocalVoiceStream.StartRecording("Dog");
-            saveRemoteVoiceStream.StartRecording("Dog");
+            saveRemoteVoiceStream.StartRecording("Dog", true);
         }
 
         public void OnReportInstruction()
         {
             print("OnReportInstruction");
             saveLocalVoiceStream.StartRecording("Instruction");
-            saveRemoteVoiceStream.StartRecording("Instruction");
+            saveRemoteVoiceStream.StartRecording("Instruction", true);
         }
 
         public void OnReportClamp()
         {
             print("OnReportClamp");
             saveLocalVoiceStream.StartRecording("Clamp");
-            saveRemoteVoiceStream.StartRecording("Clamp");
+            saveRemoteVoiceStream.StartRecording("Clamp", true);
         }
 
 
@@ -615,14 +615,14 @@ namespace VRC2
         {
             print("OnReportGlue");
             saveLocalVoiceStream.StartRecording("Glue");
-            saveRemoteVoiceStream.StartRecording("Glue");
+            saveRemoteVoiceStream.StartRecording("Glue", true);
         }
 
         public void OnReportPipe()
         {
             print("OnReportPipe");
             saveLocalVoiceStream.StartRecording("Pipe");
-            saveRemoteVoiceStream.StartRecording("Pipe");
+            saveRemoteVoiceStream.StartRecording("Pipe", true);
         }
 
         #endregion
@@ -633,28 +633,28 @@ namespace VRC2
         {
             print("OnReportFall");
             saveLocalVoiceStream.StartRecording("Fall");
-            saveRemoteVoiceStream.StartRecording("Fall");
+            saveRemoteVoiceStream.StartRecording("Fall", false);
         }
 
         public void OnReportStruck()
         {
             print("OnReportStruck");
             saveLocalVoiceStream.StartRecording("Struck");
-            saveRemoteVoiceStream.StartRecording("Struck");
+            saveRemoteVoiceStream.StartRecording("Struck", false);
         }
 
         public void OnReportElectrified()
         {
             print("OnReportElectrified");
             saveLocalVoiceStream.StartRecording("Electrified");
-            saveRemoteVoiceStream.StartRecording("Electrified");
+            saveRemoteVoiceStream.StartRecording("Electrified", false);
         }
 
         public void OnReportCollision()
         {
             print("OnReportCollision");
             saveLocalVoiceStream.StartRecording("Collision");
-            saveRemoteVoiceStream.StartRecording("Collision");
+            saveRemoteVoiceStream.StartRecording("Collision", false);
         }
 
         #endregion
