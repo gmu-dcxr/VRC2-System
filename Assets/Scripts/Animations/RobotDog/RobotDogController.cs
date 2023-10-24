@@ -556,6 +556,7 @@ namespace VRC2.Animations
                         if (IsDropoffDone())
                             // if (dropoffDone)
                         {
+                            ReadyToDropoff();
                             print("dropoff done");
                             droppingoff = false;
                             // reset arm
