@@ -24,7 +24,7 @@ namespace VRC2.Record
         }
         public static void Write(string text)
         {
-            using (var writer = new StreamWriter(GetFilename()))
+            using (StreamWriter writer = File.AppendText(GetFilename()))
             {
                 writer.Write(text);
                 writer.Write('\n');
