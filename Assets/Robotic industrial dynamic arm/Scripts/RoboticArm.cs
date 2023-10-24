@@ -50,7 +50,7 @@ public class RoboticArm : MonoBehaviour
 
 	// start to pickup once it's less then the threshold.
 	private float rightGripCloseYThreshold = 160f;
-	private float rightGripOpenYThreshold = 170f;
+	private float rightGripOpenYThreshold = 165f;
 
 	#endregion
 
