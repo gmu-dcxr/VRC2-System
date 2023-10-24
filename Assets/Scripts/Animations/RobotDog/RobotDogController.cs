@@ -370,12 +370,18 @@ namespace VRC2.Animations
         }
         bool pickUpStrafe() 
         {
-            var diff = body.transform.position.z - targetTransform.position.z;
-       
+            // var diff = body.transform.position.z - targetTransform.position.z;
+
+            var p1 = body.transform.position;
+            var p2 = targetTransform.position;
+            p1.y = 0;
+            p2.y = 0;
+
+            var diff = Vector3.Distance(p1, p2);
+            
             print(diff);
-            if (pickupOffset - Math.Abs(diff) <= 0) 
+            if (pickupOffset < diff) 
             {
-                
                 return false;
             }
             return true;
@@ -554,9 +560,7 @@ namespace VRC2.Animations
                     else
                     {
                         if (IsDropoffDone())
-                            // if (dropoffDone)
                         {
-                            ReadyToDropoff();
                             print("dropoff done");
                             droppingoff = false;
                             // reset arm
@@ -580,7 +584,7 @@ namespace VRC2.Animations
                                 stage = RobotStage.Stop;
 
                                 // ready to pickup again
-                                targetTransform = bendcutOutput;
+                                // targetTransform = bendcutOutput;
 
                                 // make it waiting
                                 if (ReadyToOperate != null)
@@ -594,11 +598,12 @@ namespace VRC2.Animations
                                 MoveToTarget();
                             }
                             
-                            stage = RobotStage.Reset;
+                            // stage = RobotStage.Reset;
                         }
                     }
                     break;
                 case RobotStage.Reset:
+                    
                     if (!reset)
                     {
                         print("Resetting");
@@ -622,8 +627,12 @@ namespace VRC2.Animations
                             armAnimator.enabled = false;
 
                             RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
-                            MoveToTarget();
+                            // MoveToTarget();
                             reset = false;
+                            if (targetTransform == standbyPoint)
+                            {
+                                MoveToTarget();
+                            }
                         }
                     }
                     break;
@@ -787,6 +796,10 @@ namespace VRC2.Animations
 
             targetGameObject = go;
             targetTransform = t;
+            print($"Target: {targetTransform.position.ToString("f5")}");
+            
+            // update bend/cut output transform
+            bendcutOutput = t;
 
             // enable dog animator, disable arm animator
             armAnimator.enabled = false;
