@@ -486,7 +486,7 @@ namespace VRC2.Animations
 
                     break;
 
-                case RobotStage.Pickup:
+                case RobotStage.Pickup:                   
                     if (!pickingup)
                     {
                         print("start pickup");
@@ -549,6 +549,8 @@ namespace VRC2.Animations
                     {
                         print("drop off");
                         droppingoff = true;
+                        //gets reset here so animation doesn't replay itself. 
+                        reset = false;
 
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
@@ -564,8 +566,7 @@ namespace VRC2.Animations
                             print("dropoff done");
                             droppingoff = false;
                             // reset arm
-                            // roboticArm.ResetRotations();
-
+                            // roboticArm.ResetRotations();                            
                           
                             //currentPipe.transform.parent = null;
                                                                                        
@@ -591,6 +592,7 @@ namespace VRC2.Animations
                                 {
                                     ReadyToOperate(parameters.angle);
                                 }
+                               
                             }
                             else if (targetTransform == deliveryPoint)
                             {
@@ -598,7 +600,7 @@ namespace VRC2.Animations
                                 MoveToTarget();
                             }
                             
-                            // stage = RobotStage.Reset;
+                            stage = RobotStage.Reset;
                         }
                     }
                     break;
@@ -628,7 +630,7 @@ namespace VRC2.Animations
 
                             RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
                             // MoveToTarget();
-                            reset = false;
+                            //reset = false;
                             if (targetTransform == standbyPoint)
                             {
                                 MoveToTarget();
