@@ -70,6 +70,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
+            return;
             switch (_stage)
             {
                 case CraneTruckStage.Stop:
