@@ -3,13 +3,35 @@ using UnityEngine;
 
 namespace VRC2.Animations.CraneTruck
 {
-    public class CraneTruckCraneController: MonoBehaviour
+    enum CraneStatus
+    {
+        Idle,
+        PrepareSeize,
+        SeizeCargo,
+        UpArm,
+        ExtendArm,
+        RotateArm,
+        DownHook,
+        ReleaseCargo,
+        Reset
+    }
+
+    public class CraneTruckCraneController : MonoBehaviour
     {
         [Header("Reference")] public Transform manipArrowRotation;
         public Transform manipArrow0;
         public Transform pointDistanceA;
         public Transform pointCargo;
 
+        [Space(30)] [Header("Cargo")] public GameObject cargo;
+
+        [Space(30)] [Header("Threshold")] public float cargoHookPickup; // for pickup
+
+        [HideInInspector] public float hookDistanceInit; // init hook
+        public float hookDistanceDropoff; // hook distance for dropoff 
+
+
+        private CraneStatus _status;
 
         #region Derived properties
 
@@ -33,6 +55,11 @@ namespace VRC2.Animations.CraneTruck
             get => Vector3.Distance(pointCargo.position, pointDistanceA.position);
         }
 
+        public float HookCargoDistance
+        {
+            get => Vector3.Distance(pointCargo.position, cargo.transform.position);
+        }
+
         #endregion
 
         private void Update()
@@ -41,8 +68,9 @@ namespace VRC2.Animations.CraneTruck
             var udr = UpDownRotation;
             var al = ArmLength;
             var hd = HookDistance;
-            
-            print($"lr: {lrr} ud: {udr} arm: {al} hook: {hd}");
+            var hcd = HookCargoDistance;
+
+            print($"lr: {lrr} ud: {udr} arm: {al} hook: {hd} hook-cargo: {hcd}");
         }
     }
 }
