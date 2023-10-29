@@ -274,17 +274,39 @@ public class HookManip : MonoBehaviour
 		// if (Input.GetKey (m_ScriptHook_2.UpHook) && Input.GetKey (m_ScriptHook_2.hook) && hook_Bool == false && limitHook > 0) {
 		if (craneArrowInput.ReadValue<Vector2>().y > 0 && hook_Bool == false && limitHook > 0)
 		{
-			limitHook -= Time.deltaTime * m_ScriptHook_2.speedHook;
-			m_ScriptHook_1.SoundPitchManip();
+			// limitHook -= Time.deltaTime * m_ScriptHook_2.speedHook;
+			// m_ScriptHook_1.SoundPitchManip();
+			UpHook();
+			
 			// } else if (Input.GetKey (m_ScriptHook_2.DownHook) && Input.GetKey (m_ScriptHook_2.hook) && hook_Bool == false && onCol == true && onCol_Cargo == true) {
 		}
 		else if (craneArrowInput.ReadValue<Vector2>().y < 0 && hook_Bool == false && onCol == true &&
 		         onCol_Cargo == true)
 		{
-			limitHook += Time.deltaTime * m_ScriptHook_2.speedHook;
-			m_ScriptHook_1.SoundPitchManip();
+			// limitHook += Time.deltaTime * m_ScriptHook_2.speedHook;
+			// m_ScriptHook_1.SoundPitchManip();
+			
+			DownHook();
 		}
 	}
+
+	#region API
+
+	public void UpHook()
+	{
+		limitHook -= Time.deltaTime * m_ScriptHook_2.speedHook;
+		m_ScriptHook_1.SoundPitchManip();
+	}
+
+	public void DownHook()
+	{
+		limitHook += Time.deltaTime * m_ScriptHook_2.speedHook;
+		m_ScriptHook_1.SoundPitchManip();
+	}
+
+	
+
+	#endregion
 
 	public void LineRen()
 	{

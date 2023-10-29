@@ -18,6 +18,11 @@ namespace VRC2.Animations.CraneTruck
 
     public class CraneTruckCraneController : MonoBehaviour
     {
+        [Header("Controller")] public Manipulator manipulator;
+        public HookManip hookManip;
+        public CraneTruckInputRecording recording;
+        
+        [Space(30)]
         [Header("Reference")] public Transform manipArrowRotation;
         public Transform manipArrow0;
         public Transform pointDistanceA;
@@ -25,7 +30,7 @@ namespace VRC2.Animations.CraneTruck
 
         [Space(30)] [Header("Cargo")] public GameObject cargo;
 
-        [Space(30)] [Header("Threshold")] public float cargoHookPickup; // for pickup
+        [Space(30)] [Header("Threshold")] public float cargoHookPickup = 0.75f; // for pickup
 
         [HideInInspector] public float hookDistanceInit; // init hook
         public float hookDistanceDropoff; // hook distance for dropoff 
@@ -62,6 +67,12 @@ namespace VRC2.Animations.CraneTruck
 
         #endregion
 
+        void Start()
+        {
+            // initialize with crane mode
+            recording.truckMode = false;
+        }
+
         private void Update()
         {
             var lrr = LeftRightRotation;
@@ -71,6 +82,49 @@ namespace VRC2.Animations.CraneTruck
             var hcd = HookCargoDistance;
 
             print($"lr: {lrr} ud: {udr} arm: {al} hook: {hd} hook-cargo: {hcd}");
+
+            switch (_status)
+            {
+                case CraneStatus.Idle:
+                    break;
+                
+                case CraneStatus.PrepareSeize:
+                    if (PrepareSeize())
+                    {
+                        _status = CraneStatus.SeizeCargo;
+                    }
+                    break;
+                case CraneStatus.SeizeCargo:
+                    break;
+                
+                default:
+                    break;
+            }
+            
         }
+
+        #region Crane control
+
+        bool PrepareSeize()
+        {
+            hookManip.DownHook();
+            return false;
+        }
+
+        
+
+        #endregion
+
+        #region Debug
+
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, 10, 100, 50), "Crane"))
+            {
+                _status = CraneStatus.PrepareSeize;
+            }
+        }
+
+        #endregion
     }
 }
