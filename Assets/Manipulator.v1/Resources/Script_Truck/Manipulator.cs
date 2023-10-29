@@ -236,7 +236,7 @@ public class Manipulator : MonoBehaviour
 
 	public void RotationArrow()
 	{
-		print($"uiManip_Bool: {uiManip_Bool}");
+		// print($"uiManip_Bool: {uiManip_Bool}");
 		// if (Input.GetKey (m_ScriptM.rotationArrowLeft) && block_Left == true) {
 		if (craneMoveInput.ReadValue<Vector2>().x > 0 && block_Left == true)
 		{
