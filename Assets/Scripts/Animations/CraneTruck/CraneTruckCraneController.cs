@@ -104,6 +104,17 @@ namespace VRC2.Animations.CraneTruck
                     {
                         SeizeCargo();
                     }
+                    else
+                    {
+                        status = CraneStatus.UpArm;
+                    }
+                    break;
+                
+                case CraneStatus.UpArm:
+                    if (UpArm())
+                    {
+                        status = CraneStatus.ExtendArm;
+                    }
                     break;
                 
                 default:
@@ -126,6 +137,16 @@ namespace VRC2.Animations.CraneTruck
         {
             cargoManipulator.SeizeCargo(true);
             cargoSeized = true;
+        }
+
+        bool UpArm()
+        {
+
+            if (UpDownRotation > armUpThreshold) return true;
+            
+            manipulator.UpArm();
+
+            return false;
         }
 
         

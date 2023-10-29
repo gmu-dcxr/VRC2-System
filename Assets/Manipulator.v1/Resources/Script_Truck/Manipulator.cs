@@ -259,6 +259,7 @@ public class Manipulator : MonoBehaviour
 
 	public void ArrowUp()
 	{
+		print($"obl_Crable: {obl_Crable == null}");
 		// if (Input.GetKey (m_ScriptM.UpArrow)) {
 		if (craneMoveInput.ReadValue<Vector2>().y > 0)
 		{
@@ -268,7 +269,11 @@ public class Manipulator : MonoBehaviour
 			}
 			else if (checkManip == 3 && obl_Crable == null)
 			{
-				arrowUp_Float = Mathf.Clamp(arrowUp_Float, -62f, 13f);
+				// arrowUp_Float = Mathf.Clamp(arrowUp_Float, -62f, 13f);
+
+				UpArm();
+				return;
+
 			}
 			else if (checkManip == 3 && obl_Crable != null)
 			{
@@ -293,7 +298,10 @@ public class Manipulator : MonoBehaviour
 			}
 			else if (checkManip == 3 && obl_Crable == null)
 			{
-				arrowUp_Float = Mathf.Clamp(arrowUp_Float, -62f, 13f);
+				// arrowUp_Float = Mathf.Clamp(arrowUp_Float, -62f, 13f);
+
+				DownArm();
+				return;
 			}
 			else if (checkManip == 3 && obl_Crable != null)
 			{
@@ -420,7 +428,29 @@ public class Manipulator : MonoBehaviour
 	}
 
 	#region API
-	// the following actions are based on checkManip == 3
+
+	// the following actions are based on checkManip == 3 and obl_Crable == null
+
+	public void UpArm()
+	{
+		arrowUp_Float = Mathf.Clamp(arrowUp_Float, -62f, 13f);
+
+		arrowUp_Float -= Time.deltaTime * m_ScriptM.speedUpArrow;
+		arrowForward1.transform.localRotation = Quaternion.AngleAxis(arrowUp_Float, Vector3.left);
+
+		SoundPitchManip();
+	}
+
+	public void DownArm()
+	{
+		arrowUp_Float = Mathf.Clamp(arrowUp_Float, -62f, 13f);
+
+		arrowUp_Float += Time.deltaTime * m_ScriptM.speedUpArrow;
+		arrowForward1.transform.localRotation = Quaternion.AngleAxis(arrowUp_Float, Vector3.left);
+
+		SoundPitchManip();
+	}
+
 	public void ExtendArm()
 	{
 		arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
@@ -442,6 +472,7 @@ public class Manipulator : MonoBehaviour
 			arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
 				new Vector3(0.004825752f, -0.08844844f, -3.22f), m_ScriptM.speedForward * Time.deltaTime);
 		}
+
 		// add sound effect
 		SoundPitchManip();
 	}
@@ -470,10 +501,10 @@ public class Manipulator : MonoBehaviour
 
 		arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
 			new Vector3(0.004825752f, -0.08844844f, -0.141324f), m_ScriptM.speedForward * Time.deltaTime);
-		
+
 		SoundPitchManip();
 	}
-	
+
 
 	#endregion
 
