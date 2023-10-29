@@ -336,28 +336,29 @@ public class Manipulator : MonoBehaviour
 			}
 			else if (checkManip == 3)
 			{
-				if (endPos_Arrow3 == new Vector3(0.0005618262f, 0.0002853314f, -0.04771918f))
-				{
-					arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
-						new Vector3(-0.01917278f, 0.07633314f, -3.588468f), m_ScriptM.speedForward * Time.deltaTime);
-				}
-
-				if (endPos_Arrow4 == new Vector3(-0.0003943945f, -0.04917584f, -0.05477962f))
-				{
-					arrowForward3.transform.localPosition = Vector3.MoveTowards(arrowForward3.transform.localPosition,
-						new Vector3(0.0005618262f, 0.0002853314f, -0.04771918f),
-						m_ScriptM.speedForward * Time.deltaTime);
-				}
-
-				if (endPos_Arrow5 == new Vector3(0.004825752f, -0.08844844f, -0.141324f))
-				{
-					arrowForward4.transform.localPosition = Vector3.MoveTowards(arrowForward4.transform.localPosition,
-						new Vector3(-0.0003943945f, -0.04917584f, -0.05477962f),
-						m_ScriptM.speedForward * Time.deltaTime);
-				}
-
-				arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
-					new Vector3(0.004825752f, -0.08844844f, -0.141324f), m_ScriptM.speedForward * Time.deltaTime);
+				// if (endPos_Arrow3 == new Vector3(0.0005618262f, 0.0002853314f, -0.04771918f))
+				// {
+				// 	arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
+				// 		new Vector3(-0.01917278f, 0.07633314f, -3.588468f), m_ScriptM.speedForward * Time.deltaTime);
+				// }
+				//
+				// if (endPos_Arrow4 == new Vector3(-0.0003943945f, -0.04917584f, -0.05477962f))
+				// {
+				// 	arrowForward3.transform.localPosition = Vector3.MoveTowards(arrowForward3.transform.localPosition,
+				// 		new Vector3(0.0005618262f, 0.0002853314f, -0.04771918f),
+				// 		m_ScriptM.speedForward * Time.deltaTime);
+				// }
+				//
+				// if (endPos_Arrow5 == new Vector3(0.004825752f, -0.08844844f, -0.141324f))
+				// {
+				// 	arrowForward4.transform.localPosition = Vector3.MoveTowards(arrowForward4.transform.localPosition,
+				// 		new Vector3(-0.0003943945f, -0.04917584f, -0.05477962f),
+				// 		m_ScriptM.speedForward * Time.deltaTime);
+				// }
+				//
+				// arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
+				// 	new Vector3(0.004825752f, -0.08844844f, -0.141324f), m_ScriptM.speedForward * Time.deltaTime);
+				ShrinkArm();
 			}
 
 			SoundPitchManip();
@@ -383,25 +384,26 @@ public class Manipulator : MonoBehaviour
 			}
 			else if (checkManip == 3)
 			{
-				arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
-					new Vector3(-0.01917278f, 0.07633314f, -6.513f), m_ScriptM.speedForward * Time.deltaTime);
-				if (endPos_Arrow2 == new Vector3(-0.01917278f, 0.07633314f, -6.513f))
-				{
-					arrowForward3.transform.localPosition = Vector3.MoveTowards(arrowForward3.transform.localPosition,
-						new Vector3(0.0005618262f, 0.0002853314f, -3.065f), m_ScriptM.speedForward * Time.deltaTime);
-				}
-
-				if (endPos_Arrow3 == new Vector3(0.0005618262f, 0.0002853314f, -3.065f))
-				{
-					arrowForward4.transform.localPosition = Vector3.MoveTowards(arrowForward4.transform.localPosition,
-						new Vector3(-0.0003943945f, -0.04917584f, -3.109f), m_ScriptM.speedForward * Time.deltaTime);
-				}
-
-				if (endPos_Arrow4 == new Vector3(-0.0003943945f, -0.04917584f, -3.109f))
-				{
-					arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
-						new Vector3(0.004825752f, -0.08844844f, -3.22f), m_ScriptM.speedForward * Time.deltaTime);
-				}
+				// arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
+				// 	new Vector3(-0.01917278f, 0.07633314f, -6.513f), m_ScriptM.speedForward * Time.deltaTime);
+				// if (endPos_Arrow2 == new Vector3(-0.01917278f, 0.07633314f, -6.513f))
+				// {
+				// 	arrowForward3.transform.localPosition = Vector3.MoveTowards(arrowForward3.transform.localPosition,
+				// 		new Vector3(0.0005618262f, 0.0002853314f, -3.065f), m_ScriptM.speedForward * Time.deltaTime);
+				// }
+				//
+				// if (endPos_Arrow3 == new Vector3(0.0005618262f, 0.0002853314f, -3.065f))
+				// {
+				// 	arrowForward4.transform.localPosition = Vector3.MoveTowards(arrowForward4.transform.localPosition,
+				// 		new Vector3(-0.0003943945f, -0.04917584f, -3.109f), m_ScriptM.speedForward * Time.deltaTime);
+				// }
+				//
+				// if (endPos_Arrow4 == new Vector3(-0.0003943945f, -0.04917584f, -3.109f))
+				// {
+				// 	arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
+				// 		new Vector3(0.004825752f, -0.08844844f, -3.22f), m_ScriptM.speedForward * Time.deltaTime);
+				// }
+				ExtendArm();
 			}
 
 			SoundPitchManip();
@@ -416,6 +418,64 @@ public class Manipulator : MonoBehaviour
 			endPos_Arrow5 = arrowForward5.localPosition;
 		}
 	}
+
+	#region API
+	// the following actions are based on checkManip == 3
+	public void ExtendArm()
+	{
+		arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
+			new Vector3(-0.01917278f, 0.07633314f, -6.513f), m_ScriptM.speedForward * Time.deltaTime);
+		if (endPos_Arrow2 == new Vector3(-0.01917278f, 0.07633314f, -6.513f))
+		{
+			arrowForward3.transform.localPosition = Vector3.MoveTowards(arrowForward3.transform.localPosition,
+				new Vector3(0.0005618262f, 0.0002853314f, -3.065f), m_ScriptM.speedForward * Time.deltaTime);
+		}
+
+		if (endPos_Arrow3 == new Vector3(0.0005618262f, 0.0002853314f, -3.065f))
+		{
+			arrowForward4.transform.localPosition = Vector3.MoveTowards(arrowForward4.transform.localPosition,
+				new Vector3(-0.0003943945f, -0.04917584f, -3.109f), m_ScriptM.speedForward * Time.deltaTime);
+		}
+
+		if (endPos_Arrow4 == new Vector3(-0.0003943945f, -0.04917584f, -3.109f))
+		{
+			arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
+				new Vector3(0.004825752f, -0.08844844f, -3.22f), m_ScriptM.speedForward * Time.deltaTime);
+		}
+		// add sound effect
+		SoundPitchManip();
+	}
+
+	public void ShrinkArm()
+	{
+		if (endPos_Arrow3 == new Vector3(0.0005618262f, 0.0002853314f, -0.04771918f))
+		{
+			arrowForward2.transform.localPosition = Vector3.MoveTowards(arrowForward2.transform.localPosition,
+				new Vector3(-0.01917278f, 0.07633314f, -3.588468f), m_ScriptM.speedForward * Time.deltaTime);
+		}
+
+		if (endPos_Arrow4 == new Vector3(-0.0003943945f, -0.04917584f, -0.05477962f))
+		{
+			arrowForward3.transform.localPosition = Vector3.MoveTowards(arrowForward3.transform.localPosition,
+				new Vector3(0.0005618262f, 0.0002853314f, -0.04771918f),
+				m_ScriptM.speedForward * Time.deltaTime);
+		}
+
+		if (endPos_Arrow5 == new Vector3(0.004825752f, -0.08844844f, -0.141324f))
+		{
+			arrowForward4.transform.localPosition = Vector3.MoveTowards(arrowForward4.transform.localPosition,
+				new Vector3(-0.0003943945f, -0.04917584f, -0.05477962f),
+				m_ScriptM.speedForward * Time.deltaTime);
+		}
+
+		arrowForward5.transform.localPosition = Vector3.MoveTowards(arrowForward5.transform.localPosition,
+			new Vector3(0.004825752f, -0.08844844f, -0.141324f), m_ScriptM.speedForward * Time.deltaTime);
+		
+		SoundPitchManip();
+	}
+	
+
+	#endregion
 
 	IEnumerator BlockOnPower()
 	{
