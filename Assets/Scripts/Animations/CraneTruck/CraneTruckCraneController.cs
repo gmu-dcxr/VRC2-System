@@ -30,15 +30,17 @@ namespace VRC2.Animations.CraneTruck
 
         [Space(30)] [Header("Cargo")] public GameObject cargo;
 
-        [Space(30)] [Header("Threshold")] public float cargoHookPickup = 0.75f; // for pickup
-        public float armUpThreshold = 0.34f;
+        [Space(30)] [Header("Threshold")]
+        public float cargoHookPickup = 0.75f; // maximum distance between hook and cargo for pickup
 
-        [HideInInspector] public float armForwardInit;
-        public float armForwardThreshold = 8.0f;
-        public float armRotationThreshold = 0.33f;
+        public float armUpThreshold = 0.34f; // arm up maximum
 
-        [HideInInspector] public float hookDistanceInit; // init hook
-        public float hookDistanceDropoff = 6.5f; // hook distance for dropoff 
+        [HideInInspector] public float armForwardInit; // arm length initial value
+        public float armForwardThreshold = 8.0f; // arm maximum length
+        public float armRotationThreshold = 0.33f; // arm rotation maximum (left, right) 
+
+        [HideInInspector] public float hookDistanceInit; // init hook for resetting
+        public float hookDistanceDropoff = 6.5f; // maximum distance between hook and cargo for dropoff 
 
 
         private CraneStatus status;
