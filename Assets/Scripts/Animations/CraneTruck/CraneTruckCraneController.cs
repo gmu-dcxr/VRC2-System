@@ -32,6 +32,8 @@ namespace VRC2.Animations.CraneTruck
 
         [Space(30)] [Header("Threshold")] public float cargoHookPickup = 0.75f; // for pickup
         public float armUpThreshold = 0.34f;
+
+        [HideInInspector] public float armForwardInit;
         public float armForwardThreshold = 8.0f;
         public float armRotationThreshold = 0.33f;
 
@@ -42,6 +44,17 @@ namespace VRC2.Animations.CraneTruck
         private CraneStatus status;
 
         private bool cargoSeized = false;
+
+        #region Reset flags
+
+        private bool hookReset = false; // hook up / down
+        private bool armLengthReset = false; // extend / shrink
+        private bool armRotationUpReset = false; // up / down
+        private bool armRotationLeftReset = false; // left / right
+
+
+
+        #endregion
 
         #region Derived properties
 
@@ -76,6 +89,9 @@ namespace VRC2.Animations.CraneTruck
         {
             // initialize with crane mode
             recording.truckMode = false;
+
+            armForwardInit = ArmLength;
+            hookDistanceInit = HookDistance;
         }
 
         private void Update()
@@ -94,6 +110,13 @@ namespace VRC2.Animations.CraneTruck
                     break;
 
                 case CraneStatus.PrepareSeize:
+
+                    // clear reset status
+                    hookReset = false;
+                    armLengthReset = false;
+                    armRotationLeftReset = false;
+                    armRotationUpReset = false;
+
                     if (PrepareSeize())
                     {
                         status = CraneStatus.SeizeCargo;
@@ -130,6 +153,7 @@ namespace VRC2.Animations.CraneTruck
                     break;
 
                 case CraneStatus.RotateArm:
+                    // tilt may occur here
                     if (RotateArm())
                     {
                         status = CraneStatus.DownHook;
@@ -158,6 +182,15 @@ namespace VRC2.Animations.CraneTruck
 
                     break;
 
+                case CraneStatus.Reset:
+                    if (ResetCrane())
+                    {
+                        print("Reset crane is done");
+                        status = CraneStatus.Idle;
+                    }
+
+                    break;
+
                 default:
                     break;
             }
@@ -182,7 +215,6 @@ namespace VRC2.Animations.CraneTruck
 
         bool UpArm()
         {
-
             if (UpDownRotation > armUpThreshold) return true;
 
             manipulator.UpArm();
@@ -220,7 +252,73 @@ namespace VRC2.Animations.CraneTruck
             cargoSeized = false;
         }
 
+        bool ResetCrane()
+        {
+            var eps = 1e-2;
+            // up hook to the initial position
+            if (!hookReset)
+            {
+                if (Math.Abs(HookDistance - hookDistanceInit) > eps)
+                {
+                    hookManip.UpHook();
+                }
+                else
+                {
+                    hookReset = true;
+                }
 
+                return false;
+            }
+
+            // rotate back
+            if (!armRotationLeftReset)
+            {
+
+
+                if (Math.Abs(LeftRightRotation) > eps)
+                {
+                    manipulator.RightArm();
+                }
+                else
+                {
+                    armRotationLeftReset = true;
+                }
+
+                return false;
+            }
+
+            // shrink arm
+            if (!armLengthReset)
+            {
+                if (Math.Abs(ArmLength - armForwardInit) > eps)
+                {
+                    manipulator.ShrinkArm();
+                }
+                else
+                {
+                    armLengthReset = true;
+                }
+
+                return false;
+            }
+
+            // down arm
+            if (!armRotationUpReset)
+            {
+                if (Math.Abs(UpDownRotation) > eps)
+                {
+                    manipulator.DownArm();
+                }
+                else
+                {
+                    armRotationUpReset = true;
+                }
+
+                return false;
+            }
+
+            return true;
+        }
 
         #endregion
 
