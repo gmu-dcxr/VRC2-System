@@ -236,19 +236,24 @@ public class Manipulator : MonoBehaviour
 
 	public void RotationArrow()
 	{
+		print($"uiManip_Bool: {uiManip_Bool}");
 		// if (Input.GetKey (m_ScriptM.rotationArrowLeft) && block_Left == true) {
 		if (craneMoveInput.ReadValue<Vector2>().x > 0 && block_Left == true)
 		{
-			arrowRotation.Rotate(Vector3.up * m_ScriptM.speedRotation * Time.deltaTime);
-			SoundPitchManip();
-			angleRotArrow_float += Time.deltaTime * m_ScriptM.speedRotation;
+			// arrowRotation.Rotate(Vector3.up * m_ScriptM.speedRotation * Time.deltaTime);
+			// SoundPitchManip();
+			// angleRotArrow_float += Time.deltaTime * m_ScriptM.speedRotation;
+			LeftArm();
 			// } else if (Input.GetKey (m_ScriptM.rotationArrowRight) && block_Right == true) {
+			
+			
 		}
 		else if (craneMoveInput.ReadValue<Vector2>().x < 0 && block_Right == true)
 		{
-			arrowRotation.Rotate(Vector3.up * -m_ScriptM.speedRotation * Time.deltaTime);
-			SoundPitchManip();
-			angleRotArrow_float -= Time.deltaTime * m_ScriptM.speedRotation;
+			// arrowRotation.Rotate(Vector3.up * -m_ScriptM.speedRotation * Time.deltaTime);
+			// SoundPitchManip();
+			// angleRotArrow_float -= Time.deltaTime * m_ScriptM.speedRotation;
+			RightArm();
 		}
 
 		if (uiManip_Bool == false)
@@ -259,7 +264,6 @@ public class Manipulator : MonoBehaviour
 
 	public void ArrowUp()
 	{
-		print($"obl_Crable: {obl_Crable == null}");
 		// if (Input.GetKey (m_ScriptM.UpArrow)) {
 		if (craneMoveInput.ReadValue<Vector2>().y > 0)
 		{
@@ -429,7 +433,7 @@ public class Manipulator : MonoBehaviour
 
 	#region API
 
-	// the following actions are based on checkManip == 3 and obl_Crable == null
+	// the following actions are based on checkManip == 3 and obl_Crable == null and uiManip_Bool == true
 
 	public void UpArm()
 	{
@@ -503,6 +507,20 @@ public class Manipulator : MonoBehaviour
 			new Vector3(0.004825752f, -0.08844844f, -0.141324f), m_ScriptM.speedForward * Time.deltaTime);
 
 		SoundPitchManip();
+	}
+
+	public void RightArm()
+	{
+		arrowRotation.Rotate(Vector3.up * -m_ScriptM.speedRotation * Time.deltaTime);
+		SoundPitchManip();
+		angleRotArrow_float -= Time.deltaTime * m_ScriptM.speedRotation;
+	}
+
+	public void LeftArm()
+	{
+		arrowRotation.Rotate(Vector3.up * m_ScriptM.speedRotation * Time.deltaTime);
+		SoundPitchManip();
+		angleRotArrow_float += Time.deltaTime * m_ScriptM.speedRotation;
 	}
 
 

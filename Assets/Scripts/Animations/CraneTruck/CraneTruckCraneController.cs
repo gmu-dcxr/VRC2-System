@@ -22,9 +22,8 @@ namespace VRC2.Animations.CraneTruck
         public HookManip hookManip;
         public CraneTruckInputRecording recording;
         public CargoManipulator cargoManipulator;
-        
-        [Space(30)]
-        [Header("Reference")] public Transform manipArrowRotation;
+
+        [Space(30)] [Header("Reference")] public Transform manipArrowRotation;
         public Transform manipArrow0;
         public Transform pointDistanceA;
         public Transform pointCargo;
@@ -33,9 +32,11 @@ namespace VRC2.Animations.CraneTruck
 
         [Space(30)] [Header("Threshold")] public float cargoHookPickup = 0.75f; // for pickup
         public float armUpThreshold = 0.34f;
+        public float armForwardThreshold = 8.0f;
+        public float armRotationThreshold = 0.33f;
 
         [HideInInspector] public float hookDistanceInit; // init hook
-        public float hookDistanceDropoff; // hook distance for dropoff 
+        public float hookDistanceDropoff = 6.5f; // hook distance for dropoff 
 
 
         private CraneStatus status;
@@ -91,13 +92,14 @@ namespace VRC2.Animations.CraneTruck
             {
                 case CraneStatus.Idle:
                     break;
-                
+
                 case CraneStatus.PrepareSeize:
                     if (PrepareSeize())
                     {
                         status = CraneStatus.SeizeCargo;
                         cargoSeized = false;
                     }
+
                     break;
                 case CraneStatus.SeizeCargo:
                     if (!cargoSeized)
@@ -108,19 +110,58 @@ namespace VRC2.Animations.CraneTruck
                     {
                         status = CraneStatus.UpArm;
                     }
+
                     break;
-                
+
                 case CraneStatus.UpArm:
                     if (UpArm())
                     {
                         status = CraneStatus.ExtendArm;
                     }
+
                     break;
-                
+
+                case CraneStatus.ExtendArm:
+                    if (ExtendArm())
+                    {
+                        status = CraneStatus.RotateArm;
+                    }
+
+                    break;
+
+                case CraneStatus.RotateArm:
+                    if (RotateArm())
+                    {
+                        status = CraneStatus.DownHook;
+                    }
+
+                    break;
+
+                case CraneStatus.DownHook:
+                    if (DownHook())
+                    {
+                        status = CraneStatus.ReleaseCargo;
+                    }
+
+                    break;
+
+                case CraneStatus.ReleaseCargo:
+                    if (cargoSeized)
+                    {
+                        ReleaseCargo();
+                    }
+                    else
+                    {
+                        // to reset
+                        status = CraneStatus.Reset;
+                    }
+
+                    break;
+
                 default:
                     break;
             }
-            
+
         }
 
         #region Crane control
@@ -128,7 +169,7 @@ namespace VRC2.Animations.CraneTruck
         bool PrepareSeize()
         {
             if (HookCargoDistance < cargoHookPickup) return true;
-            
+
             hookManip.DownHook();
             return false;
         }
@@ -143,13 +184,43 @@ namespace VRC2.Animations.CraneTruck
         {
 
             if (UpDownRotation > armUpThreshold) return true;
-            
+
             manipulator.UpArm();
 
             return false;
         }
 
-        
+        bool ExtendArm()
+        {
+            if (ArmLength > armForwardThreshold) return true;
+
+            manipulator.ExtendArm();
+            return false;
+        }
+
+        bool RotateArm()
+        {
+            if (LeftRightRotation > armRotationThreshold) return true;
+
+            manipulator.LeftArm();
+            return false;
+        }
+
+        bool DownHook()
+        {
+            if (HookDistance > hookDistanceDropoff) return true;
+
+            hookManip.DownHook();
+            return false;
+        }
+
+        void ReleaseCargo()
+        {
+            cargoManipulator.SeizeCargo(false);
+            cargoSeized = false;
+        }
+
+
 
         #endregion
 
