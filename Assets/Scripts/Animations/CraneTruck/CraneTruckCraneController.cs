@@ -21,6 +21,7 @@ namespace VRC2.Animations.CraneTruck
         [Header("Controller")] public Manipulator manipulator;
         public HookManip hookManip;
         public CraneTruckInputRecording recording;
+        public CargoManipulator cargoManipulator;
         
         [Space(30)]
         [Header("Reference")] public Transform manipArrowRotation;
@@ -31,12 +32,15 @@ namespace VRC2.Animations.CraneTruck
         [Space(30)] [Header("Cargo")] public GameObject cargo;
 
         [Space(30)] [Header("Threshold")] public float cargoHookPickup = 0.75f; // for pickup
+        public float armUpThreshold = 0.34f;
 
         [HideInInspector] public float hookDistanceInit; // init hook
         public float hookDistanceDropoff; // hook distance for dropoff 
 
 
-        private CraneStatus _status;
+        private CraneStatus status;
+
+        private bool cargoSeized = false;
 
         #region Derived properties
 
@@ -83,7 +87,7 @@ namespace VRC2.Animations.CraneTruck
 
             print($"lr: {lrr} ud: {udr} arm: {al} hook: {hd} hook-cargo: {hcd}");
 
-            switch (_status)
+            switch (status)
             {
                 case CraneStatus.Idle:
                     break;
@@ -91,10 +95,15 @@ namespace VRC2.Animations.CraneTruck
                 case CraneStatus.PrepareSeize:
                     if (PrepareSeize())
                     {
-                        _status = CraneStatus.SeizeCargo;
+                        status = CraneStatus.SeizeCargo;
+                        cargoSeized = false;
                     }
                     break;
                 case CraneStatus.SeizeCargo:
+                    if (!cargoSeized)
+                    {
+                        SeizeCargo();
+                    }
                     break;
                 
                 default:
@@ -107,8 +116,16 @@ namespace VRC2.Animations.CraneTruck
 
         bool PrepareSeize()
         {
+            if (HookCargoDistance < cargoHookPickup) return true;
+            
             hookManip.DownHook();
             return false;
+        }
+
+        void SeizeCargo()
+        {
+            cargoManipulator.SeizeCargo(true);
+            cargoSeized = true;
         }
 
         
@@ -121,7 +138,7 @@ namespace VRC2.Animations.CraneTruck
         {
             if (GUI.Button(new Rect(10, 10, 100, 50), "Crane"))
             {
-                _status = CraneStatus.PrepareSeize;
+                status = CraneStatus.PrepareSeize;
             }
         }
 

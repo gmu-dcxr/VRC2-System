@@ -93,6 +93,24 @@ public class CargoManipulator : MonoBehaviour {
 			LineRendererCargo ();
 		}
 	}
+
+	#region API
+
+	public void SeizeCargo(bool seize)
+	{
+		ConnectedCargoToHook ();
+		if (seize)
+		{
+			cargoLine.SetActive(true);	
+		}
+	
+		if (lineRen1 != null || lineRen2 != null || lineRen3 != null || lineRen4 != null) {
+			LineRendererCargo ();
+		}
+	}
+    
+	#endregion
+	
 	void FixedUpdate(){
 		if (connectedCargoToHook_Bool == false) {
 			if (gameObject.GetComponent<HingeJoint> () != null) {
