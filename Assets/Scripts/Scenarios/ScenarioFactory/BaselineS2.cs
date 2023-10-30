@@ -138,6 +138,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("Start Normal Incident Baseline S2");
             _pathFollower.enabled = true;
+            drone.SetActive(true);
         }
 
         public void On_BaselineS2_1_Start()
@@ -178,6 +179,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS2_3_Start()
         {
             print("On_BaselineS2_3_Start");
+            // start normal event
+            StartNormalIncident();
+            
             // SAGAT query
             ShowSAGAT();
         }
