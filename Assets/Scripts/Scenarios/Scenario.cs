@@ -395,8 +395,7 @@ namespace VRC2.Scenarios
             ready = true;
             started = false;
             finished = false;
-            print("xxx");
-            StartNormalIncident();
+            // StartNormalIncident();
         }
 
         void FixedUpdate()
