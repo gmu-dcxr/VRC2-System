@@ -77,6 +77,15 @@ namespace VRC2.Scenarios
             Helper.ParseTime(time, ref startInSec, ref endInSec);
         }
 
+        public void OverrideStartEnd(int offset)
+        {
+            startInSec = startInSec + offset;
+            if (endInSec != -1)
+            {
+                endInSec = endInSec + offset;
+            }
+        }
+
         public void Execute(int timestamp)
         {
             startTimestamp = timestamp;
@@ -130,6 +139,11 @@ namespace VRC2.Scenarios
         public void ForceQuit()
         {
             finished = true;
+        }
+
+        public void Print()
+        {
+            print($"({Scenario}, {ID}, {Desc}, {Warning}, {StartInSec}, {EndInSec})");
         }
     }
 }

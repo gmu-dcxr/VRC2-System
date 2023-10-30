@@ -365,6 +365,15 @@ namespace VRC2.Scenarios
             startInSec = start;
             endInSec = end;
             print($"OverrideStartEnd for {name}: {startInSec} - {endInSec}");
+
+            // it also needs to override the start/end for each incident
+            var count = incidents.Count;
+            for (var i = 0; i < count; i++)
+            {
+                incidents[i].OverrideStartEnd(startInSec);
+                // debug
+                incidents[i].Print();
+            }
         }
 
         public void AddIncident(Incident incident)
@@ -501,6 +510,8 @@ namespace VRC2.Scenarios
                 incident.OnStart += OnIncidentStart;
                 incident.OnFinish += OnIncidentFinish;
                 AddIncident(incident);
+                // debug
+                incident.Print();
             }
         }
 
