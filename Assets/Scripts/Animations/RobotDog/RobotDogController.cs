@@ -846,21 +846,21 @@ namespace VRC2.Animations
             //     stage = RobotStage.Dropoff;
             // }
 
-            if (GUI.Button(new Rect(10, 200, 100, 50), "Pickup"))
-            {
-                // StartPickupAnimation();
-                PickUp();
-            }
-
-            if (GUI.Button(new Rect(150, 200, 100, 50), "Idle"))
-            {
-                StopAnimation();
-            }
-
-            if (GUI.Button(new Rect(300, 200, 100, 50), "Dropoff"))
-            {
-                StartDropoffAnimation();
-            }
+            // if (GUI.Button(new Rect(10, 200, 100, 50), "Pickup"))
+            // {
+            //     // StartPickupAnimation();
+            //     PickUp();
+            // }
+            //
+            // if (GUI.Button(new Rect(150, 200, 100, 50), "Idle"))
+            // {
+            //     StopAnimation();
+            // }
+            //
+            // if (GUI.Button(new Rect(300, 200, 100, 50), "Dropoff"))
+            // {
+            //     StartDropoffAnimation();
+            // }
         }
 
         #endregion
