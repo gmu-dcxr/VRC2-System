@@ -60,6 +60,13 @@ namespace VRC2.Scenarios
                     }
                 }
             }
+            else // local mode
+            {
+                if (GUI.Button(new Rect(500, 10, 150, 50), "Start"))
+                {
+                    StartScenarios();
+                }
+            }
         }
 
         #region Start at the same time

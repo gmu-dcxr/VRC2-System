@@ -51,12 +51,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private CraneStatus craneStatus;
 
-        // the start rotation of the crane
-        private float startAngle
-        {
-            get => recording.startRotation;
-        }
-
         // threshold to decide whether reaching the destination
         private float rotationThreshold = 2f;
 
@@ -108,6 +102,20 @@ namespace VRC2.Scenarios.ScenarioFactory
             _timer = Timer.Register(second, oncomplete, isLooped: false, useRealTime: true);
 
             _timerRunning = true;
+        }
+
+        #endregion
+
+        #region Debug control
+
+        private bool debugPrint = false;
+
+        void DebugPrint(string msg)
+        {
+            if (debugPrint)
+            {
+                print(msg);
+            }
         }
 
         #endregion
@@ -271,7 +279,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool DownHookUntil(float target)
         {
             var hook = recording.DistanceHook;
-            print($"DownHookUntil: {hook} {target}");
+            DebugPrint($"DownHookUntil: {hook} {target}");
             if (hook < target)
             {
                 recording.DownHook();
@@ -283,7 +291,6 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         bool WaitUntilHookSteady()
         {
-            // print($"WaitUntilHookSteady: {recording.DistanceHook} {target}");
             var s1 = Distance2String(recording.DistanceHook);
             return s1 == distanceHook;
         }
@@ -291,7 +298,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool UpHookUntilInit()
         {
             var hook = recording.DistanceHook;
-            print($"UpHookUntilInit: {recording.DistanceHook} {distanceHook}");
+            DebugPrint($"UpHookUntilInit: {recording.DistanceHook} {distanceHook}");
 
             if (Distance2String(hook) == distanceHook)
             {
@@ -315,7 +322,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool RotateLeftUntilDropoff()
         {
             var rotation = recording.RotationCrane;
-            print($"RotateLeftUntilDropoff: {rotation} {Rotation2String(dropoffRotation)}");
+            DebugPrint($"RotateLeftUntilDropoff: {rotation} {Rotation2String(dropoffRotation)}");
             if (rotation > dropoffRotation)
             {
                 recording.TurnLeft();
@@ -328,7 +335,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         bool RotateRightUntilInit()
         {
             var rotation = recording.RotationCrane;
-            print($"RotateRightUntilInit: {rotation} {initRotationCrane}");
+            DebugPrint($"RotateRightUntilInit: {rotation} {initRotationCrane}");
             if (rotation < initRotationCrane)
             {
                 recording.TurnRight();
