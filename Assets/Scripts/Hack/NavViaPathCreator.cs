@@ -87,7 +87,7 @@ namespace VRC2.Hack
                 // change to next destination
                 dstIndex = (dstIndex + 1) % anchorPoints.Count;
                 _agent.SetDestination(anchorPoints[dstIndex]);
-                print("change destination");
+                //print("change destination");
             }
 
             // if (forceZRotation)
