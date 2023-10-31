@@ -49,6 +49,9 @@ public class ExcavAnimPlayer : MonoBehaviour
     private Vector3 scaleChange = new Vector3(0.03f, 0.0f, 0.03f);
     private Vector3 initScale = new Vector3(0.05f, 0.05f, 0.05f);
 
+    private GameObject[] clonesArray;
+    int curIndex = 0;
+
     internal enum part
     {
         nextTo = 0,
@@ -69,6 +72,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         matL = TreadsL.GetComponent<Renderer>().material;
         matR = TreadsR.GetComponent<Renderer>().material;
         done = false;
+        clonesArray = new GameObject[50];
         //anim.SetBool("Dig", true);
     }
 
@@ -167,6 +171,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         done = false;
         pt = part.nextTo;
         destination = digPoint1;
+        clonesArray = new GameObject[50];
     }
 
     public void start_3()
@@ -179,6 +184,13 @@ public class ExcavAnimPlayer : MonoBehaviour
         anim.enabled = true;
         pt = part.into1;
         destination = digPoint2;
+
+        while(curIndex > 0)
+        {
+            Destroy(clonesArray[curIndex]);
+            curIndex--;
+        }
+        clonesArray = new GameObject[50];
     }
 
     public void start_4()
@@ -191,6 +203,12 @@ public class ExcavAnimPlayer : MonoBehaviour
         anim.enabled = true;
         pt = part.into2;
         destination = digPoint3;
+        while (curIndex > 0)
+        {
+            Destroy(clonesArray[curIndex]);
+            curIndex--;
+        }
+        clonesArray = new GameObject[50];
     }
 
     public void makeDirt()
@@ -242,11 +260,16 @@ public class ExcavAnimPlayer : MonoBehaviour
         dupe.GetComponent<Rigidbody>().useGravity = true;
         dupe.GetComponent<MeshCollider>().convex = true;
         dupe.transform.SetParent(truck.transform);
+        curIndex++;
+        clonesArray[curIndex] = dupe;
+        print(curIndex);
+        print("INDEX");
         dirt.SetActive(false);
+        print("xxxxx");
 
-        dirt.transform.SetParent(null);
-        dirt.GetComponent<Rigidbody>().useGravity = true;
-        dirt.GetComponent<MeshCollider>().convex = true;
+        //dirt.transform.SetParent(null);
+        //dirt.GetComponent<Rigidbody>().useGravity = true;
+        //dirt.GetComponent<MeshCollider>().convex = true;
     }
 
     public void spillUpdate()
