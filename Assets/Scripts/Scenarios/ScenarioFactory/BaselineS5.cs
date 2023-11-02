@@ -30,7 +30,11 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Space(30)] [Header("Recording/Replay")]
         public CraneTruckInputRecording recording;
 
-        public CraneTruckInputReplay replay;
+        //public CraneTruckInputReplay replay;
+
+        public CraneTruckCraneController unload;
+        public CraneTruckCraneController tilt;
+        public CraneTruckCraneController overturn;
 
         public GameObject good;
         public GameObject good2;
@@ -71,7 +75,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         private void Update()
         {
             return;
-            switch (_stage)
+            /*switch (_stage)
             {
                 case CraneTruckStage.Stop:
                     replay.Stop();
@@ -114,7 +118,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     }
 
                     break;
-            }
+            }*/
         }
 
         void ResetTransforms()
@@ -135,22 +139,28 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         IEnumerator WaitForUnload()
         {
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(17f);
+            good.SetActive(true);
             anim.SetBool("Unload", true);
+            unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             yield return null;
         }
 
         IEnumerator WaitForTilt()
         {
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(17f);
+            good2.SetActive(true);
             anim.SetBool("Tilt", true);
+            tilt.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             yield return null;
         }
 
         IEnumerator WaitForOverturn()
         {
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(17f);
+            good3.SetActive(true);
             anim.SetBool("Overturn", true);
+            overturn.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             yield return null;
         }
 
@@ -206,7 +216,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", true);
             StartCoroutine(WaitForUnload());
             _stage = CraneTruckStage.Backward;
-            replay.Backward(true);
+            //replay.Backward(true);
         }
 
         public void On_BaselineS5_2_Finish()
@@ -245,13 +255,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            good2.SetActive(true);
-            anim.SetBool("Reverse2", true);
+            anim.SetBool("Reverse", true);
             anim.SetBool("Forward", false);
             StartCoroutine(WaitForTilt());
             ResetTransforms();
             _stage = CraneTruckStage.Backward;
-            replay.Backward(true);
+            //replay.Backward(true);
         }
 
         public void On_BaselineS5_4_Finish()
@@ -267,9 +276,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            anim.SetBool("Reverse2", false);
+            anim.SetBool("Reverse", false);
             anim.SetBool("Tilt", false);
-            anim.SetBool("Forward2", true);
+            anim.SetBool("Forward", true);
        
 
             // _stage = CraneTruckStage.Forward;
@@ -291,13 +300,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
-            good3.SetActive(true);
-            anim.SetBool("Reverse3", true);
-            anim.SetBool("Forward2", false);
+            anim.SetBool("Reverse", true);
+            anim.SetBool("Forward", false);
             StartCoroutine(WaitForOverturn());
             ResetTransforms();
             _stage = CraneTruckStage.Backward;
-            replay.Backward(true);
+            //replay.Backward(true);
         }
 
         public void On_BaselineS5_6_Finish()
@@ -310,7 +318,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS5_7_Start");
 
-            anim.SetBool("Reverse3", false);
+            anim.SetBool("Reverse", false);
             anim.SetBool("Overturn", false);
 
             // SAGAT query
