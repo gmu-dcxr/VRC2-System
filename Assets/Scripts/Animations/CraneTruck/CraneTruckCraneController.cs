@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace VRC2.Animations.CraneTruck
 {
-    enum CraneStatus
+    [HideInInspector] public enum CraneStatus
     {
         Idle,
         PrepareSeize,
@@ -43,7 +43,7 @@ namespace VRC2.Animations.CraneTruck
         public float hookDistanceDropoff = 6.5f; // maximum distance between hook and cargo for dropoff 
 
 
-        private CraneStatus status;
+        [HideInInspector] public CraneStatus status;
 
         private bool cargoSeized = false;
 
@@ -328,7 +328,7 @@ namespace VRC2.Animations.CraneTruck
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 10, 100, 50), "Crane"))
+            if (GUI.Button(new Rect(1000, 10, 100, 50), "Crane"))
             {
                 status = CraneStatus.PrepareSeize;
             }
