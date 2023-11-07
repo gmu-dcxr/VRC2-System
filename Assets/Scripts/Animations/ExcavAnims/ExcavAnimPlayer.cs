@@ -18,6 +18,8 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject dirt;
     public GameObject hole;
 
+    private GameObject scoop;
+
     public GameObject spill;
     public GameObject truck;
 
@@ -47,7 +49,7 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject truckCheck;
 
     private Vector3 scaleChange = new Vector3(0.03f, 0.0f, 0.03f);
-    private Vector3 initScale = new Vector3(0.05f, 0.05f, 0.05f);
+    private Vector3 initScale = new Vector3(0.99f, 0.99f, 0.99f);
 
     private GameObject[] clonesArray;
     int curIndex = 0;
@@ -65,6 +67,8 @@ public class ExcavAnimPlayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //scoop = GameObject.FindGameObjectWithTag("Scoop");
+        //Physics.IgnoreCollision(GetComponent<Collider>(), dirt.GetComponent<Collider>());
         dirt.SetActive(false);
         awake = false;
         destination = digPoint1;
@@ -171,7 +175,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         done = false;
         pt = part.nextTo;
         destination = digPoint1;
-        clonesArray = new GameObject[50];
+        //clonesArray = new GameObject[50];
     }
 
     public void start_3()
@@ -213,15 +217,19 @@ public class ExcavAnimPlayer : MonoBehaviour
 
     public void makeDirt()
     {
-        dirt.transform.SetParent(endPiece);
-        dirt.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y,
-            spawn.transform.position.z);
-        dirt.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x, spawn.transform.rotation.y,
-            spawn.transform.rotation.z);
-        dirt.GetComponent<Rigidbody>().useGravity = false;
-        dirt.GetComponent<Rigidbody>().isKinematic = false;
-        dirt.GetComponent<MeshCollider>().convex = false;
-        dirt.GetComponent<MeshCollider>().convex = false;
+        //dirt.transform.SetParent(endPiece);
+        //dirt.transform.position = new Vector3(7.629f, 9.5367f, 1.9073f);
+        //dirt.transform.rotation = Quaternion.Euler(-1.628f, 4.071f, 0f);
+        //endPiece.transform.rotation.z);
+        //endPiece.transform.position.z);
+        //dirt.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y,
+        //endPiece.transform.position.z);
+        //dirt.transform.rotation = Quaternion.Euler(endPiece.transform.rotation.x, endPiece.transform.rotation.y,
+        //endPiece.transform.rotation.z);
+        //dirt.GetComponent<Rigidbody>().useGravity = false;
+        //dirt.GetComponent<Rigidbody>().isKinematic = false;
+        //dirt.GetComponent<MeshCollider>().convex = false;
+        //dirt.GetComponent<MeshCollider>().convex = false;
         UpdateHole(hole);
         dirt.SetActive(true);
     }
@@ -237,29 +245,33 @@ public class ExcavAnimPlayer : MonoBehaviour
     {
         GameObject dupe = Instantiate(dirt);
         //dirtSpawned = true;
-        if(pt == part.into2)
+        //dupe.SetActive(false);
+        dupe.transform.SetParent(endPiece);
+        if (pt == part.into2)
         {
-            dupe.transform.position = new Vector3(spawn.transform.position.x-0.75f, spawn.transform.position.y, spawn.transform.position.z-0.2f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.75f, endPiece.transform.position.y, endPiece.transform.position.z-0.2f);
         }
         if (pt == part.into1)
         {
-            dupe.transform.position = new Vector3(spawn.transform.position.x - 0.60f, spawn.transform.position.y, spawn.transform.position.z - 0.3f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x - 0.60f, endPiece.transform.position.y, endPiece.transform.position.z - 0.3f);
         }
-        if(pt == part.nextTo) {
-            dupe.transform.position = new Vector3(spawn.transform.position.x, spawn.transform.position.y, spawn.transform.position.z - 0.3f);
+        if(pt == part.nextTo)
+        {
+            dupe.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y, endPiece.transform.position.z-0.3f);
         }
-        dupe.transform.SetParent(endPiece);
+        
+        //dupe.transform.SetParent(endPiece);
         dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
-        dupe.GetComponent<Rigidbody>().useGravity = false;
         dupe.GetComponent<Rigidbody>().isKinematic = false;
-        dupe.GetComponent<MeshCollider>().convex = false;
+        //dupe.GetComponent<MeshCollider>().convex = false;
         dupe.transform.localScale = initScale;
+        //dupe.SetActive(true);
 
 
         dupe.transform.SetParent(null);
         dupe.GetComponent<Rigidbody>().useGravity = true;
-        dupe.GetComponent<MeshCollider>().convex = true;
-        dupe.transform.SetParent(truck.transform);
+        //dupe.GetComponent<MeshCollider>().convex = true;
+        //dupe.transform.SetParent(truck.transform);
         curIndex++;
         clonesArray[curIndex] = dupe;
         print(curIndex);
