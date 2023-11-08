@@ -40,7 +40,10 @@ namespace VRC2.Animations
     public class RobotDogController : NetworkBehaviour
     {
         public GameObject robotDog;
+        public GameObject arm; 
         private Animator dogAnimator;
+        private AudioSource armSound;
+        private AudioSource dogSound;
 
         public GameObject attachePoint;
 
@@ -151,6 +154,8 @@ namespace VRC2.Animations
             roboticArm.ReadyToPickup += ReadyToPickup;
             roboticArm.ReadyToDropoff += ReadyToDropoff;
             pipeOutPut = bendcutOutput;
+            armSound = arm.GetComponent<AudioSource>();
+            dogSound = robotDog.GetComponent<AudioSource>();
 
         }
 
@@ -214,6 +219,8 @@ namespace VRC2.Animations
             {
                 walk = true;
                 actions.Walk();
+                dogSound.loop = true;
+                dogSound.Play();
             }
 
             if (strafeDirection == StrafeDirection.Unknown)
@@ -283,6 +290,8 @@ namespace VRC2.Animations
             {
                 turn = true;
                 actions.TurnLeft();
+                dogSound.loop = true;
+                dogSound.Play();
             }
 
             var pos1 = body.position;
@@ -312,6 +321,8 @@ namespace VRC2.Animations
             {
                 turn = true;
                 actions.TurnLeft();
+                dogSound.loop = true;
+                dogSound.Play();
             }
 
             // add y offset
@@ -343,6 +354,8 @@ namespace VRC2.Animations
             {
                 walk = true;
                 actions.Walk();
+                dogSound.loop = true;
+                dogSound.Play();
             }
 
             var pos1 = body.position;
@@ -361,6 +374,7 @@ namespace VRC2.Animations
             walk = false;
             turn = false;
             actions.Idle1();
+            dogSound.loop = false;
         }
 
         //NEW for picking up from side
@@ -394,7 +408,7 @@ namespace VRC2.Animations
         private void Update()
         {
             if (stage == RobotStage.Default) return;
-
+           
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -510,6 +524,9 @@ namespace VRC2.Animations
                             RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                             StartPickupAnimation();
+                            dogSound.loop = false;
+                            armSound.loop = true;
+                            armSound.Play();
                         }
                     }
                     else
@@ -519,7 +536,7 @@ namespace VRC2.Animations
                         {
                             // move to target
                             print("pickup is done");
-
+                            armSound.loop = false;
                             // enable dog animator, disable arm animator
                             armAnimator.enabled = false;
                             dogAnimator.enabled = true;
@@ -542,9 +559,10 @@ namespace VRC2.Animations
                             }
 
                             MoveToTarget();
-                        }
+                        }                    
+                        
                     }
-
+                    
                     break;
 
                 case RobotStage.Dropoff:
@@ -561,6 +579,9 @@ namespace VRC2.Animations
                         RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                         StartDropoffAnimation();
+                        dogSound.loop = false;
+                        armSound.loop = true;
+                        armSound.Play();
                     }
                     else
                     {
@@ -568,6 +589,7 @@ namespace VRC2.Animations
                         {
                             print("dropoff done");
                             droppingoff = false;
+                            armSound.loop = false;
                             // reset arm
                             // roboticArm.ResetRotations();                            
                           
@@ -605,6 +627,7 @@ namespace VRC2.Animations
                             
                             stage = RobotStage.Reset;
                         }
+                        armSound.PlayOneShot(armSound.clip, 0.1f);
                     }
                     break;
                 case RobotStage.Reset:
@@ -622,12 +645,16 @@ namespace VRC2.Animations
                         turn = false;
                         walk = false;
                         armAnimator.SetBool("ResetArm", true);
+                        dogSound.loop = false;
+                        armSound.loop = true;
+                        armSound.Play();
                     }
                     else 
                     {
                         if (IsResetDone()) 
                         {
                             armAnimator.SetBool("ResetArm", false);
+                            armSound.loop = false;
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
 
