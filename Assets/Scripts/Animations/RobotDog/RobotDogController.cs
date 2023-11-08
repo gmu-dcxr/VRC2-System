@@ -60,6 +60,7 @@ namespace VRC2.Animations
 
         [Space(30)] [Header("Target")] public Transform bendcutInput;
         public Transform bendcutOutput;
+        private Transform pipeOutPut;
         public Transform deliveryPoint;
         public Transform standbyPoint;
 
@@ -149,6 +150,7 @@ namespace VRC2.Animations
 
             roboticArm.ReadyToPickup += ReadyToPickup;
             roboticArm.ReadyToDropoff += ReadyToDropoff;
+            pipeOutPut = bendcutOutput;
 
         }
 
@@ -426,6 +428,7 @@ namespace VRC2.Animations
                         else if (targetTransform == bendcutInput)
                         {
                             // make it dropoff
+                            bendcutOutput = pipeOutPut;
                             stage = RobotStage.Dropoff;
                         }
                         else if (targetTransform == bendcutOutput)
