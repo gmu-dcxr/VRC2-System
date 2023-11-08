@@ -18,6 +18,7 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject dirt;
     public GameObject hole;
 
+    public GameObject lid;
     private GameObject scoop;
 
     public GameObject spill;
@@ -49,7 +50,8 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject truckCheck;
 
     private Vector3 scaleChange = new Vector3(0.03f, 0.0f, 0.03f);
-    private Vector3 initScale = new Vector3(0.99f, 0.99f, 0.99f);
+    private Vector3 initScale2 = new Vector3(0.99f, 0.99f, 0.99f);
+    private Vector3 initScale = new Vector3(0.2f, 0.2f, 0.2f);
 
     private GameObject[] clonesArray;
     int curIndex = 0;
@@ -132,6 +134,7 @@ public class ExcavAnimPlayer : MonoBehaviour
                     anim.SetBool("Dig", false);
                     done = true;
                     //anim.enabled = false;
+                    lid.SetActive(true);
 
                     if (pt == part.nextTo)
                     {
@@ -176,6 +179,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         pt = part.nextTo;
         destination = digPoint1;
         //clonesArray = new GameObject[50];
+        lid.SetActive(false);
     }
 
     public void start_3()
@@ -195,6 +199,7 @@ public class ExcavAnimPlayer : MonoBehaviour
             curIndex--;
         }
         clonesArray = new GameObject[50];
+        lid.SetActive(false);
     }
 
     public void start_4()
@@ -213,6 +218,7 @@ public class ExcavAnimPlayer : MonoBehaviour
             curIndex--;
         }
         clonesArray = new GameObject[50];
+        lid.SetActive(false);
     }
 
     public void makeDirt()
