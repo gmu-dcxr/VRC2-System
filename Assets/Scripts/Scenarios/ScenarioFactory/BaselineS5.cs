@@ -155,6 +155,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             good2.SetActive(true);
             anim.SetBool("Tilt", true);
             tilt.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            // reset cargo
+            unload.ResetCargo();
+            
             yield return null;
         }
 
@@ -164,6 +167,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             good3.SetActive(true);
             anim.SetBool("Overturn", true);
             overturn.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            // reset cargo
+            unload.ResetCargo();
+            
             yield return null;
         }
 
