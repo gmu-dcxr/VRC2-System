@@ -141,7 +141,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             yield return new WaitForSeconds(17f);
             good.SetActive(true);
-            anim.SetBool("Unload", true);
+            //anim.enabled = false;
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             yield return null;
         }
@@ -258,7 +258,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", true);
             anim.SetBool("Forward", false);
             StartCoroutine(WaitForTilt());
-            ResetTransforms();
+            //ResetTransforms();
             _stage = CraneTruckStage.Backward;
             //replay.Backward(true);
         }
@@ -303,7 +303,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", true);
             anim.SetBool("Forward", false);
             StartCoroutine(WaitForOverturn());
-            ResetTransforms();
+            //ResetTransforms();
             _stage = CraneTruckStage.Backward;
             //replay.Backward(true);
         }
