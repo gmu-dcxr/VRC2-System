@@ -50,8 +50,8 @@ public class ExcavAnimPlayer : MonoBehaviour
     public GameObject truckCheck;
 
     private Vector3 scaleChange = new Vector3(0.03f, 0.0f, 0.03f);
-    private Vector3 initScale2 = new Vector3(0.99f, 0.99f, 0.99f);
-    private Vector3 initScale = new Vector3(0.2f, 0.2f, 0.2f);
+    private Vector3 initScale = new Vector3(0.99f, 0.99f, 0.99f);
+    //private Vector3 initScale = new Vector3(0.2f, 0.2f, 0.2f);
 
     private GameObject[] clonesArray;
     int curIndex = 0;
