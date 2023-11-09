@@ -21,14 +21,24 @@ namespace VRC2.Animations.CraneTruck
         [Header("Controller")] public Manipulator manipulator;
         public HookManip hookManip;
         public CraneTruckInputRecording recording;
-        public CargoManipulator cargoManipulator;
+        // public CargoManipulator cargoManipulator;
+        
+        // TODO: cache the cargo and the cargoManipulator
+        private CargoManipulator cargoManipulator
+        {
+            get => cargo.GetComponent<CargoManipulator>();
+        }
 
         [Space(30)] [Header("Reference")] public Transform manipArrowRotation;
         public Transform manipArrow0;
         public Transform pointDistanceA;
         public Transform pointCargo;
 
-        [Space(30)] [Header("Cargo")] public GameObject cargo;
+        // [Space(30)] [Header("Cargo")] public GameObject cargo;
+        private GameObject cargo
+        {
+            get => hookManip.GetCargoByRaycast();
+        }
 
         [Space(30)] [Header("Threshold")]
         public float cargoHookPickup = 0.75f; // maximum distance between hook and cargo for pickup
@@ -82,7 +92,16 @@ namespace VRC2.Animations.CraneTruck
 
         public float HookCargoDistance
         {
-            get => Vector3.Distance(pointCargo.position, cargo.transform.position);
+            get
+            {
+                if (cargo != null)
+                {
+                    return Vector3.Distance(pointCargo.position, cargo.transform.position);
+                }
+
+                return -1f;
+            }
+
         }
 
         #endregion
@@ -104,7 +123,7 @@ namespace VRC2.Animations.CraneTruck
             var hd = HookDistance;
             var hcd = HookCargoDistance;
 
-            print($"lr: {lrr} ud: {udr} arm: {al} hook: {hd} hook-cargo: {hcd}");
+            // print($"lr: {lrr} ud: {udr} arm: {al} hook: {hd} hook-cargo: {hcd}");
 
             switch (status)
             {

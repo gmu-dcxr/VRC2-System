@@ -277,7 +277,7 @@ public class HookManip : MonoBehaviour
 			// limitHook -= Time.deltaTime * m_ScriptHook_2.speedHook;
 			// m_ScriptHook_1.SoundPitchManip();
 			UpHook();
-			
+
 			// } else if (Input.GetKey (m_ScriptHook_2.DownHook) && Input.GetKey (m_ScriptHook_2.hook) && hook_Bool == false && onCol == true && onCol_Cargo == true) {
 		}
 		else if (craneArrowInput.ReadValue<Vector2>().y < 0 && hook_Bool == false && onCol == true &&
@@ -285,7 +285,7 @@ public class HookManip : MonoBehaviour
 		{
 			// limitHook += Time.deltaTime * m_ScriptHook_2.speedHook;
 			// m_ScriptHook_1.SoundPitchManip();
-			
+
 			DownHook();
 		}
 	}
@@ -304,7 +304,7 @@ public class HookManip : MonoBehaviour
 		m_ScriptHook_1.SoundPitchManip();
 	}
 
-	
+
 
 	#endregion
 
@@ -384,4 +384,22 @@ public class HookManip : MonoBehaviour
 			}
 		}
 	}
+
+	#region Get cargo by raycast
+
+	public GameObject GetCargoByRaycast()
+	{
+		Ray rayDecal = new Ray(transform.position, -Vector3.up);
+		int layerCargo = (1 << 9);
+
+		RaycastHit hitCargo;
+		if (Physics.Raycast(rayDecal, out hitCargo, 3.6f, layerCargo, QueryTriggerInteraction.Ignore))
+		{
+			return hitCargo.transform.gameObject;
+		}
+
+		return null;
+	}
+
+	#endregion
 }

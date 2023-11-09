@@ -11,7 +11,7 @@ public class CargoManipulator : MonoBehaviour
 	[HideInInspector] public bool connectedCargoToHook_Bool = true;
 	[HideInInspector] public Transform hook;
 	[HideInInspector] public Transform pointHook;
-	[HideInInspector] public GameObject cargoLine;
+	// [HideInInspector] public GameObject cargoLine;
 	[HideInInspector] public float distanceHook = 0;
 	public float massCagro;
 	public float speedRotation = 0;
@@ -46,6 +46,21 @@ public class CargoManipulator : MonoBehaviour
 
 	public CraneTruckInputRecording recording;
 
+	private GameObject _cargoLine = null;
+
+	public GameObject cargoLine
+	{
+		get
+		{
+			if (_cargoLine == null)
+			{
+				_cargoLine = GameObject.Find("PointCargo");
+			}
+
+			return _cargoLine;
+		}
+	}
+
 	#endregion
 
 	void Start()
@@ -55,9 +70,8 @@ public class CargoManipulator : MonoBehaviour
 		craneTIA = new CraneTruckInputActions();
 		craneTIA.Enable();
 
-		cargoLine = GameObject.Find("PointCargo");
-
-
+		// cargoLine = GameObject.Find("PointCargo");
+		
 		craneSeizeInput = craneTIA.Crane.Seize;
 
 		if (gameObject.GetComponent<Rigidbody>() == null)
