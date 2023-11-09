@@ -143,6 +143,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             good.SetActive(true);
             //anim.enabled = false;
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            // reset cargo
+            unload.ResetCargo();
+            
             yield return null;
         }
 

@@ -35,9 +35,25 @@ namespace VRC2.Animations.CraneTruck
         public Transform pointCargo;
 
         // [Space(30)] [Header("Cargo")] public GameObject cargo;
+
+        private GameObject _cargo = null;
+
+        public void ResetCargo()
+        {
+            _cargo = null;
+        }
+
         private GameObject cargo
         {
-            get => hookManip.GetCargoByRaycast();
+            get
+            {
+                if (_cargo == null)
+                {
+                    _cargo = hookManip.GetCargoByRaycast();
+                }
+
+                return _cargo;
+            }
         }
 
         [Space(30)] [Header("Threshold")]
