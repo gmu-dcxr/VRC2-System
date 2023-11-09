@@ -130,6 +130,7 @@ namespace VRC2.Animations.CraneTruck
                     if (!cargoSeized)
                     {
                         SeizeCargo();
+
                     }
                     else
                     {
