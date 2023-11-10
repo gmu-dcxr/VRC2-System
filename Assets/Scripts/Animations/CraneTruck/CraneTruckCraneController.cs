@@ -58,7 +58,7 @@ namespace VRC2.Animations.CraneTruck
         public float armRotationThreshold = 0.33f; // arm rotation maximum (left, right) 
 
         [HideInInspector] public float hookDistanceInit; // init hook for resetting
-        public float hookDistanceDropoff = 6.5f; // maximum distance between hook and cargo for dropoff 
+        public float hookDistanceDropoff = 6.5f; // maximum distance between hook and cargo for dropoff // 4.25
 
 
         [HideInInspector] public CraneStatus status;
