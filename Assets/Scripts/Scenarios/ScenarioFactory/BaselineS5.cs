@@ -27,18 +27,21 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject cargo;
         public Animator anim;
 
-        [Space(30)] [Header("Recording/Replay")]
-        public CraneTruckInputRecording recording;
+        // [Space(30)] [Header("Recording/Replay")]
+        // public CraneTruckInputRecording recording;
 
         //public CraneTruckInputReplay replay;
 
         public CraneTruckCraneController unload;
-        public CraneTruckCraneController tilt;
-        public CraneTruckCraneController overturn;
+        // public CraneTruckCraneController tilt;
+        // public CraneTruckCraneController overturn;
 
         public GameObject good;
         public GameObject good2;
         public GameObject good3;
+
+
+        private GameObject currentCargo;
 
         public Transform startPoint;
         public Transform dropoffPoint;
@@ -141,11 +144,12 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             yield return new WaitForSeconds(17f);
             good.SetActive(true);
+            currentCargo = good;
             //anim.enabled = false;
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             // reset cargo
-            unload.ResetCargo();
-            
+            unload.ResetCargo(ref currentCargo);
+
             yield return null;
         }
 
@@ -153,11 +157,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             yield return new WaitForSeconds(17f);
             good2.SetActive(true);
+
+            currentCargo = good2;
             anim.SetBool("Tilt", true);
-            tilt.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             // reset cargo
-            unload.ResetCargo();
-            
+            unload.ResetCargo(ref currentCargo);
+
             yield return null;
         }
 
@@ -165,11 +171,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             yield return new WaitForSeconds(17f);
             good3.SetActive(true);
+
+            currentCargo = good3;
             anim.SetBool("Overturn", true);
-            overturn.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             // reset cargo
-            unload.ResetCargo();
-            
+            unload.ResetCargo(ref currentCargo);
+
             yield return null;
         }
 
@@ -221,7 +229,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
-            
+
             anim.SetBool("Reverse", true);
             StartCoroutine(WaitForUnload());
             _stage = CraneTruckStage.Backward;
@@ -243,7 +251,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", false);
             anim.SetBool("Unload", false);
             anim.SetBool("Forward", true);
-        
+
             // it already automatically moves forward
             // _stage = CraneTruckStage.Forward;
         }
@@ -288,7 +296,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", false);
             anim.SetBool("Tilt", false);
             anim.SetBool("Forward", true);
-       
+
 
             // _stage = CraneTruckStage.Forward;
         }
