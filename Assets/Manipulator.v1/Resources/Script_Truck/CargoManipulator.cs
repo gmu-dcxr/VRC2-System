@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using VRC2;
 using VRC2.Animations.CraneTruck;
 
 public class CargoManipulator : MonoBehaviour
@@ -97,7 +98,8 @@ public class CargoManipulator : MonoBehaviour
 			    gameObject.GetComponent<HingeJoint>() == null)
 			{
 				ConnectedCargoToHook();
-				cargoLine.SetActive(true);
+				// cargoLine.SetActive(true);
+				cargoLine.GetComponent<LineRenderer>().enabled = true;
 			}
 			else
 				// if (Input.GetKeyDown (connectedCargo) && gameObject.GetComponent<HingeJoint>() != null) {
@@ -122,7 +124,8 @@ public class CargoManipulator : MonoBehaviour
 	public void SeizeCargo(bool seize)
 	{
 		ConnectedCargoToHook();
-		cargoLine.SetActive(seize);
+		// cargoLine.SetActive(seize);
+		cargoLine.GetComponent<LineRenderer>().enabled = seize;
 
 		if (lineRen1 != null || lineRen2 != null || lineRen3 != null || lineRen4 != null)
 		{
@@ -220,7 +223,8 @@ public class CargoManipulator : MonoBehaviour
 			hook.GetComponent<HookManip>().m_ScriptHook_2.blockOnManip_Cargo = true;
 			if (pointHook.GetComponent<LineRenderer>().enabled)
 			{
-				cargoLine.SetActive(false);
+				// cargoLine.SetActive(false);
+				cargoLine.GetComponent<LineRenderer>().enabled = false;
 				//pointHook.GetComponent<LineRenderer>().enabled = false;
 			}
 
@@ -247,7 +251,7 @@ public class CargoManipulator : MonoBehaviour
 	{
 		yield return new WaitForSeconds(connectedSecond);
 		m_lineCargo = null;
-		Destroy(pointHook.GetComponent<LineRenderer>());
+		// Destroy(pointHook.GetComponent<LineRenderer>());
 		gameObject.layer = 9;
 		foreach (Transform m_layer in GetComponentInChildren<Transform>(true))
 		{
