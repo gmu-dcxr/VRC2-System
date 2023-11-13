@@ -134,7 +134,7 @@ public class ExcavAnimPlayer : MonoBehaviour
                     anim.SetBool("Dig", false);
                     done = true;
                     //anim.enabled = false;
-                    lid.SetActive(true);
+                    //lid.SetActive(true);
 
                     if (pt == part.nextTo)
                     {
@@ -179,7 +179,6 @@ public class ExcavAnimPlayer : MonoBehaviour
         pt = part.nextTo;
         destination = digPoint1;
         //clonesArray = new GameObject[50];
-        lid.SetActive(false);
     }
 
     public void start_3()
@@ -199,7 +198,6 @@ public class ExcavAnimPlayer : MonoBehaviour
             curIndex--;
         }
         clonesArray = new GameObject[50];
-        lid.SetActive(false);
     }
 
     public void start_4()
@@ -218,7 +216,6 @@ public class ExcavAnimPlayer : MonoBehaviour
             curIndex--;
         }
         clonesArray = new GameObject[50];
-        lid.SetActive(false);
     }
 
     public void makeDirt()
@@ -255,11 +252,11 @@ public class ExcavAnimPlayer : MonoBehaviour
         dupe.transform.SetParent(endPiece);
         if (pt == part.into2)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.71f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.75f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
         }
         if (pt == part.into1)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x - 0.40f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x - 0.51f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
         }
         if(pt == part.nextTo)
         {
@@ -281,9 +278,9 @@ public class ExcavAnimPlayer : MonoBehaviour
         curIndex++;
         clonesArray[curIndex] = dupe;
         print(curIndex);
-        print("INDEX");
+        //print("INDEX");
         dirt.SetActive(false);
-        print("xxxxx");
+        //print("xxxxx");
 
         //dirt.transform.SetParent(null);
         //dirt.GetComponent<Rigidbody>().useGravity = true;
