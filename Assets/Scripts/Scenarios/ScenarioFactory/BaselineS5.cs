@@ -161,6 +161,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             currentCargo = good2;
             anim.SetBool("Tilt", true);
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            unload.hookDistanceDropoff = 3.0f;
             // reset cargo
             unload.ResetCargo(ref currentCargo);
 
@@ -175,6 +176,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             currentCargo = good3;
             anim.SetBool("Overturn", true);
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            unload.hookDistanceDropoff = 8.0f;
+            unload.armForwardThreshold = 7.5f;
             // reset cargo
             unload.ResetCargo(ref currentCargo);
 
