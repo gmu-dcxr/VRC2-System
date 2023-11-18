@@ -10,6 +10,8 @@ namespace VRC2.Scenarios
             public string time { get; set; }
             public string incident { get; set; }
             public string warning { get; set; }
+            // warning delay
+            public float? wdelay { get; set; }
         }
 
         public class WarningVariant

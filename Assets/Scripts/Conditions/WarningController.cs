@@ -88,7 +88,7 @@ public class WarningController : MonoBehaviour
         {
             cam = FindObjectOfType<Camera>();
         }
-        
+
         _cameraTransform = cam.transform;
 
         _audioSource = gameObject.GetComponent<AudioSource>();
@@ -116,10 +116,24 @@ public class WarningController : MonoBehaviour
         _audioSource.loop = looped;
 
         _timer = Timer.Register(interval, () => { Hide(); }, isLooped: looped, useRealTime: true);
-
     }
 
-    public void Show(string title, string scenename, int incidentid, string content)
+    // warning delay
+    private IEnumerator PlayAudio(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        _audioSource.Play();
+        if (quality == Quality.Bad)
+        {
+            // add noise
+            noise.Play();
+        }
+
+        yield return null;
+    }
+
+    public void Show(string title, string scenename, int incidentid, string content, float? delay)
     {
         // directly return if no warning
         if (existence == Existence.NoWarning) return;
@@ -132,12 +146,21 @@ public class WarningController : MonoBehaviour
             // load audio clip
             var ac = LoadAudioClip(scenename, incidentid);
             _audioSource.clip = ac;
-            _audioSource.Play();
 
-            if (quality == Quality.Bad)
+            if (delay == null)
             {
-                // add noise
-                noise.Play();
+                _audioSource.Play();
+
+                if (quality == Quality.Bad)
+                {
+                    // add noise
+                    noise.Play();
+                }
+            }
+            else
+            {
+                // play audio with delay
+                StartCoroutine(PlayAudio(delay.Value));
             }
         }
         else

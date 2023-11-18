@@ -118,7 +118,9 @@ namespace VRC2.Scenarios.ScenarioFactory
                 var msg = GetRightMessage(3, scenariosManager.condition.Context, scenariosManager.condition.Amount);
                 if (!warningShowing)
                 {
-                    ShowWarning(ClsName, 3, msg);
+                    // get delay
+                    var wdelay = GetIncident(3).WDelay;
+                    ShowWarning(ClsName, 3, msg, wdelay);
                 }
             }
             else
@@ -309,7 +311,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         #region Warning Override
 
-        public override void OnIncidentStart(int obj)
+        public override void OnIncidentStart(int obj, float? delay)
         {
             print($"");
             // not show warning in this scenario
