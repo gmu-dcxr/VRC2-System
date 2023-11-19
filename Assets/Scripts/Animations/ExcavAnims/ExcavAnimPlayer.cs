@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//CONTROLS BASELINE S3 - TRUCK BACKING UP CLOSE TO USER ACCIDENT
+
 public class ExcavAnimPlayer : MonoBehaviour
 {
     private Animator anim;
@@ -79,6 +81,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         matR = TreadsR.GetComponent<Renderer>().material;
         done = false;
         clonesArray = new GameObject[50];
+        anim.Rebind();
         //anim.SetBool("Dig", true);
     }
 
@@ -92,7 +95,7 @@ public class ExcavAnimPlayer : MonoBehaviour
 
             if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f) && anim.GetCurrentAnimatorStateInfo(0).IsName("Wakeup"))
             {
-                print("STOP");
+                //print("STOP");
                 //wakeup animation has played
                 anim.SetBool("Wakeup", false);
                 awake = true;
@@ -252,7 +255,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         dupe.transform.SetParent(endPiece);
         if (pt == part.into2)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.75f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.77f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
         }
         if (pt == part.into1)
         {
