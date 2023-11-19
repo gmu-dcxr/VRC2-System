@@ -505,7 +505,7 @@ namespace VRC2.Scenarios
             foreach (var icd in scenario.incidents)
             {
                 Incident incident = gameObject.AddComponent<Incident>();
-                incident.InitIncident(_name, icd.id, icd.time, icd.incident, icd.warning);
+                incident.InitIncident(_name, icd.id, icd.time, icd.incident, icd.warning, icd.wdelay);
                 // bind actions
                 incident.OnStart += OnIncidentStart;
                 incident.OnFinish += OnIncidentFinish;
@@ -530,11 +530,11 @@ namespace VRC2.Scenarios
             Invoke(name, 0);
         }
 
-        public virtual void OnIncidentStart(int obj)
+        public virtual void OnIncidentStart(int obj, float? delay)
         {
             // show warning
             var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
-            ShowWarning(_name, obj, msg);
+            ShowWarning(_name, obj, msg, delay);
             var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
             print($"{_name} #{obj} {name}");
             Invoke(name, 0);
@@ -579,12 +579,12 @@ namespace VRC2.Scenarios
             surveyController.Hide();
         }
 
-        public void ShowWarning(string sname, int idx, string msg)
+        public void ShowWarning(string sname, int idx, string msg, float? delay)
         {
             if (msg == "") return;
 
             print($"Show warning: {msg}");
-            warningController.Show("Warning", sname, idx, msg);
+            warningController.Show("Warning", sname, idx, msg, delay);
         }
 
         public void HideWarning()
@@ -661,7 +661,9 @@ namespace VRC2.Scenarios
                 return;
             }
 
-            OnIncidentStart(obj);
+            var wdelay = GetIncident(obj).WDelay;
+
+            OnIncidentStart(obj, wdelay);
         }
 
         void EndIncident(int obj)
