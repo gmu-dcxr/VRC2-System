@@ -12,6 +12,8 @@ namespace VRC2.Scenarios
         private int _id;
         private string _desc;
         private string _warning;
+        // warning delay
+        private float? _wdelay;
         private string _rawTime;
 
         private int startInSec = 0;
@@ -26,7 +28,7 @@ namespace VRC2.Scenarios
             get;
         }
 
-        public System.Action<int> OnStart;
+        public System.Action<int, float?> OnStart;
         public System.Action<int> OnFinish;
 
         private bool started = false;
@@ -56,6 +58,11 @@ namespace VRC2.Scenarios
             get => _warning;
         }
 
+        public float? WDelay
+        {
+            get => _wdelay;
+        }
+        
         public int StartInSec
         {
             get => startInSec;
@@ -67,12 +74,13 @@ namespace VRC2.Scenarios
         }
 
 
-        public void InitIncident(string scenario, int idx, string time, string desc, string warning)
+        public void InitIncident(string scenario, int idx, string time, string desc, string warning, float? wdelay)
         {
             _scenario = scenario;
             _id = idx;
             _desc = desc;
             _warning = warning;
+            _wdelay = wdelay;
             _rawTime = time;
             Helper.ParseTime(time, ref startInSec, ref endInSec);
         }
@@ -112,7 +120,7 @@ namespace VRC2.Scenarios
                     //print($"{Scenario} - Incident #{_id} - Start @ {localts}");
                     if (OnStart != null)
                     {
-                        OnStart(_id);
+                        OnStart(_id, _wdelay);
                     }
 
                     // start it

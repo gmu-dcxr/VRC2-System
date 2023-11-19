@@ -26,6 +26,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         [Header("Gameobjects")] public GameObject craneTruck;
         public GameObject cargo;
         public Animator anim;
+        public AudioSource ReverseBeep;
 
         // [Space(30)] [Header("Recording/Replay")]
         // public CraneTruckInputRecording recording;
@@ -77,6 +78,15 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
+            if (anim.GetBool("Reverse") == true && !ReverseBeep.isPlaying)
+            {
+                ReverseBeep.Play();
+            }
+            else if (anim.GetBool("Reverse") == false && ReverseBeep.isPlaying)
+            {
+                ReverseBeep.Stop();
+            }
+
             return;
             /*switch (_stage)
             {
@@ -143,6 +153,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         IEnumerator WaitForUnload()
         {
             yield return new WaitForSeconds(17f);
+            anim.SetBool("Reverse", false);
             good.SetActive(true);
             currentCargo = good;
             //anim.enabled = false;
@@ -156,11 +167,13 @@ namespace VRC2.Scenarios.ScenarioFactory
         IEnumerator WaitForTilt()
         {
             yield return new WaitForSeconds(17f);
+            anim.SetBool("Reverse", false);
             good2.SetActive(true);
 
             currentCargo = good2;
             anim.SetBool("Tilt", true);
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            unload.hookDistanceDropoff = 3.0f;
             // reset cargo
             unload.ResetCargo(ref currentCargo);
 
@@ -170,11 +183,14 @@ namespace VRC2.Scenarios.ScenarioFactory
         IEnumerator WaitForOverturn()
         {
             yield return new WaitForSeconds(17f);
+            anim.SetBool("Reverse", false);
             good3.SetActive(true);
 
             currentCargo = good3;
             anim.SetBool("Overturn", true);
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
+            unload.hookDistanceDropoff = 8.0f;
+            unload.armForwardThreshold = 7.5f;
             // reset cargo
             unload.ResetCargo(ref currentCargo);
 
@@ -248,7 +264,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(3);
 
-            anim.SetBool("Reverse", false);
             anim.SetBool("Unload", false);
             anim.SetBool("Forward", true);
 
@@ -293,7 +308,6 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(5);
 
-            anim.SetBool("Reverse", false);
             anim.SetBool("Tilt", false);
             anim.SetBool("Forward", true);
 
@@ -335,7 +349,6 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS5_7_Start");
 
-            anim.SetBool("Reverse", false);
             anim.SetBool("Overturn", false);
 
             // SAGAT query
