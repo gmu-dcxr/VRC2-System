@@ -13,6 +13,9 @@ public class TruckAnimPlayer : MonoBehaviour
     public GameObject FirstBackup;
     public GameObject SecondBackup;
     public GameObject ThirdBackup;
+
+    public GameObject backUpWarning;
+    public GameObject waterWarning;
     // Start is called before the first frame update
     void Start()
     {
@@ -80,6 +83,7 @@ public class TruckAnimPlayer : MonoBehaviour
     {
         if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
         {
+            print("start");
             source.Play();
         }
     }
@@ -89,8 +93,27 @@ public class TruckAnimPlayer : MonoBehaviour
         
         if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
         {
+            print("stop");
             source.Stop();
 
+        }
+    }
+
+    public void playBackUpWarning()
+    {
+        if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+        {
+            print("Warning: A truck is backing up nearby.");
+            backUpWarning.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    public void playWaterWarning()
+    {
+        if ((anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+        {
+            print("Electrical struck warning: please be aware of the water stain when crossing the road.");
+            waterWarning.GetComponent<AudioSource>().Play();
         }
     }
 }

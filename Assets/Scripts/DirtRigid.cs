@@ -27,7 +27,7 @@ public class DirtRigid : MonoBehaviour
     {
         if(col.gameObject.tag == "bottom")
         {
-            print("XXXX");
+            //print("XXXX");
             Destroy(GetComponent<Rigidbody>());
             transform.parent = truck.transform;
             GetComponent<Collider>().enabled = false;
@@ -50,7 +50,7 @@ public class DirtRigid : MonoBehaviour
         if (distance < 0.3f)
         {
             done = true;
-            print("raaa");
+            //print("raaa");
             //Destroy(GetComponent<Rigidbody>());
             //transform.parent = truck.transform;
             Invoke("stop", 1);
