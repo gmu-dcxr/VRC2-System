@@ -59,6 +59,9 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
     private GameObject[] clonesArray;
     int curIndex = 0;
 
+    public int animationRan = 0;
+
+
     internal enum part
     {
         nextTo = 0,
@@ -76,6 +79,7 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         //Physics.IgnoreCollision(GetComponent<Collider>(), dirt.GetComponent<Collider>());
         dirt.SetActive(false);
         awake = false;
+        curIndex = 0;
         destination = digPoint1;
         anim = GetComponent<Animator>();
         matL = TreadsL.GetComponent<Renderer>().material;
@@ -102,6 +106,7 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
             }
 
         }
+       
         if (ready && truckCheck.active)
         {
             anim.SetBool("Dig", false);
@@ -132,8 +137,14 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
                     done = true;
                 }
 
-                if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
-                {
+            if (anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
+            {
+                print("<><> " + anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            }
+            
+            if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
+            {
+                print("RRRRR");
                     anim.SetBool("Dig", false);
                     done = true;
                     //anim.enabled = false;
@@ -152,6 +163,7 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
                         ThirdBackup.SetActive(false);
                     }
                 }
+                //print("<><> "+anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
 
             }
             //}
@@ -177,6 +189,8 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         //go forward til its at location 2
         //then dig
         //then dump
+        anim = GetComponent<Animator>();
+
         ready = true;
         done = false;
         pt = part.nextTo;
@@ -189,6 +203,8 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         //go forward til its at location 3
         //then dig
         //then dump
+        anim = GetComponent<Animator>();
+
         ready = true;
         done = false;
         anim.enabled = true;
@@ -200,7 +216,18 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
             Destroy(clonesArray[curIndex]);
             curIndex--;
         }
-        clonesArray = new GameObject[50];
+        //clonesArray = new GameObject[50];
+    }
+
+    public void OnAnimationEnd()
+    {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
+        {
+            if (animationRan < NumberOfDigs)
+            {
+                Animation.Stop();
+            }
+        }
     }
 
     public void start_4()
@@ -208,6 +235,8 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         //go forward til its at location 4
         //then dig
         //then dump
+        anim = GetComponent<Animator>();
+
         ready = true;
         done = false;
         anim.enabled = true;
@@ -218,7 +247,7 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
             Destroy(clonesArray[curIndex]);
             curIndex--;
         }
-        clonesArray = new GameObject[50];
+        //clonesArray = new GameObject[50];
     }
 
     public void makeDirt()
@@ -253,18 +282,8 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         //dirtSpawned = true;
         //dupe.SetActive(false);
         dupe.transform.SetParent(endPiece);
-        if (pt == part.into2)
-        {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.77f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
-        }
-        if (pt == part.into1)
-        {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x - 0.51f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
-        }
-        if(pt == part.nextTo)
-        {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
-        }
+        dupe.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
+        
         
         //dupe.transform.SetParent(endPiece);
         dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
@@ -278,9 +297,11 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         dupe.GetComponent<Rigidbody>().useGravity = true;
         //dupe.GetComponent<MeshCollider>().convex = true;
         //dupe.transform.SetParent(truck.transform);
+        print("PREINDEX: " + curIndex);
         curIndex++;
+        print("CURINDEX: " + curIndex);
         clonesArray[curIndex] = dupe;
-        print(curIndex);
+        //print(curIndex);
         //print("INDEX");
         dirt.SetActive(false);
         //print("xxxxx");
