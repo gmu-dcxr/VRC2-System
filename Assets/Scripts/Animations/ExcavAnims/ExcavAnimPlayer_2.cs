@@ -59,8 +59,6 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
     private GameObject[] clonesArray;
     int curIndex = 0;
 
-    public int animationRan = 0;
-
 
     internal enum part
     {
@@ -115,33 +113,32 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         }
 
 
-            if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
+        {
+            //animate the treads
+            offsetR = Time.time * (0.75f) % 1;
+            offsetL = Time.time * (0.75f) % 1;
+            matL.mainTextureOffset = new Vector2(0, offsetL);
+            matR.mainTextureOffset = new Vector2(0, offsetR);
+            WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+        }
+        //print("<><> " + anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        if (ReachDestination(destination.position))
+        {
+            //print("x");
+            if (!done)
             {
-                //animate the treads
-                offsetR = Time.time * (0.75f) % 1;
-                offsetL = Time.time * (0.75f) % 1;
-                matL.mainTextureOffset = new Vector2(0, offsetL);
-                matR.mainTextureOffset = new Vector2(0, offsetR);
-                WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
-                WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
-                WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
-                WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+                anim.SetBool("Forward", false);
+                anim.SetBool("Dig", true);
+                done = true;
             }
-
-            if (ReachDestination(destination.position))
-            {
-                if (!done)
-                {
-                    anim.SetBool("Forward", false);
-                    anim.SetBool("Dig", true);
-                    done = true;
-                }
-
             if (anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
             {
-                print("<><> " + anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
+                
             }
-            
             if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
             {
                 print("RRRRR");
@@ -162,11 +159,10 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
                     {
                         ThirdBackup.SetActive(false);
                     }
-                }
+            }
                 //print("<><> "+anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
 
-            }
-            //}
+        }
     }
 
     bool ReachDestination(Vector3 des)
@@ -177,7 +173,7 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         t.y = 0;
         var distance = Vector3.Distance(t, des);
 
-        if (distance < 1.0f)
+        if (distance < 1.6f)
         {
             return true;
         }
@@ -219,16 +215,6 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         //clonesArray = new GameObject[50];
     }
 
-    public void OnAnimationEnd()
-    {
-        if (anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
-        {
-            if (animationRan < NumberOfDigs)
-            {
-                Animation.Stop();
-            }
-        }
-    }
 
     public void start_4()
     {
