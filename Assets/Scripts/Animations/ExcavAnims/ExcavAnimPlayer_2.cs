@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class ExcavAnimPlayer_2 : MonoBehaviour
 {
-    
+    public GameObject NORMAL;
+    public GameObject spill2;
     private Animator anim;
     public Transform digPoint1;
     public Transform digPoint2;
@@ -299,7 +300,14 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
 
     public void spillUpdate()
     {
-        spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y+0.030f, spill.transform.position.z);
+        if (NORMAL.active)
+        {
+            spill2.transform.position = new Vector3(spill2.transform.position.x, spill2.transform.position.y + 0.030f, spill2.transform.position.z);
+        }
+        else
+        {
+            spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y + 0.030f, spill.transform.position.z);
+        }
     }
 
 }
