@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TruckAnimPlayer : MonoBehaviour
 {
+    public GameObject NORMAL;
     public Animator anim;
     public GameObject truckCheck;
 
@@ -101,19 +102,25 @@ public class TruckAnimPlayer : MonoBehaviour
 
     public void playBackUpWarning()
     {
-        if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+        if (!NORMAL.active)
         {
-            print("Warning: A truck is backing up nearby.");
-            backUpWarning.GetComponent<AudioSource>().Play();
+            if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+            {
+                print("Warning: A truck is backing up nearby.");
+                backUpWarning.GetComponent<AudioSource>().Play();
+            }
         }
     }
 
     public void playWaterWarning()
     {
-        if ((anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+        if (!NORMAL.active)
         {
-            print("Electrical struck warning: please be aware of the water stain when crossing the road.");
-            waterWarning.GetComponent<AudioSource>().Play();
+            if ((anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+            {
+                print("Electrical struck warning: please be aware of the water stain when crossing the road.");
+                waterWarning.GetComponent<AudioSource>().Play();
+            }
         }
     }
 }

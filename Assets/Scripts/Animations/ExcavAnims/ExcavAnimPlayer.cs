@@ -145,11 +145,15 @@ public class ExcavAnimPlayer : MonoBehaviour
                     }
                     if (pt == part.into1)
                     {
-                        SecondBackup.SetActive(false);
+                        
+                            SecondBackup.SetActive(false);
+                          
                     }
                     if (pt == part.into2)
                     {
-                        ThirdBackup.SetActive(false);
+                        
+                            ThirdBackup.SetActive(false);
+                       
                     }
                 }
 
@@ -255,19 +259,21 @@ public class ExcavAnimPlayer : MonoBehaviour
         dupe.transform.SetParent(endPiece);
         if (pt == part.into2)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.77f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.80f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
         }
         if (pt == part.into1)
         {
             dupe.transform.position = new Vector3(endPiece.transform.position.x - 0.51f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
+            dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
         }
         if(pt == part.nextTo)
         {
             dupe.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
+            dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
         }
         
         //dupe.transform.SetParent(endPiece);
-        dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
+        
         dupe.GetComponent<Rigidbody>().isKinematic = false;
         //dupe.GetComponent<MeshCollider>().convex = false;
         dupe.transform.localScale = initScale;
