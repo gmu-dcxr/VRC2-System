@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using PathCreation.Utility;
 using UnityEngine;
@@ -452,7 +453,15 @@ namespace PathCreation {
 
         /// Get the desired angle of the normal vector at a particular anchor (only relevant for paths in 3D space)
         public float GetAnchorNormalAngle (int anchorIndex) {
-            return perAnchorNormalsAngle[anchorIndex] % 360;
+            try
+            {
+                // BUG: sometimes anchorIndex will be out of boundary
+                return perAnchorNormalsAngle[anchorIndex] % 360;
+            }
+            catch (Exception e)
+            {
+                return 0f;
+            }
         }
 
         /// Set the desired angle of the normal vector at a particular anchor (only relevant for paths in 3D space)
