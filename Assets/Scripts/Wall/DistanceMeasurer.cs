@@ -28,9 +28,56 @@ namespace VRC2
 
         // measure distance only when two controllers' select button (trigger) are pressed.
 
+        #region Anchor-based Distance Measuring
+
+        private RayInteractor _leftRayInteractor;
+
+        private RayInteractor LeftRayInteractor
+        {
+            get
+            {
+                if (_leftRayInteractor == null)
+                {
+                    var go = GetRayInteractor(left);
+                    if (go != null)
+                    {
+                        return go.GetComponent<RayInteractor>();
+                    }
+                }
+
+                return _leftRayInteractor;
+            }
+        }
+
+        private RayInteractor _rightRayInteractor;
+
+        private RayInteractor RightRayInteractor
+        {
+            get
+            {
+                if (_rightRayInteractor == null)
+                {
+                    var go = GetRayInteractor(right);
+                    if (go != null)
+                    {
+                        return go.GetComponent<RayInteractor>();
+                    }
+                }
+
+                return _rightRayInteractor;
+            }
+        }
+
+        // the name of the anchor cube
+        private string anchorCubeName = "Cube";
+
+        #endregion
+
         // Start is called before the first frame update
         void Start()
         {
+            print($"left ray: {LeftRayInteractor != null}");
+            print($"right ray: {RightRayInteractor != null}");
         }
 
         // Update is called once per frame
@@ -38,10 +85,12 @@ namespace VRC2
         {
             var l = OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger);
             var r = OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
-
+            
             if (l && r)
             {
                 var (h, v, d) = GetTouchPointsDistances();
+                // use the anchor based method
+                // var (h, v, d) = GetAnchorPointsDistances();
                 if (h >= 0)
                 {
                     // valid
@@ -79,12 +128,40 @@ namespace VRC2
         {
             if (interactor.CollisionInfo.HasValue)
             {
-                point = interactor.CollisionInfo.Value.Point;
-                return true;
+                RaycastHit hit;
+                if (Physics.Raycast(interactor.Ray, out hit, 10f))
+                {
+                    if (hit.transform.gameObject.name.Equals(anchorCubeName))
+                    {
+                        point = hit.transform.position;
+                        return true;
+                    }
+                }
             }
 
             point = Vector3.zero;
             return false;
+        }
+
+        (float, float, float) GetAnchorPointsDistances()
+        {
+            var leftValue = Vector3.zero;
+            var rightValue = Vector3.zero;
+            var l = GetTouchPoint(LeftRayInteractor, out leftValue);
+            var r = GetTouchPoint(RightRayInteractor, out rightValue);
+
+            float h = -1, v = -1, d = -1;
+
+            if (l && r)
+            {
+                // multiply ratio to get the length in model scale 
+                h = Math.Abs(leftValue.z - rightValue.z) * ratio;
+                v = Math.Abs(leftValue.y - rightValue.y) * ratio;
+
+                d = (float)Math.Sqrt(h * h + v * v);
+            }
+
+            return (h, v, d);
         }
 
         (float, float, float) GetTouchPointsDistances()
@@ -107,6 +184,20 @@ namespace VRC2
             }
 
             return (h, v, d);
+        }
+
+        GameObject GetRayInteractor(GameObject cursor)
+        {
+            // OculusCursor -- RayCasterCursorVisual -- Visuals -- ControllerRayInteractor
+            try
+            {
+                return cursor.transform.parent.parent.parent.gameObject;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("Failed to get RayInteractor");
+                return null;
+            }
         }
     }
 }
