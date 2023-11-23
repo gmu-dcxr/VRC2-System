@@ -88,13 +88,12 @@ namespace VRC2
             
             if (l && r)
             {
-                var (h, v, d) = GetTouchPointsDistances();
+                // var (h, v, d) = GetTouchPointsDistances();
                 // use the anchor based method
-                // var (h, v, d) = GetAnchorPointsDistances();
+                var (h, v, d) = GetAnchorPointsDistances();
                 if (h >= 0)
                 {
                     // valid
-                    // TODO: Convert to the real world unit
                     SetTexts(h, v, d);
                     return;
                 }
