@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Helper = VRC2.Scenarios.Helper;
@@ -27,7 +28,22 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #endregion
 
+        public string ClsName
+        {
+            get => GetType().Name;
+        }
+
+        public string DefaultYamlFile
+        {
+            get => $"{ClsName}.yml";
+        }
+
         #region Methods
+
+        public void ParseYamlFile()
+        {
+            ParseYamlFile(DefaultYamlFile);
+        }
 
         public void ParseYamlFile(string name)
         {
@@ -160,5 +176,60 @@ namespace VRC2.ScenariosV2.Vehicle
         }
 
         #endregion
+
+        #region Implementation Checker
+
+        private string GetVehicleCallbackName(bool normal, int idx)
+        {
+            string name = GetType().Name;
+            if (normal)
+            {
+                name += "_normals_";
+            }
+            else
+            {
+                name += "_accidents_";
+            }
+
+            name += $"{idx}";
+
+            return name;
+        }
+
+        public void CheckIncidentsImplementation()
+        {
+            bool pass = true;
+
+            var ClsName = GetType().Name;
+
+            var @namespace = "VRC2.ScenariosV2.Vehicle";
+            var myClassType = Type.GetType($"{@namespace}.{ClsName}");
+
+            foreach (var inc in normals)
+            {
+                var name = GetVehicleCallbackName(true, inc.id);
+                if (myClassType.GetMethod(name) == null)
+                {
+                    pass = false;
+                    Debug.LogError($"[{ClsName}] missing method: {name}");
+                }
+            }
+
+            foreach (var inc in accidents)
+            {
+                var name = GetVehicleCallbackName(false, inc.id);
+                if (myClassType.GetMethod(name) == null)
+                {
+                    pass = false;
+                    Debug.LogError($"[{ClsName}] missing method: {name}");
+                }
+            }
+
+            Debug.LogWarning($"{ClsName} Check Scenarios Callbacks Result: {pass}");
+        }
+
+        #endregion
+
+
     }
 }
