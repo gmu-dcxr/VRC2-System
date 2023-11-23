@@ -1,0 +1,30 @@
+﻿name: "Crane"
+desc: "Crane related incidents"
+variables: ["T1", "T2", "T3", "T4"]
+gameObject: "Crane" # gameobject name in Unity
+incidents:
+  normals:
+    - id: 1
+      condition: "Normal" # ConditionType: Normal or Accident
+      time: "T1"
+      type: "Potential" # AccidentType: Potential or NearlyHappen
+      desc: "A load is passing overhead."
+      warning: "Warning: A cargo is going to be passed overhead."
+    - id: 2
+      condition: "Normal"
+      time: "T1+60s"
+      desc: "A hook (without a load) is passing overhead in the opposite direction."
+  accidents:
+    - id: 1
+      condition: "Accident"
+      time: "T1"
+      type: "Potential"
+      desc: "A load is being hoisted and is going to pass above players."
+      warning: "Warning: A cargo is going to be passed overhead."
+    - id: 2
+      condition: "Accident"
+      time: "T1+60s"
+      desc: "A hook (without a load) is passing overhead in the opposite direction."
+    
+    
+    
