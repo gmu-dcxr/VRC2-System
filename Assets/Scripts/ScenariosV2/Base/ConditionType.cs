@@ -8,6 +8,7 @@
 
     public enum AccidentType
     {
+        None, // new customized type
         Potential,
         NearlyHappen
     }

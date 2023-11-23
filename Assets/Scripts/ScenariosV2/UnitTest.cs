@@ -10,15 +10,18 @@ namespace VRC2.ScenariosV2
         private void Start()
         {
             var name = "Crane.yml";
-            var path = Helper.GetConfigureFile(Application.dataPath, name);
-            print(path);
+            // var path = Helper.GetConfigureFile(Application.dataPath, name);
+            // print(path);
+            //
+            // var text = System.IO.File.ReadAllText(path);
+            // print(text);
+            //
+            // var deser = new DeserializerBuilder().Build();
+            // var Vehicle = deser.Deserialize<YamlParser.Vehicle>(text);
+            // print(Vehicle);
 
-            var text = System.IO.File.ReadAllText(path);
-            print(text);
-
-            var deser = new DeserializerBuilder().Build();
-            var Vehicle = deser.Deserialize<YamlParser.Vehicle>(text);
-            print(Vehicle);
+            var b = new Vehicle.Base();
+            b.ParseYamlFile(name);
         }
     }
 }
