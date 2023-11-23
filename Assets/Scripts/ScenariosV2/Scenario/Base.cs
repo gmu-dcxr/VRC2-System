@@ -7,28 +7,43 @@ using Incident = VRC2.ScenariosV2.Base.Incident;
 
 namespace VRC2.ScenariosV2.Scenario
 {
-    public class Base: MonoBehaviour
+    public class Base : MonoBehaviour
     {
         #region Attributes
 
         #region Raw from yaml file
-        
+
         private string _name;
         private string _desc;
         private string _normal;
         private string _accident;
         private List<YamlParser.Refer> _incidents;
-        
+
         #endregion
 
         #region Parse Incidents
-        
+
+        public string ClsName
+        {
+            get => GetType().Name;
+        }
+
+        public string DefaultYamlFile
+        {
+            get => $"{ClsName}.yml";
+        }
+
         public List<Incident> parsedIncidents;
-        
+
         #endregion
-        
+
         #endregion
-        
+
+        public void ParseYamlFile()
+        {
+            ParseYamlFile(DefaultYamlFile);
+        }
+
         public void ParseYamlFile(string name)
         {
             var path = Helper.GetConfigureFile(Application.dataPath, name);
