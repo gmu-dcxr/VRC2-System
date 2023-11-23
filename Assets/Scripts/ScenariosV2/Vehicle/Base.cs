@@ -40,12 +40,12 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #region Methods
 
-        public void ParseYamlFile()
+        public virtual void ParseYamlFile()
         {
             ParseYamlFile(DefaultYamlFile);
         }
 
-        public void ParseYamlFile(string name)
+        public virtual void ParseYamlFile(string name)
         {
             var path = Helper.GetConfigureFile(Application.dataPath, name);
             print(path);
@@ -59,7 +59,7 @@ namespace VRC2.ScenariosV2.Vehicle
             ParseYamlVehicle(v);
         }
 
-        public void ParseYamlVehicle(YamlParser.Vehicle v)
+        public virtual void ParseYamlVehicle(YamlParser.Vehicle v)
         {
             this.name = v.name;
             this.desc = v.desc;
@@ -75,6 +75,9 @@ namespace VRC2.ScenariosV2.Vehicle
                     var inci = v.incidents.normals[i];
                     Incident incident = new Incident();
                     incident.ParseYamlIncident(inci);
+                    // update callback
+                    incident.callback = GetVehicleCallbackName(true, inci.id);
+                    
                     this.normals.Add(incident);
                 }
             }
@@ -89,6 +92,9 @@ namespace VRC2.ScenariosV2.Vehicle
                     var inci = v.incidents.accidents[i];
                     Incident incident = new Incident();
                     incident.ParseYamlIncident(inci);
+                    // update callback
+                    incident.callback = GetVehicleCallbackName(false, inci.id);
+                    
                     this.accidents.Add(incident);
                 }
             }
@@ -196,7 +202,7 @@ namespace VRC2.ScenariosV2.Vehicle
             return name;
         }
 
-        public void CheckIncidentsImplementation()
+        public virtual void CheckIncidentsImplementation()
         {
             bool pass = true;
 
@@ -225,11 +231,15 @@ namespace VRC2.ScenariosV2.Vehicle
                 }
             }
 
-            Debug.LogWarning($"{ClsName} Check Scenarios Callbacks Result: {pass}");
+            Debug.LogWarning($"{ClsName} Check Vehicle Callbacks Result: {pass}");
         }
 
         #endregion
 
-
+        public virtual void Start()
+        {
+            ParseYamlFile();
+            CheckIncidentsImplementation();
+        }
     }
 }

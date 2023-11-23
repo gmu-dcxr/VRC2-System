@@ -50,6 +50,13 @@ namespace VRC2.ScenariosV2.Base
         private int _duration;
         private int _endtime;
 
+        [HideInInspector]public string callback;
+
+        public int startTime
+        {
+            get => _stime;
+        }
+
         #endregion
 
         #region Methods

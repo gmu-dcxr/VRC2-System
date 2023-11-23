@@ -41,6 +41,7 @@ namespace VRC2.ScenariosV2.Base
             public int id { get; set; }
             public string time { get; set; }
             public List<string> refer { get; set; }
+            public float? wdelay { get; set; }
         }
 
         public class Scenario

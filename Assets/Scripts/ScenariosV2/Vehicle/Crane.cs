@@ -5,12 +5,6 @@ namespace VRC2.ScenariosV2.Vehicle
 {
     public class Crane : Base
     {
-        private void Start()
-        {
-            ParseYamlFile();
-            CheckIncidentsImplementation();
-        }
-
         #region Callbacks
 
         public void Crane_normals_1()
