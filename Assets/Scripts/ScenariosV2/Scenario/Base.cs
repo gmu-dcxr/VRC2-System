@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Base;
@@ -34,6 +35,7 @@ namespace VRC2.ScenariosV2.Scenario
         }
 
         public List<Incident> parsedIncidents;
+        public List<int> parsedIncidentsTime; // the time when to start the incident
 
         #endregion
 
@@ -90,13 +92,63 @@ namespace VRC2.ScenariosV2.Scenario
         {
             if (_incidents == null) return;
             parsedIncidents = new List<Incident>();
+            parsedIncidentsTime = new List<int>();
 
             var count = _incidents.Count;
             for (var i = 0; i < count; i++)
             {
                 var inci = GetIncident(_incidents[i]);
+                // parse time
+                var t = ParseTime(_incidents[i].time);
+
                 parsedIncidents.Add(inci);
+                parsedIncidentsTime.Add(t);
             }
         }
+
+        // parse time in scenario definition file
+        private int ParseTime(string str)
+        {
+            var s = 0;
+            var e = 0;
+            Helper.ParseTime(str, ref s, ref e);
+            return s;
+        }
+
+        #region Scenario Control
+
+        public void Start()
+        {
+            ParseYamlFile();
+        }
+
+        public void StartScenario()
+        {
+            var c = parsedIncidents.Count;
+            for (var i = 0; i < c; i++)
+            {
+                print(parsedIncidents[i].callback);
+                print(parsedIncidentsTime[i]);
+            }
+        }
+
+        public void FixedUpdate()
+        {
+
+        }
+
+        #endregion
+
+        #region Debug
+
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
+            {
+                StartScenario();
+            }
+        }
+
+        #endregion
     }
 }
