@@ -128,7 +128,7 @@ namespace VRC2
             if (interactor.CollisionInfo.HasValue)
             {
                 RaycastHit hit;
-                if (Physics.Raycast(interactor.Ray, out hit, 10f))
+                if (Physics.Raycast(interactor.Ray, out hit, 50f)) // 50 should be large enough
                 {
                     if (hit.transform.gameObject.name.Equals(anchorCubeName))
                     {
