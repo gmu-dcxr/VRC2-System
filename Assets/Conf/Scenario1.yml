@@ -1,0 +1,14 @@
+﻿name: "Scenario1"
+desc: "Scenario definition"
+normal: "Normal events: supervising drone, forklift, truck"
+accident: "Accident events: crane(in bold type)"
+incidents:
+  - id: 1
+    time: "0:30"
+    refer: ["Crane", "accidents", "1"]
+  - id: 2
+    time: "1:00"
+    refer: ["Drone", "normals", "1"]
+  - id: 3
+    time: "1:30"
+    refer: ["Crane", "accidents", "2"]

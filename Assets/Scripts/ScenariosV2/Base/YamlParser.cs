@@ -5,6 +5,8 @@ namespace VRC2.ScenariosV2.Base
 {
     public class YamlParser
     {
+        #region Vehicle
+
         public class Incident
         {
             public int id { get; set; }
@@ -29,5 +31,27 @@ namespace VRC2.ScenariosV2.Base
             public string gameObject { get; set; }
             public Incidents incidents { get; set; }
         }
+
+        #endregion
+
+        #region Scenairo
+
+        public class Refer
+        {
+            public int id { get; set; }
+            public string time { get; set; }
+            public List<string> refer { get; set; }
+        }
+
+        public class Scenario
+        {
+            public string name { get; set; }
+            public string desc { get; set; }
+            public string normal { get; set; }
+            public string accident { get; set; }
+            public List<Refer> incidents { get; set; }
+        }
+
+        #endregion
     }
 }
