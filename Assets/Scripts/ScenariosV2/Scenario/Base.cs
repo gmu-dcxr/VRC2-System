@@ -190,13 +190,6 @@ namespace VRC2.ScenariosV2.Scenario
 
         public void StartScenario(int ts)
         {
-            startTimestamp = ts;
-            var c = parsedIncidents.Count;
-            for (var i = 0; i < c; i++)
-            {
-                parsedIncidents[i].RunIncident();
-            }
-
             if (startedIncidents == null)
             {
                 startedIncidents = new HashSet<int>();
@@ -205,6 +198,9 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 startedIncidents.Clear();
             }
+
+            startTimestamp = ts;
+            started = true;
         }
 
         public void FixedUpdate()
@@ -227,8 +223,8 @@ namespace VRC2.ScenariosV2.Scenario
                 // get incident
                 var pi = parsedIncidents[idx];
 
-
-                print($"start incident: {pi.callback}");
+                // run
+                pi.RunIncident();
 
                 startedIncidents.Add(sec);
             }
@@ -241,7 +237,8 @@ namespace VRC2.ScenariosV2.Scenario
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
+
+            if (GUI.Button(new Rect(200, 10, 150, 50), "Start"))
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
