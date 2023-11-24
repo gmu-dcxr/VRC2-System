@@ -1,16 +1,25 @@
-﻿namespace VRC2.ScenariosV2.Adaptor
+﻿using System.Collections.Generic;
+using UnityEngine;
+using VRC2.Scenarios;
+using YamlDotNet.Serialization;
+
+namespace VRC2.ScenariosV2.Adaptor
 {
     public class ScenarioAdaptor : VRC2.Scenarios.Scenario
     {
+
         public void Start()
         {
+            // hide the original debug UI
+            showDebugUI = false;
+
             InitFromFile();
             CheckIncidentsCallbacks();
 
             this.ScenarioStart += OnScenarioStart;
             this.ScenarioFinish += OnScenarioFinish;
         }
-        
+
         public virtual void OnIncidentFinish(int obj)
         {
             // hide warning

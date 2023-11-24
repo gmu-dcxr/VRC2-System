@@ -4,6 +4,7 @@ using Fusion;
 using UnityEngine;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Base;
+using VRC2.ScenariosV2.Tool;
 using YamlDotNet.Serialization;
 using Incident = VRC2.ScenariosV2.Base.Incident;
 
@@ -35,7 +36,7 @@ namespace VRC2.ScenariosV2.Scenario
             get => $"{ClsName}.yml";
         }
 
-        public List<Incident> parsedIncidents;
+        [ReadOnly]public List<Incident> parsedIncidents;
 
         // (time, incident index in `parsedIncidents`)
         public Dictionary<int, int> timeIncidentIdxMap;
@@ -93,12 +94,7 @@ namespace VRC2.ScenariosV2.Scenario
 
         #endregion
 
-        #region Adaptation from the old implementation
-
-        // original scenario
-        public VRC2.Scenarios.Scenario oldScenario;
-
-        #endregion
+        [Header("Debug UI")] public bool showDebugUI = true;
 
         public void ParseYamlFile()
         {
@@ -233,8 +229,7 @@ namespace VRC2.ScenariosV2.Scenario
                 var idx = timeIncidentIdxMap[sec];
                 // get incident
                 var pi = parsedIncidents[idx];
-                
-                // TODO: add parameter to pass the old implementation to support before incident callback
+
                 // run
                 pi.RunIncident();
 
@@ -299,21 +294,21 @@ namespace VRC2.ScenariosV2.Scenario
         //     }
         // }
         //
-        // private ScenariosManager _scenariosManager;
-        //
-        // [HideInInspector]
-        // public ScenariosManager scenariosManager
-        // {
-        //     get
-        //     {
-        //         if (_scenariosManager == null)
-        //         {
-        //             _scenariosManager = FindFirstObjectByType<ScenariosManager>();
-        //         }
-        //
-        //         return _scenariosManager;
-        //     }
-        // }
+        private ScenariosManager _scenariosManager;
+
+        [HideInInspector]
+        public ScenariosManager scenariosManager
+        {
+            get
+            {
+                if (_scenariosManager == null)
+                {
+                    _scenariosManager = FindFirstObjectByType<ScenariosManager>();
+                }
+
+                return _scenariosManager;
+            }
+        }
         //
         // [HideInInspector]
         // public bool warningShowing
@@ -472,6 +467,17 @@ namespace VRC2.ScenariosV2.Scenario
 
         #region Debug
 
+        void StartIncident(int idx)
+        {
+            if (idx > parsedIncidents.Count)
+            {
+                print("Out of boundary of StartIncident.");
+                return;
+            }
+
+            var pi = parsedIncidents[idx - 1];
+            pi.RunIncident();
+        }
 
         private void OnGUI()
         {
@@ -480,6 +486,69 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
+            }
+
+            if (!showDebugUI) return;
+
+            // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
+            var runner = GameObject.FindObjectOfType<NetworkRunner>();
+            if (runner != null && runner.IsRunning && scenariosManager.scenarios != null &&
+                scenariosManager.scenarios.Count > 0) return;
+
+            if (GUI.Button(new Rect(10, 10, 150, 30), $"Start {ClsName}"))
+            {
+                var t = Helper.SecondNow();
+                StartScenario(t);
+            }
+
+            if (GUI.Button(new Rect(10, 50, 150, 30), $"Start {1}"))
+            {
+                StartIncident(1);
+            }
+
+            if (GUI.Button(new Rect(10, 100, 150, 30), $"Start {2}"))
+            {
+                StartIncident(2);
+            }
+
+            if (GUI.Button(new Rect(10, 150, 150, 30), $"Start {3}"))
+            {
+                StartIncident(3);
+            }
+
+            if (GUI.Button(new Rect(10, 200, 150, 30), $"Start {4}"))
+            {
+                StartIncident(4);
+            }
+
+            if (GUI.Button(new Rect(10, 250, 150, 30), $"Start {5}"))
+            {
+                StartIncident(5);
+            }
+
+            if (GUI.Button(new Rect(10, 300, 150, 30), $"Start {6}"))
+            {
+                StartIncident(6);
+            }
+
+            if (GUI.Button(new Rect(10, 350, 150, 30), $"Start {7}"))
+            {
+                StartIncident(7);
+            }
+
+            if (GUI.Button(new Rect(10, 400, 150, 30), $"Start {8}"))
+            {
+                StartIncident(8);
+            }
+
+            if (GUI.Button(new Rect(10, 450, 150, 30), $"Start {9}"))
+            {
+                StartIncident(9);
+            }
+
+            if (GUI.Button(new Rect(10, 500, 150, 30), $"Start {10}"))
+            {
+                StartIncident(10);
             }
         }
 

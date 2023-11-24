@@ -592,10 +592,22 @@ namespace VRC2.Scenarios
 
         public void ShowWarning(string sname, int idx, string msg, float? delay)
         {
-            if (msg == "") return;
+            if (msg == "")
+            {
+                // hide warning
+                warningController.Hide(true);
+                return;
+            }
 
             print($"Show warning: {msg}");
             warningController.Show("Warning", sname, idx, msg, delay);
+        }
+
+        public void ShowWarning(int idx)
+        {
+            var msg = GetRightMessage(idx, scenariosManager.condition.Context, scenariosManager.condition.Amount);
+            var wdelay = GetIncident(idx).WDelay;
+            ShowWarning(_name, idx, msg, wdelay);
         }
 
         public void HideWarning()
