@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using Unity.VisualScripting;
+using UnityEngine;
 using VRC2.Scenarios;
+using VRC2.ScenariosV2.Tool;
 
 namespace VRC2.ScenariosV2.Base
 {
+    [Serializable, Inspectable]
     public class Incident : MonoBehaviour
     {
         #region Attributes
@@ -50,7 +54,7 @@ namespace VRC2.ScenariosV2.Base
         private int _duration;
         private int _endtime;
 
-        [HideInInspector]public string callback;
+        [ReadOnly] public string callback;
 
         public int startTime
         {
