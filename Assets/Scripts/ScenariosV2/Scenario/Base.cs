@@ -57,6 +57,41 @@ namespace VRC2.ScenariosV2.Scenario
 
         #endregion
 
+        #region Vehicles
+
+        private Vehicle.Crane _crane;
+        private Vehicle.Drone _drone;
+
+        public Vehicle.Crane crane
+        {
+            get
+            {
+                if (_crane == null)
+                {
+                    _crane = FindObjectOfType<Vehicle.Crane>();
+                }
+
+                return _crane;
+            }
+        }
+
+        public Vehicle.Drone drone
+        {
+            get
+            {
+                if (_drone == null)
+                {
+                    _drone = FindObjectOfType<Vehicle.Drone>();
+                }
+
+                return _drone;
+            }
+        }
+
+
+
+        #endregion
+
         public void ParseYamlFile()
         {
             ParseYamlFile(DefaultYamlFile);
@@ -96,23 +131,24 @@ namespace VRC2.ScenariosV2.Scenario
         {
             var arr = refer.refer;
 
-            Incident res = null;
+            var cname = arr[0];
+            var idx = int.Parse(arr[2]);
+            var normal = IsNormal(refer);
 
-            switch (arr[0])
+            // crane
+            if (cname.Equals(crane.ClsName))
             {
-                case "Crane":
-                    var cr = FindObjectOfType<Vehicle.Crane>();
-                    res = cr.GetIncident(int.Parse(arr[2]), IsNormal(refer));
-                    break;
-                case "Drone":
-                    var dr = FindObjectOfType<Vehicle.Drone>();
-                    res = dr.GetIncident(int.Parse(arr[2]), IsNormal(refer));
-                    break;
-                default:
-                    break;
+                return crane.GetIncident(idx, normal);
             }
 
-            return res;
+            // drone
+            if (cname.Equals(drone.ClsName))
+            {
+                return drone.GetIncident(idx, normal);
+            }
+
+            // default
+            return null;
         }
 
         private void ParseIncidents()

@@ -28,7 +28,7 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #endregion
 
-        public string ClsName
+        public virtual string ClsName
         {
             get => GetType().Name;
         }
