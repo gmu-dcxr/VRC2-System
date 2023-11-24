@@ -1,0 +1,57 @@
+﻿name: "Drone"
+desc: "Drone related incidents"
+variables: ["T1", "T2", "T3", "T4"]
+gameObject: "Drone"
+incidents:
+  normals:
+    - id: 1
+      condition: "Normal"
+      time: "T1"
+      type: "Potential"
+      desc: "A supervising drone is approaching and hovering at h=16"
+      warning: "Warning: A supervising drone is approaching."
+    - id: 2
+      condition: "Normal"
+      time: "T1+30s"
+      desc: "The drone leaves."
+  accidents:
+    - id: 1
+      condition: "Accident"
+      time: "T1"
+      type: "Potential"
+      desc: "A supervising drone is approaching and hovering at h=16"
+      warning: "Warning: A supervising drone is approaching."
+    - id: 2
+      condition: "Accident"
+      time: "T1+30s"
+      desc: "The drone leaves."
+    - id: 3
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: "A supervising drone is approaching and hovering at h=9"
+      warning: "Warning: A supervising drone is approaching."
+    - id: 4
+      condition: "Accident"
+      time: "T2+30s"
+      desc: "The drone leaves."
+    - id: 5
+      condition: "Accident"
+      time: "T3"
+      type: "Potential"
+      desc: "A supervising drone is approaching and hovering at h=6"
+      warning: "Warning: A supervising drone is approaching."
+    - id: 6
+      condition: "Accident"
+      time: "T3+30s"
+      desc: "The drone leaves."
+    - id: 7
+      condition: "Accident"
+      time: "T4"
+      type: "Potential"
+      desc: "A supervising drone is approaching and hovering at h=6"
+      warning: "Warning: A supervising drone is approaching."
+    - id: 8
+      condition: "Accident"
+      time: "T4+30s"
+      desc: "The drone leaves."

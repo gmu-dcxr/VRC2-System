@@ -16,7 +16,7 @@ namespace VRC2.ScenariosV2.Vehicle
         private string name;
         private string desc;
         private List<string> variables;
-        private string @gameObject;
+        // private string @gameObject;
         private YamlParser.Incidents incidents;
 
         #endregion
@@ -73,7 +73,8 @@ namespace VRC2.ScenariosV2.Vehicle
                 for (var i = 0; i < count; i++)
                 {
                     var inci = v.incidents.normals[i];
-                    Incident incident = new Incident();
+                    // Incident incident = new Incident();
+                    Incident incident = gameObject.AddComponent<Incident>();
                     incident.ParseYamlIncident(inci);
                     // update callback
                     incident.callback = GetVehicleCallbackName(true, inci.id);

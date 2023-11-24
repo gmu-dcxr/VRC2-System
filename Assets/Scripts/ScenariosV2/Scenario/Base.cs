@@ -35,9 +35,25 @@ namespace VRC2.ScenariosV2.Scenario
         }
 
         public List<Incident> parsedIncidents;
-        public List<int> parsedIncidentsTime; // the time when to start the incident
+
+        // (time, incident index in `parsedIncidents`)
+        public Dictionary<int, int> timeIncidentIdxMap;
+        public HashSet<int> startedIncidents; // started incidents
 
         #endregion
+
+        #endregion
+
+        #region Incident Control
+
+        // the offset
+        private int startTimestamp { get; set; }
+
+        // start / end in second
+        [HideInInspector] public int startInSec;
+        [HideInInspector] public int endInSec;
+        [HideInInspector] public bool started = false;
+
 
         #endregion
 
@@ -79,20 +95,32 @@ namespace VRC2.ScenariosV2.Scenario
         private Incident GetIncident(YamlParser.Refer refer)
         {
             var arr = refer.refer;
-            if (arr[0] == "Crane")
+
+            Incident res = null;
+
+            switch (arr[0])
             {
-                var cr = FindObjectOfType<Vehicle.Crane>();
-                return cr.GetIncident(int.Parse(arr[2]), IsNormal(refer));
+                case "Crane":
+                    var cr = FindObjectOfType<Vehicle.Crane>();
+                    res = cr.GetIncident(int.Parse(arr[2]), IsNormal(refer));
+                    break;
+                case "Drone":
+                    var dr = FindObjectOfType<Vehicle.Drone>();
+                    res = dr.GetIncident(int.Parse(arr[2]), IsNormal(refer));
+                    break;
+                default:
+                    break;
             }
 
-            return null;
+            return res;
         }
 
         private void ParseIncidents()
         {
             if (_incidents == null) return;
             parsedIncidents = new List<Incident>();
-            parsedIncidentsTime = new List<int>();
+
+            timeIncidentIdxMap = new Dictionary<int, int>();
 
             var count = _incidents.Count;
             for (var i = 0; i < count; i++)
@@ -102,7 +130,9 @@ namespace VRC2.ScenariosV2.Scenario
                 var t = ParseTime(_incidents[i].time);
 
                 parsedIncidents.Add(inci);
-                parsedIncidentsTime.Add(t);
+
+                // add map
+                timeIncidentIdxMap.Add(t, i);
             }
         }
 
@@ -122,18 +152,50 @@ namespace VRC2.ScenariosV2.Scenario
             ParseYamlFile();
         }
 
-        public void StartScenario()
+        public void StartScenario(int ts)
         {
+            startTimestamp = ts;
             var c = parsedIncidents.Count;
             for (var i = 0; i < c; i++)
             {
                 print(parsedIncidents[i].callback);
-                print(parsedIncidentsTime[i]);
+            }
+
+            if (startedIncidents == null)
+            {
+                startedIncidents = new HashSet<int>();
+            }
+            else
+            {
+                startedIncidents.Clear();
             }
         }
 
         public void FixedUpdate()
         {
+            if (!started) return;
+
+            // current second
+            var sec = Helper.SecondNow() - startTimestamp;
+
+            // not time to start
+            if (sec < startInSec) return;
+
+            // exceed time 
+            if (endInSec > 0 && sec > endInSec) return;
+
+            if (timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
+            {
+                // idx
+                var idx = timeIncidentIdxMap[sec];
+                // get incident
+                var pi = parsedIncidents[idx];
+
+
+                print($"start incident: {pi.callback}");
+
+                startedIncidents.Add(sec);
+            }
 
         }
 
@@ -145,7 +207,8 @@ namespace VRC2.ScenariosV2.Scenario
         {
             if (GUI.Button(new Rect(10, 10, 150, 50), "Start"))
             {
-                StartScenario();
+                var t = Helper.SecondNow();
+                StartScenario(t);
             }
         }
 
