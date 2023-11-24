@@ -5,6 +5,11 @@ namespace VRC2.ScenariosV2.Vehicle
 {
     public class Crane : Base
     {
+        void Start()
+        {
+            base.Start();
+        }
+        
         #region Callbacks
 
         public void Crane_normals_1()

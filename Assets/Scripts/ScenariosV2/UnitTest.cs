@@ -20,8 +20,9 @@ namespace VRC2.ScenariosV2
             // var Vehicle = deser.Deserialize<YamlParser.Vehicle>(text);
             // print(Vehicle);
 
-            var b = new Vehicle.Base();
+            var b = gameObject.AddComponent<Vehicle.Crane>();
             b.ParseYamlFile(name);
+            print(b.GetIncident(1, true));
         }
     }
 }
