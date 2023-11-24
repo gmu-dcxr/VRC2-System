@@ -1,21 +1,26 @@
-﻿name: "Crane"
+﻿# name should be the same with the filename
+name: "Crane"
+# desc, this doesn't matter, just some illustration
 desc: "Crane related incidents"
+# variables that exist in the incidents
 variables: ["T1", "T2", "T3", "T4"]
+# corresponding gameobject name in 
 gameObject: "Crane" # gameobject name in Unity
+# all incidents, including normal incidents and accidents
 incidents:
-  normals:
-    - id: 1
-      condition: "Normal" # ConditionType: Normal or Accident
-      time: "T1"
-      type: "Potential" # AccidentType: Potential or NearlyHappen
-      desc: "A load is passing overhead."
-      warning: "Warning: A cargo is going to be passed overhead."
+  normals: # normal incidents
+    - id: 1 # id of the incidents, this id matters. Its callback is `VRC2.ScenariosV2.Vehicle.Crane.Crane_normals_1`. Notice: It must own a corresponding implementation in `BaselineSx` class. [Can NOT Be Null] 
+      condition: "Normal" # ConditionType: Normal or Accident [Can Be Null]
+      time: "T1" # time variable defined in the original slides [Can Be Null]
+      type: "Potential" # AccidentType: Potential or NearlyHappen [Can Be Null]
+      desc: "A load is passing overhead." # this desc is redundant as it's already defined in the BaselineSx.yml file. [Can Be Null]
+      warning: "Warning: A cargo is going to be passed overhead." # This same as above.  [Can Be Null]
     - id: 2
       condition: "Normal"
       time: "T1+60s"
       desc: "A hook (without a load) is passing overhead in the opposite direction."
-  accidents:
-    - id: 1
+  accidents: # normal incidents
+    - id: 1 #  Its callback is `Crane_accidents_1`.
       condition: "Accident"
       time: "T1"
       type: "Potential"
@@ -25,6 +30,23 @@ incidents:
       condition: "Accident"
       time: "T1+60s"
       desc: "A hook (without a load) is passing overhead in the opposite direction."
+    - id: 3
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: ""
+    - id: 4
+      condition: "Accident"
+      time: "T2+60s"
+      type: "NearlyHappen"
+    - id: 5
+      condition: "Accident"
+      time: "T3"
+    - id: 6
+      condition: "Accident"
+    - id: 7
+    - id: 8
+    - id: 9
     
     
     
