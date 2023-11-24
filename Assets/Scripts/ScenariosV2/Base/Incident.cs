@@ -67,8 +67,11 @@ namespace VRC2.ScenariosV2.Base
 
         #region Methods
 
-        private ConditionType ParseCondition(string condition)
+        private ConditionType ParseCondition(string condition, ConditionType t)
         {
+            // return the default value
+            if (condition == null) return t;
+            
             if (condition.Equals(Utils.GetDisplayName<ConditionType>(ConditionType.Accident)))
             {
                 return ConditionType.Accident;
@@ -90,13 +93,13 @@ namespace VRC2.ScenariosV2.Base
 
         }
 
-        public virtual void ParseYamlIncident(YamlParser.Incident incident)
+        public virtual void ParseYamlIncident(YamlParser.Incident incident, ConditionType t)
         {
             _incident = incident;
 
             _id = incident.id;
             // no name
-            _conditionType = ParseCondition(incident.condition);
+            _conditionType = ParseCondition(incident.condition, t);
             _accidentType = ParseAccidentType(incident.type);
         }
 

@@ -10,10 +10,10 @@ namespace VRC2.ScenariosV2.Base
         public class Incident
         {
             public int id { get; set; }
-            public string condition { get; set; }
-            public string time { get; set; }
+            [CanBeNull] public string condition { get; set; }
+            [CanBeNull] public string time { get; set; }
             [CanBeNull] public string type { get; set; }
-            public string desc { get; set; }
+            [CanBeNull] public string desc { get; set; }
             [CanBeNull] public string warning { get; set; }
         }
 
