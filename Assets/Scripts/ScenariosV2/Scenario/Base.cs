@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Base;
@@ -89,6 +90,13 @@ namespace VRC2.ScenariosV2.Scenario
         }
 
 
+
+        #endregion
+
+        #region Adaptation from the old implementation
+
+        // original scenario
+        public VRC2.Scenarios.Scenario oldScenario;
 
         #endregion
 
@@ -186,6 +194,9 @@ namespace VRC2.ScenariosV2.Scenario
         public void Start()
         {
             ParseYamlFile();
+
+            // this.ScenarioStart += OnScenarioStart;
+            // this.ScenarioFinish += OnScenarioFinish;
         }
 
         public void StartScenario(int ts)
@@ -222,7 +233,8 @@ namespace VRC2.ScenariosV2.Scenario
                 var idx = timeIncidentIdxMap[sec];
                 // get incident
                 var pi = parsedIncidents[idx];
-
+                
+                // TODO: add parameter to pass the old implementation to support before incident callback
                 // run
                 pi.RunIncident();
 
@@ -233,7 +245,233 @@ namespace VRC2.ScenariosV2.Scenario
 
         #endregion
 
+        // #region Adaptation from the old version
+        //
+        // // original scenario
+        // public VRC2.Scenarios.Scenario oldScenario;
+        //
+        // private int _taskStart
+        // {
+        //     get => oldScenario.taskStart;
+        // }
+        //
+        // private int _taskEnd
+        // {
+        //     get => oldScenario.taskEnd;
+        // }
+        //
+        // public System.Action ScenarioStart;
+        // public System.Action ScenarioFinish;
+        //
+        // // SAGAT survey UI
+        // private GameObject SAGATRoot;
+        //
+        // private SurveyController _surveyController;
+        //
+        // // warning controller
+        // private WarningController _warningController;
+        //
+        // public WarningController warningController
+        // {
+        //     get
+        //     {
+        //         if (_warningController == null)
+        //         {
+        //             _warningController = GameObject.FindFirstObjectByType<WarningController>();
+        //         }
+        //
+        //         return _warningController;
+        //     }
+        // }
+        //
+        // [HideInInspector]
+        // public SurveyController surveyController
+        // {
+        //     get
+        //     {
+        //         if (SAGATRoot == null)
+        //         {
+        //             SAGATRoot = GameObject.FindWithTag(GlobalConstants.SAGATTag);
+        //             _surveyController = SAGATRoot.GetComponent<SurveyController>();
+        //         }
+        //
+        //         return _surveyController;
+        //     }
+        // }
+        //
+        // private ScenariosManager _scenariosManager;
+        //
+        // [HideInInspector]
+        // public ScenariosManager scenariosManager
+        // {
+        //     get
+        //     {
+        //         if (_scenariosManager == null)
+        //         {
+        //             _scenariosManager = FindFirstObjectByType<ScenariosManager>();
+        //         }
+        //
+        //         return _scenariosManager;
+        //     }
+        // }
+        //
+        // [HideInInspector]
+        // public bool warningShowing
+        // {
+        //     get { return warningController.showing; }
+        // }
+        //
+        // #region Player
+        //
+        // private NetworkRunner _networkRunner;
+        // private GameObject _localPlayer;
+        // private GameObject _remotePlayer;
+        //
+        // [HideInInspector]
+        // public NetworkRunner networkRunner
+        // {
+        //     get
+        //     {
+        //         if (_networkRunner == null)
+        //         {
+        //             _networkRunner = GameObject.FindFirstObjectByType<NetworkRunner>();
+        //         }
+        //
+        //         return _networkRunner;
+        //     }
+        // }
+        //
+        // [HideInInspector]
+        // public GameObject localPlayer // HighFidelityFirstPerson
+        // {
+        //     get
+        //     {
+        //         if (_localPlayer == null)
+        //         {
+        //             var players = GameObject.FindObjectsOfType<OVRCustomSkeleton>(includeInactive: true);
+        //
+        //             if (networkRunner == null || !networkRunner.IsRunning)
+        //             {
+        //                 if (players != null)
+        //                 {
+        //                     _localPlayer = players[0].gameObject;
+        //                     Debug.LogWarning($"Find local player: {_localPlayer.name}");
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 // find the object having input authority
+        //                 foreach (var player in players)
+        //                 {
+        //                     var no = player.gameObject.GetComponent<NetworkObject>();
+        //                     if (no.HasInputAuthority)
+        //                     {
+        //                         _localPlayer = no.gameObject;
+        //
+        //                         Debug.LogWarning($"Find local player: {_localPlayer.name}");
+        //                     }
+        //                     else
+        //                     {
+        //                         _remotePlayer = no.gameObject;
+        //                         Debug.LogWarning($"Find remote player: {_localPlayer.name}");
+        //                     }
+        //                 }
+        //             }
+        //
+        //         }
+        //
+        //         return _localPlayer;
+        //     }
+        // }
+        //
+        // [HideInInspector]
+        // public GameObject remotePlayer // HighFidelityFirstPerson without 
+        // {
+        //     get
+        //     {
+        //         // get local player first, and the remote player will be set
+        //         var lp = localPlayer;
+        //         return _remotePlayer;
+        //     }
+        // }
+        //
+        //
+        //
+        // #endregion
+        //
+        // public virtual void OnScenarioStart()
+        // {
+        //     UpdateInstruction();
+        // }
+        //
+        //
+        //
+        // public virtual void OnScenarioFinish()
+        // {
+        //
+        // }
+        //
+        // public virtual void UpdateInstruction()
+        // {
+        //     if (_taskStart > 0 && _taskEnd > 0)
+        //     {
+        //         scenariosManager.UpdateInstruction(_taskStart, _taskEnd);
+        //     }
+        // }
+        //
+        // public virtual void OnIncidentFinish(int obj)
+        // {
+        //     // hide warning
+        //     HideWarning();
+        //
+        //     // var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
+        //     // print($"{_name} #{obj} {name}");
+        //     // Invoke(name, 0);
+        // }
+        //
+        // public virtual void OnIncidentStart(int obj, float? delay)
+        // {
+        //     // show warning
+        //     
+        //     // TODO: start
+        //     var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
+        //     ShowWarning(_name, obj, msg, delay);
+        //     //// TODO: end
+        //     
+        //     // var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
+        //     // print($"{_name} #{obj} {name}");
+        //     // Invoke(name, 0);
+        // }
+        //
+        // public void ShowSAGAT()
+        // {
+        //     surveyController.Show();
+        // }
+        //
+        // public void HideSAGAT()
+        // {
+        //     surveyController.Hide();
+        // }
+        //
+        // public void ShowWarning(string sname, int idx, string msg, float? delay)
+        // {
+        //     if (msg == "") return;
+        //
+        //     print($"Show warning: {msg}");
+        //     warningController.Show("Warning", sname, idx, msg, delay);
+        // }
+        //
+        // public void HideWarning()
+        // {
+        //     print("Hide warning");
+        //     warningController.Hide(true);
+        // }
+        //
+        //
+        // #endregion
+
         #region Debug
+
 
         private void OnGUI()
         {

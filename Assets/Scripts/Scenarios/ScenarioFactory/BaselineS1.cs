@@ -5,6 +5,7 @@ using UnityEngine.Serialization;
 using VRC2.Animations;
 using VRC2.Pipe;
 using UnityTimer;
+using VRC2.ScenariosV2.Adaptor;
 using Random = UnityEngine.Random;
 
 namespace VRC2.Scenarios.ScenarioFactory
@@ -27,7 +28,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         LoopDone,
     }
 
-    public class BaselineS1 : Scenario
+    public class BaselineS1 : ScenarioAdaptor
     {
         private Transform _pipeParent;
 
