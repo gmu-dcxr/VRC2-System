@@ -1,4 +1,5 @@
 ﻿using System;
+using ExitGames.Client.Photon.StructWrapping;
 using Unity.VisualScripting;
 using UnityEngine;
 using VRC2.Scenarios;
@@ -54,6 +55,7 @@ namespace VRC2.ScenariosV2.Base
         private int _duration;
         private int _endtime;
 
+        [HideInInspector] public Vehicle.Base vehicle;
         [ReadOnly] public string callback;
 
         public int startTime
@@ -98,14 +100,18 @@ namespace VRC2.ScenariosV2.Base
             _accidentType = ParseAccidentType(incident.type);
         }
 
-        public virtual void InitializeIncident()
+
+        public void RunIncident()
         {
-
-        }
-
-        public virtual void RunIncident()
-        {
-
+            var @namespace = "VRC2.ScenariosV2.Vehicle";
+            var myClassType = Type.GetType($"{@namespace}.{vehicle.ClsName}");
+            var method = myClassType.GetMethod(callback);
+            // callback
+            if (method != null)
+            {
+                // invoke
+                method.Invoke(vehicle, null);
+            }
         }
 
         #endregion
