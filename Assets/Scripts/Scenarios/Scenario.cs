@@ -512,6 +512,7 @@ namespace VRC2.Scenarios
             _rawTime = $"{scenario.start}{Helper.timeSep}{scenario.end}";
             // parse time in incidents
             Helper.ParseTime(_rawTime, ref startInSec, ref endInSec);
+
             // add incidents
             foreach (var icd in scenario.incidents)
             {
