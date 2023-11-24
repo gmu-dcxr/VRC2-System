@@ -73,7 +73,7 @@ namespace VRC2.ScenariosV2.Vehicle
                 for (var i = 0; i < count; i++)
                 {
                     var inci = v.incidents.normals[i];
-                    // Incident incident = new Incident();
+                    // Incident incident = new Incident(); --- this won't work
                     Incident incident = gameObject.AddComponent<Incident>();
                     incident.ParseYamlIncident(inci);
                     // update callback
@@ -91,7 +91,7 @@ namespace VRC2.ScenariosV2.Vehicle
                 for (var i = 0; i < count; i++)
                 {
                     var inci = v.incidents.accidents[i];
-                    Incident incident = new Incident();
+                    Incident incident = gameObject.AddComponent<Incident>();
                     incident.ParseYamlIncident(inci);
                     // update callback
                     incident.callback = GetVehicleCallbackName(false, inci.id);

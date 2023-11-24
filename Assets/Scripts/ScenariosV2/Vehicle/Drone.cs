@@ -2,11 +2,6 @@
 {
     public class Drone : Base
     {
-        void Start()
-        {
-            base.Start();
-        }
-        
         #region Callbacks
 
         public void Drone_normals_1()
