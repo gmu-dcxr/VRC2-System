@@ -76,8 +76,11 @@ namespace VRC2.ScenariosV2.Vehicle
                     // Incident incident = new Incident(); --- this won't work
                     Incident incident = gameObject.AddComponent<Incident>();
                     incident.ParseYamlIncident(inci);
+                    // TODO: refactor
                     // update callback
                     incident.callback = GetVehicleCallbackName(true, inci.id);
+                    // update vehicle
+                    incident.vehicle = this;
                     
                     this.normals.Add(incident);
                 }
@@ -93,8 +96,11 @@ namespace VRC2.ScenariosV2.Vehicle
                     var inci = v.incidents.accidents[i];
                     Incident incident = gameObject.AddComponent<Incident>();
                     incident.ParseYamlIncident(inci);
+                    
                     // update callback
                     incident.callback = GetVehicleCallbackName(false, inci.id);
+                    // update vehicle
+                    incident.vehicle = this;
                     
                     this.accidents.Add(incident);
                 }

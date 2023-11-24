@@ -194,7 +194,7 @@ namespace VRC2.ScenariosV2.Scenario
             var c = parsedIncidents.Count;
             for (var i = 0; i < c; i++)
             {
-                print(parsedIncidents[i].callback);
+                parsedIncidents[i].RunIncident();
             }
 
             if (startedIncidents == null)

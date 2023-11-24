@@ -6,7 +6,7 @@
 
         public void Drone_normals_1()
         {
-
+            print("Invoked Drone_normals_1");
         }
 
         public void Drone_normals_2()
