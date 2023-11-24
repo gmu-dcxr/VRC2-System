@@ -32,6 +32,17 @@ namespace VRC2.Scenarios
         private string _shortName;
         private int _taskStart;
         private int _taskEnd;
+        
+        [HideInInspector] public int taskStart
+        {
+            get => _taskStart;
+        }
+
+        [HideInInspector]
+        public int taskEnd
+        {
+            get => _taskEnd;
+        }
 
         private List<YamlHelper.WarningVariant> _context;
         private List<YamlHelper.WarningVariant> _amount;
@@ -114,7 +125,7 @@ namespace VRC2.Scenarios
             set => _name = value;
         }
 
-        private bool ready = false;
+        [HideInInspector] public bool ready = false;
 
         [HideInInspector] public YamlHelper.Scenario scenario;
 
