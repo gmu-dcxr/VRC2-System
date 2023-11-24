@@ -15,7 +15,9 @@ namespace VRC2.ScenariosV2.Vehicle
 
         private string name;
         private string desc;
+
         private List<string> variables;
+
         // private string @gameObject;
         private YamlParser.Incidents incidents;
 
@@ -23,8 +25,35 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #region Parsed Attributes
 
-        private List<Incident> normals;
-        private List<Incident> accidents;
+        private List<Incident> _normals;
+        private List<Incident> _accidents;
+
+        // because of the execution order, sometime it will be called before it's done
+        private List<Incident> normals
+        {
+            get
+            {
+                if (!parsed)
+                {
+                    ParseYamlFile();
+                }
+
+                return this._normals;
+            }
+        }
+
+        private List<Incident> accidents
+        {
+            get
+            {
+                if (!parsed)
+                {
+                    ParseYamlFile();
+                }
+
+                return this._accidents;
+            }
+        }
 
         #endregion
 
@@ -38,11 +67,14 @@ namespace VRC2.ScenariosV2.Vehicle
             get => $"{ClsName}.yml";
         }
 
+        private bool parsed = false;
+
         #region Methods
 
         public virtual void ParseYamlFile()
         {
             ParseYamlFile(DefaultYamlFile);
+            parsed = true;
         }
 
         public virtual void ParseYamlFile(string name)
@@ -68,7 +100,7 @@ namespace VRC2.ScenariosV2.Vehicle
             // parse normals
             if (v.incidents.normals != null)
             {
-                this.normals = new List<Incident>();
+                this._normals = new List<Incident>();
                 var count = v.incidents.normals.Count;
                 for (var i = 0; i < count; i++)
                 {
@@ -81,28 +113,28 @@ namespace VRC2.ScenariosV2.Vehicle
                     incident.callback = GetVehicleCallbackName(true, inci.id);
                     // update vehicle
                     incident.vehicle = this;
-                    
-                    this.normals.Add(incident);
+
+                    this._normals.Add(incident);
                 }
             }
 
             // parse accidents
             if (v.incidents.accidents != null)
             {
-                this.accidents = new List<Incident>();
+                this._accidents = new List<Incident>();
                 var count = v.incidents.accidents.Count;
                 for (var i = 0; i < count; i++)
                 {
                     var inci = v.incidents.accidents[i];
                     Incident incident = gameObject.AddComponent<Incident>();
                     incident.ParseYamlIncident(inci);
-                    
+
                     // update callback
                     incident.callback = GetVehicleCallbackName(false, inci.id);
                     // update vehicle
                     incident.vehicle = this;
-                    
-                    this.accidents.Add(incident);
+
+                    this._accidents.Add(incident);
                 }
             }
         }
