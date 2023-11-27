@@ -20,13 +20,19 @@ namespace VRC2.ScenariosV2.Scenario
         private string _desc;
         private string _normal;
         private string _accident;
+        private string startTimeRaw;
+        private string endTimeRaw;
+
+        private int taskStart;
+        private int taskEnd;
+
         private List<YamlParser.Refer> _incidents;
 
         #endregion
 
         #region Parse Incidents
 
-        [HideInInspector]public int _id = 0;
+        [HideInInspector] public int _id = 0;
 
         public int ID
         {
@@ -43,7 +49,7 @@ namespace VRC2.ScenariosV2.Scenario
             get => $"{ClsName}.yml";
         }
 
-        [ReadOnly]public List<Incident> parsedIncidents;
+        [ReadOnly] public List<Incident> parsedIncidents;
 
         // (time, incident index in `parsedIncidents`)
         public Dictionary<int, int> timeIncidentIdxMap;
@@ -63,6 +69,12 @@ namespace VRC2.ScenariosV2.Scenario
         [HideInInspector] public int endInSec;
         [HideInInspector] public bool started = false;
 
+        private bool scenarioStarted = false;
+        private bool scenarioFinished = false;
+
+        // scenario start/finish events
+        public System.Action ScenarioStart;
+        public System.Action ScenarioFinish;
 
         #endregion
 
@@ -130,7 +142,16 @@ namespace VRC2.ScenariosV2.Scenario
             _desc = s.desc;
             _normal = s.normal;
             _accident = s.accident;
+            startTimeRaw = s.start;
+            endTimeRaw = s.end;
+            taskStart = s.taskStart;
+            taskEnd = s.taskEnd;
             _incidents = s.incidents;
+
+            // parse time
+            var rawTime = $"{startTimeRaw}{Helper.timeSep}{endTimeRaw}";
+            // parse time in incidents
+            Helper.ParseTime(rawTime, ref startInSec, ref endInSec);
         }
 
         public bool IsNormal(YamlParser.Refer r)
@@ -198,8 +219,8 @@ namespace VRC2.ScenariosV2.Scenario
         {
             ParseYamlFile();
 
-            // this.ScenarioStart += OnScenarioStart;
-            // this.ScenarioFinish += OnScenarioFinish;
+            this.ScenarioStart += OnScenarioStart;
+            this.ScenarioFinish += OnScenarioFinish;
         }
 
         public void StartScenario(int ts)
@@ -215,6 +236,7 @@ namespace VRC2.ScenariosV2.Scenario
 
             startTimestamp = ts;
             started = true;
+            print($"Set Scenario {name} to start @ {startTimestamp}");
         }
 
         public void Execute(int timestamp)
@@ -237,10 +259,44 @@ namespace VRC2.ScenariosV2.Scenario
             var sec = Helper.SecondNow() - startTimestamp;
 
             // not time to start
-            if (sec < startInSec) return;
+            if (sec < startInSec)
+            {
+                return;
+            }
+            else
+            {
+                if (!scenarioStarted)
+                {
+                    // scenario started
+                    print($"Scenario {_name} Start @ {sec}");
+
+                    if (ScenarioStart != null)
+                    {
+                        ScenarioStart();
+                    }
+
+                    scenarioStarted = true;
+                }
+            }
 
             // exceed time 
-            if (endInSec > 0 && sec > endInSec) return;
+            if (endInSec > 0 && sec > endInSec)
+            {
+                if (!scenarioFinished)
+                {
+                    // scenario ended
+                    print($"Scenario {_name} Finish @ {sec}");
+
+                    if (ScenarioFinish != null)
+                    {
+                        ScenarioFinish();
+                    }
+
+                    scenarioFinished = true;
+                }
+
+                return;
+            }
 
             if (timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
             {
@@ -500,8 +556,7 @@ namespace VRC2.ScenariosV2.Scenario
 
         private void OnGUI()
         {
-
-            if (GUI.Button(new Rect(200, 10, 150, 50), "Start"))
+            if (GUI.Button(new Rect(200, 10, 150, 50), $"Start {name}"))
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
@@ -570,6 +625,30 @@ namespace VRC2.ScenariosV2.Scenario
                 StartIncident(10);
             }
         }
+
+        #endregion
+
+        public virtual void OnScenarioStart()
+        {
+            print($"Invoke {name} OnScenarioStart");
+            UpdateInstruction();
+        }
+
+        public virtual void OnScenarioFinish()
+        {
+            print($"Invoke {name} OnScenarioFinish");
+        }
+
+        #region Task Instruction
+
+        public virtual void UpdateInstruction()
+        {
+            if (taskStart > 0 && taskEnd > 0)
+            {
+                scenariosManager.UpdateInstruction(taskStart, taskEnd);
+            }
+        }
+
 
         #endregion
     }
