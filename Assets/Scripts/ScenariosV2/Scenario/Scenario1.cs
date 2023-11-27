@@ -6,6 +6,8 @@ namespace VRC2.ScenariosV2.Scenario
     {
         private void Start()
         {
+            _id = 1;
+            
             var filename = "Scenario1.yml";
             ParseYamlFile(filename);
         }
