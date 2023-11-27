@@ -55,7 +55,7 @@ namespace VRC2.Scenarios
                 if (no.HasStateAuthority)
                 {
                     // host, show GUI
-                    if (GUI.Button(new Rect(500, 10, 150, 50), "Start"))
+                    if (GUI.Button(new Rect(500, 10, 150, 50), "Start Manager"))
                     {
                         RPC_SendMessage();
                     }
@@ -63,7 +63,7 @@ namespace VRC2.Scenarios
             }
             else // local mode
             {
-                if (GUI.Button(new Rect(500, 10, 150, 50), "Start"))
+                if (GUI.Button(new Rect(500, 10, 150, 50), "Start Manager"))
                 {
                     StartScenarios();
                 }
