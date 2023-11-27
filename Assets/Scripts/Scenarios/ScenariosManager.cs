@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using VRC2.Conditions;
+using ScenarioBase = VRC2.ScenariosV2.Scenario.Base;
 
 namespace VRC2.Scenarios
 {
@@ -14,7 +15,7 @@ namespace VRC2.Scenarios
 
         public ConditionNumber conditionNumber;
 
-        public List<Scenario> scenarios = null;
+        public List<ScenarioBase> scenarios = null;
 
         public System.Action OnStart;
         public System.Action OnFinish;
@@ -100,11 +101,9 @@ namespace VRC2.Scenarios
             for (int i = 1; i < count; i++)
             {
                 var s = scenarios[i];
-                if (i > 0)
-                {
-                    var s0 = scenarios[i - 1];
-                    s.OverrideStartEnd(s.startInSec + s0.endInSec, s.endInSec + s0.endInSec);
-                }
+
+                var s0 = scenarios[i - 1];
+                s.OverrideStartEnd(s.startInSec + s0.endInSec, s.endInSec + s0.endInSec);
             }
 
             startTimestamp = Helper.SecondNow();
@@ -150,19 +149,19 @@ namespace VRC2.Scenarios
 
         void TestScenarioManager()
         {
-            scenarios = new List<Scenario>();
+            scenarios = new List<ScenarioBase>();
 
-            var s1 = gameObject.AddComponent<Scenario>();
+            var s1 = gameObject.AddComponent<ScenarioBase>();
             s1.startInSec = 0;
             s1.endInSec = 10;
             s1.name = "S1";
 
-            var s2 = gameObject.AddComponent<Scenario>();
+            var s2 = gameObject.AddComponent<ScenarioBase>();
             s2.startInSec = 0;
             s2.endInSec = 5;
             s2.name = "S2";
 
-            var s3 = gameObject.AddComponent<Scenario>();
+            var s3 = gameObject.AddComponent<ScenarioBase>();
             s3.startInSec = 0;
             s3.endInSec = 15;
             s3.name = "S3";

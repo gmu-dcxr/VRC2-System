@@ -26,6 +26,13 @@ namespace VRC2.ScenariosV2.Scenario
 
         #region Parse Incidents
 
+        [HideInInspector]public int _id = 0;
+
+        public int ID
+        {
+            get => _id;
+        }
+
         public string ClsName
         {
             get => GetType().Name;
@@ -208,6 +215,18 @@ namespace VRC2.ScenariosV2.Scenario
 
             startTimestamp = ts;
             started = true;
+        }
+
+        public void Execute(int timestamp)
+        {
+            StartScenario(timestamp);
+        }
+
+        public void OverrideStartEnd(int start, int end)
+        {
+            startInSec = start;
+            endInSec = end;
+            print($"OverrideStartEnd for {name}: {startInSec} - {endInSec}");
         }
 
         public void FixedUpdate()
