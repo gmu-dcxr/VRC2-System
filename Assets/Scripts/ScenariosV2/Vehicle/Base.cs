@@ -73,6 +73,9 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public virtual void ParseYamlFile()
         {
+            // ensure it's parsed once.
+            if(parsed) return;
+            
             ParseYamlFile(DefaultYamlFile);
             parsed = true;
         }
@@ -275,7 +278,7 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #endregion
 
-        public virtual void Start()
+        public void Start()
         {
             ParseYamlFile();
             CheckIncidentsImplementation();
