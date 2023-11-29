@@ -29,6 +29,13 @@ namespace VRC2
 
         [Header("SurveyView")] public SurveyWebView webView;
 
+
+        [HideInInspector]
+        public bool showing
+        {
+            get => webView.enabled;
+        } 
+
         // Start is called before the first frame update
         void Start()
         {

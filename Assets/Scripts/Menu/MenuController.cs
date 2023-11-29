@@ -427,7 +427,7 @@ namespace VRC2.Menu
         #endregion
 
 
-        #region SubMenus Actions
+        #region SubMenus Actions -- Deprecated
 
         public void OnSupervisor()
         {
