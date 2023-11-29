@@ -383,10 +383,10 @@ namespace VRC2.Menu
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckLevel);
                         break;
                     case MenuItem.Supervisor:
-                        puew.WhenRelease.AddListener(OnSupervisor);
+                        puew.WhenRelease.AddListener(_menuHandler.OnSupervisor);
                         break;
                     case MenuItem.SafetyManager:
-                        puew.WhenRelease.AddListener(OnSafetyManager);
+                        puew.WhenRelease.AddListener(_menuHandler.OnSafetyManager);
                         break;
                     case MenuItem.ReportDog:
                         puew.WhenRelease.AddListener(_menuHandler.OnReportDog);

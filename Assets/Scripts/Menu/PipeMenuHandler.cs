@@ -25,6 +25,27 @@ namespace VRC2
 
         private DirectMessage directMessage;
 
+        #region Survey Controller
+
+        private SurveyController _surveyController;
+
+        public SurveyController surveyController
+        {
+            get
+            {
+                if (_surveyController == null)
+                {
+                    _surveyController = FindObjectOfType<SurveyController>();
+                }
+
+                return _surveyController;
+            }
+        }
+
+        
+
+        #endregion
+
         internal void ShowModalDialog(bool flag)
         {
             dialogManager.Show(flag);
@@ -192,6 +213,20 @@ namespace VRC2
             // dialogManager.UpdateDialog("Check Level", $"Level value:{value}\nIs it correct?", "Yes", "No",
             //     PipeInstallEvent.P2CheckLevel);
             // ShowModalDialog(true);
+        }
+        
+        public void OnSupervisor()
+        {
+            print("OnSupervisor");
+            var url = "https://forms.gle/LP2MbGbGJbUkPzUM6";
+            surveyController.Show(url);
+        }
+
+        public void OnSafetyManager()
+        {
+            print("OnSafetyManager");
+            var url = "https://forms.gle/dTB4gziy3geW8VZo8";
+            surveyController.Show(url);
         }
 
         // public void OnSupervisor()

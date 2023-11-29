@@ -3,35 +3,38 @@ using System.Collections.Generic;
 using SimpleWebBrowser;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC2.WebView;
 
 namespace VRC2
 {
     public class SurveyController : MonoBehaviour
     {
-        [Header("Root canvas")] public GameObject rootCanvas;
+        // [Header("Root canvas")] public GameObject rootCanvas;
+        //
+        // // [Header("UIHelper")] public GameObject UIHelper;
+        //
+        //
+        // [Header("Confirm/Clear")] public Button confirmButton;
+        //
+        // public Button clearButton;
+        //
+        // [Header("Text")] public InputField inputField;
+        //
+        // [Header("Browser")] public WebBrowser2D browser2D;
+        //
+        // private Canvas _canvas
+        // {
+        //     get => rootCanvas.GetComponent<Canvas>();
+        // }
 
-        // [Header("UIHelper")] public GameObject UIHelper;
-
-
-        [Header("Confirm/Clear")] public Button confirmButton;
-
-        public Button clearButton;
-
-        [Header("Text")] public InputField inputField;
-
-        [Header("Browser")] public WebBrowser2D browser2D;
-
-        private Canvas _canvas
-        {
-            get => rootCanvas.GetComponent<Canvas>();
-        }
+        [Header("SurveyView")] public SurveyWebView webView;
 
         // Start is called before the first frame update
         void Start()
         {
-            confirmButton.onClick.AddListener(OnConfirmed);
-            clearButton.onClick.AddListener(OnCleared);
-            Hide();
+            // confirmButton.onClick.AddListener(OnConfirmed);
+            // clearButton.onClick.AddListener(OnCleared);
+            // Hide();
         }
 
         // Update is called once per frame
@@ -40,27 +43,33 @@ namespace VRC2
 
         }
 
-        public void Show()
+        private void Show()
         {
-            _canvas.enabled = true;
+            webView.SetVisibility(true);
             GlobalConstants.SetLaserPointer(true);
         }
 
         public void Hide()
         {
-            _canvas.enabled = false;
+            webView.SetVisibility(false);
             GlobalConstants.SetLaserPointer(false);
         }
 
-        void OnConfirmed()
+        public void Show(string url)
         {
-            var text = inputField.text;
-            browser2D.InputText(text);
+            webView.LoadUrl(url);
+            Show();
         }
 
-        void OnCleared()
-        {
-            browser2D.ClearSelection();
-        }
+        // void OnConfirmed()
+        // {
+        //     var text = inputField.text;
+        //     browser2D.InputText(text);
+        // }
+        //
+        // void OnCleared()
+        // {
+        //     browser2D.ClearSelection();
+        // }
     }
 }
