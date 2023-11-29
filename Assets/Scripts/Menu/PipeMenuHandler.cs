@@ -42,7 +42,7 @@ namespace VRC2
             }
         }
 
-        
+
 
         #endregion
 
@@ -214,7 +214,7 @@ namespace VRC2
             //     PipeInstallEvent.P2CheckLevel);
             // ShowModalDialog(true);
         }
-        
+
         public void OnSupervisor()
         {
             print("OnSupervisor");
