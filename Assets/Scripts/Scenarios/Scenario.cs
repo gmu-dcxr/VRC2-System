@@ -583,7 +583,7 @@ namespace VRC2.Scenarios
 
         public void ShowSAGAT()
         {
-            surveyController.Show();
+            surveyController.Show("");
         }
 
         public void HideSAGAT()
