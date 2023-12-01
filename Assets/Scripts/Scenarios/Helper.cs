@@ -14,6 +14,11 @@ namespace VRC2.Scenarios
             return Path.Combine(root, $"./Conf/{name}");
         }
 
+        public static string GetSurveyFile(string root, string name)
+        {
+            return Path.Combine(root, $"./SAGAT/{name}");
+        }
+
         public static int SecondNow()
         {
             return (int)DateTimeOffset.UtcNow.Subtract(startPoint).TotalSeconds;
