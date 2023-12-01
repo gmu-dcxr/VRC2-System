@@ -5612,8 +5612,9 @@ GameObject:
   m_Component:
   - component: {fileID: 511902674}
   - component: {fileID: 511902672}
-  - component: {fileID: 511902671}
   - component: {fileID: 511902673}
+  - component: {fileID: 511902675}
+  - component: {fileID: 511902671}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -5630,13 +5631,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 511902670}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65b99afb3758e9e4689c28a18224eb8f, type: 3}
+  m_Script: {fileID: 11500000, guid: 660ae0c150a985445b8378bddf2d8a8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RandomRoom: 1
-  autoConnect: 1
-  publishUserId: 1
-  RoomName: 
+  micDropdown: {fileID: 1070714476}
+  micLevelSlider: {fileID: 1619484170}
+  recorder: {fileID: 511902672}
+  refreshButton: {fileID: 1751707069}
+  startRecordingButton: {fileID: 1814636447}
+  stopRecordingButton: {fileID: 1893421278}
+  saver: {fileID: 511902675}
 --- !u!114 &511902672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5663,7 +5667,7 @@ MonoBehaviour:
   frameDuration: 60000
   bitrate: 30000
   sourceType: 0
-  microphoneType: 1
+  microphoneType: 0
   audioClip: {fileID: 8300000, guid: 52ffbccca1224d143a6bbbca626ae566, type: 3}
   loopAudioClip: 1
   recordingEnabled: 1
@@ -5733,6 +5737,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &511902675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511902670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c391c9da0fb1ed418fb565017876f13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519870998
 GameObject:
   m_ObjectHideFlags: 0
@@ -16968,7 +16984,6 @@ GameObject:
   - component: {fileID: 1508609594}
   - component: {fileID: 1508609597}
   - component: {fileID: 1508609596}
-  - component: {fileID: 1508609598}
   m_Layer: 5
   m_Name: Mic Layout Panel
   m_TagString: Untagged
@@ -17033,22 +17048,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1508609593}
   m_CullTransparentMesh: 0
---- !u!114 &1508609598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508609593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 660ae0c150a985445b8378bddf2d8a8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  micDropdown: {fileID: 1070714476}
-  micLevelSlider: {fileID: 1619484170}
-  recorder: {fileID: 511902672}
-  refreshButton: {fileID: 1751707069}
 --- !u!1 &1509394186
 GameObject:
   m_ObjectHideFlags: 0

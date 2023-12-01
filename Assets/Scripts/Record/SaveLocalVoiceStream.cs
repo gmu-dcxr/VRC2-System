@@ -17,11 +17,13 @@ namespace VRC2.Record
     public class VideoLogWriter
     {
         private static string folder = "VoiceRecordings";
+
         public static string GetFilename()
         {
-            string filename = string.Format("{0}.log",System.DateTime.Now.ToString("yyyy-MM-dd"));   
+            string filename = string.Format("{0}.log", System.DateTime.Now.ToString("yyyy-MM-dd"));
             return Path.Combine(Path.GetDirectoryName(Application.dataPath), VideoLogWriter.folder, filename);
         }
+
         public static void Write(string text)
         {
             using (StreamWriter writer = File.AppendText(GetFilename()))
@@ -31,7 +33,7 @@ namespace VRC2.Record
             }
         }
     }
-    
+
 
     [RequireComponent(typeof(Recorder))]
     [DisallowMultipleComponent]
@@ -43,6 +45,9 @@ namespace VRC2.Record
 
         private LocalVoice _localVoice;
         private VoiceInfo voiceInfo;
+
+        private OutgoingStreamSaverShort osSaverShort;
+        private OutgoingStreamSaverFloat osSaverFloat;
 
         private string outputFolder = "VoiceRecordings";
 
@@ -83,22 +88,35 @@ namespace VRC2.Record
 
                 this.Logger.LogInfo("Outgoing 32 bit stream {0}, output file path: {1}", voiceInfo, filePath);
                 LocalVoiceAudioFloat localVoiceAudioFloat = _localVoice as LocalVoiceAudioFloat;
-                localVoiceAudioFloat.AddPostProcessor(new OutgoingStreamSaverFloat(this.wavWriter));
+                this.osSaverFloat = new OutgoingStreamSaverFloat(this.wavWriter);
+                localVoiceAudioFloat.AddPostProcessor(this.osSaverFloat);
             }
             else if (_audioFormat == AudioFormat.Short)
             {
                 this.wavWriter = new WaveWriter(filePath, voiceInfo.SamplingRate, 16, voiceInfo.Channels);
                 this.Logger.LogInfo("Outgoing 16 bit stream {0}, output file path: {1}", voiceInfo, filePath);
                 LocalVoiceAudioShort localVoiceAudioShort = _localVoice as LocalVoiceAudioShort;
-                localVoiceAudioShort.AddPostProcessor(new OutgoingStreamSaverShort(this.wavWriter));
+                this.osSaverShort = new OutgoingStreamSaverShort(this.wavWriter);
+                localVoiceAudioShort.AddPostProcessor(this.osSaverShort);
             }
         }
 
         public void StopRecording()
         {
             print("StopRecording");
-            this.wavWriter.Dispose();
-            this.wavWriter = null;
+            if (this.osSaverFloat != null)
+            {
+                LocalVoiceAudioFloat localVoiceAudioFloat = _localVoice as LocalVoiceAudioFloat;
+                localVoiceAudioFloat.RemoveProcessor(this.osSaverFloat);
+                this.osSaverFloat.Dispose();
+            }
+
+            if (this.osSaverShort != null)
+            {
+                LocalVoiceAudioShort localVoiceAudioShort = _localVoice as LocalVoiceAudioShort;
+                localVoiceAudioShort.RemoveProcessor(this.osSaverShort);
+                this.osSaverShort.Dispose();
+            }
         }
 
 
@@ -129,6 +147,8 @@ namespace VRC2.Record
 
             public float[] Process(float[] buf)
             {
+                if (this.wavWriter == null) return null;
+
                 this.wavWriter.WriteSamples(buf, 0, buf.Length);
                 return buf;
             }
@@ -136,6 +156,7 @@ namespace VRC2.Record
             public void Dispose()
             {
                 this.wavWriter.Dispose();
+                this.wavWriter = null;
             }
         }
 
@@ -150,6 +171,8 @@ namespace VRC2.Record
 
             public short[] Process(short[] buf)
             {
+                if (this.wavWriter == null) return null;
+
                 for (int i = 0; i < buf.Length; i++)
                 {
                     this.wavWriter.Write(buf[i]);
@@ -161,6 +184,7 @@ namespace VRC2.Record
             public void Dispose()
             {
                 this.wavWriter.Dispose();
+                this.wavWriter = null;
             }
         }
     }
