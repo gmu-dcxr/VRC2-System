@@ -47,6 +47,12 @@ namespace VRC2.Record
         [SerializeField] [FormerlySerializedAs("RefreshButton")]
         private GameObject refreshButton;
 
+        [Space(30)] [Header("Recording Control")] [SerializeField]
+        private GameObject startRecordingButton;
+
+        [SerializeField] private GameObject stopRecordingButton;
+        [SerializeField] private SaveLocalVoiceStream saver;
+
         private Image fillArea;
         private Color defaultFillColor = Color.white;
         private Color speakingFillColor = Color.green;
@@ -55,15 +61,17 @@ namespace VRC2.Record
 #pragma warning restore 649
 
         private IDeviceEnumerator unityMicEnum;
-        private IDeviceEnumerator photonMicEnum;
+        // private IDeviceEnumerator photonMicEnum;
 
         protected override void Awake()
         {
             base.Awake();
             unityMicEnum = new AudioInEnumerator(this.Logger);
-            photonMicEnum = Platform.CreateAudioInEnumerator(this.Logger);
+            // photonMicEnum = Platform.CreateAudioInEnumerator(this.Logger);
             this.RefreshMicrophones();
             this.refreshButton.GetComponentInChildren<Button>().onClick.AddListener(RefreshMicrophones);
+            this.startRecordingButton.GetComponentInChildren<Button>().onClick.AddListener(StartRecording);
+            this.stopRecordingButton.GetComponentInChildren<Button>().onClick.AddListener(StopRecording);
 
             this.fillArea = this.micLevelSlider.fillRect.GetComponent<Image>();
 
@@ -75,9 +83,10 @@ namespace VRC2.Record
             if (this.recorder != null)
             {
                 this.micLevelSlider.value = this.recorder.LevelMeter.CurrentPeakAmp;
-                this.fillArea.color = this.recorder.IsCurrentlyTransmitting
-                    ? this.speakingFillColor
-                    : this.defaultFillColor;
+                this.fillArea.color = this.speakingFillColor;
+                // this.fillArea.color = this.recorder.IsCurrentlyTransmitting
+                //     ? this.speakingFillColor
+                //     : this.defaultFillColor;
             }
         }
 
@@ -181,7 +190,7 @@ namespace VRC2.Record
         public void RefreshMicrophones()
         {
             this.unityMicEnum.Refresh();
-            this.photonMicEnum.Refresh();
+            // this.photonMicEnum.Refresh();
             this.SetupMicDropdown();
             this.SetCurrentValue();
         }
@@ -191,5 +200,19 @@ namespace VRC2.Record
         {
             this.RefreshMicrophones();
         }
+
+        #region Recording control
+
+        public void StartRecording()
+        {
+            saver.StartRecording("Question");
+        }
+
+        public void StopRecording()
+        {
+            saver.StopRecording();
+        }
+        
+        #endregion
     }
 }
