@@ -1,5 +1,6 @@
 ﻿// refer: Photon.Voice.Unity.Demos.DemoVoiceUI.MicrophoneSelector
 
+using System;
 using System.Collections.Generic;
 using Photon.Voice;
 using Photon.Voice.Unity;
@@ -7,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using VRC2.SAGAT;
 using UtilityScripts = Photon.Voice.Unity.UtilityScripts;
 
 namespace VRC2.Record
@@ -53,6 +55,19 @@ namespace VRC2.Record
         [SerializeField] private GameObject stopRecordingButton;
         [SerializeField] private SaveLocalVoiceStream saver;
 
+        [Space(30)] [Header("Question Control")] [SerializeField]
+        private SAGATSurvey survey;
+
+        [SerializeField] private GameObject prevQuestionButton;
+
+        [SerializeField] private GameObject nextQuestionButton;
+
+        [Space(30)] [Header("Question")] [SerializeField]
+        private Text title;
+
+        [SerializeField] private Text question;
+
+
         private Image fillArea;
         private Color defaultFillColor = Color.white;
         private Color speakingFillColor = Color.green;
@@ -72,6 +87,9 @@ namespace VRC2.Record
             this.refreshButton.GetComponentInChildren<Button>().onClick.AddListener(RefreshMicrophones);
             this.startRecordingButton.GetComponentInChildren<Button>().onClick.AddListener(StartRecording);
             this.stopRecordingButton.GetComponentInChildren<Button>().onClick.AddListener(StopRecording);
+
+            this.prevQuestionButton.GetComponentInChildren<Button>().onClick.AddListener(PrevQuestion);
+            this.nextQuestionButton.GetComponentInChildren<Button>().onClick.AddListener(NextQuestion);
 
             this.fillArea = this.micLevelSlider.fillRect.GetComponent<Image>();
 
@@ -212,7 +230,50 @@ namespace VRC2.Record
         {
             saver.StopRecording();
         }
-        
+
+        #endregion
+
+        #region Question control
+
+        private void Start()
+        {
+            var filename = "Environment.yml";
+            survey.LoadFile(filename);
+            // fill the 1st question
+            InitQuestion();
+        }
+
+        public void InitQuestion()
+        {
+            var q = survey.First();
+            if (q.IsNone())
+            {
+                UpdateQuestion("Label", "Question");
+            }
+            else
+            {
+                UpdateQuestion(q.label, q.question);
+            }
+        }
+
+        public void PrevQuestion()
+        {
+            var q = survey.PrevQuestion();
+            UpdateQuestion(q.label, q.question);
+        }
+
+        public void NextQuestion()
+        {
+            var q = survey.NextQuestion();
+            UpdateQuestion(q.label, q.question);
+        }
+
+        private void UpdateQuestion(string t, string q)
+        {
+            title.text = t;
+            question.text = q;
+        }
+
         #endregion
     }
 }

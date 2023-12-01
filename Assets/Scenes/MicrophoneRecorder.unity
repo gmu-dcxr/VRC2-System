@@ -5479,6 +5479,7 @@ GameObject:
   - component: {fileID: 511902673}
   - component: {fileID: 511902675}
   - component: {fileID: 511902671}
+  - component: {fileID: 511902676}
   m_Layer: 0
   m_Name: Scripts
   m_TagString: Untagged
@@ -5505,6 +5506,11 @@ MonoBehaviour:
   startRecordingButton: {fileID: 1814636447}
   stopRecordingButton: {fileID: 1893421278}
   saver: {fileID: 511902675}
+  survey: {fileID: 511902676}
+  prevQuestionButton: {fileID: 2044383273}
+  nextQuestionButton: {fileID: 946712842}
+  title: {fileID: 114433101188068166}
+  question: {fileID: 587944871}
 --- !u!114 &511902672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5613,6 +5619,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c391c9da0fb1ed418fb565017876f13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &511902676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 511902670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 093ec2cef65a6cd4f918976064df1c19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filename: 
 --- !u!1 &519870998
 GameObject:
   m_ObjectHideFlags: 0
