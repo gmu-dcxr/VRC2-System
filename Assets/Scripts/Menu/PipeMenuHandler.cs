@@ -217,16 +217,26 @@ namespace VRC2
 
         public void OnSupervisor()
         {
+            // print("OnSupervisor");
+            // var url = "https://forms.gle/LP2MbGbGJbUkPzUM6";
+            // surveyController.Show(url);
+            
+            // Record the audio instead
             print("OnSupervisor");
-            var url = "https://forms.gle/LP2MbGbGJbUkPzUM6";
-            surveyController.Show(url);
+            saveLocalVoiceStream.StartRecording("Supervisor");
+            saveRemoteVoiceStream.StartRecording("Supervisor", true);
         }
 
         public void OnSafetyManager()
         {
+            // print("OnSafetyManager");
+            // var url = "https://forms.gle/dTB4gziy3geW8VZo8";
+            // surveyController.Show(url);
+            
+            // Record the audio instead
             print("OnSafetyManager");
-            var url = "https://forms.gle/dTB4gziy3geW8VZo8";
-            surveyController.Show(url);
+            saveLocalVoiceStream.StartRecording("SafetyManager");
+            saveRemoteVoiceStream.StartRecording("SafetyManager", true);
         }
 
         // public void OnSupervisor()
