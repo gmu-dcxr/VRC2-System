@@ -3,6 +3,8 @@ using System.IO;
 using Photon.Voice;
 using Photon.Voice.Unity;
 using Photon.Voice.Unity.UtilityScripts;
+using VRC2.Record;
+using VRC2.Record.Wave;
 
 namespace VRC2.Record
 {
@@ -34,6 +36,49 @@ namespace VRC2.Record
         }
     }
 
+    public class QuestionSeparator
+    {
+        private string path = "Assets/Resources/Audio/Ding-dong.wav";
+        private Wave.Metadata _metadata;
+
+        private byte[] data;
+
+        private string filename;
+
+        private const int HEADER_SIZE = 44; // Size of the .wav file header in bytes
+
+        public QuestionSeparator()
+        {
+            filename = Path.Combine(Path.GetDirectoryName(Application.dataPath), path);
+            data = File.ReadAllBytes(filename);
+        }
+
+        public void GetMetaData()
+        {
+            _metadata = Wave.Reader.GetMetadata(filename);
+            Debug.Log(_metadata.GetAllMetadataAsString());
+        }
+
+        public byte[] GetData()
+        {
+            return data;
+        }
+
+        public int GetOffset()
+        {
+            return HEADER_SIZE;
+        }
+
+        public int GetLength()
+        {
+            // 547692
+            // var tail = 1e5;
+            // return data.Length - HEADER_SIZE;
+            // remove some tail noise
+            return 400000;
+        }
+    }
+
 
     [RequireComponent(typeof(Recorder))]
     [DisallowMultipleComponent]
@@ -51,6 +96,8 @@ namespace VRC2.Record
 
         private string outputFolder = "VoiceRecordings";
 
+        private QuestionSeparator _questionSeparator;
+
         private void PhotonVoiceCreated(PhotonVoiceCreatedParams photonVoiceCreatedParams)
         {
             Debug.Log($"PhotonVoiceCreated");
@@ -58,11 +105,13 @@ namespace VRC2.Record
             voiceInfo = photonVoiceCreatedParams.Voice.Info;
             if (photonVoiceCreatedParams.Voice is LocalVoiceAudioFloat)
             {
+                print("Format LocalVoiceAudioFloat");
                 _audioFormat = AudioFormat.Float;
 
             }
             else if (photonVoiceCreatedParams.Voice is LocalVoiceAudioShort)
             {
+                print("Format LocalVoiceAudioShort");
                 _audioFormat = AudioFormat.Short;
             }
 
@@ -71,8 +120,14 @@ namespace VRC2.Record
 
         public void StartRecording(string type)
         {
+            if (_questionSeparator == null)
+            {
+                _questionSeparator = new QuestionSeparator();
+            }
+
             var filePath = GetFilePath();
-            print($"StartRecording [Local] [{type}]: {filePath}");
+            print(
+                $"StartRecording [Local] [{type}]: {filePath} SampleRate: {voiceInfo.SamplingRate} Channels: {voiceInfo.Channels}");
             // write log
             VideoLogWriter.Write($"{type}, {filePath}");
             // close previous one
@@ -86,6 +141,8 @@ namespace VRC2.Record
             {
                 this.wavWriter = new WaveWriter(filePath, voiceInfo.SamplingRate, 32, voiceInfo.Channels);
 
+                // this.wavWriter.Write(_questionSeparator.GetbData(), 44, _questionSeparator.GetbData().Length - 44);
+
                 this.Logger.LogInfo("Outgoing 32 bit stream {0}, output file path: {1}", voiceInfo, filePath);
                 LocalVoiceAudioFloat localVoiceAudioFloat = _localVoice as LocalVoiceAudioFloat;
                 this.osSaverFloat = new OutgoingStreamSaverFloat(this.wavWriter);
@@ -98,6 +155,20 @@ namespace VRC2.Record
                 LocalVoiceAudioShort localVoiceAudioShort = _localVoice as LocalVoiceAudioShort;
                 this.osSaverShort = new OutgoingStreamSaverShort(this.wavWriter);
                 localVoiceAudioShort.AddPostProcessor(this.osSaverShort);
+            }
+        }
+
+        public void InsertSeparator()
+        {
+            if (_audioFormat == AudioFormat.Float)
+            {
+                if (this.wavWriter != null)
+                {
+                    this.wavWriter.Write(_questionSeparator.GetData(),
+                        _questionSeparator.GetOffset(),
+                        _questionSeparator.GetLength());
+                    print("Separator inserted");
+                }
             }
         }
 

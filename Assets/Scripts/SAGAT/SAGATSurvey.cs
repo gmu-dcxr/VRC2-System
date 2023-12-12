@@ -73,6 +73,11 @@ namespace VRC2.SAGAT
             this.index = 0;
         }
 
+        public bool IsLast()
+        {
+            return this.index == sagat.Count() - 1;
+        }
+
         #endregion
     }
 }

@@ -264,6 +264,12 @@ namespace VRC2.Record
 
         public void NextQuestion()
         {
+            if (!survey.IsLast())
+            {
+                // insert separator
+                saver.InsertSeparator();
+            }
+
             var q = survey.NextQuestion();
             UpdateQuestion(q.label, q.question);
         }
