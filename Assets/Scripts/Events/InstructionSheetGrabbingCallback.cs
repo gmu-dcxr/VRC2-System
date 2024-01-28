@@ -28,7 +28,7 @@ namespace VRC2.Events
             _wrapper.WhenSelect.AddListener(OnSelect);
             _wrapper.WhenRelease.AddListener(OnRelease);
 
-            dialog.SetActive(false);
+            // dialog.SetActive(false);
         }
 
         void OnSelect()

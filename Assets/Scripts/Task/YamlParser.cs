@@ -11,13 +11,60 @@ namespace VRC2.Task
         {
             public int id { get; set; }
             public int segment { get; set; }
-            public string color { get; set; }
-            public string type { get; set; }
-            public int size { get; set; }
-            public float length { get; set; }
+            [CanBeNull] public string color { get; set; }
+            [CanBeNull] public string type { get; set; }
+            [CanBeNull] public int? size { get; set; }
+            [CanBeNull] public float? length { get; set; }
+
+            public Info()
+            {
+                // construct as null for not id and segment
+                id = 0;
+                segment = 0;
+                color = null;
+                type = null;
+                size = null;
+                length = null;
+            }
+
+            public string FormatSpec()
+            {
+                var s = "";
+                if (color != null)
+                {
+                    s += $"{color}, ";
+                }
+
+                if (type != null)
+                {
+                    s += $"{type}, ";
+                }
+
+                if (size != null)
+                {
+                    s += $"Ø{size}”, ";
+                }
+
+                if (length != null)
+                {
+                    s += $"L={length}’, ";
+                }
+
+                // remove last ,
+                s = s.Substring(0, s.Length - 2);
+
+                return s;
+            }
         }
 
         #endregion
+
+        [System.Serializable]
+        public class TableRow
+        {
+            public int segment;
+            public string spec;
+        }
 
         #region Task
 
