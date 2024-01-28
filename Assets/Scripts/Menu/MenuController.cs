@@ -227,7 +227,8 @@ namespace VRC2.Menu
     {
         [Header("Menu")] [SerializeField] private GameObject _menuRoot;
 
-        [Header("Settings")] [SerializeField] private bool leaveUnusedBlank;
+        [Space(30)] [Header("Settings")] [SerializeField]
+        private bool leaveUnusedBlank;
 
         private MenuInitializer _menuInitializer = null;
 
@@ -236,6 +237,9 @@ namespace VRC2.Menu
         private bool _menuInitialized = false;
 
         private List<MenuItem> _initializedMenuItems = null;
+
+        [Space(30)] [Header("Runtime Menus")] public UIMenuInitializer safetyManagerMenu;
+        public UIMenuInitializer supervisorMenu;
 
         // Start is called before the first frame update
         void Start()
@@ -261,7 +265,53 @@ namespace VRC2.Menu
             }
         }
 
-        # region Initialize Menu
+        #region Initialize Menu
+
+        #region Safety Manager Menu
+
+        void InitializeMenuText(List<string> items, bool blank_remaining)
+        {
+            var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
+            var count = 0;
+
+            foreach (var go in allTextGameObject)
+            {
+                var tmp = go.GetComponent<TextMeshPro>();
+                if (count >= items.Count)
+                {
+                    if (blank_remaining)
+                    {
+                        tmp.text = "";
+                        // disable it
+                        try
+                        {
+                            // some TextMeshPros are not menu.
+                            go.transform.parent.parent.gameObject.SetActive(false);
+                        }
+                        catch (Exception e)
+                        {
+                            ;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    var s = items[count];
+                    go.transform.parent.parent.gameObject.SetActive(true);
+                    tmp.text = s;
+                }
+
+                count += 1;
+            }
+        }
+
+
+
+        #endregion
 
         void InitializeMenuText(List<MenuItem> items, bool blank_remaining)
         {
@@ -383,10 +433,10 @@ namespace VRC2.Menu
                         puew.WhenRelease.AddListener(_menuHandler.OnCheckLevel);
                         break;
                     case MenuItem.Supervisor:
-                        puew.WhenRelease.AddListener(_menuHandler.OnSupervisor);
+                        puew.WhenRelease.AddListener(OnSupervisor);
                         break;
                     case MenuItem.SafetyManager:
-                        puew.WhenRelease.AddListener(_menuHandler.OnSafetyManager);
+                        puew.WhenRelease.AddListener(OnSafetyManager);
                         break;
                     case MenuItem.ReportDog:
                         puew.WhenRelease.AddListener(_menuHandler.OnReportDog);
@@ -432,15 +482,65 @@ namespace VRC2.Menu
         public void OnSupervisor()
         {
             print("OnSupervisor");
-            InitializeMenuText(_menuInitializer.SupervisorMenu, leaveUnusedBlank);
-            InitializeMenuAction();
+            var items = supervisorMenu.GetSubMenuNames();
+            InitializeMenuText(items, leaveUnusedBlank);
+            InitializeUIMenuInitializerAction(supervisorMenu, items.Count);
         }
 
         public void OnSafetyManager()
         {
             print("OnSafetyManager");
-            InitializeMenuText(_menuInitializer.SafetyManagerMenu, leaveUnusedBlank);
-            InitializeMenuAction();
+            var items = safetyManagerMenu.GetSubMenuNames();
+            InitializeMenuText(items, leaveUnusedBlank);
+            InitializeUIMenuInitializerAction(safetyManagerMenu, items.Count);
+        }
+
+        public void InitializeUIMenuInitializerAction(UIMenuInitializer menu, int count)
+        {
+            var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
+            var c = 0;
+            foreach (var go in allTextGameObject)
+            {
+                if (c >= count) break;
+
+                var text = go.GetComponent<TextMeshPro>();
+                // in hierarchy, TMP - parent (ButtonVisual) - parent (Visuals) - parent (Menu x)
+
+                var btn = go.transform.parent.parent.parent.gameObject;
+
+                var puew = btn.GetComponent<PointableUnityEventWrapper>();
+                // remove all listeners first
+                puew.WhenRelease.RemoveAllListeners();
+                puew.WhenRelease.AddListener(() => OnUIMenuReleased(menu, text.text));
+
+                c += 1;
+            }
+        }
+
+        public void OnUIMenuReleased(UIMenuInitializer menu, string text)
+        {
+            print($"OnUIMenuReleased: {text}");
+
+            if (text.Equals(menu.BackString))
+            {
+                menu.OnBack();
+                OnBack();
+                return;
+            }
+
+            menu.EnstackMenu(text);
+            var cur = menu.GetCurrentMenu();
+            if (menu.IsLeaf(cur))
+            {
+                print($"Leaf menu: {cur.desc}");
+                // TODO: write to log
+            }
+            else
+            {
+                var items = safetyManagerMenu.GetSubMenuNames(cur);
+                InitializeMenuText(items, leaveUnusedBlank);
+                InitializeUIMenuInitializerAction(menu, items.Count);
+            }
         }
 
         void OnBack()
