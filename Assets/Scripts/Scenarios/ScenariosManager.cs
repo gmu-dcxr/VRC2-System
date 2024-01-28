@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using VRC2.Utility;
 using VRC2.Conditions;
 using ScenarioBase = VRC2.ScenariosV2.Scenario.Base;
+using VRC2.Pipe;
 
 namespace VRC2.Scenarios
 {
@@ -198,7 +200,8 @@ namespace VRC2.Scenarios
 
             if (isTraining)
             {
-                (texture, folder, filename) = GlobalConstants.loadTrainingInstruction();
+                // (texture, folder, filename) = GlobalConstants.loadTrainingInstruction();
+                (texture, folder, filename) = GlobalConstants.LoadTrainingWall();
             }
             else
             {
@@ -246,6 +249,18 @@ namespace VRC2.Scenarios
                 {
                     boxes.transform.GetChild(i).gameObject.SetActive(false);
                 }
+            }
+        }
+
+        #endregion
+
+        #region Debug
+
+        private void Update()
+        {
+            if (Input.GetKeyUp(KeyCode.T))
+            {
+                UpdateInstruction(0, 0);
             }
         }
 

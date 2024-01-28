@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-
+using VRC2.Utility;
 using YamlDotNet;
 using YamlDotNet.Serialization;
 
