@@ -64,13 +64,7 @@ namespace VRC2.Menu
         public void ParseYamlFile(string name)
         {
             var path = Helper.GetConfigureFile(Application.dataPath, name);
-            print(path);
-
-            var text = System.IO.File.ReadAllText(path);
-            print(text);
-
-            var deser = new DeserializerBuilder().Build();
-            menuFile = deser.Deserialize<YamlParser.MenuFile>(text);
+            menuFile = Helper.ParseYamlFile<YamlParser.MenuFile>(path);
             rootMenu = menuFile.menu;
         }
 

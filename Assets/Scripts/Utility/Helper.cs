@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using UnityEngine;
 using VRC2;
 using VRC2.Scenarios;
+using YamlDotNet.Serialization;
 
 namespace VRC2.Utility
 {
@@ -14,6 +16,16 @@ namespace VRC2.Utility
         {
             // var dir = Directory.CreateDirectory(Path.Combine(root, "../Conf")).FullName;
             return Path.Combine(root, $"./Conf/{name}");
+        }
+
+        public static T ParseYamlFile<T>(string path)
+        {
+            Debug.Log($"ParseYamlFile: {path}");
+            var text = System.IO.File.ReadAllText(path);
+            Debug.Log(text);
+            var deser = new DeserializerBuilder().Build();
+            var result = deser.Deserialize<T>(text);
+            return result;
         }
 
         public static string GetSurveyFile(string root, string name)
