@@ -2,6 +2,7 @@
 using ExitGames.Client.Photon.StructWrapping;
 using Unity.VisualScripting;
 using UnityEngine;
+using VRC2.Utility;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Tool;
 

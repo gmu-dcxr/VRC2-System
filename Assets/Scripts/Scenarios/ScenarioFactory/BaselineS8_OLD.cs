@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using VRC2.Utility;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 
