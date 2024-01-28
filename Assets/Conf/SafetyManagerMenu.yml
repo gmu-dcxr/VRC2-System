@@ -1,0 +1,130 @@
+﻿name: "SafetyManagerMenu"
+desc: "Safety Manager Menu in the hierarchy mode"
+menu:
+  id: 0
+  level: 0
+  text: "Safety Manager"
+  desc: "level 0 menu, safety manager button itself"
+  menu:
+    - id: 1
+      level: 1
+      text: "Crane"
+      desc: "crane submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Cargo overhead"
+          desc: "Cargo is overhead"
+        - id: 2
+          level: 2
+          text: "Unpacked pipe"
+          desc: "Unpacked pipe found"
+        - id: 3
+          level: 2
+          text: "Pipe drops"
+          desc: "Pipe drops found"
+    - id: 2
+      level: 1
+      text: "Truck"
+      desc: "truck submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "Truck is too close"
+        - id: 2
+          level: 2
+          text: "Too fast"
+          desc: "Truck is too fast"
+    - id: 3
+      level: 1
+      text: "Excavator"
+      desc: "excavator submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "Excavator is too close"
+    - id: 4
+      level: 1
+      text: "Forklift"
+      desc: "forklift submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "Forklift is too close"
+        - id: 2
+          level: 2
+          text: "Too fast"
+          desc: "Forklift is too fast"
+    - id: 5
+      level: 1
+      text: "Crane Truck"
+      desc: "crane truck submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "Forklift is too close"
+        - id: 2
+          level: 2
+          text: "Too fast"
+          desc: "Forklift is too fast"
+        - id: 3
+          level: 2
+          text: "Might overturns"
+          desc: "Crane truck might overturns"
+    - id: 6
+      level: 1
+      text: "Cable"
+      desc: "cable submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "In the water"
+          desc: "Cable is in the water"
+        - id: 2
+          level: 2
+          text: "Too messy"
+          desc: "Cable is too messy"
+    - id: 7
+      level: 1
+      text: "Supervisory Drone"
+      desc: "supervisory drone submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "Supervisory drone is too close"
+        - id: 2
+          level: 2
+          text: "Too fast"
+          desc: "Supervisory drone is too fast"
+    - id: 8
+      level: 1
+      text: "Robotdog"
+      desc: "robotdog submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "Robotdog drone is too close"
+        - id: 2
+          level: 2
+          text: "Too fast"
+          desc: "Robotdog drone is too fast"
+    - id: 9
+      level: 1
+      text: "AI Drone"
+      desc: "AI drone submenu"
+      menu:
+        - id: 1
+          level: 2
+          text: "Too close"
+          desc: "AI drone is too close"
+        - id: 2
+          level: 2
+          text: "Too fast"
+          desc: "AI drone is too fast"
+      
