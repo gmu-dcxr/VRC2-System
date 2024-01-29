@@ -1,16 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using VRC2.ScenariosV2.Tool;
 
-namespace VRC2
+namespace VRC2.Pipe
 {
     public class QuadImageManager : MonoBehaviour
     {
         [Header("Image")] [Tooltip("Folder name under the Assets/Resource folder")]
-        public string folder;
+        [ReadOnly]public string folder;
 
         [Tooltip("No filetype extension, e.g., using `image` not `image.png`")]
-        public string filename;
+        [ReadOnly]public string filename;
 
         private Texture2D _texture;
 

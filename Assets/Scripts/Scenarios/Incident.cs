@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Timers;
 using UnityEngine;
+using VRC2.Utility;
 
 
 namespace VRC2.Scenarios

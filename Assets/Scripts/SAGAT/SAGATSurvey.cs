@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using VRC2.Utility;
 using VRC2.Scenarios;
 using YamlDotNet.Serialization;
 
