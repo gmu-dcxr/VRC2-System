@@ -6,6 +6,7 @@ using UnityEngine;
 using VRC2.Conditions;
 using VRC2.Scenarios;
 using UnityTimer;
+using VRC2.Utility;
 using VRC2;
 using VRC2.Pipe;
 

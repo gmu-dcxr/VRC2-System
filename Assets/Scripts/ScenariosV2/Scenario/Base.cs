@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using VRC2.Utility;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Base;
 using VRC2.ScenariosV2.Tool;

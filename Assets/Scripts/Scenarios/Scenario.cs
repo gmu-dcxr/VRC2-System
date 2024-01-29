@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Fusion;
 using Unity.VisualScripting;
+using VRC2.Utility;
 using VRC2.Conditions;
 using YamlDotNet.Serialization;
 

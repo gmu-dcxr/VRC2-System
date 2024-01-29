@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 
 using Fusion;
+using UnityEngine.WSA;
 using VRC2.Pipe;
 
 namespace VRC2
@@ -309,6 +310,7 @@ namespace VRC2
 
         // private static string instructionImagesResource = "Assets/Resources/Task/";
         public static string instructionImagesResource = "Task";
+        public static string wallImagesResource = "Wall";
 
         public static string instructionTag = "Instruction";
 
@@ -334,6 +336,38 @@ namespace VRC2
             var filename = "Training";
             return (loadTaskInstruction(filename), instructionImagesResource, filename);
         }
+
+        public static Texture2D LoadTexture(string folder, string filename)
+        {
+            var name = $"{folder}/{filename}";
+            Debug.Log(name);
+            Texture2D texture = Resources.Load<Texture2D>(name);
+            texture.alphaIsTransparency = true;
+            return texture;
+        }
+
+        public static (Texture2D, string, string) LoadTrainingWall()
+        {
+            var filename = GetWallImageName(0, true);
+            return (LoadTexture(wallImagesResource, filename), wallImagesResource, filename);
+        }
+
+        public static string GetWallImageName(int task, bool training)
+        {
+            var s = "wall layout_";
+            if (training)
+            {
+                s += "training";
+            }
+            else
+            {
+                s += $"task{task}";
+            }
+
+            // s += ".png";
+            return s;
+        }
+        
 
         #endregion
 

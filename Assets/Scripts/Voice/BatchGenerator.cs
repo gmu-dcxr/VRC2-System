@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using AiKodexDeepVoice;
 using UnityEngine;
+using VRC2.Utility;
 using VRC2.Scenarios;
 using YamlDotNet.Serialization;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VRC2.Utility;
 using VRC2.Scenarios;
 using YamlDotNet.Serialization;
 using MenuFile = VRC2.Menu.YamlParser.MenuFile;
@@ -12,7 +13,9 @@ namespace VRC2.Menu
     {
         #region Input file
 
-        [Header("Filename")] public string filename;
+        [Header("Filename")] 
+        [Tooltip("The full name under Conf/, e.g., Menu/a.yml")]
+        public string filename;
 
         #endregion
 
@@ -61,13 +64,7 @@ namespace VRC2.Menu
         public void ParseYamlFile(string name)
         {
             var path = Helper.GetConfigureFile(Application.dataPath, name);
-            print(path);
-
-            var text = System.IO.File.ReadAllText(path);
-            print(text);
-
-            var deser = new DeserializerBuilder().Build();
-            menuFile = deser.Deserialize<YamlParser.MenuFile>(text);
+            menuFile = Helper.ParseYamlFile<YamlParser.MenuFile>(path);
             rootMenu = menuFile.menu;
         }
 

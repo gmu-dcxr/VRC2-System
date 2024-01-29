@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using Helper = VRC2.Scenarios.Helper;
+using VRC2.Utility;
 using VRC2.ScenariosV2.Base;
 using YamlDotNet.Serialization;
 
