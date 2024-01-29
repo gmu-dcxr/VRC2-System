@@ -46,7 +46,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_1_Start()
         {
-
+            print("Starting BaselineS3 1");
         }
 
         public void On_BaselineS3_1_Finish()
