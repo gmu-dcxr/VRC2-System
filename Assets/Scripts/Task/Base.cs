@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityUITable;
 using VRC2.Utility;
 using TaskData = VRC2.Task.YamlParser.Task;
@@ -19,6 +20,10 @@ namespace VRC2.Task
 
 
         [Header("Table")] public Table table;
+
+        public Text constructionRule;
+
+        private string srcText;
 
         // data to show in the table
         [HideInInspector] public List<TableRow> rows;
@@ -41,11 +46,24 @@ namespace VRC2.Task
 
         private void Start()
         {
+            // enable it 
+            // table.updateCellContentAtRuntime = true;
+            // table.updateCellStyleAtRuntime = true;
+
+            srcText = constructionRule.text;
+
+
             ParseYmlFile();
 
-            FormatInfoData(false);
-            UpdateTable();
+            UpdateTableRule(false);
+            // InitializeTable();
         }
+
+        // void InitializeTable()
+        // {
+        //     FormatInfoData(false);
+        //     UpdateTable();
+        // }
 
         public void UpdateTable()
         {
@@ -54,22 +72,24 @@ namespace VRC2.Task
             table.targetCollection.componentName = GetType().Name; // class name, e.g., Training
             table.targetCollection.memberName = "rows"; // this is to save the data
 
-            // add columns, corresponding to `TableRow` class
-            var c1 = new TableColumnInfo();
-            c1.columnTitle = "Segment";
-            c1.fieldName = "segment";
-            c1.autoWidth = true;
+            // BUG: It's better to set up columns in Inspector window
 
-            var c2 = new TableColumnInfo();
-            c2.columnTitle = "Spec";
-            c2.fieldName = "spec";
-            c2.autoWidth = true;
-
-            // clear all first
-            table.columns.Clear();
-
-            table.columns.Add(c1);
-            table.columns.Add(c2);
+            // // add columns, corresponding to `TableRow` class
+            // var c1 = new TableColumnInfo();
+            // c1.columnTitle = "Segment";
+            // c1.fieldName = "segment";
+            // c1.autoWidth = true;
+            //
+            // var c2 = new TableColumnInfo();
+            // c2.columnTitle = "Spec";
+            // c2.fieldName = "spec";
+            // c2.autoWidth = true;
+            //
+            // // clear all first
+            // table.columns.Clear();
+            //
+            // table.columns.Add(c1);
+            // table.columns.Add(c2);
 
             // initialize it
             table.Initialize();
@@ -114,6 +134,26 @@ namespace VRC2.Task
             }
         }
 
+        public bool P1HasLength()
+        {
+            return task.P1.Contains("length");
+        }
+
+        public bool P2HasLength()
+        {
+            return !P1HasLength();
+        }
+
+        public bool P1HasRule()
+        {
+            return P1HasLength();
+        }
+
+        public bool P2HasRule()
+        {
+            return !P1HasRule();
+        }
+
         public (List<string>, List<InfoData>) GetP1Info()
         {
             var keys = task.P1;
@@ -135,6 +175,7 @@ namespace VRC2.Task
             return GlobalConstants.LoadTexture(folder, filename);
         }
 
+        // shown to who has the length information
         public string GetConstructRule()
         {
             var rule = task.rule;
@@ -178,19 +219,64 @@ namespace VRC2.Task
             return result;
         }
 
+        public void UpdateRule(bool flag)
+        {
+            if (flag)
+            {
+                var text = srcText;
+                text += GetConstructRule();
+                constructionRule.text = text;
+            }
+            else
+            {
+                // set to empty
+                constructionRule.text = "";
+            }
+        }
+
+        public void UpdateTableRule(bool p1)
+        {
+            var rule = false;
+            if (p1)
+            {
+                rule = P1HasRule();
+            }
+            else
+            {
+                rule = P2HasRule();
+            }
+
+            FormatInfoData(p1);
+            // update table
+            table.Initialize();
+            // update rule
+            UpdateRule(rule);
+        }
+
         #region Debug
 
         private void OnGUI()
         {
             if (GUI.Button(new Rect(500, 100, 100, 50), "Table"))
             {
-                UpdateTable();
+                table.Initialize();
             }
 
             if (GUI.Button(new Rect(500, 150, 100, 50), "Refresh"))
             {
-                // it will automatically update the table when changing data source
                 rows.RemoveAt(rows.Count - 1);
+                table.Initialize();
+            }
+
+            if (GUI.Button(new Rect(600, 100, 100, 50), "P1"))
+            {
+                // only refresh data, not columns
+                UpdateTableRule(true);
+            }
+
+            if (GUI.Button(new Rect(600, 150, 100, 50), "P2"))
+            {
+                UpdateTableRule(false);
             }
         }
 

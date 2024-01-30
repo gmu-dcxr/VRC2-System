@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -153,7 +154,16 @@ namespace UnityUITable
 						return;
 					}
 					SerializedProperty element = reorderableList.serializedProperty.GetArrayElementAtIndex(index);
-					EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
+					
+					// fix: bypass 'Oculus.Interaction.Deprecated.BoxProximityField' is missing the class attribute 'ExtensionOfNativeClass'!
+					try
+					{
+						EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), element, GUIContent.none);
+					}
+					catch (Exception e)
+					{
+						// Debug.LogError(e);
+					}
 				};
 			reorderableList.elementHeightCallback = (index) => (!columns.isExpanded) ? 0.0001f : EditorGUI.GetPropertyHeight(reorderableList.serializedProperty.GetArrayElementAtIndex(index));
 			reorderableList.onAddCallback = (list) =>
