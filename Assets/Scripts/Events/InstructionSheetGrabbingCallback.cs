@@ -8,8 +8,8 @@ namespace VRC2.Events
     public class InstructionSheetGrabbingCallback : MonoBehaviour
     {
         public GameObject dialog;
-        public TextMeshProUGUI titleUI;
-        public TextMeshProUGUI contentUI;
+        // public TextMeshProUGUI titleUI;
+        // public TextMeshProUGUI contentUI;
         public float distance;
 
         public string title = "Instruction";
@@ -37,8 +37,8 @@ namespace VRC2.Events
 
             dialog.SetActive(true);
 
-            titleUI.text = title;
-            contentUI.text = content;
+            // titleUI.text = title;
+            // contentUI.text = content;
         }
 
         void OnRelease()
