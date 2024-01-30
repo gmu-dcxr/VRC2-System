@@ -23,6 +23,13 @@ namespace VRC2.Task
 
         public Text constructionRule;
 
+        [Space(30)] [Header("Layout")] public ImageAsTexture imageAsTexture;
+
+        public string folder;
+
+        public string sheetRule;
+        public string sheetPipe;
+
         private string srcText;
 
         // data to show in the table
@@ -234,6 +241,19 @@ namespace VRC2.Task
             }
         }
 
+        public void UpdateSheet(bool rule)
+        {
+            if (rule)
+            {
+                // set sheet_rule picture
+                imageAsTexture.UpdateFolderFilename(folder, sheetRule);
+            }
+            else
+            {
+                imageAsTexture.UpdateFolderFilename(folder, sheetPipe);
+            }
+        }
+
         public void UpdateTableRule(bool p1)
         {
             var rule = false;
@@ -251,6 +271,8 @@ namespace VRC2.Task
             table.Initialize();
             // update rule
             UpdateRule(rule);
+            // update sheet
+            UpdateSheet(rule);
         }
 
         #region Debug

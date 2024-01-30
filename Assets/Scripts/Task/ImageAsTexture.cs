@@ -46,6 +46,7 @@ namespace VRC2.Task
         {
             this.folder = folder;
             this.filename = filename;
+            SetImageAsTexture();
         }
 
 
