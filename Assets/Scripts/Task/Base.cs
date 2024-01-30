@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityUITable;
 using VRC2.Utility;
@@ -46,7 +47,7 @@ namespace VRC2.Task
             UpdateTable();
         }
 
-        private void UpdateTable()
+        public void UpdateTable()
         {
             // hack it
             table.targetCollection.target = gameObject;
@@ -63,6 +64,9 @@ namespace VRC2.Task
             c2.columnTitle = "Spec";
             c2.fieldName = "spec";
             c2.autoWidth = true;
+
+            // clear all first
+            table.columns.Clear();
 
             table.columns.Add(c1);
             table.columns.Add(c2);
@@ -148,7 +152,7 @@ namespace VRC2.Task
                 var infoData = new InfoData();
                 // update segment
                 infoData.segment = info.segment;
-                
+
                 for (var j = 0; j < keysCount; j++)
                 {
                     switch (keys[j])
@@ -173,5 +177,23 @@ namespace VRC2.Task
 
             return result;
         }
+
+        #region Debug
+
+        private void OnGUI()
+        {
+            if (GUI.Button(new Rect(500, 100, 100, 50), "Table"))
+            {
+                UpdateTable();
+            }
+
+            if (GUI.Button(new Rect(500, 150, 100, 50), "Refresh"))
+            {
+                // it will automatically update the table when changing data source
+                rows.RemoveAt(rows.Count - 1);
+            }
+        }
+
+        #endregion
     }
 }
