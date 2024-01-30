@@ -26,12 +26,12 @@ namespace VRC2.Task
         [Space(30)] [Header("Layout")] public ImageAsTexture imageAsTexture;
 
         public string folder;
-
+        
         public string sheetRule;
         public string sheetPipe;
 
         private string srcText;
-
+        
         // data to show in the table
         [HideInInspector] public List<TableRow> rows;
 
@@ -53,31 +53,20 @@ namespace VRC2.Task
 
         private void Start()
         {
-            // enable it 
-            // table.updateCellContentAtRuntime = true;
-            // table.updateCellStyleAtRuntime = true;
-
             srcText = constructionRule.text;
 
 
             ParseYmlFile();
 
             UpdateTableRule(false);
-            // InitializeTable();
         }
 
-        // void InitializeTable()
-        // {
-        //     FormatInfoData(false);
-        //     UpdateTable();
-        // }
-
-        public void UpdateTable()
+        public void UpdateTable(ref Table t)
         {
             // hack it
-            table.targetCollection.target = gameObject;
-            table.targetCollection.componentName = GetType().Name; // class name, e.g., Training
-            table.targetCollection.memberName = "rows"; // this is to save the data
+            t.targetCollection.target = gameObject;
+            t.targetCollection.componentName = GetType().Name; // class name, e.g., Training
+            t.targetCollection.memberName = "rows"; // this is to save the data
 
             // BUG: It's better to set up columns in Inspector window
 
@@ -99,7 +88,7 @@ namespace VRC2.Task
             // table.columns.Add(c2);
 
             // initialize it
-            table.Initialize();
+            t.Initialize();
         }
 
         public void ParseYmlFile()
