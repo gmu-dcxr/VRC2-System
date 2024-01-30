@@ -69,5 +69,22 @@ namespace VRC2.Task
             filename = fn;
             SetImageAsTexture();
         }
+
+        public Texture2D GetTexture()
+        {
+            return _texture;
+        }
+
+        public void SetTexture(Texture2D texture)
+        {
+            if (renderer != null)
+            {
+                renderer.materials[0].mainTexture = texture;
+            }
+            else if (image != null)
+            {
+                image.material.mainTexture = texture;
+            }
+        }
     }
 }
