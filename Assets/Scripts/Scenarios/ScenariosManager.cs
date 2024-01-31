@@ -214,8 +214,8 @@ namespace VRC2.Scenarios
 
         void UpdateInstructionPanel(Texture2D texture)
         {
-            var qim = GameObject.FindWithTag(GlobalConstants.instructionTag).GetComponent<QuadImageManager>();
-            qim.SetTexture(texture);
+            //var qim = GameObject.FindWithTag(GlobalConstants.instructionTag).GetComponent<QuadImageManager>();
+            //qim.SetTexture(texture);
         }
 
         void UpdateWallBackground(Texture2D texture, string folder, string filename)

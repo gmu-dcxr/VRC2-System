@@ -197,9 +197,6 @@ namespace VRC2.ScenariosV2.Scenario
             // truck
             if (cname.Equals(truck.ClsName))
             {
-                print("22032XX");
-                print(idx);
-                print(normal);
                 return truck.GetIncident(idx, normal);
             }
 

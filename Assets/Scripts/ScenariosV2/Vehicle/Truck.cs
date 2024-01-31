@@ -39,6 +39,7 @@ namespace VRC2.ScenariosV2.Vehicle
             print("Invoked Truck_accidents_1");
             // show warning controller
             baselineS3.ShowWarning(2);
+            print("we showed the warning!!!");
             baselineS3.On_BaselineS3_2_Start();
         }
 
@@ -66,9 +67,41 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS3.On_BaselineS3_5_Start();
         }
 
-       
+        public void Truck_accidents_5()
+        {
+            print("Invoked Truck_accidents_5");
 
-        
+            baselineS3.ShowWarning(6);
+            baselineS3.On_BaselineS3_6_Start();
+        }
+
+        public void Truck_accidents_6()
+        {
+            print("Invoked Truck_accidents_6");
+
+            baselineS3.ShowWarning(7);
+            baselineS3.On_BaselineS3_7_Start();
+        }
+
+        public void Truck_accidents_7()
+        {
+            print("Invoked Truck_accidents_7");
+
+            baselineS3.ShowWarning(8);
+            baselineS3.On_BaselineS3_7_Start();
+        }
+
+        public void Truck_accidents_8()
+        {
+            print("Invoked Truck_accidents_8");
+
+            baselineS3.ShowWarning(8);
+            baselineS3.On_BaselineS3_8_Start();
+        }
+
+
+
+
 
         #endregion
     }

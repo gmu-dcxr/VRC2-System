@@ -51,7 +51,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_1_Finish()
         {
-
+            print("Ending BaselineS3 1");
         }
 
         public void On_BaselineS3_2_Start()
@@ -65,6 +65,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_2_Finish()
         {
+            print("Ending BaselineS3 2");
             // An excavator is digging next to the participants.
         }
 
@@ -79,6 +80,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_3_Finish()
         {
             // The excavator is digging into the working zone.
+            print("Ending BaselineS3 3");
         }
 
         public void On_BaselineS3_4_Start()
@@ -92,6 +94,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public void On_BaselineS3_4_Finish()
         {
             // The excavator is digging more into the working zone.
+            print("Ending BaselineS3 4");
         }
 
 
@@ -101,6 +104,36 @@ namespace VRC2.Scenarios.ScenarioFactory
         }
 
         public void On_BaselineS3_5_Finish()
+        {
+
+        }
+
+        public void On_BaselineS3_6_Start()
+        {
+
+        }
+
+        public void On_BaselineS3_6_Finish()
+        {
+
+        }
+
+        public void On_BaselineS3_7_Start()
+        {
+
+        }
+
+        public void On_BaselineS3_7_Finish()
+        {
+
+        }
+
+        public void On_BaselineS3_8_Start()
+        {
+
+        }
+
+        public void On_BaselineS3_8_Finish()
         {
 
         }
