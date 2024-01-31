@@ -8,7 +8,7 @@ namespace VRC2.ScenariosV2.Scenario
         {
             base.Start();
             // update the private id variable
-            _id = 1;
+            _id = 3;
         }
     }
 }

@@ -374,6 +374,7 @@ namespace VRC2.Scenarios
         // When scenarios are sequenced, it's necessary to override them
         public void OverrideStartEnd(int start, int end)
         {
+       
             startInSec = start;
             endInSec = end;
             print($"OverrideStartEnd for {name}: {startInSec} - {endInSec}");
@@ -396,11 +397,17 @@ namespace VRC2.Scenarios
             }
 
             incidents.Add(incident);
+            print(incident.ID);
         }
 
         public Incident GetIncident(int idx)
         {
-            if (incidents == null || idx > incidents.Count) return null;
+            if (incidents == null || idx > incidents.Count)
+            {
+                if (idx > incidents.Count)
+                    print("NULLNULL"+incidents.Count);
+                return null;
+            }
 
             foreach (var incident in incidents)
             {
@@ -479,6 +486,7 @@ namespace VRC2.Scenarios
 
         public virtual void InitFromFile()
         {
+            print("INNIT");
             var filename = $"{ClsName}.yml";
             var path = Helper.GetConfigureFile(Application.dataPath, filename);
             var text = System.IO.File.ReadAllText(path);
@@ -526,6 +534,7 @@ namespace VRC2.Scenarios
                 // debug
                 incident.Print();
             }
+            print("done adding");
         }
 
         public virtual void StartNormalIncident()
@@ -643,6 +652,7 @@ namespace VRC2.Scenarios
         public string GetRightMessage(int idx, Context context, Amount amount)
         {
             // original warning
+            print("ID: "+idx);
             var message = GetIncident(idx).Warning;
 
             if (context == Context.Irrelevant)

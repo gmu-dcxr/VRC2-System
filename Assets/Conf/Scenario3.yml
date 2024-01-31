@@ -14,7 +14,7 @@ end: "07:40"
 # start task
 taskStart: 1
 # end task
-taskEnd: 9
+taskEnd: 1
 #########################################################################################################
 # all incidents, including the normal events and accidents
 incidents:
@@ -32,7 +32,7 @@ incidents:
     refer: ["Truck", "accidents", "3"]
   - id: 5
     time: "2:30"
-    refer: ["CraneTruck", "normals", "1"]
+    refer: ["Drone", "normals", "1"] #switch back to crane truck later
   - id: 6
     time: "4:00"
     refer: ["Truck", "accidents", "5"]
