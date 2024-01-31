@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityUITable;
+using VRC2.Events;
 using VRC2.Utility;
 using TaskData = VRC2.Task.YamlParser.Task;
 using InfoData = VRC2.Task.YamlParser.Info;
@@ -18,17 +19,48 @@ namespace VRC2.Task
         [Header("Filename")] [Tooltip("Filename under Assets/Conf, e.g. Task/Training.yml")]
         public string filename;
 
-
-        [Header("Table")] public Table table;
-
-        public Text constructionRule;
-
-        [Space(30)] [Header("Layout")] public ImageAsTexture imageAsTexture;
-
+        // TODO: refactor based on the task name
+        [Space(30)] [Header("Instruction Picture")]
         public string folder;
 
         public string sheetRule;
         public string sheetPipe;
+
+        #region Instruction related components
+
+        // find them during the runtime
+        private InstructionSheetGrabbingCallback _sheetCallback;
+
+        public InstructionSheetGrabbingCallback sheetCallback
+        {
+            get
+            {
+                if (_sheetCallback == null)
+                {
+                    _sheetCallback = FindObjectOfType<InstructionSheetGrabbingCallback>();
+                }
+
+                return _sheetCallback;
+            }
+        }
+
+
+        public Table table
+        {
+            get => sheetCallback.srcTable;
+        }
+
+        public Text constructionRule
+        {
+            get => sheetCallback.srcRule;
+        }
+
+        public ImageAsTexture imageAsTexture
+        {
+            get => sheetCallback.srcIAT;
+        }
+
+        #endregion
 
         private string srcText;
 
@@ -53,31 +85,20 @@ namespace VRC2.Task
 
         private void Start()
         {
-            // enable it 
-            // table.updateCellContentAtRuntime = true;
-            // table.updateCellStyleAtRuntime = true;
-
             srcText = constructionRule.text;
 
 
             ParseYmlFile();
 
             UpdateTableRule(false);
-            // InitializeTable();
         }
 
-        // void InitializeTable()
-        // {
-        //     FormatInfoData(false);
-        //     UpdateTable();
-        // }
-
-        public void UpdateTable()
+        public void UpdateTable(ref Table t)
         {
             // hack it
-            table.targetCollection.target = gameObject;
-            table.targetCollection.componentName = GetType().Name; // class name, e.g., Training
-            table.targetCollection.memberName = "rows"; // this is to save the data
+            t.targetCollection.target = gameObject;
+            t.targetCollection.componentName = GetType().Name; // class name, e.g., Training
+            t.targetCollection.memberName = "rows"; // this is to save the data
 
             // BUG: It's better to set up columns in Inspector window
 
@@ -99,7 +120,7 @@ namespace VRC2.Task
             // table.columns.Add(c2);
 
             // initialize it
-            table.Initialize();
+            t.Initialize();
         }
 
         public void ParseYmlFile()
