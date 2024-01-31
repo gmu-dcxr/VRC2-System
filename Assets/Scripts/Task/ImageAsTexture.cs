@@ -1,5 +1,6 @@
 ﻿// this class is almost the same as QuadImageManager except fields are not ReadOnly.
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VRC2.Task
 {
@@ -12,6 +13,16 @@ namespace VRC2.Task
         public string filename;
 
         private Texture2D _texture;
+
+        private MeshRenderer renderer
+        {
+            get => gameObject.GetComponent<MeshRenderer>();
+        }
+
+        private Image image
+        {
+            get => gameObject.GetComponent<Image>();
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -31,15 +42,18 @@ namespace VRC2.Task
             print($"set image texture: {name}");
             _texture = Resources.Load<Texture2D>(name);
             _texture.alphaIsTransparency = true;
-            gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = _texture;
 
-            SetTexture(_texture);
-
-        }
-
-        public void SetTexture(Texture2D texture2D)
-        {
-            gameObject.GetComponent<MeshRenderer>().materials[0].mainTexture = texture2D;
+            if (renderer != null)
+            {
+                renderer.materials[0].mainTexture = _texture;
+            }
+            else if (image != null)
+            {
+                // var spriteRenderer = GetComponent<SpriteRenderer>();
+                // var sprite = Resources.Load<Sprite>(name);
+                image.material.mainTexture = _texture;
+                // spriteRenderer.sprite = sprite;
+            }
         }
 
         public void UpdateFolderFilename(string folder, string filename)
@@ -54,6 +68,23 @@ namespace VRC2.Task
         {
             filename = fn;
             SetImageAsTexture();
+        }
+
+        public Texture2D GetTexture()
+        {
+            return _texture;
+        }
+
+        public void SetTexture(Texture2D texture)
+        {
+            if (renderer != null)
+            {
+                renderer.materials[0].mainTexture = texture;
+            }
+            else if (image != null)
+            {
+                image.material.mainTexture = texture;
+            }
         }
     }
 }

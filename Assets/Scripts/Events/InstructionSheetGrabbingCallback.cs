@@ -2,18 +2,34 @@
 using Oculus.Interaction;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityUITable;
+using VRC2.Task;
 
 namespace VRC2.Events
 {
     public class InstructionSheetGrabbingCallback : MonoBehaviour
     {
         public GameObject dialog;
-        public TextMeshProUGUI titleUI;
-        public TextMeshProUGUI contentUI;
+
+        // public TextMeshProUGUI titleUI;
+        // public TextMeshProUGUI contentUI;
         public float distance;
 
-        public string title = "Instruction";
-        public string content = "This is instruction";
+        [HideInInspector]public string title = "Instruction";
+        [HideInInspector]public string content = "This is instruction";
+
+
+        [Header("Table")] public Table srcTable;
+        public Table localTable;
+
+        [Space(30)] [Header("Rule")] public Text srcRule;
+        public Text localRule;
+
+        [Space(30)] [Header("Layout")] public ImageAsTexture srcIAT;
+        public ImageAsTexture localIAT;
+
+
 
         private PointableUnityEventWrapper _wrapper;
 
@@ -37,8 +53,11 @@ namespace VRC2.Events
 
             dialog.SetActive(true);
 
-            titleUI.text = title;
-            contentUI.text = content;
+            // sync
+            SyncAttributes();
+
+            // titleUI.text = title;
+            // contentUI.text = content;
         }
 
         void OnRelease()
@@ -62,6 +81,23 @@ namespace VRC2.Events
 
             dialog.transform.rotation = _cameraTransform.rotation;
             dialog.transform.position = _cameraTransform.position + forward * distance;
+        }
+
+        void SyncAttributes()
+        {
+            // table
+            localTable.targetCollection.target = srcTable.targetCollection.target;
+            localTable.targetCollection.componentName = srcTable.targetCollection.componentName;
+            localTable.targetCollection.memberName = srcTable.targetCollection.memberName;
+
+            localTable.Initialize();
+
+            // rule
+            localRule.text = srcRule.text;
+
+            // layout
+            var texture = srcIAT.GetTexture();
+            localIAT.SetTexture(texture);
         }
     }
 }
