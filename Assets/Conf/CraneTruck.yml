@@ -5,11 +5,50 @@ gameObject: "CraneTruck"
 incidents:
   normals:
     - id: 1
+      condition: "Normal"
+      time: "T1"
+      type: "Potential"
+      desc: "A crane truck backs up nearby, and then starts to unload cargo."
+      warning: "Warning: A crane truck is going to back up nearby"
+      warning2: "Warning: A crane truck is unloading goods nearby"
     - id: 2
+      condition: "Normal"
+      time: "T1+30s"
+      desc: "The unload finishes and the crane truck leaves"
   accidents:
     - id: 1
+      condition: "Accident"
+      time: "T1"
+      type: "Potential"
+      desc: "A crane truck backs up nearby, and then starts to unload cargo."
+      warning: "Warning: A crane truck is going to back up nearby"
+      warning2: "Warning: A crane truck is unloading goods nearby"
     - id: 2
+      condition: "Accident"
+      time: "T1+30s"
+      desc: "The unload finishes and the crane truck leaves"
     - id: 3
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: "A crane truck backs up nearby, and then starts to unload cargo. The 2nd cargo is closter to players, 
+             and the crane truck tilts a little bit"
+      warning: "Warning: A crane truck is going to back up nearby"
+      warning2: "Warning: A crane truck is unloading goods nearby"
     - id: 4
+      condition: "Accident"
+      time: "T2+30s"
+      desc: "The unload finishes and the crane truck leaves"
     - id: 5
+      condition: "Accident"
+      time: "T3"
+      type: "Nearly-happen Accident"
+      desc: "A crane truck backs up nearby, and then starts to unload cargo. The 3rd cargo is much closer to players,
+             and the crane truck tilts"
+      warning: "Warning: A crane truck is going to back up nearby"
+      warning2: "Warning: A crane truck is unloading goods nearby"
     - id: 6
+      condition: "Accident"
+      time: "T3+10s"
+      desc: "The crane truck overturns"
+    
