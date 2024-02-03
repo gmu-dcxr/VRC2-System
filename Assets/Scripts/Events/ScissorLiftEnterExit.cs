@@ -58,8 +58,6 @@ namespace VRC2.Events
             p1.y = 0;
             p2.y = 0;
 
-            print(Vector3.Distance(p1, p2));
-
             if ((Input.GetKeyUp(KeyCode.E) || keyX) && Vector3.Distance(p1, p2) < distanceThreshold)
             {
                 if (p.parent == null)
