@@ -62,7 +62,20 @@ namespace VRC2.Events
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.UpArrow))
+            // ovr input
+            float horizontalInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch).x;
+            float verticalInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch).y;
+
+            if (Math.Abs(horizontalInput) > Math.Abs(verticalInput))
+            {
+                verticalInput = 0;
+            }
+            else
+            {
+                horizontalInput = 0;
+            }
+
+            if (Input.GetKey(KeyCode.UpArrow) || verticalInput > 0)
             {
                 if (!ReachTop())
                 {
@@ -73,7 +86,7 @@ namespace VRC2.Events
                     StopAnimator();
                 }
             }
-            else if (Input.GetKey(KeyCode.DownArrow))
+            else if (Input.GetKey(KeyCode.DownArrow) || verticalInput < 0)
             {
                 if (!ReachBottom())
                 {
@@ -84,11 +97,11 @@ namespace VRC2.Events
                     StopAnimator();
                 }
             }
-            else if (Input.GetKey(KeyCode.LeftArrow))
+            else if (Input.GetKey(KeyCode.LeftArrow) || horizontalInput < 0)
             {
                 Left(leftRight);
             }
-            else if (Input.GetKey(KeyCode.RightArrow))
+            else if (Input.GetKey(KeyCode.RightArrow) || horizontalInput > 0)
             {
                 Right(leftRight);
             }
