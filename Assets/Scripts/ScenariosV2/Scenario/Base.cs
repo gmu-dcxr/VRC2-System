@@ -85,6 +85,9 @@ namespace VRC2.ScenariosV2.Scenario
         private Vehicle.Drone _drone;
         private Vehicle.Truck _truck;
 
+        // adapation for Scenario 4
+        private Vehicle.Irrelevant _irrelevant;
+
         public Vehicle.Crane crane
         {
             get
@@ -121,6 +124,19 @@ namespace VRC2.ScenariosV2.Scenario
                 }
 
                 return _truck;
+            }
+        }
+
+        public Vehicle.Irrelevant irrelevant
+        {
+            get
+            {
+                if (_irrelevant == null)
+                {
+                    _irrelevant = FindObjectOfType<Vehicle.Irrelevant>();
+                }
+
+                return _irrelevant;
             }
         }
 
@@ -198,6 +214,12 @@ namespace VRC2.ScenariosV2.Scenario
             if (cname.Equals(truck.ClsName))
             {
                 return truck.GetIncident(idx, normal);
+            }
+
+            // irrelevant
+            if (cname.Equals(irrelevant.ClsName))
+            {
+                return irrelevant.GetAccidentIncident(idx);
             }
 
             // default
