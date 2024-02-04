@@ -56,6 +56,22 @@ namespace VRC2.ScenariosV2.Vehicle
         }
 
         #endregion
+        
+        // warning controller
+        private WarningController _warningController;
+
+        public WarningController warningController
+        {
+            get
+            {
+                if (_warningController == null)
+                {
+                    _warningController = GameObject.FindFirstObjectByType<WarningController>();
+                }
+
+                return _warningController;
+            }
+        }
 
         public virtual string ClsName
         {
@@ -83,7 +99,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public virtual void ParseYamlFile(string name)
         {
             var path = Helper.GetConfigureFile(Application.dataPath, name);
-            print(path);
+            Debug.LogWarning($"ParseYamlFile: {path}");
 
             var text = System.IO.File.ReadAllText(path);
             print(text);

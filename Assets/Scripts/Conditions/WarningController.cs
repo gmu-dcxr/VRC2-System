@@ -221,4 +221,32 @@ public class WarningController : MonoBehaviour
 
         return ac;
     }
+
+    #region Adaptation for new design
+
+    public void PlayAudioClip(string filename, float? delay)
+    {
+        var path = $"{GlobalConstants.warningAudioPath}{filename}";
+        // load audio clip
+        AudioClip ac = AssetDatabase.LoadAssetAtPath(path, typeof(AudioClip)) as AudioClip;
+        _audioSource.clip = ac;
+
+        if (delay == null)
+        {
+            _audioSource.Play();
+
+            if (quality == Quality.Bad)
+            {
+                // add noise
+                noise.Play();
+            }
+        }
+        else
+        {
+            // play audio with delay
+            StartCoroutine(PlayAudio(delay.Value));
+        }
+    }
+
+    #endregion
 }
