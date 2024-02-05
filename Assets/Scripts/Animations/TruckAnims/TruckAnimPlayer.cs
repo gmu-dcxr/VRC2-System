@@ -94,7 +94,7 @@ public class TruckAnimPlayer : MonoBehaviour
         
         if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
         {
-            print("stop");
+            //print("stop");
             source.Stop();
 
         }

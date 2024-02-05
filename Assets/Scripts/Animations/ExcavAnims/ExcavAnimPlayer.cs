@@ -286,7 +286,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         //dupe.transform.SetParent(truck.transform);
         curIndex++;
         clonesArray[curIndex] = dupe;
-        print(curIndex);
+        //print(curIndex);
         //print("INDEX");
         dirt.SetActive(false);
         //print("xxxxx");
