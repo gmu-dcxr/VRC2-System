@@ -5,13 +5,53 @@ gameObject: "Truck"
 incidents:
   normals:
     - id: 1
+      condition: "Normal"
+      time: "T1"
+      type: "Potential"
+      desc: "A truck backing up nearby."
+      warning: "Warning: A truck is going to back up nearby."
     - id: 2
+      condition: "Normal"
+      time: "T1+60s"
+      desc: "The loaded truck is passing nearby. And the water stain accumulated along the path."
   accidents:
     - id: 1
+      condition: "Accident"
+      time: "T1"
+      type: "Potential"
+      desc: "A truck is backing up nearby."
+      warning: "Warning: A truck is going to back up."
     - id: 2
+      condition: "Accident"
+      time: "T1+60s"
+      desc: "The loaded truck is passing nearby. And the water stain accumulated alongthe path."
     - id: 3
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: "A truck is backing up nearby, and it is closer to players."
+      warning: "Warning: A truck is going to back up."
     - id: 4
+      condition: "Accident"
+      time: "T2+60s"
+      desc: "The loaded truck is passing nearby. And the water stain accumulated along the path."
     - id: 5
+      condition: "Accident"
+      time: "T3"
+      type: "NearlyHappen"
+      desc: "A truck is backing up nearby and is very close to players."
+      warning: "Warning: A truck is going to back up."
     - id: 6
+      condition: "Accident"
+      time: "T3+60s"
+      desc: "The loaded truck is passing nearby. And the water stain accumulated along the path."
     - id: 7
+      condition: "Accident"
+      time: "T4"
+      type: "NearlyHappen"
+      desc: "A truck is backing up nearby and is very close to players."
+      warning: "Warning: A truck is going to back up."
     - id: 8
+      condition: "Accident"
+      time: "T4+60s"
+      desc: "It ends after the warning of T4 is given, and the truck is approximately 5m away from players."
