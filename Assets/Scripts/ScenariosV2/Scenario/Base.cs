@@ -84,6 +84,7 @@ namespace VRC2.ScenariosV2.Scenario
         private Vehicle.Crane _crane;
         private Vehicle.Drone _drone;
         private Vehicle.Truck _truck;
+        private Vehicle.CraneTruck _craneTruck;
 
         // adapation for Scenario 4
         private Vehicle.Irrelevant _irrelevant;
@@ -127,6 +128,19 @@ namespace VRC2.ScenariosV2.Scenario
             }
         }
 
+        public Vehicle.CraneTruck craneTruck
+        {
+            get
+            {
+                if (_craneTruck == null)
+                {
+                    _craneTruck = FindObjectOfType<Vehicle.CraneTruck>();
+                }
+
+                return _craneTruck;
+            }
+        }
+
         public Vehicle.Irrelevant irrelevant
         {
             get
@@ -140,7 +154,20 @@ namespace VRC2.ScenariosV2.Scenario
             }
         }
 
+        private ScenariosManager _scenariosManager;
 
+        public ScenariosManager scenariosManager
+        {
+            get
+            {
+                if (_scenariosManager == null)
+                {
+                    _scenariosManager = FindFirstObjectByType<ScenariosManager>();
+                }
+
+                return _scenariosManager;
+            }
+        }
 
         #endregion
 
@@ -214,6 +241,12 @@ namespace VRC2.ScenariosV2.Scenario
             if (cname.Equals(truck.ClsName))
             {
                 return truck.GetIncident(idx, normal);
+            }
+
+            // cranetruck
+            if (cname.Equals(craneTruck.ClsName))
+            {
+                return craneTruck.GetIncident(idx, normal);
             }
 
             // irrelevant
@@ -353,7 +386,6 @@ namespace VRC2.ScenariosV2.Scenario
 
                 startedIncidents.Add(sec);
             }
-
         }
 
         #endregion
@@ -412,21 +444,6 @@ namespace VRC2.ScenariosV2.Scenario
         //     }
         // }
         //
-        private ScenariosManager _scenariosManager;
-
-        [HideInInspector]
-        public ScenariosManager scenariosManager
-        {
-            get
-            {
-                if (_scenariosManager == null)
-                {
-                    _scenariosManager = FindFirstObjectByType<ScenariosManager>();
-                }
-
-                return _scenariosManager;
-            }
-        }
         //
         // [HideInInspector]
         // public bool warningShowing
@@ -691,7 +708,6 @@ namespace VRC2.ScenariosV2.Scenario
                 scenariosManager.UpdateInstruction(taskStart, taskEnd);
             }
         }
-
 
         #endregion
     }

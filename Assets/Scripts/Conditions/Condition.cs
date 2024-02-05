@@ -40,6 +40,7 @@ namespace VRC2.Conditions
         public Format Format
         {
             get => _format;
+            set => _format = value;
         }
 
         public Quality Quality
