@@ -21,11 +21,17 @@ public class WarningController : MonoBehaviour
 
     public float distance = 0.5f;
 
+    [Header("Hazard")] public Transform centerEyeAnchor;
+    public Vector3 offset = Vector3.zero;
+
     [Header("Noise Simulation")] public AudioSource noise;
 
     private ScenariosManager scenariosManager;
 
-    private Transform _cameraTransform;
+    private Transform _cameraTransform
+    {
+        get => centerEyeAnchor;
+    }
 
     public bool showing
     {
@@ -84,13 +90,13 @@ public class WarningController : MonoBehaviour
     {
         scenariosManager = FindFirstObjectByType<ScenariosManager>();
 
-        var cam = Camera.main;
-        if (cam == null)
-        {
-            cam = FindObjectOfType<Camera>();
-        }
-
-        _cameraTransform = cam.transform;
+        // var cam = Camera.main;
+        // if (cam == null)
+        // {
+        //     cam = FindObjectOfType<Camera>();
+        // }
+        //
+        // _cameraTransform = cam.transform;
 
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.playOnAwake = false;
@@ -134,6 +140,34 @@ public class WarningController : MonoBehaviour
         yield return null;
     }
 
+    private void ProcessAudioWarning(string scenename, int incidentid, float? delay)
+    {
+        // load audio clip
+        var ac = LoadAudioClip(scenename, incidentid);
+        _audioSource.clip = ac;
+
+        if (delay == null)
+        {
+            _audioSource.Play();
+
+            if (quality == Quality.Bad)
+            {
+                // add noise
+                noise.Play();
+            }
+        }
+        else
+        {
+            // play audio with delay
+            StartCoroutine(PlayAudio(delay.Value));
+        }
+    }
+
+    private void ProcessVisualWarning()
+    {
+        dialog.SetActive(true);
+    }
+
     public void Show(string title, string scenename, int incidentid, string content, float? delay)
     {
         // directly return if no warning
@@ -144,31 +178,24 @@ public class WarningController : MonoBehaviour
 
         if (format == Format.Audio)
         {
-            // load audio clip
-            var ac = LoadAudioClip(scenename, incidentid);
-            _audioSource.clip = ac;
-
-            if (delay == null)
-            {
-                _audioSource.Play();
-
-                if (quality == Quality.Bad)
-                {
-                    // add noise
-                    noise.Play();
-                }
-            }
-            else
-            {
-                // play audio with delay
-                StartCoroutine(PlayAudio(delay.Value));
-            }
+            ProcessAudioWarning(scenename, incidentid, delay);
         }
-        else
+        else if (format == Format.Visual)
         {
-            dialog.SetActive(true);
+            ProcessVisualWarning();
+        }
+        else if (format == Format.Both)
+        {
+            ProcessVisualWarning();
+            ProcessAudioWarning(scenename, incidentid, delay);
         }
 
+        StartTimer();
+    }
+
+    public void ShowVisualOnly()
+    {
+        ProcessVisualWarning();
         StartTimer();
     }
 
@@ -185,8 +212,19 @@ public class WarningController : MonoBehaviour
                     noise.Stop();
                 }
             }
-            else
+            else if (format == Format.Visual)
             {
+                dialog.SetActive(false);
+            }
+            else if (format == Format.Both)
+            {
+                _audioSource.Stop();
+                if (quality == Quality.Bad)
+                {
+                    // add noise
+                    noise.Stop();
+                }
+
                 dialog.SetActive(false);
             }
         }
@@ -205,8 +243,13 @@ public class WarningController : MonoBehaviour
     {
         var forward = _cameraTransform.forward;
 
-        dialog.transform.rotation = _cameraTransform.rotation;
-        dialog.transform.position = _cameraTransform.position + forward * distance;
+        var rot = _cameraTransform.rotation;
+        var pos = _cameraTransform.position + forward * distance;
+
+        pos += offset;
+
+        dialog.transform.rotation = rot;
+        dialog.transform.position = pos;
     }
 
     public AudioClip LoadAudioClip(string scenario, int incident)
