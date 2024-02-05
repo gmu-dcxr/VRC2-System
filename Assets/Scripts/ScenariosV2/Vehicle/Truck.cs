@@ -38,6 +38,9 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             print("Invoked Truck_accidents_1");
             // show warning controller
+            if (baselineS3 == null)
+                print("sssssssssssss");
+            print("555555");
             baselineS3.ShowWarning(2);
             print("we showed the warning!!!");
             baselineS3.On_BaselineS3_2_Start();

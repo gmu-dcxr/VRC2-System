@@ -12,9 +12,9 @@ start: "0:00"
 # end timestamp in raw time
 end: "07:40"
 # start task
-taskStart: 1
+taskStart: 3
 # end task
-taskEnd: 1
+taskEnd: 7
 #########################################################################################################
 # all incidents, including the normal events and accidents
 incidents:
@@ -32,13 +32,13 @@ incidents:
     refer: ["Truck", "accidents", "3"]
   - id: 5
     time: "2:30"
-    refer: ["Drone", "normals", "1"] #switch back to crane truck later
+    refer: ["Crane", "normals", "1"] #switch back to crane truck later
   - id: 6
     time: "4:00"
     refer: ["Truck", "accidents", "5"]
   - id: 7
     time: "4:30"
-    refer: ["Drone", "normals", "1"]
+    refer: ["Drone", "normals", "1"] 
   - id: 8
     time: "5:30"
     refer: ["Truck", "accidents", "7"]
