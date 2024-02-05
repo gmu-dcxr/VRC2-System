@@ -16,6 +16,7 @@
     {
         Audio = 1,
         Visual = 2,
+        Both = 3,
     }
 
     public enum Quality
