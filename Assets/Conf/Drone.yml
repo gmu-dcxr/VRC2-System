@@ -14,16 +14,15 @@ incidents:
       condition: "Normal"
       time: "T1+30s"
       desc: "The drone leaves."
-#  changes:
-#    - id: 1
-#      condition: "Change"
-#      time: "T1"
-#      desc: "A supervising drone is approaching and hovering at h=16"
-#      warning: "Attention please: Your task has been changed." 
-#    - id: 2
-#      condition: "Change"
-#      time: "T2"
-#      desc: "Drone leaves"
+    - id: 3
+      condition: "Normal"
+      time: "T2"
+      desc: "A supervising drone is approaching and hovering at h=16"
+      warning: "Attention please: Your task has been changed." 
+    - id: 4
+      condition: "Normal"
+      time: "T2+30"
+      desc: "Drone leaves"
   accidents:
     - id: 1
       condition: "Accident"
