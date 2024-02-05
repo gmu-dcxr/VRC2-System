@@ -11,10 +11,11 @@ using VRC2.Animations;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 using Timer = UnityTimer.Timer;
+using VRC2.ScenariosV2.Adaptor;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
-    public class BaselineS3 : Scenario
+    public class BaselineS3 : ScenarioAdaptor
     {
 
         public GameObject TRUCK;
