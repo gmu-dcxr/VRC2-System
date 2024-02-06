@@ -38,11 +38,9 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             print("Invoked Truck_accidents_1");
             // show warning controller
-            if (baselineS3 == null)
-                print("sssssssssssss");
-            print("555555");
-            baselineS3.ShowWarning(2);
-            print("we showed the warning!!!");
+            //print("555555");
+            //baselineS3.ShowWarning(2);   <-- ADD BACK LATER?
+            //print("we showed the warning!!!");
             baselineS3.On_BaselineS3_2_Start();
         }
 
@@ -50,15 +48,15 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             print("Invoked Truck_accidents_2");
 
-            baselineS3.ShowWarning(3);
-            baselineS3.On_BaselineS3_3_Start();
+            //baselineS3.ShowWarning(3); <-- ADD BACK LATER?
+            //baselineS3.On_BaselineS3_3_Start();
         }
 
         public void Truck_accidents_3()
         {
             print("Invoked Truck_accidents_3");
 
-            baselineS3.ShowWarning(4);
+            //baselineS3.ShowWarning(4); <-- ADD BACK LATER?
             baselineS3.On_BaselineS3_4_Start();
         }
 
@@ -66,15 +64,15 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             print("Invoked Truck_accidents_4");
 
-            baselineS3.ShowWarning(5);
-            baselineS3.On_BaselineS3_5_Start();
+            //baselineS3.ShowWarning(5); <-- ADD BACK LATER?
+            //baselineS3.On_BaselineS3_5_Start();
         }
 
         public void Truck_accidents_5()
         {
             print("Invoked Truck_accidents_5");
 
-            baselineS3.ShowWarning(6);
+            //baselineS3.ShowWarning(6); <-- ADD BACK LATER?
             baselineS3.On_BaselineS3_6_Start();
         }
 
@@ -82,15 +80,15 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             print("Invoked Truck_accidents_6");
 
-            baselineS3.ShowWarning(7);
-            baselineS3.On_BaselineS3_7_Start();
+            //baselineS3.ShowWarning(7); <-- ADD BACK LATER?
+            //baselineS3.On_BaselineS3_7_Start();
         }
 
         public void Truck_accidents_7()
         {
             print("Invoked Truck_accidents_7");
 
-            baselineS3.ShowWarning(8);
+            //baselineS3.ShowWarning(8); <-- ADD BACK LATER?
             baselineS3.On_BaselineS3_7_Start();
         }
 
@@ -98,8 +96,8 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             print("Invoked Truck_accidents_8");
 
-            baselineS3.ShowWarning(8);
-            baselineS3.On_BaselineS3_8_Start();
+            //baselineS3.ShowWarning(8); <-- ADD BACK LATER?
+            //baselineS3.On_BaselineS3_8_Start();
         }
 
 
