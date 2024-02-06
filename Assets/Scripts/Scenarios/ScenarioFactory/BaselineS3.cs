@@ -88,8 +88,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS3_4_Start");
             normal.SetActive(false);
-            EXCAV.GetComponent<ExcavAnimPlayer>().start_4();
-            TRUCK.GetComponent<TruckAnimPlayer>().Backup3();
+            EXCAV.GetComponent<ExcavAnimPlayer>().start_3();
+            TRUCK.GetComponent<TruckAnimPlayer>().Backup2();
         }
 
         public void On_BaselineS3_4_Finish()
@@ -101,7 +101,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_5_Start()
         {
-
+            print("On_BaselineS3_5_Start");
+            normal.SetActive(false);
+            EXCAV.GetComponent<ExcavAnimPlayer>().start_4();
+            TRUCK.GetComponent<TruckAnimPlayer>().Backup3();
         }
 
         public void On_BaselineS3_5_Finish()
@@ -111,7 +114,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_6_Start()
         {
-
+            print("On_BaselineS3_6_Start");
+            normal.SetActive(false);
+            EXCAV.GetComponent<ExcavAnimPlayer>().start_4();
+            TRUCK.GetComponent<TruckAnimPlayer>().Backup3();
         }
 
         public void On_BaselineS3_6_Finish()
@@ -121,7 +127,10 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_7_Start()
         {
-
+            print("On_BaselineS3_7_Start");
+            normal.SetActive(false);
+            EXCAV.GetComponent<ExcavAnimPlayer>().start_4();
+            TRUCK.GetComponent<TruckAnimPlayer>().Backup3();
         }
 
         public void On_BaselineS3_7_Finish()
