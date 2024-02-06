@@ -26,12 +26,16 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Crane_normals_1()
         {
-            print("Invoked");
+            print("Invoked Crane_normals_1");
+            baselineS1.ShowWarning(2);
+            baselineS1.On_BaselineS1_2_Start();
         }
 
         public void Crane_normals_2()
         {
-
+            print("Invoked Crane_normals_2");
+            baselineS1.ShowWarning(3);
+            baselineS1.On_BaselineS1_3_Start();
         }
 
         public void Crane_accidents_1()

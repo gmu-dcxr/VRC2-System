@@ -6,9 +6,6 @@ desc: "Scenario definition"
 normal: "Normal events: supervising drone, crane, crane truck"
 # accidents description in this file
 accident: "Accident events: none"
-# BUG: This property is not supported.
-# changes description in this file
-# changes: "Change Orders events: supervising drone"
 ### the following 4 attributes are not in the slides, but it is referred from the original implementation
 # start timestamp in raw time
 start: "0:00"
@@ -23,43 +20,27 @@ taskEnd: 1
 incidents:
   - id: 1 # the order of the incident
     time: "0:30" # start time of this incident
-    refer: ["CraneTruck", "normals", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
-#  - id: 2
-#    time: "1:00"
-#    refer: ["Drone", "normals", "1"]
-  - id: 3
+    refer: ["Truck", "normals", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+    #CraneTruck ^
+  - id: 2
     time: "1:30"
     refer: ["Crane", "normals", "1"]
-  - id: 4
+  - id: 3
     time: "2:00"
     refer: ["Drone", "normals", "3"]
-  - id: 5
+  - id: 4
     time: "2:30"
     refer: ["Crane", "normals", "2"]
-  - id: 6
+  - id: 5
     time: "3:00"
-    refer: ["CraneTruck", "normals", "1"]
-  - id: 7
+    refer: ["Truck", "normals", "1"]
+    #CraneTruck^
+  - id: 6
     time: "3:30"
     refer: ["Crane", "normals", "1"]
-  - id: 8
+  - id: 7
     time: "4:00"
     refer: ["Drone", "normals", "1"]
-  - id: 9
+  - id: 8
     time: "4:30"
     refer: ["Crane", "normals", "2"]
-  #- id: 10
-  #  time: "4:40"
-  #  refer: ["Crane", "accidents", "6"]
-  #- id: 11
-  #  time: "5:30"
-  #  refer: ["Crane", "accidents", "7"]
-#  - id: 12
-#    time: "5:30" # the same time
-#    refer: ["Truck", "normals", ""] # TODO
-  #- id: 13
-  #  time: "6:00"
-  #  refer: ["Crane", "accidents", "8"]
-  #- id: 14
-  #  time: "6:10"
-  #  refer: ["Crane", "accidents", "9"]
