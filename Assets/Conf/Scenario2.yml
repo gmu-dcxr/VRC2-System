@@ -20,7 +20,7 @@ taskEnd: 1
 incidents:
   - id: 1 # the order of the incident
     time: "0:30" # start time of this incident
-    refer: ["Truck", "normals", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+    refer: ["CraneTruck", "normals", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
     #CraneTruck ^
   - id: 2
     time: "1:30"
@@ -33,7 +33,7 @@ incidents:
     refer: ["Crane", "normals", "2"]
   - id: 5
     time: "3:00"
-    refer: ["Truck", "normals", "1"]
+    refer: ["CraneTruck", "normals", "1"]
     #CraneTruck^
   - id: 6
     time: "3:30"
