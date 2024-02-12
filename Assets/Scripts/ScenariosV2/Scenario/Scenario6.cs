@@ -2,7 +2,7 @@
 
 namespace VRC2.ScenariosV2.Scenario
 {
-    public class Scenario2: Base
+    public class Scenario6: Base
     {
         public void Start()
         {
