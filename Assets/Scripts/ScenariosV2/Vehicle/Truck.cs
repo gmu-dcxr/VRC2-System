@@ -17,8 +17,11 @@ namespace VRC2.ScenariosV2.Vehicle
                 {
                     _baselineS3 = FindObjectOfType<BaselineS3>();
                 }
-
-                return _baselineS3;
+                if (_baselineS3 == null)
+                {
+                    print("BAD: baselines3 is null");
+                }
+                    return _baselineS3;
             }
         }
 
@@ -26,12 +29,14 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Truck_normals_1()
         {
-            print("Invoked");
+            print("Invoked Truck_normals_2");
+            baselineS3.On_BaselineS3_2_Start();
         }
 
         public void Truck_normals_2()
         {
-
+            print("Invoked Truck_normals_2");
+            baselineS3.On_BaselineS3_2_Start();
         }
 
         public void Truck_accidents_1()
@@ -39,7 +44,7 @@ namespace VRC2.ScenariosV2.Vehicle
             print("Invoked Truck_accidents_1");
             // show warning controller
             //print("555555");
-            //baselineS3.ShowWarning(2);   <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(2);   //<-- ADD BACK LATER?
             //print("we showed the warning!!!");
             baselineS3.On_BaselineS3_2_Start();
         }
@@ -89,7 +94,7 @@ namespace VRC2.ScenariosV2.Vehicle
             print("Invoked Truck_accidents_7");
 
             //baselineS3.ShowWarning(8); <-- ADD BACK LATER?
-            baselineS3.On_BaselineS3_7_Start();
+            baselineS3.On_BaselineS3_6_Start();
         }
 
         public void Truck_accidents_8()
