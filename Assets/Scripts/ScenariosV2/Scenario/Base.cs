@@ -53,7 +53,7 @@ namespace VRC2.ScenariosV2.Scenario
         [ReadOnly] public List<Incident> parsedIncidents;
 
         // (time, incident index in `parsedIncidents`)
-        public Dictionary<int, int> timeIncidentIdxMap;
+        public Dictionary<int, List<int>> timeIncidentIdxMap;
         public HashSet<int> startedIncidents; // started incidents
 
         #endregion
@@ -264,7 +264,7 @@ namespace VRC2.ScenariosV2.Scenario
             if (_incidents == null) return;
             parsedIncidents = new List<Incident>();
 
-            timeIncidentIdxMap = new Dictionary<int, int>();
+            timeIncidentIdxMap = new Dictionary<int, List<int>>();
 
             var count = _incidents.Count;
             for (var i = 0; i < count; i++)
@@ -273,10 +273,20 @@ namespace VRC2.ScenariosV2.Scenario
                 // parse time
                 var t = ParseTime(_incidents[i].time);
 
-                parsedIncidents.Add(inci);
+                if (!timeIncidentIdxMap.ContainsKey(t))
+                {
+                    var indices = new List<int>();
+                    indices.Add(i);
+                    timeIncidentIdxMap.Add(t, indices);
+                }
+                else
+                {
+                    var indices = timeIncidentIdxMap[t];
+                    indices.Add(i);
+                    timeIncidentIdxMap[t] = indices;
+                }
 
-                // add map
-                timeIncidentIdxMap.Add(t, i);
+                parsedIncidents.Add(inci);
             }
         }
 
@@ -377,12 +387,15 @@ namespace VRC2.ScenariosV2.Scenario
             if (timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
             {
                 // idx
-                var idx = timeIncidentIdxMap[sec];
-                // get incident
-                var pi = parsedIncidents[idx];
+                var indices = timeIncidentIdxMap[sec];
 
-                // run
-                pi.RunIncident();
+                foreach (var idx in indices)
+                {
+                    // get incident
+                    var pi = parsedIncidents[idx];
+                    // run
+                    pi.RunIncident();
+                }
 
                 startedIncidents.Add(sec);
             }
