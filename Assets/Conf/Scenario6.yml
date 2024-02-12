@@ -1,0 +1,65 @@
+﻿# name of the scenario, correspond to the yml filename 
+name: "Scenario6"
+# description of this file
+desc: "Scenario definition"
+# normal events description in this file
+normal: "Normal events: crane, forklift, supervising drone"
+# accidents description in this file
+accident: "Electrocution"
+### the following 4 attributes are not in the slides, but it is referred from the original implementation
+# start timestamp in raw time
+start: "0:00"
+# end timestamp in raw time
+end: "07:40"
+# start task
+taskStart: 1
+# end task
+taskEnd: 1
+#########################################################################################################
+# all incidents, including the normal events and accidents
+incidents:
+  - id: 1 # the order of the incident
+    time: "0:30" # start time of this incident
+    refer: [ "Electrocution", "accidents", "1" ]
+  - id: 2 
+    time: "1:00" 
+    refer: [ "Crane", "normals", "1" ]
+  - id: 3 
+    time: "1:20" 
+    refer: [ "Electrocution", "accidents", "2" ]
+  - id: 4 
+    time: "1:30" 
+    refer: [ "Forklift", "normals", "1" ]
+  - id: 5 
+    time: "1:40" 
+    refer: [ "Crane", "normals", "2" ]
+  - id: 6
+    time: "1:50" 
+    refer: [ "Electrocution", "accidents", "3" ]
+  - id: 7
+    time: "2:20" 
+    refer: [ "Drone", "normals", "3" ]
+  - id: 8 
+    time: "2:40" 
+    refer: [ "Crane", "normals", "1" ]
+  - id: 9 
+    time: "3:10" 
+    refer: [ "Electrocution", "accidents", "4" ]
+  - id: 10 
+    time: "3:20" 
+    refer: [ "Forklift", "normals", "1" ]
+  - id: 11 
+    time: "3:40" 
+    refer: [ "Electrocution", "accidents", "5" ]
+  - id: 12
+    time: "4:00" 
+    refer: [ "Crane", "normals", "2" ]
+  - id: 13
+    time: "4:10" 
+    refer: [ "Crane", "normals", "1" ]
+  - id: 14
+    time: "4:30" 
+    refer: [ "Electrocution", "accidents", "6" ]
+  #- id: 15
+  #  time: "5:00" 
+  #  refer: [ "CraneTruck", "accidents", "1" ]
