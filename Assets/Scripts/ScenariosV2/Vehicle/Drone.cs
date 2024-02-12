@@ -70,34 +70,58 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Drone_accidents_1()
         {
+            print("Invoked Drone_accidents_1");
+            baselineS4.ShowWarning(2);
+            baselineS4.On_BaselineS4_2_Start();
         }
 
         public void Drone_accidents_2()
         {
+            print("Invoked Drone_accidents_2");
+            baselineS4.ShowWarning(3);
+            baselineS4.On_BaselineS4_3_Start();
         }
 
         public void Drone_accidents_3()
         {
+            print("Invoked Drone_accidents_4");
+            baselineS4.ShowWarning(4);
+            baselineS4.On_BaselineS4_4_Start();
         }
 
         public void Drone_accidents_4()
         {
+            print("Invoked Drone_accidents_4");
+            baselineS4.ShowWarning(5);
+            baselineS4.On_BaselineS4_5_Start();
         }
 
         public void Drone_accidents_5()
         {
+            print("Invoked Drone_accidents_5");
+            baselineS4.ShowWarning(6);
+            baselineS4.On_BaselineS4_6_Start();
         }
 
         public void Drone_accidents_6()
         {
+            print("Invoked Drone_accidents_6");
+            baselineS4.ShowWarning(7);
+            baselineS4.On_BaselineS4_7_Start();
         }
 
         public void Drone_accidents_7()
         {
+            print("Invoked Drone_accidents_7");
+            baselineS4.ShowWarning(6);
+            baselineS4.On_BaselineS4_6_Start();
         }
 
         public void Drone_accidents_8()
         {
+            print("Invoked Drone_accidents_8");
+            baselineS4.ShowWarning(7);
+            baselineS4.On_BaselineS4_7_Start();
         }
 
         #endregion
