@@ -15,7 +15,7 @@ using VRC2.ScenariosV2.Adaptor;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
-    public class BaselineS3 : ScenarioAdaptor
+    public class BaselineS3 : Scenario
     {
 
         public GameObject TRUCK;
