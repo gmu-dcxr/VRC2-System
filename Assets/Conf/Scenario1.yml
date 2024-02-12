@@ -21,27 +21,27 @@ incidents:
   - id: 1 # the order of the incident
     time: "0:30" # start time of this incident
     refer: ["Crane", "accidents", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
-#  - id: 2
-#    time: "1:00"
-#    refer: ["Drone", "normals", "1"]
+  - id: 2
+    time: "1:00"
+    refer: ["Drone", "normals", "1"]
   - id: 3
     time: "1:30"
     refer: ["Crane", "accidents", "2"]
-#  - id: 4
-#    time: "2:00"
-#    refer: ["Forklift", "normals", "1"]
+  - id: 4
+    time: "2:00"
+    refer: ["Forklift", "normals", "1"]
   - id: 5
     time: "2:30"
     refer: ["Crane", "accidents", "3"]
-#  - id: 6
-#    time: "3:00"
-#    refer: ["Truck", "", ""] # TODO
+  - id: 6
+    time: "3:00"
+    refer: ["Truck", "normals", "1"] # TODO
   - id: 7
     time: "3:30"
     refer: ["Crane", "accidents", "4"]
-#  - id: 8
-#    time: "4:00"
-#    refer: ["Forklift", "normals", "1"]
+  - id: 8
+    time: "4:00"
+    refer: ["Forklift", "normals", "1"]
   - id: 9
     time: "4:30"
     refer: ["Crane", "accidents", "5"]
@@ -51,9 +51,9 @@ incidents:
   - id: 11
     time: "5:30"
     refer: ["Crane", "accidents", "7"]
-#  - id: 12
-#    time: "5:30" # the same time
-#    refer: ["Truck", "normals", ""] # TODO
+  - id: 12
+    time: "5:30" # the same time
+    refer: ["Truck", "normals", ""] # TODO
   - id: 13
     time: "6:00"
     refer: ["Crane", "accidents", "8"]
