@@ -5,11 +5,47 @@ gameObject: "Electrocutions"
 incidents:
   normals:
     - id: 1
+      condition: "Normal"
+      time: "T1"
+      type: "Potential"
+      desc: "A truck is backing up nearby"
+      warning: "Warning: A truck is going to back up nearby"
     - id: 2
+      condition: "Normal"
+      time: "T1+60s"
+      type: "Potential"
+      desc: "The load truck is passing nearby. And the water stain accumulated along the path"
   accidents:
     - id: 1
+      condition: "Accident"
+      time: "T1"
+      type: "Potential"
+      desc: "A truck is backing up nearby (Same distance as T1 in the scrane scenario)"
+      warning: "Warning: A truck is going to back up nearby"
     - id: 2
+      condition: "Accident"
+      time: "T1+60s"
+      desc: "The loaded truck is passing nearby. And the water stain acuumlated close to the cable"
+      warning: "Warning: be aware of the pond nearby"
     - id: 3
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: "A truck is backing up nearby (same distance as T1 in the crane scenario)"
+      warning: "Warning: A truck is going to back up nearby"
     - id: 4
+      condition: "Accident"
+      time: "T2+60s"
+      desc: "The loaded truck is passing nearby. And the water stain grows bigger"
+      warning: "Warning: be aware of the pond nearby"
     - id: 5
+      condition: "Accident"
+      time: "T3"
+      type: "Potential"
+      desc: "A truck is backing up nearby (same distance as T1 in the crane scenario)"
+      warning: "Warning: A truck is going to back up nearby"
     - id: 6
+      condition: "Accident"
+      time: "T3+60s"
+      desc: "The loaded truck is passing nearby. And the water stain grows bigger"
+      warning: "Warning: be aware of the pond nearby"
