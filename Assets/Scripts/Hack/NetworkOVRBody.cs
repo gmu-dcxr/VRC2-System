@@ -1,110 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using ProtoBuf;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using FishNet.Transporting;
 using UnityEngine;
-using Fusion;
 
 namespace VRC2
 {
-    [ProtoContract]
-    public struct Quatf
-    {
-        [ProtoMember(1)] public float x;
-        [ProtoMember(2)] public float y;
-        [ProtoMember(3)] public float z;
-        [ProtoMember(4)] public float w;
-    }
-
-    [ProtoContract]
-    public struct Vector3f
-    {
-        [ProtoMember(1)] public float x;
-        [ProtoMember(2)] public float y;
-        [ProtoMember(3)] public float z;
-    }
-
-    [ProtoContract]
-    public struct Posef
-    {
-        [ProtoMember(1)] public Quatf Orientation;
-        [ProtoMember(2)] public Vector3f Position;
-    }
-
-    [ProtoContract]
-    public struct SkeletonPoseData
-    {
-        [ProtoMember(1)] public Posef RootPose { get; set; }
-        [ProtoMember(2)] public float RootScale { get; set; }
-        [ProtoMember(3)] public Quatf[] BoneRotations { get; set; }
-        [ProtoMember(4)] public bool IsDataValid { get; set; }
-        [ProtoMember(5)] public bool IsDataHighConfidence { get; set; }
-        [ProtoMember(6)] public Vector3f[] BoneTranslations { get; set; }
-        [ProtoMember(7)] public int SkeletonChangedCount { get; set; }
-
-        public static void SetRootPose(ref Posef pose, OVRPlugin.Posef src)
-        {
-            var p = src.Position;
-            var q = src.Orientation;
-
-            pose.Position.x = p.x;
-            pose.Position.y = p.y;
-            pose.Position.z = p.z;
-
-            pose.Orientation.x = q.x;
-            pose.Orientation.y = q.y;
-            pose.Orientation.z = q.z;
-            pose.Orientation.w = q.w;
-        }
-
-        public static void RestoreRootPose(ref OVRPlugin.Posef pose, Posef src)
-        {
-            var p = src.Position;
-            var q = src.Orientation;
-
-            pose.Position.x = p.x;
-            pose.Position.y = p.y;
-            pose.Position.z = p.z;
-
-            pose.Orientation.x = q.x;
-            pose.Orientation.y = q.y;
-            pose.Orientation.z = q.z;
-            pose.Orientation.w = q.w;
-        }
-
-        public static void SetBoneRotation(ref Quatf[] quatf, OVRPlugin.Quatf src, int idx)
-        {
-            quatf[idx].x = src.x;
-            quatf[idx].y = src.y;
-            quatf[idx].z = src.z;
-            quatf[idx].w = src.w;
-        }
-
-        public static void RestoreBoneRotation(ref OVRPlugin.Quatf[] quatf, Quatf src, int idx)
-        {
-            quatf[idx].x = src.x;
-            quatf[idx].y = src.y;
-            quatf[idx].z = src.z;
-            quatf[idx].w = src.w;
-        }
-
-        public static void SetBoneTranslation(ref Vector3f[] vector3f, OVRPlugin.Vector3f src, int idx)
-        {
-            vector3f[idx].x = src.x;
-            vector3f[idx].y = src.y;
-            vector3f[idx].z = src.z;
-        }
-
-        public static void RestoreBoneTranslation(ref OVRPlugin.Vector3f[] vector3f, Vector3f src, int idx)
-        {
-            vector3f[idx].x = src.x;
-            vector3f[idx].y = src.y;
-            vector3f[idx].z = src.z;
-        }
-    }
-
-    [RequireComponent(typeof(NetworkObject))]
     public class NetworkOVRBody : NetworkBehaviour,
         OVRSkeleton.IOVRSkeletonDataProvider,
         OVRSkeletonRenderer.IOVRSkeletonRendererDataProvider
@@ -125,16 +26,14 @@ namespace VRC2
         private Action<string> _onPermissionGranted;
         private static int _trackingInstanceCount;
 
-        // protobuf SkeletonPoseData
-        private SkeletonPoseData _networkSkeletonPoseData;
-        private Quatf[] _networkBoneRotations;
-        private Vector3f[] _networkBoneTranslations;
-        private Posef _networkRootPose;
+        // Synchronize SkeletonPoseData through Fish-Net
+        [field: SyncVar(ReadPermissions = ReadPermission.ExcludeOwner, Channel = Channel.Reliable)]
+        public OVRSkeleton.SkeletonPoseData skeletonPoseData { get; [ServerRpc(RunLocally = true)] set; }
 
-        // RPC decoded skeletonposedata
-        private OVRSkeleton.SkeletonPoseData _RPCDecodedSkeletonPoseData;
-
-        private NetworkObject _networkObject;
+        // private void OnSkeletonPoseData(OVRSkeleton.SkeletonPoseData prev, OVRSkeleton.SkeletonPoseData next, bool asServer)
+        // {
+        //     print($"on_data : {asServer}");
+        // }
 
         /// <summary>
         /// The raw <see cref="BodyState"/> data used to populate the <see cref="OVRSkeleton"/>.
@@ -143,9 +42,7 @@ namespace VRC2
 
         private void Awake()
         {
-            _networkObject = gameObject.GetComponent<NetworkObject>();
-
-            if (!_networkObject.IsValid || (_networkObject.IsValid && _networkObject.HasInputAuthority))
+            if (!base.isActiveAndEnabled || (base.isActiveAndEnabled && base.IsClient))
             {
                 _onPermissionGranted = OnPermissionGranted;
             }
@@ -158,7 +55,7 @@ namespace VRC2
 
         private void OnEnable()
         {
-            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
+            if (base.isActiveAndEnabled && !Owner.IsLocalClient)
             {
                 Debug.LogWarning("Override NetworkOVRBody OnEnable");
                 if (!enabled) enabled = true;
@@ -166,7 +63,7 @@ namespace VRC2
                 if (!_dataChangedSinceLastQuery) _dataChangedSinceLastQuery = true;
                 return;
             }
-            
+
             _trackingInstanceCount++;
             _dataChangedSinceLastQuery = false;
             _hasData = false;
@@ -233,7 +130,7 @@ namespace VRC2
 
         private void GetBodyState(OVRPlugin.Step step)
         {
-            if (_networkObject.IsValid && !_networkObject.HasInputAuthority)
+            if (base.isActiveAndEnabled && !Owner.IsLocalClient)
             {
                 if (!enabled) enabled = true;
                 if (!_hasData) _hasData = true;
@@ -257,7 +154,7 @@ namespace VRC2
 
         OVRSkeleton.SkeletonPoseData OVRSkeleton.IOVRSkeletonDataProvider.GetSkeletonPoseData()
         {
-            if (!_networkObject.IsValid || _networkObject.HasInputAuthority)
+            if (!base.isActiveAndEnabled || Owner.IsLocalClient)
             {
                 if (!_hasData) return default;
 
@@ -267,10 +164,6 @@ namespace VRC2
                     Array.Resize(ref _boneRotations, _bodyState.JointLocations.Length);
                     Array.Resize(ref _boneTranslations, _bodyState.JointLocations.Length);
 
-                    Array.Resize(ref _networkBoneRotations, _bodyState.JointLocations.Length);
-                    Array.Resize(ref _networkBoneTranslations, _bodyState.JointLocations.Length);
-
-
                     // Copy joint poses into bone arrays
                     for (var i = 0; i < _bodyState.JointLocations.Length; i++)
                     {
@@ -279,48 +172,20 @@ namespace VRC2
                         {
                             var orientation = jointLocation.Pose.Orientation;
                             _boneRotations[i] = orientation;
-
-                            SkeletonPoseData.SetBoneRotation(ref _networkBoneRotations, orientation, i);
                         }
 
                         if (jointLocation.PositionValid)
                         {
                             var position = jointLocation.Pose.Position;
                             _boneTranslations[i] = position;
-
-                            SkeletonPoseData.SetBoneTranslation(ref _networkBoneTranslations, position, i);
                         }
                     }
 
                     _dataChangedSinceLastQuery = false;
                 }
 
-                SkeletonPoseData.SetRootPose(ref _networkRootPose,
-                    _bodyState.JointLocations[(int)OVRPlugin.BoneId.Body_Root].Pose);
-
-                if (_networkObject.IsValid && _networkObject.HasInputAuthority)
-                {
-                    _networkSkeletonPoseData = new SkeletonPoseData()
-                    {
-                        IsDataValid = true,
-                        IsDataHighConfidence = _bodyState.Confidence > .5f,
-                        RootPose = _networkRootPose,
-                        RootScale = 1.0f,
-                        BoneRotations = _networkBoneRotations,
-                        BoneTranslations = _networkBoneTranslations,
-                        SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
-                    };
-
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        Serializer.Serialize(stream, _networkSkeletonPoseData);
-                        var bytes = stream.ToArray();
-                        RPC_SendSkeletonPoseData(bytes);
-                    }   
-                }
-
                 // render locally
-                return new OVRSkeleton.SkeletonPoseData
+                skeletonPoseData = new OVRSkeleton.SkeletonPoseData
                 {
                     IsDataValid = true,
                     IsDataHighConfidence = _bodyState.Confidence > .5f,
@@ -330,12 +195,13 @@ namespace VRC2
                     BoneTranslations = _boneTranslations,
                     SkeletonChangedCount = (int)_bodyState.SkeletonChangedCount,
                 };
+                return skeletonPoseData;
             }
-            else
-            {
-                return _RPCDecodedSkeletonPoseData;
-            }
+
+            // use synchronized
+            return skeletonPoseData;
         }
+
 
         OVRSkeletonRenderer.SkeletonRendererData
             OVRSkeletonRenderer.IOVRSkeletonRendererDataProvider.GetSkeletonRendererData() => _hasData
@@ -347,66 +213,5 @@ namespace VRC2
                 ShouldUseSystemGestureMaterial = false,
             }
             : default;
-
-
-        [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-        public void RPC_SendSkeletonPoseData(byte[] bytes, RpcInfo info = default)
-        {
-            // var message = "";
-
-            if (info.IsInvokeLocal)
-            {
-                // message = $"Send data of length: {bytes.Length}";
-            }
-            else
-            {
-                // message = $"Recv data of length: {bytes.Length}\n";
-                // decode
-                var data = DecodeSkeletonPoseData(bytes);
-                // covert
-                _RPCDecodedSkeletonPoseData = ConvertSkeletonPoseData(data);
-            }
-
-            // Debug.LogWarning(message);
-        }
-
-        public SkeletonPoseData DecodeSkeletonPoseData(byte[] bytes)
-        {
-            using (MemoryStream stream = new MemoryStream(bytes))
-            {
-                var data = (SkeletonPoseData)Serializer.Deserialize<SkeletonPoseData>(stream);
-                return data;
-            }
-        }
-
-        public OVRSkeleton.SkeletonPoseData ConvertSkeletonPoseData(SkeletonPoseData data)
-        {
-            Array.Resize(ref _boneRotations, data.BoneRotations.Length);
-            Array.Resize(ref _boneTranslations, data.BoneRotations.Length);
-
-            // Copy joint poses into bone arrays
-            for (var i = 0; i < data.BoneRotations.Length; i++)
-            {
-                var rotation = data.BoneRotations[i];
-                SkeletonPoseData.RestoreBoneRotation(ref _boneRotations, rotation, i);
-
-                var position = data.BoneTranslations[i];
-                SkeletonPoseData.RestoreBoneTranslation(ref _boneTranslations, position, i);
-            }
-
-            var rootPose = new OVRPlugin.Posef();
-            SkeletonPoseData.RestoreRootPose(ref rootPose, data.RootPose);
-
-            return new OVRSkeleton.SkeletonPoseData
-            {
-                IsDataValid = data.IsDataValid,
-                IsDataHighConfidence = data.IsDataHighConfidence,
-                RootPose = rootPose,
-                RootScale = data.RootScale,
-                BoneRotations = _boneRotations,
-                BoneTranslations = _boneTranslations,
-                SkeletonChangedCount = data.SkeletonChangedCount,
-            };
-        }
     }
 }
