@@ -3833,6 +3833,7 @@ GameObject:
   - component: {fileID: 1845600826537973613}
   - component: {fileID: 1845600826537973612}
   - component: {fileID: 8947324896823354469}
+  - component: {fileID: 4680788057750612471}
   m_Layer: 10
   m_Name: HighFidelityFirstPerson 1
   m_TagString: Untagged
@@ -4034,7 +4035,6 @@ MonoBehaviour:
     RawGuidValue: 6eb5ada1101e4534ca72ee784f0df896
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 1845600826537973612}
   - {fileID: 8947324896823354469}
   SimulationBehaviours: []
 --- !u!114 &1845600826537973612
@@ -4049,7 +4049,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d381457cb5543d4ab48165a71156b10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 4680788057750612471}
+  _networkObjectCache: {fileID: 0}
 --- !u!114 &8947324896823354469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4076,6 +4078,38 @@ MonoBehaviour:
     RotBlendStart: 0.1
     RotBlendEnd: 0.5
     RotTeleportRadians: 1.5
+--- !u!114 &4680788057750612471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7329516836346332585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NetworkObserver: {fileID: 0}
+  <PrefabId>k__BackingField: 0
+  <SpawnableCollectionId>k__BackingField: 0
+  _scenePathHash: 0
+  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 708184553859360311
+  <IsNested>k__BackingField: 0
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  _networkBehaviours: []
+  <ParentNetworkObject>k__BackingField: {fileID: 0}
+  <ChildNetworkObjects>k__BackingField: []
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    LocalScale: {x: 0, y: 0, z: 0}
+  _isNetworked: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _defaultDespawnType: 0
 --- !u!1 &7343475241461409641
 GameObject:
   m_ObjectHideFlags: 0
