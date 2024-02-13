@@ -169,6 +169,21 @@ namespace VRC2.ScenariosV2.Scenario
             }
         }
 
+        private WarningController _warningController;
+
+        public WarningController warningController
+        {
+            get
+            {
+                if (_warningController == null)
+                {
+                    _warningController = FindFirstObjectByType<WarningController>();
+                }
+
+                return _warningController;
+            }
+        }
+
         #endregion
 
         [Header("Debug UI")] public bool showDebugUI = true;

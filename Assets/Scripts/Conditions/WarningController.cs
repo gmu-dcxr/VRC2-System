@@ -26,6 +26,13 @@ public class WarningController : MonoBehaviour
 
     [Header("Noise Simulation")] public AudioSource noise;
 
+    [Space(30)] [Header("Counter Down")] public GameObject counterDownDialog;
+    public TextMeshProUGUI counterDown;
+
+    private Timer _CounterDowntimer;
+
+    private int totalSecond;
+
     private ScenariosManager scenariosManager;
 
     private Transform _cameraTransform
@@ -103,6 +110,10 @@ public class WarningController : MonoBehaviour
 
 
         dialog.SetActive(false);
+
+        // clear it to make it invisible
+        counterDownDialog.SetActive(false);
+        counterDown.text = "";
     }
 
     void StartTimer()
@@ -235,11 +246,16 @@ public class WarningController : MonoBehaviour
     {
         if (dialog.activeSelf)
         {
-            MoveDialogFaceHeadset();
+            MoveDialogFaceHeadset(dialog);
+        }
+
+        if (counterDownDialog.activeSelf)
+        {
+            MoveDialogFaceHeadset(counterDownDialog);
         }
     }
 
-    void MoveDialogFaceHeadset()
+    void MoveDialogFaceHeadset(GameObject obj)
     {
         var forward = _cameraTransform.forward;
 
@@ -248,8 +264,8 @@ public class WarningController : MonoBehaviour
 
         pos += offset;
 
-        dialog.transform.rotation = rot;
-        dialog.transform.position = pos;
+        obj.transform.rotation = rot;
+        obj.transform.position = pos;
     }
 
     public AudioClip LoadAudioClip(string scenario, int incident)
@@ -288,6 +304,49 @@ public class WarningController : MonoBehaviour
         {
             // play audio with delay
             StartCoroutine(PlayAudio(delay.Value));
+        }
+    }
+
+    #endregion
+
+    #region Counter Down
+
+    public void StartCounterDown(int total_second)
+    {
+        totalSecond = total_second;
+
+        if (_CounterDowntimer != null)
+        {
+            Timer.Cancel(_CounterDowntimer);
+        }
+        
+        counterDownDialog.SetActive(true);
+
+        _CounterDowntimer = Timer.Register(1, () => { SetCounterDown(); }, isLooped: true, useRealTime: true);
+    }
+
+    private void SetCounterDown()
+    {
+        if (totalSecond <= 0)
+        {
+            Timer.Cancel(_CounterDowntimer);
+            _CounterDowntimer = null;
+        }
+
+        var m = totalSecond / 60;
+        var s = totalSecond % 60;
+        counterDown.text = $"{m} : {s}";
+        totalSecond -= 1;
+    }
+
+    public void StopCounterDown()
+    {
+        counterDownDialog.SetActive(false);
+        counterDown.text = "";
+
+        if (_CounterDowntimer != null)
+        {
+            Timer.Cancel(_CounterDowntimer);
         }
     }
 
