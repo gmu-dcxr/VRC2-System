@@ -273,8 +273,11 @@ namespace VRC2.ScenariosV2.Scenario
                 res = irrelevant.GetAccidentIncident(idx);
             }
 
-            // update reference warning
-            res.showWarning = warning;
+            if (res != null)
+            {
+                // update reference warning
+                res.showWarning = warning;
+            }
 
             return res;
         }
