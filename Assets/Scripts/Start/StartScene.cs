@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using FishNet.Managing;
+using FishNet.Transporting.Tugboat;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
@@ -26,6 +28,8 @@ public class StartScene : MonoBehaviour
     public GameObject mainEventSystem;
     public Button hostButton;
     public Button joinButton;
+
+    [Space(30)] [Header("FishNet")] public Tugboat boat;
 
     [Space(30)] [Header("Debug")] public bool enableDebug = false;
 
@@ -76,12 +80,16 @@ public class StartScene : MonoBehaviour
 
     public void HostButton()
     {
+        // start Fish-Net
+        boat.StartConnection(true);
+        boat.StartConnection(false);
         _playerSpawner.StartHost();
 
     }
 
     public void JoinButton()
     {
+        boat.StartConnection(false);
         _playerSpawner.StartClient();
     }
 
