@@ -10,7 +10,7 @@ public class CargoManipulator : MonoBehaviour
 
 	public KeyCode connectedCargo = KeyCode.C;
 	[HideInInspector] public bool connectedCargoToHook_Bool = true;
-	[HideInInspector] public Transform hook;
+	public Transform hook;
 	[HideInInspector] public Transform pointHook;
 	// [HideInInspector] public GameObject cargoLine;
 	[HideInInspector] public float distanceHook = 0;
