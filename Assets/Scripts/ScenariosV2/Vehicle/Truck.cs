@@ -17,29 +17,31 @@ namespace VRC2.ScenariosV2.Vehicle
                 {
                     _baselineS3 = FindObjectOfType<BaselineS3>();
                 }
+
                 if (_baselineS3 == null)
                 {
                     print("BAD: baselines3 is null");
                 }
-                    return _baselineS3;
+
+                return _baselineS3;
             }
         }
 
         #region Callbacks
 
-        public void Truck_normals_1()
+        public void Truck_normals_1(object[] parameters)
         {
             print("Invoked Truck_normals_2");
             baselineS3.On_BaselineS3_2_Start();
         }
 
-        public void Truck_normals_2()
+        public void Truck_normals_2(object[] parameters)
         {
             print("Invoked Truck_normals_2");
             baselineS3.On_BaselineS3_2_Start();
         }
 
-        public void Truck_accidents_1()
+        public void Truck_accidents_1(object[] parameters)
         {
             print("Invoked Truck_accidents_1");
             // show warning controller
@@ -49,7 +51,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS3.On_BaselineS3_2_Start();
         }
 
-        public void Truck_accidents_2()
+        public void Truck_accidents_2(object[] parameters)
         {
             print("Invoked Truck_accidents_2");
 
@@ -57,7 +59,7 @@ namespace VRC2.ScenariosV2.Vehicle
             //baselineS3.On_BaselineS3_3_Start();
         }
 
-        public void Truck_accidents_3()
+        public void Truck_accidents_3(object[] parameters)
         {
             print("Invoked Truck_accidents_3");
 
@@ -65,7 +67,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS3.On_BaselineS3_4_Start();
         }
 
-        public void Truck_accidents_4()
+        public void Truck_accidents_4(object[] parameters)
         {
             print("Invoked Truck_accidents_4");
 
@@ -73,7 +75,7 @@ namespace VRC2.ScenariosV2.Vehicle
             //baselineS3.On_BaselineS3_5_Start();
         }
 
-        public void Truck_accidents_5()
+        public void Truck_accidents_5(object[] parameters)
         {
             print("Invoked Truck_accidents_5");
 
@@ -81,7 +83,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS3.On_BaselineS3_6_Start();
         }
 
-        public void Truck_accidents_6()
+        public void Truck_accidents_6(object[] parameters)
         {
             print("Invoked Truck_accidents_6");
 
@@ -89,7 +91,7 @@ namespace VRC2.ScenariosV2.Vehicle
             //baselineS3.On_BaselineS3_7_Start();
         }
 
-        public void Truck_accidents_7()
+        public void Truck_accidents_7(object[] parameters)
         {
             print("Invoked Truck_accidents_7");
 
@@ -97,7 +99,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS3.On_BaselineS3_6_Start();
         }
 
-        public void Truck_accidents_8()
+        public void Truck_accidents_8(object[] parameters)
         {
             print("Invoked Truck_accidents_8");
 

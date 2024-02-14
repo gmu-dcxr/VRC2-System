@@ -56,7 +56,7 @@ namespace VRC2.ScenariosV2.Vehicle
         }
 
         #endregion
-        
+
         // warning controller
         private WarningController _warningController;
 
@@ -84,6 +84,15 @@ namespace VRC2.ScenariosV2.Vehicle
         }
 
         private bool parsed = false;
+
+        #region Adaption for invoke with parameters
+
+        public bool showWaring(object[] parameters)
+        {
+            return (bool)parameters[0];
+        }
+
+        #endregion
 
         #region Methods
 

@@ -239,39 +239,47 @@ namespace VRC2.ScenariosV2.Scenario
             var cname = arr[0];
             var idx = int.Parse(arr[2]);
             var normal = IsNormal(refer);
+            var warning = refer.warning;
+
+            Incident res = null;
 
             // crane
             if (cname.Equals(crane.ClsName))
             {
-                return crane.GetIncident(idx, normal);
+                res = crane.GetIncident(idx, normal);
             }
 
             // drone
             if (cname.Equals(drone.ClsName))
             {
-                return drone.GetIncident(idx, normal);
+                res = drone.GetIncident(idx, normal);
             }
 
             // truck
             if (cname.Equals(truck.ClsName))
             {
-                return truck.GetIncident(idx, normal);
+                res = truck.GetIncident(idx, normal);
             }
 
             // cranetruck
             if (cname.Equals(craneTruck.ClsName))
             {
-                return craneTruck.GetIncident(idx, normal);
+                res = craneTruck.GetIncident(idx, normal);
             }
 
             // irrelevant
             if (cname.Equals(irrelevant.ClsName))
             {
-                return irrelevant.GetAccidentIncident(idx);
+                res = irrelevant.GetAccidentIncident(idx);
             }
 
-            // default
-            return null;
+            if (res != null)
+            {
+                // update reference warning
+                res.showWarning = warning;
+            }
+
+            return res;
         }
 
         private void ParseIncidents()
