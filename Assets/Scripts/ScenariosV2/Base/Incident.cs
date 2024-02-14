@@ -5,6 +5,7 @@ using UnityEngine;
 using VRC2.Utility;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Tool;
+using Object = UnityEngine.Object;
 
 namespace VRC2.ScenariosV2.Base
 {
@@ -65,6 +66,12 @@ namespace VRC2.ScenariosV2.Base
         }
 
         #endregion
+        
+        #region Reference in Scenario V2
+
+        // default is true
+        [HideInInspector] public bool showWarning = true;
+        #endregion
 
         #region Methods
 
@@ -113,8 +120,10 @@ namespace VRC2.ScenariosV2.Base
             // callback
             if (method != null)
             {
-                // invoke
-                method.Invoke(vehicle, null);
+                // invoke with parameters
+                // refer: https://stackoverflow.com/questions/61855500/targetparametercountexception-c-sharp
+                object[] parameters = new object[] {new object[]{ showWarning}};
+                method.Invoke(vehicle, parameters);
             }
         }
 

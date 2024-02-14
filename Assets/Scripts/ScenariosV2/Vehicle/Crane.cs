@@ -24,21 +24,21 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #region Callbacks
 
-        public void Crane_normals_1()
+        public void Crane_normals_1(object[] parameters)
         {
             print("Invoked Crane_normals_1");
             baselineS1.ShowWarning(2);
             baselineS1.On_BaselineS1_2_Start();
         }
 
-        public void Crane_normals_2()
+        public void Crane_normals_2(object[] parameters)
         {
             print("Invoked Crane_normals_2");
             baselineS1.ShowWarning(3);
             baselineS1.On_BaselineS1_3_Start();
         }
 
-        public void Crane_accidents_1()
+        public void Crane_accidents_1(object[] parameters)
         {
             print("Invoked Crane_accidents_1");
             // show warning controller
@@ -46,7 +46,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_2_Start();
         }
 
-        public void Crane_accidents_2()
+        public void Crane_accidents_2(object[] parameters)
         {
             print("Invoked Crane_accidents_2");
 
@@ -54,15 +54,18 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_3_Start();
         }
 
-        public void Crane_accidents_3()
+        public void Crane_accidents_3(object[] parameters)
         {
             print("Invoked Crane_accidents_3");
-
-            baselineS1.ShowWarning(4);
+            if (showWaring(parameters))
+            {
+                baselineS1.ShowWarning(4);    
+            }
+            
             baselineS1.On_BaselineS1_4_Start();
         }
 
-        public void Crane_accidents_4()
+        public void Crane_accidents_4(object[] parameters)
         {
             print("Invoked Crane_accidents_4");
 
@@ -70,7 +73,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_5_Start();
         }
 
-        public void Crane_accidents_5()
+        public void Crane_accidents_5(object[] parameters)
         {
             print("Invoked Crane_accidents_5");
 
@@ -78,7 +81,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_6_Start();
         }
 
-        public void Crane_accidents_6()
+        public void Crane_accidents_6(object[] parameters)
         {
             print("Invoked Crane_accidents_6");
 
@@ -86,7 +89,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_7_Start();
         }
 
-        public void Crane_accidents_7()
+        public void Crane_accidents_7(object[] parameters)
         {
             print("Invoked Crane_accidents_7");
 
@@ -94,7 +97,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_8_Start();
         }
 
-        public void Crane_accidents_8()
+        public void Crane_accidents_8(object[] parameters)
         {
             print("Invoked Crane_accidents_8");
 
@@ -102,7 +105,7 @@ namespace VRC2.ScenariosV2.Vehicle
             baselineS1.On_BaselineS1_9_Start();
         }
 
-        public void Crane_accidents_9()
+        public void Crane_accidents_9(object[] parameters)
         {
             print("Invoked Crane_accidents_9");
 
