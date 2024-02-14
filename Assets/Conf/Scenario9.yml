@@ -1,0 +1,26 @@
+﻿# name of the scenario, correspond to the yml filename 
+name: "Scenario9"
+# description of this file
+desc: "Scenario definition"
+# normal events description in this file
+normal: "Normal events: truck, crane, forklift"
+# accidents description in this file
+accident: "Accident events: supervising drone(in bold type)"
+### the following 4 attributes are not in the slides, but it is referred from the original implementation
+# start timestamp in raw time
+start: "0:00"
+# end timestamp in raw time
+end: "05:10"
+# start task
+taskStart: 1
+# end task
+taskEnd: 1
+#########################################################################################################
+# all incidents, including the normal events and accidents
+incidents:
+  - id: 1 # the order of the incident
+    time: "0:30" # start time of this incident
+    refer: [ "Drone", "accidents", "1" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+  - id: 2
+    time: "1:30"
+    refer: [ "Truck", "normals", "1" ]
