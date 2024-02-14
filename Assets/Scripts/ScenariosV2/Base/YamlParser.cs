@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using JetBrains.Annotations;
 
 namespace VRC2.ScenariosV2.Base
@@ -41,6 +42,10 @@ namespace VRC2.ScenariosV2.Base
             public int id { get; set; }
             public string time { get; set; }
             public List<string> refer { get; set; }
+            
+            // adaption for Scenario 7
+            // default value setting refer: https://github.com/aaubry/YamlDotNet/issues/465
+            [CanBeNull] [DefaultValue(true)] public bool warning { get; set; } = true; 
         }
 
         public class Scenario

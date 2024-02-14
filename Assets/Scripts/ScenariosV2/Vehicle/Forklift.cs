@@ -26,14 +26,14 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #region Callbacks
 
-        public void Forklift_normals_1()
+        public void Forklift_normals_1(object[] parameters)
         {
             print("Invoked Forklift_normals_1");
             background.ShowWarning(2);
             background.On_Background_2_Start();
         }
 
-        public void Forklift_normals_2()
+        public void Forklift_normals_2(object[] parameters)
         {
             print("Invoked Forklift_normals_2");            
         }        
