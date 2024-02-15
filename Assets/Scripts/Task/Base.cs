@@ -264,15 +264,18 @@ namespace VRC2.Task
 
         public void UpdateSheet(bool rule)
         {
-            if (rule)
-            {
-                // set sheet_rule picture
-                imageAsTexture.UpdateFolderFilename(folder, sheetRule);
-            }
-            else
-            {
-                imageAsTexture.UpdateFolderFilename(folder, sheetPipe);
-            }
+            // sheet rule is deprecated. Always use sheet pipe
+            
+            imageAsTexture.UpdateFolderFilename(folder, sheetPipe);
+            // if (rule)
+            // {
+            //     // set sheet_rule picture
+            //     imageAsTexture.UpdateFolderFilename(folder, sheetRule);
+            // }
+            // else
+            // {
+            //     imageAsTexture.UpdateFolderFilename(folder, sheetPipe);
+            // }
         }
 
         public void UpdateTableRule(bool p1)

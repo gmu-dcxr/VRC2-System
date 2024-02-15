@@ -16,8 +16,8 @@ namespace VRC2.Events
         // public TextMeshProUGUI contentUI;
         public float distance;
 
-        [HideInInspector]public string title = "Instruction";
-        [HideInInspector]public string content = "This is instruction";
+        [HideInInspector] public string title = "Instruction";
+        [HideInInspector] public string content = "This is instruction";
 
 
         [Header("Table")] public Table srcTable;
@@ -98,6 +98,17 @@ namespace VRC2.Events
             // layout
             var texture = srcIAT.GetTexture();
             localIAT.SetTexture(texture);
+        }
+
+        public void UpdateInstruction(string folder, string filename)
+        {
+            srcIAT.UpdateFolderFilename(folder, filename);
+            localIAT.UpdateFolderFilename(folder, filename);
+        }
+
+        public (string, string) BackupInstruction()
+        {
+            return (srcIAT.folder, srcIAT.name);
         }
     }
 }
