@@ -57,6 +57,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_2_Start()
         {
+            //var incident = GetIncident(2);
+            //var warning = incident.Warning;
             print("On_BaselineS3_2_Start");
             normal.SetActive(false);
             EXCAV.GetComponent<ExcavAnimPlayer>().start_2();
