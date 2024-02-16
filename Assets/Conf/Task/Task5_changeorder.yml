@@ -2,7 +2,7 @@ name: "Training" # name for this file
 desc: "Training task" # description
 folder: "Task" # folder name under Assets/Resources/
 image: "Training" # Instruction filename for this task, it will be shown in the instruction for participants
-rule: [ "Water", "Gas", "Electricity", "Sewage" ] # construction rule
+rule: [ "Ø1\"", "Ø2\"", "Ø3\"", "Ø4\"" ] # construction rule
 P1: [ "size", "length" ] # partial info given to P1
 P2: [ "color", "type" ] # partial info given to P2
 # Layout/Plan is given to the player who does not receive length, here it's P1
@@ -10,7 +10,7 @@ P2: [ "color", "type" ] # partial info given to P2
 info:
   - id: 1
     segment: 1
-    color: green # magenta/yellow/green/blue
+    color: magenta # magenta/yellow/green/blue
     type: electricity # sewage/gas/electricity/water
     size: 4 # int
     length: 0.5 # float
@@ -23,18 +23,18 @@ info:
   - id: 3
     segment: 3
     color: yellow
-    type: water
-    size: 1
+    type: sewage
+    size: 3
     length: 4.25
   - id: 4
     segment: 4
     color: green
-    type: water
-    size: 1
+    type: sewage
+    size: 3
     length: 18.25
   - id: 5
     segment: 5
-    color: magenta
+    color: yellow
     type: gas
     size: 2
     length: 1.0
@@ -46,7 +46,7 @@ info:
     length: 4.0
   - id: 7
     segment: 7
-    color: magenta
+    color: yellow
     type: gas
     size: 2
     length: 16.0
@@ -58,7 +58,7 @@ info:
     length: 8.5
   - id: 9
     segment: 9
-    color: magenta
+    color: yellow
     type: gas
     size: 2
     length: 1.0
