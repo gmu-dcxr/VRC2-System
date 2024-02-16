@@ -30,6 +30,9 @@ public class GlueHintManager : MonoBehaviour
 
     public void ShowHintFor(GameObject p)
     {
+        // set once
+        if(_pipe == p) return;
+        
         _pipe = p;
 
         MoveHintTo(p);
