@@ -255,8 +255,8 @@ namespace VRC2.Events
         {
             if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
 
-            // fix for connector 
-            if (transform.parent.name.EndsWith("connector")) return true;
+            // // fix for connector 
+            // if (transform.parent.name.EndsWith("connector")) return true;
 
             return hintManager.glued;
         }
