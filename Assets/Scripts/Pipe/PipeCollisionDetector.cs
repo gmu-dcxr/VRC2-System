@@ -179,7 +179,6 @@ namespace VRC2.Events
             // collision with glue
             else if (go.CompareTag(GlobalConstants.glueObjectTag))
             {
-                print("handling glue");
                 HandleGlueCollision(go);
             }
         }
@@ -255,6 +254,9 @@ namespace VRC2.Events
         bool IsGlued()
         {
             if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
+
+            // fix for connector 
+            if (transform.parent.name.EndsWith("connector")) return true;
 
             return hintManager.glued;
         }
