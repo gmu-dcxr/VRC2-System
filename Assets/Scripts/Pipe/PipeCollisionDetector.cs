@@ -179,6 +179,7 @@ namespace VRC2.Events
             // collision with glue
             else if (go.CompareTag(GlobalConstants.glueObjectTag))
             {
+                print("handling glue");
                 HandleGlueCollision(go);
             }
         }

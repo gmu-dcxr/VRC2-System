@@ -5,6 +5,8 @@ namespace VRC2.Authority
     public class MeshRendererHook : AuthorityHook
     {
         [Space(30)] [Header("Default")] public bool defaultValue = false;
+        // bypass default setting, do nothing
+        public bool bypass = false;
         private MeshRenderer renderer
         {
             get
@@ -31,6 +33,8 @@ namespace VRC2.Authority
 
         public override void Default()
         {
+            if (bypass) return;
+            
             if (renderer == null) return;
 
             renderer.enabled = defaultValue;
