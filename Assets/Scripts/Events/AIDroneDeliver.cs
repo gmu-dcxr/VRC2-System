@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using VRC2.Pipe;
@@ -25,7 +26,7 @@ namespace VRC2.Events
 
         private PipeConstants.PipeParameters parameters;
 
-        private NetworkObject spawnedPipe;
+        private List<NetworkObject> spawnedPipes = new List<NetworkObject>();
 
         void UpdateLocalSpawnedPipe(GameObject go)
         {
@@ -48,7 +49,7 @@ namespace VRC2.Events
             pm.SetMaterial(para);
         }
 
-        void SpawnPipeUsingSelected(PipeDiameter diameter)
+        void SpawnPipeUsingSelected(PipeDiameter diameter, int amount)
         {
             // spawn object
             var runner = GlobalConstants.networkRunner;
@@ -59,15 +60,21 @@ namespace VRC2.Events
 
             var prefab = PipeHelper.GetStraightPipePrefabRef(diameter);
 
-            spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
+            spawnedPipes.Clear();
 
-            // update global lastspawned pipe
+            for (var i = 0; i < amount; i++)
+            {
+                var pipe = runner.Spawn(prefab, pos, rot, localPlayer);
+                GlobalConstants.lastSpawnedPipe = pipe.gameObject;
+                UpdateLocalSpawnedPipe(pipe.gameObject);
+                RPC_SendMessage(pipe.Id, parameters);
 
-            GlobalConstants.lastSpawnedPipe = spawnedPipe.gameObject;
-            
-            UpdateLocalSpawnedPipe(spawnedPipe.gameObject);
+                // add to list
+                spawnedPipes.Add(pipe);
+            }
 
-            RPC_SendMessage(spawnedPipe.Id, parameters);
+            // start pick up
+            _droneController.PickUp();
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -79,8 +86,8 @@ namespace VRC2.Events
             {
                 message = $"AIDrone message ({para.ToString()})\n";
                 Debug.LogWarning(message);
-                // start pick up
-                _droneController.PickUp();
+                // // start pick up
+                // _droneController.PickUp();
             }
             else
             {
@@ -115,12 +122,13 @@ namespace VRC2.Events
         {
             print("ReadyToDropoff");
 
-            var go = spawnedPipe.gameObject;
-
-            PipeHelper.AfterMove(ref go);
-
-            // Despawn the previous one
-            spawnedPipe.transform.parent = null;
+            foreach (var spawnedPipe in spawnedPipes)
+            {
+                var go = spawnedPipe.gameObject;
+                PipeHelper.AfterMove(ref go);
+                // Despawn the previous one
+                spawnedPipe.transform.parent = null;
+            }
 
             _droneController.ReturnToBase();
         }
@@ -128,18 +136,22 @@ namespace VRC2.Events
         private void ReadyToPickUp()
         {
             print("ReadyToDropOff");
-            // set pipe's parent to drone
-            spawnedPipe.transform.parent = _droneController.gameObject.transform;
 
-            var go = spawnedPipe.gameObject;
+            foreach (var spawnedPipe in spawnedPipes)
+            {
+                // set pipe's parent to drone
+                spawnedPipe.transform.parent = _droneController.gameObject.transform;
 
-            PipeHelper.BeforeMove(ref go);
+                var go = spawnedPipe.gameObject;
 
-            var pos = _droneController.gameObject.transform.position;
-            pos.y -= pipeDroneDistance;
+                PipeHelper.BeforeMove(ref go);
 
-            spawnedPipe.transform.position = pos;
-            spawnedPipe.transform.localRotation = Quaternion.identity;
+                var pos = _droneController.gameObject.transform.position;
+                pos.y -= pipeDroneDistance;
+
+                spawnedPipe.transform.position = pos;
+                spawnedPipe.transform.localRotation = Quaternion.identity;
+            }
 
             _droneController.DropOff();
         }
@@ -149,7 +161,8 @@ namespace VRC2.Events
             var type = parameters.type;
             var color = parameters.color;
             var diameter = parameters.diameter;
-            SpawnPipeUsingSelected(diameter);
+            var amount = parameters.amount;
+            SpawnPipeUsingSelected(diameter, amount);
         }
 
         public void InitParameters(PipeParameters para)
@@ -158,6 +171,8 @@ namespace VRC2.Events
             parameters.type = para.type;
             parameters.color = para.color;
             parameters.diameter = para.diameter;
+            // add amount
+            parameters.amount = para.amount;
         }
     }
 }
