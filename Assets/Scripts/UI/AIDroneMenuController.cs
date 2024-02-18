@@ -52,7 +52,7 @@ namespace VRC2
             resetButton.onClick.AddListener(OnReset);
 
             // hide at the beginning
-            // Hide();
+            Hide();
         }
 
         void OnConfirm()
