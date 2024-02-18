@@ -36,7 +36,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Forklift_normals_2(object[] parameters)
         {
             print("Invoked Forklift_normals_2");            
-        }        
+        }
         #endregion
     }
 }

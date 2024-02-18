@@ -31,7 +31,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [Header("Hammer")] public HammerController hammerController;
 
-        public GameObject excav;
+        /*public GameObject excav;
         public GameObject dirt;
         public Transform endPiece;
         public GameObject hole;
@@ -43,7 +43,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public ExcavatorInputReplay replay;
 
         public Transform startPoint;
-        public Transform digPoint;
+        //public Transform digPoint;
         public Transform rotatePoint;
         public Transform ogPoint;
 
@@ -89,7 +89,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public bool dump = false;
 
-        private bool moved = false;
+        private bool moved = false;*/
 
 
         internal enum ExcavatorStage
@@ -117,27 +117,27 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             base.Start();
 
-            startPos = forklift.transform.position;
+            /*startPos = forklift.transform.position;
             startRotation = forklift.transform.rotation;
 
             goodStartPos = good.transform.position;
             goodStartRotation = good.transform.rotation;
             goodStartPos2 = good2.transform.position;
-            goodStartRotation2 = good2.transform.rotation;
+            goodStartRotation2 = good2.transform.rotation;*/
 
-            //Initialize excavator things
+            /*//Initialize excavator things
             base.Start();
             pt = part.nextTo;
             dirt.transform.SetParent(endPiece);
             dirt.GetComponent<Rigidbody>().useGravity = false;
             dirt.GetComponent<Rigidbody>().isKinematic = false;
             dirt.GetComponent<MeshCollider>().convex = false;
-            _stage = ExcavatorStage.Stop;
+            _stage = ExcavatorStage.Stop;*/
         }
 
         private void Update()
         {
-            if (ForkliftReachDestination(destinationPos))
+           /* if (ForkliftReachDestination(destinationPos))
             {
                 
             }
@@ -146,7 +146,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             
             var angle = Math.Abs(recording.getRotation() - endAngle);
 
-            switch (_stage)
+            /*switch (_stage)
             {
                 case ExcavatorStage.Stop:
                     dirt.SetActive(false);
@@ -283,16 +283,16 @@ namespace VRC2.Scenarios.ScenarioFactory
                         }
                     }
                     break;
-            }
+            }*/
         }
 
-        void UpdateHole(GameObject h)
+       /* void UpdateHole(GameObject h)
         {
             h.transform.localScale -= scaleChange;
             h.transform.position = new Vector3(h.transform.position.x - 0.3f, h.transform.position.y - 0.3f, h.transform.position.z - 0.3f);
-        }
+        }*/
 
-        bool ReachDestination(Vector3 des)
+        /*bool ReachDestination(Vector3 des)
         {
             var t = excav.transform.position;
 
@@ -307,9 +307,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             }
 
             return false;
-        }
+        }*/
 
-        bool ForkliftReachDestination(Vector3 des)
+        /*bool ForkliftReachDestination(Vector3 des)
         {
             var t = forklift.transform.position;
 
@@ -358,7 +358,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             return false;
 
 
-        }
+        }*/
 
         IEnumerator WaitForDelivery()
         {
@@ -368,9 +368,9 @@ namespace VRC2.Scenarios.ScenarioFactory
         }
 
 
-
+        
         #region Excav Anim Controls
-        void dirtCheck()
+       /* void dirtCheck()
         {
             //if piece over x high - drop
             if (endPiece.transform.position.y > 7.5f)
@@ -430,7 +430,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     return;
                 }
             }
-        }
+        }*/
         #endregion
 
         #region Accident Events Callbacks
