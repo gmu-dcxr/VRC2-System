@@ -85,9 +85,12 @@ namespace VRC2.ScenariosV2.Scenario
         private Vehicle.Drone _drone;
         private Vehicle.Truck _truck;
         private Vehicle.CraneTruck _craneTruck;
+        private Vehicle.Forklift _forklift;
 
         // adapation for Scenario 4
         private Vehicle.Irrelevant _irrelevant;
+        // Scenario 6
+        private Vehicle.Electrocutions _electrocutions;
 
         public Vehicle.Crane crane
         {
@@ -139,6 +142,19 @@ namespace VRC2.ScenariosV2.Scenario
 
                 return _craneTruck;
             }
+        } 
+        
+        public Vehicle.Forklift forklift
+        {
+            get
+            {
+                if (_forklift == null)
+                {
+                    _forklift = FindObjectOfType<Vehicle.Forklift>();
+                }
+
+                return _forklift;
+            }
         }
 
         public Vehicle.Irrelevant irrelevant
@@ -151,6 +167,19 @@ namespace VRC2.ScenariosV2.Scenario
                 }
 
                 return _irrelevant;
+            }
+        } 
+        
+        public Vehicle.Electrocutions electrocutions
+        {
+            get
+            {
+                if (_electrocutions == null)
+                {
+                    _electrocutions = FindObjectOfType<Vehicle.Electrocutions>();
+                }
+
+                return _electrocutions;
             }
         }
 
@@ -265,12 +294,24 @@ namespace VRC2.ScenariosV2.Scenario
             if (cname.Equals(craneTruck.ClsName))
             {
                 res = craneTruck.GetIncident(idx, normal);
+            } 
+            
+            // forklift
+            if (cname.Equals(forklift.ClsName))
+            {
+                res = forklift.GetIncident(idx, normal);
             }
 
             // irrelevant
             if (cname.Equals(irrelevant.ClsName))
             {
                 res = irrelevant.GetAccidentIncident(idx);
+            }
+            
+            // electrocutions
+            if (cname.Equals(electrocutions.ClsName))
+            {
+                res = electrocutions.GetAccidentIncident(idx);
             }
 
             if (res != null)
