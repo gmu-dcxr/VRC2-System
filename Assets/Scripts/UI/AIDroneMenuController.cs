@@ -52,7 +52,7 @@ namespace VRC2
             resetButton.onClick.AddListener(OnReset);
 
             // hide at the beginning
-            Hide();
+            // Hide();
         }
 
         void OnConfirm()
@@ -105,6 +105,12 @@ namespace VRC2
             ResetButtonsMaterial(pipeTypeButtons);
             ResetButtonsMaterial(pipeColorButtons);
             ResetButtonsMaterial(pipeDiameterButtons);
+            ResetAmount();
+        }
+
+        void ResetAmount()
+        {
+            amountInputField.text = "";
         }
 
         public void Show()
