@@ -41,14 +41,18 @@ namespace VRC2.Pipe
             Diameter_4 = 3,
         }
 
-        public struct PipeParameters: INetworkStruct
+        public struct PipeParameters : INetworkStruct
         {
             public PipeType type;
             public PipeColor color;
             public PipeDiameter diameter;
             public PipeBendAngles angle;
             public float a;
+
             public float b;
+
+            // add amount
+            public int amount;
 
             public string ToString()
             {
@@ -57,7 +61,8 @@ namespace VRC2.Pipe
                     $"{Enum.GetName(typeof(PipeColor), color)} - " +
                     $"{Enum.GetName(typeof(PipeDiameter), diameter)} - " +
                     $"{Enum.GetName(typeof(PipeBendAngles), angle)} - " +
-                    $"{a.ToString("f2")} - {b.ToString("f2")}";
+                    $"{a.ToString("f2")} - {b.ToString("f2")} - " +
+                    $"{amount}";
             }
         }
     }

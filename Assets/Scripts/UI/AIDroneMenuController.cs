@@ -29,6 +29,8 @@ namespace VRC2
         [Tooltip("In the order of diameter 1, 2, 3, and 4")]
         public List<Button> pipeDiameterButtons;
 
+        [Header("Amount")] public InputField amountInputField;
+
         [Header("Confirm/Reset")] public Button confirmButton;
 
         public Button resetButton;
@@ -48,7 +50,7 @@ namespace VRC2
         {
             confirmButton.onClick.AddListener(OnConfirm);
             resetButton.onClick.AddListener(OnReset);
-            
+
             // hide at the beginning
             Hide();
         }
@@ -60,7 +62,10 @@ namespace VRC2
             var type = GetPipeType();
             var diameter = GetPipeDiameter();
 
-            if (color != PipeConstants.PipeColor.Default && type != PipeType.Default && diameter != PipeDiameter.Default)
+            var amount = GetAmount();
+
+            if (color != PipeConstants.PipeColor.Default && type != PipeType.Default &&
+                diameter != PipeDiameter.Default && amount > 0)
             {
                 _parameters.type = type;
                 _parameters.color = color;
@@ -69,6 +74,8 @@ namespace VRC2
                 _parameters.a = 0;
                 _parameters.b = 0;
                 _parameters.angle = PipeBendAngles.Default;
+                // add amount
+                _parameters.amount = amount;
 
                 // close window
                 Hide();
@@ -159,6 +166,20 @@ namespace VRC2
             }
 
             return PipeDiameter.Default;
+        }
+
+        int GetAmount()
+        {
+            try
+            {
+                return (int)float.Parse(amountInputField.text);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return 0;
         }
     }
 }
