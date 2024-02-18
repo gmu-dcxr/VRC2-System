@@ -291,11 +291,16 @@ namespace VRC2.Events
 
             if (d1 != d2)
             {
-                // Debug.LogWarning("Different diameters of pipes can not connect");
+                Debug.LogWarning("Different diameters of pipes can not connect");
                 return;
             }
-
-
+            
+            // can not connector 2 connectors
+            if (cip.name.EndsWith("connector") && cip.name.Equals(oip.name))
+            {
+                Debug.LogWarning(" Can not connect 2 connectors");
+                return;
+            }
 
             Debug.Log($"HandlePipeCollision: {otherpipe.name}");
 
