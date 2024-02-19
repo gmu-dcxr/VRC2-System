@@ -2,6 +2,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 using Fusion;
 using Oculus.Interaction.DistanceReticles;
 using UnityEngine;
@@ -85,7 +86,12 @@ namespace VRC2.Animations
 
         private NetworkObject spawnedPipe;
 
-        public System.Action<PipeBendAngles> ReadyToOperate;
+        // public System.Action<PipeBendAngles> ReadyToOperate;
+        // new design, the 2nd parameter is amount
+        public System.Action<PipeBendAngles, int> ReadyToOperate;
+
+        // new design
+        public List<GameObject> processedPipes;
 
         #endregion
 
@@ -163,34 +169,67 @@ namespace VRC2.Animations
         private void ReadyToDropoff()
         {
             print("ReadyToDropoff");
-            var pipe = GlobalConstants.lastSpawnedPipe;
+            // var pipe = GlobalConstants.lastSpawnedPipe;
+            //
+            // // this will happen in Client side (p2)
+            // if (pipe == null) return;
+            //
+            //
+            // pipe.transform.parent = null;
+            //
+            // // Add rigid body, etc.
+            // PipeHelper.AfterMove(ref pipe);
+            // // update box colliders
+            // PipeHelper.UpdateBoxColliders(pipe, true);
 
-            // this will happen in Client side (p2)
-            if (pipe == null) return;
 
+            // new design
 
-            pipe.transform.parent = null;
+            var pos = Vector3.zero; // for spawning connectors
 
-            // Add rigid body, etc.
-            PipeHelper.AfterMove(ref pipe);
-            // update box colliders
-            PipeHelper.UpdateBoxColliders(pipe, true);
+            foreach (var go in processedPipes)
+            {
+                var pipe = go;
+                pipe.transform.parent = null;
+
+                // Add rigid body, etc.
+                PipeHelper.AfterMove(ref pipe);
+                // update box colliders
+                PipeHelper.UpdateBoxColliders(pipe, true);
+
+                pos = pipe.transform.position;
+            }
+
+            // spawn connectors
+            SpawnConnectors(pos);
         }
 
         private void ReadyToPickup()
         {
             print("ReadyToPickup");
-            var pipe = GlobalConstants.lastSpawnedPipe;
+            // var pipe = GlobalConstants.lastSpawnedPipe;
+            //
+            // // this will happen in Client side (p2)
+            // if (pipe == null) return;
+            //
+            // PipeHelper.BeforeMove(ref pipe);
+            // PipeHelper.UpdateBoxColliders(pipe, false);
+            //
+            // pipe.transform.parent = attachePoint.transform;
+            // pipe.transform.localPosition = Vector3.zero;
+            // pipe.transform.localRotation = Quaternion.identity;
 
-            // this will happen in Client side (p2)
-            if (pipe == null) return;
+            // new design
+            foreach (var go in processedPipes)
+            {
+                var pipe = go;
+                PipeHelper.BeforeMove(ref pipe);
+                PipeHelper.UpdateBoxColliders(pipe, false);
 
-            PipeHelper.BeforeMove(ref pipe);
-            PipeHelper.UpdateBoxColliders(pipe, false);
-
-            pipe.transform.parent = attachePoint.transform;
-            pipe.transform.localPosition = Vector3.zero;
-            pipe.transform.localRotation = Quaternion.identity;
+                pipe.transform.parent = attachePoint.transform;
+                pipe.transform.localPosition = Vector3.zero;
+                pipe.transform.localRotation = Quaternion.identity;
+            }
         }
 
         #region Animation control
@@ -618,7 +657,7 @@ namespace VRC2.Animations
                                 // make it waiting
                                 if (ReadyToOperate != null)
                                 {
-                                    ReadyToOperate(parameters.angle);
+                                    ReadyToOperate(parameters.angle, parameters.amount);
                                 }
 
                             }
@@ -833,20 +872,35 @@ namespace VRC2.Animations
         }
 
         // NOTE: gameobject may be different from the transform, the transform is to mark the destination
-        public void PickupResult(GameObject go, Transform t)
+        public void PickupResult(List<GameObject> objs, List<Transform> ts)
         {
             // move to pick result
             print("pickup result");
 
-            // update global constant
-            GlobalConstants.lastSpawnedPipe = go;
+            // update 
+            if (processedPipes == null)
+            {
+                processedPipes = new List<GameObject>();
+            }
 
-            targetGameObject = go;
-            targetTransform = t;
+            processedPipes.Clear();
+
+            foreach (var obj in objs)
+            {
+                processedPipes.Add(obj);
+            }
+
+            var count = objs.Count;
+
+            // update global constant
+            GlobalConstants.lastSpawnedPipe = objs[count - 1];
+
+            targetGameObject = objs[count - 1];
+            targetTransform = ts[count - 1];
             print($"Target: {targetTransform.position.ToString("f5")}");
 
             // update bend/cut output transform
-            bendcutOutput = t;
+            bendcutOutput = ts[count - 1];
 
             // enable dog animator, disable arm animator
             armAnimator.enabled = false;
@@ -973,12 +1027,22 @@ namespace VRC2.Animations
 
         #region New Design
 
-        void SpawnConnectors(PipeDiameter diameter, int amount)
+        void SpawnConnectors(Vector3 position)
         {
-            // TODO
-        }
+            print("spawn connectors");
+            var rot = Quaternion.identity;
+            // spawn object
+            var runner = GlobalConstants.networkRunner;
+            var localPlayer = GlobalConstants.localPlayer;
 
-        
+            var camount = parameters.connectorAmount;
+            var prefab = PipeHelper.GetPipeConnectorPrefabRef(parameters);
+
+            for (int i = 0; i < camount; i++)
+            {
+                spawnedPipe = runner.Spawn(prefab, position, rot, localPlayer);
+            }
+        }
 
         #endregion
     }
