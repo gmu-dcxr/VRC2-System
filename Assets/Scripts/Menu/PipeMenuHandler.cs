@@ -220,7 +220,7 @@ namespace VRC2
             // print("OnSupervisor");
             // var url = "https://forms.gle/LP2MbGbGJbUkPzUM6";
             // surveyController.Show(url);
-            
+
             // Record the audio instead
             print("OnSupervisor");
             saveLocalVoiceStream.StartRecording("Supervisor");
@@ -232,7 +232,7 @@ namespace VRC2
             // print("OnSafetyManager");
             // var url = "https://forms.gle/dTB4gziy3geW8VZo8";
             // surveyController.Show(url);
-            
+
             // Record the audio instead
             print("OnSafetyManager");
             saveLocalVoiceStream.StartRecording("SafetyManager");
@@ -603,7 +603,10 @@ namespace VRC2
             var rbc = go.GetComponent<RobotDogController>();
             // update current pipe
             rbc.currentPipe = GlobalConstants.lastSpawnedPipe;
-            rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);
+            // rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_45, 2f, 3f);
+            // new design
+            rbc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 1f, 1f, 2,
+                PipeConstants.PipeDiameter.Diameter_1, 3);
             rbc.Execute();
         }
 
