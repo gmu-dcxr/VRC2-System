@@ -84,11 +84,17 @@ namespace VRC2.Events
 
             List<GameObject> objs = new List<GameObject>();
             List<Transform> ts = new List<Transform>();
+
+            var (pos, rot) = robotDog.GetCurrentPipeTransform();
+            
+            // destroy current pipe
+            robotDog.DestroyCurrentPipe();
+
             // new design
             for (var i = 0; i < amount; i++)
             {
                 // spawn pipe
-                var no = robotDog.SpawnPipe(_angle);
+                var no = robotDog.SpawnPipe(_angle, pos, rot);
                 // update spawned pipe transform
                 no.transform.position = pipeOutput.transform.position;
                 no.transform.rotation = pipeOutput.transform.rotation;
