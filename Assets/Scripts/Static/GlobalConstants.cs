@@ -229,6 +229,7 @@ namespace VRC2
         #region Pipe Bend/Cut Manipulation
 
         public static string PipePrefabsPath = "Assets/Prefabs/Pipe/";
+        public static string PipeConnectorPrefabsPath = "Assets/Prefabs/Pipe/Connector/";
         public static GameObject lastSpawnedPipe = null;
         public static string BendCutRobot = "RobotDogController";
 
