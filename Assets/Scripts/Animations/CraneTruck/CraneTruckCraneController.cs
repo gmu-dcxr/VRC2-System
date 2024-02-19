@@ -21,8 +21,12 @@ namespace VRC2.Animations.CraneTruck
         [Header("Controller")] public Manipulator manipulator;
         public HookManip hookManip;
         public CraneTruckInputRecording recording;
+
+        //public GameObject craneTruck;
+        public Animator anim;
+
         // public CargoManipulator cargoManipulator;
-        
+
         // TODO: cache the cargo and the cargoManipulator
         private CargoManipulator cargoManipulator
         {
@@ -217,6 +221,7 @@ namespace VRC2.Animations.CraneTruck
                     {
                         print("Reset crane is done");
                         status = CraneStatus.Idle;
+                        anim.SetBool("Forward", true);
                     }
 
                     break;
