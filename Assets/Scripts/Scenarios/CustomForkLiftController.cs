@@ -98,7 +98,7 @@ namespace VRC2.Scenarios
 
         private void Update()
         {
-            print(_stage);
+            //print(_stage);
 
             if (!moving) return;
 
