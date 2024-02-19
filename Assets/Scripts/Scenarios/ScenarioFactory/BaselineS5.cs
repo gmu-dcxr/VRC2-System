@@ -249,6 +249,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             anim.SetBool("Reverse", true);
             StartCoroutine(WaitForUnload());
             _stage = CraneTruckStage.Backward;
+            //On_BaselineS5_3_Start();
+            //anim.SetBool("Forward", true);
             //replay.Backward(true);
         }
 
