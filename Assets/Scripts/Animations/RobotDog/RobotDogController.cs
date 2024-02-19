@@ -14,6 +14,7 @@ using AgentHelper = VRC2.Agent.AgentHelper;
 using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
 using PipeColor = VRC2.Pipe.PipeConstants.PipeColor;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
+using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2.Animations
 {
@@ -40,7 +41,7 @@ namespace VRC2.Animations
     public class RobotDogController : NetworkBehaviour
     {
         public GameObject robotDog;
-        public GameObject arm; 
+        public GameObject arm;
         private Animator dogAnimator;
         private AudioSource armSound;
         private AudioSource dogSound;
@@ -378,13 +379,14 @@ namespace VRC2.Animations
         }
 
         //NEW for picking up from side
-        void strafeForPickup() 
+        void strafeForPickup()
         {
             print("PickUp Strafing");
             actions.StrafeRight();
             body.Translate(new Vector3(1, 0, 0) * strafeSpeed * Time.deltaTime);
         }
-        bool pickUpStrafe() 
+
+        bool pickUpStrafe()
         {
             // var diff = body.transform.position.z - targetTransform.position.z;
 
@@ -394,12 +396,13 @@ namespace VRC2.Animations
             p2.y = 0;
 
             var diff = Vector3.Distance(p1, p2);
-            
+
             print(diff);
-            if (pickupOffset < diff) 
+            if (pickupOffset < diff)
             {
                 return false;
             }
+
             return true;
         }
 
@@ -408,7 +411,7 @@ namespace VRC2.Animations
         private void Update()
         {
             if (stage == RobotStage.Default) return;
-           
+
             switch (stage)
             {
                 case RobotStage.Stop:
@@ -503,16 +506,16 @@ namespace VRC2.Animations
 
                     break;
 
-                case RobotStage.Pickup:                   
+                case RobotStage.Pickup:
                     if (!pickingup)
                     {
                         print("start pickup");
-                       
-                        
+
+
                         //Adjust for picking up pipe from side of dog
                         if (pickUpStrafe())
                         {
-                            strafeForPickup();                           
+                            strafeForPickup();
                         }
                         else
                         {
@@ -559,10 +562,10 @@ namespace VRC2.Animations
                             }
 
                             MoveToTarget();
-                        }                    
-                        
+                        }
+
                     }
-                    
+
                     break;
 
                 case RobotStage.Dropoff:
@@ -592,9 +595,9 @@ namespace VRC2.Animations
                             armSound.loop = false;
                             // reset arm
                             // roboticArm.ResetRotations();                            
-                          
+
                             //currentPipe.transform.parent = null;
-                                                                                       
+
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
 
@@ -617,26 +620,28 @@ namespace VRC2.Animations
                                 {
                                     ReadyToOperate(parameters.angle);
                                 }
-                               
+
                             }
                             else if (targetTransform == deliveryPoint)
                             {
                                 targetTransform = standbyPoint;
                                 MoveToTarget();
                             }
-                            
+
                             stage = RobotStage.Reset;
                         }
+
                         armSound.PlayOneShot(armSound.clip, 0.1f);
                     }
+
                     break;
                 case RobotStage.Reset:
-                    
+
                     if (!reset)
                     {
                         print("Resetting");
                         reset = true;
-                        
+
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
 
@@ -649,9 +654,9 @@ namespace VRC2.Animations
                         armSound.loop = true;
                         armSound.Play();
                     }
-                    else 
+                    else
                     {
-                        if (IsResetDone()) 
+                        if (IsResetDone())
                         {
                             armAnimator.SetBool("ResetArm", false);
                             armSound.loop = false;
@@ -667,6 +672,7 @@ namespace VRC2.Animations
                             }
                         }
                     }
+
                     break;
             }
         }
@@ -785,6 +791,15 @@ namespace VRC2.Animations
             parameters.diameter = pm.diameter;
         }
 
+        public void InitParameters(PipeBendAngles angle, float a, float b, int amount, PipeDiameter cdiamater,
+            int cmount)
+        {
+            InitParameters(angle, a, b);
+            parameters.amount = amount;
+            parameters.connectorDiamter = cdiamater;
+            parameters.connectorAmount = cmount;
+        }
+
         public void PickUp()
         {
             Debug.Log("Robot PickUp");
@@ -829,7 +844,7 @@ namespace VRC2.Animations
             targetGameObject = go;
             targetTransform = t;
             print($"Target: {targetTransform.position.ToString("f5")}");
-            
+
             // update bend/cut output transform
             bendcutOutput = t;
 
@@ -930,7 +945,8 @@ namespace VRC2.Animations
         {
             return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("RobotDogArmDropoff") &&
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
-        } 
+        }
+
         bool IsResetDone()
         {
             return armAnimator.GetCurrentAnimatorStateInfo(0).IsName("ArmResetSimple") &&
@@ -952,6 +968,17 @@ namespace VRC2.Animations
                 armAnimator.enabled = arm;
             }
         }
+
+        #endregion
+
+        #region New Design
+
+        void SpawnConnectors(PipeDiameter diameter, int amount)
+        {
+            // TODO
+        }
+
+        
 
         #endregion
     }
