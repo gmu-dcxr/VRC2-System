@@ -20,14 +20,14 @@ namespace VRC2.Pipe
             var rb = interactablePipe.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                GameObject.Destroy(rb);   
+                GameObject.Destroy(rb);
             }
 
             // disable its interactable ability
             var reticle = interactablePipe.GetComponentInChildren<ReticleDataIcon>();
             if (reticle != null)
             {
-                reticle.gameObject.SetActive(false);   
+                reticle.gameObject.SetActive(false);
             }
         }
 
@@ -232,6 +232,31 @@ namespace VRC2.Pipe
             }
         }
 
+        public static string GetPipeConnectorPrefabName(PipeParameters para)
+        {
+            var name = "";
+            switch (para.connectorDiamter)
+            {
+                case PipeDiameter.Diameter_1:
+                    name += "1";
+                    break;
+                case PipeDiameter.Diameter_2:
+                    name += "2";
+                    break;
+                case PipeDiameter.Diameter_3:
+                    name += "3";
+                    break;
+                case PipeDiameter.Diameter_4:
+                    name += "4";
+                    break;
+                default:
+                    break;
+            }
+
+            name += " inch connector";
+            return name;
+        }
+
         public static string GetPipePrefabName(PipeParameters para)
         {
             // format: {diameter} {angle} pipe
@@ -287,6 +312,24 @@ namespace VRC2.Pipe
             GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
 
             return go;
+        }
+
+        public static GameObject GetPipeConnectorPrefab(PipeParameters para)
+        {
+            var name = GetPipeConnectorPrefabName(para);
+
+            var path = $"{GlobalConstants.PipeConnectorPrefabsPath}{name}.prefab";
+
+            GameObject go = AssetDatabase.LoadAssetAtPath(path, typeof(GameObject)) as GameObject;
+
+            return go;
+        }
+
+        public static NetworkObject GetPipeConnectorPrefabRef(PipeParameters para)
+        {
+            GameObject go = GetPipeConnectorPrefab(para);
+            var no = go.GetComponent<NetworkObject>();
+            return no;
         }
 
         public static NetworkObject GetPipePrefabRef(PipeParameters para)
