@@ -20,8 +20,48 @@ taskEnd: 1
 incidents:
   - id: 1 # the order of the incident
     time: "0:30" # start time of this incident
-    refer: [ "Crane", "accidents", "3" ]
+    refer: [ "Crane", "accidents", "1" ]
     warning: false # default is true
   - id: 2
     time: "0:40"
-    refer: [ "Irrelevant", "accident", "11" ]
+    refer: [ "Irrelevant", "accidents", "11" ]
+  - id: 3
+    time: "1:00"
+    refer: ["CraneTruck", "normals", "1"]
+  - id: 4
+    time: "1:20"
+    refer: ["Crane", "accidents", "2"]
+  - id: 5
+    time: "1:30"
+    refer: ["Drone", "normals", "3"]
+  - id: 6
+    time: "2:00"
+    refer: ["Forklift", "normals", "1"]
+  - id: 7
+    time: "2:10"
+    refer: ["Crane", "accident", "3"]
+    warning: false
+  - id: 8
+    time: "2:30"
+    refer: ["Drone", "normals", "1"]
+  - id: 9
+    time: "3:00"
+    refer: ["Crane", "accidents", "4"]
+  - id: 10
+    time: "3:30"
+    refer: ["CraneTruck", "normals", "1"]
+  - id: 11
+    time: "4:00"
+    refer: ["Crane", "accidents", "5"]
+  - id: 12
+    time: "4:10"
+    refer: ["Crane", "accidents", "6"]
+  - id: 13
+    time: "4:30"
+    refer: ["Forklift", "normals", "1"]
+  - id: 14
+    time: "5:00"
+    refer: ["Crane", "accidents", "7"]
+  - id: 15
+    time: "5:10"
+    refer: ["Crane", "accidents", "8"]
