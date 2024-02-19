@@ -34,19 +34,32 @@ incidents:
       condition: "Accident"
       time: "T2"
       type: "Potential"
-      desc: ""
+      desc: "A load with an unpacked pipe is being hoisted and is going to pass above players"
+      warning: "Warning: A cargo is oging to pass overhead"
     - id: 4
       condition: "Accident"
       time: "T2+60s"
-      type: "NearlyHappen"
+      desc: "A hook (without a load) is passing overhead in the opposite direction"
     - id: 5
       condition: "Accident"
       time: "T3"
+      type: "NearlyHappen"
+      warning: "Warning: A cargo is going to pass overhead"
     - id: 6
       condition: "Accident"
+      time: "T3+10s"
+      desc: "The unpacked pipe drops next to the particpants. And the load is still passing overhead"
     - id: 7
+      condition: "Accident"
+      time: "T3+60s"
+      desc: "A hook (without a load) is passing overhead in the opposite direction."
     - id: 8
+      condition: "Accident"
+      time: "T4"
+      type: "Potential"
+      desc: "A load with an unpacked pipe is being hoisted and is going to pass above players."
+      warning: "Warning: A cargo is going to pass overhead."
     - id: 9
-    
-    
-    
+      condition: "Accident"
+      time: "T4+10s"
+      desc: "This scenario ends after the warning is given, and the cargo has been hoisted and is about to be shifted in the middle of the air. (ends before the cargo passes above player)"            
