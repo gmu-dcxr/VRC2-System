@@ -52,7 +52,7 @@ namespace VRC2.Animations
 
         private RobotStage stage;
 
-        private float angleThreshold = 1f;
+        private float angleThreshold = 2f;
         private float distanceThreshold = 0.1f;
         public float pickupOffset = 1f;
 
