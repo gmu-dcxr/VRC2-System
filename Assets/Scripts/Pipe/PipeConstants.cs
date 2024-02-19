@@ -54,6 +54,10 @@ namespace VRC2.Pipe
             // add amount
             public int amount;
 
+            // add connector
+            public PipeDiameter connectorDiamter;
+            public int connectorAmount;
+
             public string ToString()
             {
                 return
@@ -62,7 +66,9 @@ namespace VRC2.Pipe
                     $"{Enum.GetName(typeof(PipeDiameter), diameter)} - " +
                     $"{Enum.GetName(typeof(PipeBendAngles), angle)} - " +
                     $"{a.ToString("f2")} - {b.ToString("f2")} - " +
-                    $"{amount}";
+                    $"{amount}\n" +
+                    $"Connector {Enum.GetName(typeof(PipeDiameter), connectorDiamter)} - " +
+                    $"{connectorAmount}";
             }
         }
     }

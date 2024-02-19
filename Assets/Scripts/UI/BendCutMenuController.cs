@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.UI;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
+using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2
 {
@@ -26,6 +28,21 @@ namespace VRC2
         [Header("Length")] public InputField aInputField;
 
         public InputField bInputField;
+
+        [Space(30)] [Header("New Design")] public bool newDesign = false;
+
+        public List<Button> diameterButtons;
+        public InputField pipeLength;
+        public InputField pipeAmount;
+        public InputField connectorAmount;
+        public Button confirmButtonNew;
+        public Button resetButtonNew;
+
+
+        public bool IsNewDesign
+        {
+            get => newDesign;
+        }
 
         private PipeBendAngles _bendAngles = PipeBendAngles.Default;
 
@@ -76,15 +93,28 @@ namespace VRC2
         // Start is called before the first frame update
         void Start()
         {
-            // init events
-            confirmButton.onClick.AddListener(OnConfirm);
-            resetButton.onClick.AddListener(OnReset);
-
             _parameters.angle = PipeBendAngles.Default;
             _parameters.a = 0;
             _parameters.b = 0;
             _parameters.type = PipeType.Default;
             _parameters.color = PipeConstants.PipeColor.Default;
+
+            // new design
+            if (newDesign)
+            {
+                // add connector
+                _parameters.connectorAmount = 0;
+                _parameters.connectorDiamter = PipeDiameter.Default;
+
+                confirmButtonNew.onClick.AddListener(OnConfirmNew);
+                resetButtonNew.onClick.AddListener(OnResetNew);
+            }
+            else
+            {
+                // init events
+                confirmButton.onClick.AddListener(OnConfirm);
+                resetButton.onClick.AddListener(OnReset);
+            }
 
             // hide on start
             Hide();
@@ -171,6 +201,142 @@ namespace VRC2
 
             return PipeBendAngles.Default;
         }
+
+        #region New Design
+
+        PipeDiameter GetConnectorDiameter()
+        {
+            for (var i = 0; i < diameterButtons.Count; i++)
+            {
+                var bclm = diameterButtons[i].gameObject.GetComponent<ButtonMaterialController>();
+                if (bclm.currentMaterial == bclm.selectedMaterial)
+                {
+                    return (PipeDiameter)i;
+                }
+            }
+
+            return PipeDiameter.Default;
+        }
+
+        float GetStraightPipeLength()
+        {
+            try
+            {
+                return float.Parse(pipeLength.text);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return -1.0f;
+        }
+
+        int GetPipeAmount()
+        {
+            try
+            {
+                return int.Parse(pipeAmount.text);
+            }
+            catch (Exception e)
+            {
+            }
+
+            return -1;
+        }
+
+        int GetConnectorAmount()
+        {
+            try
+            {
+                return int.Parse(connectorAmount.text);
+            }
+            catch (Exception e)
+            {
+            }
+
+            return -1;
+        }
+
+        void OnConfirmNew()
+        {
+            // validate
+            var length = GetStraightPipeLength();
+            var amount = GetPipeAmount();
+            var cDiameter = GetConnectorDiameter();
+            var cAmount = GetConnectorAmount();
+
+            float a = 0, b = 0;
+
+            bool valid = false;
+
+            if (length > 0 && amount > 0)
+            {
+                a = length / 2.0f;
+                b = length / 2.0f;
+                valid = true;
+            }
+
+            if (cDiameter != PipeDiameter.Default && cAmount > 0)
+            {
+                valid = true;
+            }
+
+            if (!valid)
+            {
+                Debug.LogWarning("Invalid selection for BendCut.");
+                return;
+            }
+
+            // update parameters
+            // always 0 
+            _parameters.angle = PipeBendAngles.Angle_0;
+            _parameters.a = a;
+            _parameters.b = b;
+            _parameters.type = _pipeType;
+            _parameters.color = _pipeColor;
+            // update amount
+            _parameters.amount = amount;
+            // update connector
+            _parameters.connectorDiamter = cDiameter;
+            _parameters.connectorAmount = cAmount;
+
+            // close window
+            Hide();
+            if (OnConfirmed != null)
+            {
+                OnConfirmed();
+            }
+        }
+
+        void OnResetNew()
+        {
+            ResetButtonsMaterial(diameterButtons);
+            ResetInputField(pipeLength);
+            ResetInputField(pipeAmount);
+            ResetInputField(connectorAmount);
+        }
+
+        void ResetInputField(InputField field)
+        {
+            field.text = "";
+        }
+
+        void ResetButtonsMaterial(List<Button> buttons)
+        {
+            foreach (var btn in buttons)
+            {
+                var bclm = btn.gameObject.GetComponent<ButtonMaterialController>();
+                if (bclm.currentMaterial == bclm.selectedMaterial)
+                {
+                    bclm.ChangeMaterial();
+                }
+            }
+        }
+
+
+
+        #endregion
 
     }
 }

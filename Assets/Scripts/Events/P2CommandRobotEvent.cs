@@ -5,6 +5,7 @@ using VRC2.Animations;
 using VRC2.Pipe;
 
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
+using PipeDiameter = VRC2.Pipe.PipeConstants.PipeDiameter;
 
 namespace VRC2.Events
 {
@@ -40,9 +41,18 @@ namespace VRC2.Events
                 return;
             }
 
-            // send message to P1 side since P1 has the input authority for the pipe
-            // Only angle, a, and b are needed since p2 doesn't have the pipe type and color information
-            RPC_SendMessage(parameter.angle, parameter.a, parameter.b);
+            if (_bendCutMenuController.IsNewDesign)
+            {
+                print("New design for P2CommandRobotEvent");
+                RPC_SendMessageNew(parameter.angle, parameter.a, parameter.b, parameter.amount,
+                    parameter.connectorDiamter, parameter.connectorAmount);
+            }
+            else
+            {
+                // send message to P1 side since P1 has the input authority for the pipe
+                // Only angle, a, and b are needed since p2 doesn't have the pipe type and color information
+                RPC_SendMessage(parameter.angle, parameter.a, parameter.b);
+            }
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -60,8 +70,32 @@ namespace VRC2.Events
                 var rdc = go.GetComponent<RobotDogController>();
                 // update current pipe
                 rdc.currentPipe = GlobalConstants.lastSpawnedPipe;
-                
+
                 rdc.InitParameters(angle, a, b);
+                rdc.Execute();
+            }
+
+            Debug.LogWarning(message);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessageNew(PipeBendAngles angle, float a, float b, int amount, PipeDiameter diameter,
+            int camount, RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+                message = $"You sent {angle} - {a} - {b} - {amount} - {diameter} - {camount}\n";
+            else
+            {
+                message = $"Some other player said:  {angle} - {a} - {b} - {amount} - {diameter} - {camount}\n";
+                // 
+                var go = GameObject.Find(GlobalConstants.BendCutRobot);
+                var rdc = go.GetComponent<RobotDogController>();
+                // update current pipe
+                rdc.currentPipe = GlobalConstants.lastSpawnedPipe;
+
+                rdc.InitParameters(angle, a, b, amount, diameter, camount);
                 rdc.Execute();
             }
 
