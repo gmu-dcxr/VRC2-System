@@ -38,6 +38,8 @@ namespace VRC2
         public Button confirmButtonNew;
         public Button resetButtonNew;
 
+        [Space(30)] [Header("Debug")] public bool enableDebug = false;
+        public GameObject spawnedPipe;
 
         public bool IsNewDesign
         {
@@ -114,6 +116,12 @@ namespace VRC2
                 // init events
                 confirmButton.onClick.AddListener(OnConfirm);
                 resetButton.onClick.AddListener(OnReset);
+            }
+            
+            // debug mode
+            if (enableDebug)
+            {
+                GlobalConstants.lastSpawnedPipe = spawnedPipe;
             }
 
             // hide on start

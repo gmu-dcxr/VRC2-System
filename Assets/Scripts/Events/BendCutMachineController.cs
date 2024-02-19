@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using VRC2.Animations;
@@ -33,7 +34,7 @@ namespace VRC2.Events
             robotDog.ReadyToOperate += OnReadyToOperate;
         }
 
-        private void OnReadyToOperate(PipeBendAngles angle)
+        private void OnReadyToOperate(PipeBendAngles angle, int amount)
         {
             _angle = angle;
 
@@ -54,14 +55,14 @@ namespace VRC2.Events
             // pipe.transform.position = pipeInput.position;
             // pipe.transform.rotation = pipeInput.rotation;
             pipe.transform.parent = null;
-            
+
             // update current pipe
             robotDog.currentPipe = pipe;
 
             RPC_SendMessage(_angle);
 
             // start timer
-            SetTimer(SpawnPipe);
+            SetTimer(() => { SpawnPipe(amount); });
         }
 
         void SetTimer(Action complete)
@@ -74,21 +75,30 @@ namespace VRC2.Events
             _timer = Timer.Register(duration, complete, isLooped: false, useRealTime: true);
         }
 
-        void SpawnPipe()
+        void SpawnPipe(int amount)
         {
             // stop noise
             audioSource.Stop();
 
             var pipeOutput = robotDog.bendcutOutput;
-            
-            // spawn pipe
-            var no = robotDog.SpawnPipe(_angle);
-            // update spawned pipe transform
-            no.transform.position = pipeOutput.transform.position;
-            no.transform.rotation = pipeOutput.transform.rotation;
-            
+
+            List<GameObject> objs = new List<GameObject>();
+            List<Transform> ts = new List<Transform>();
+            // new design
+            for (var i = 0; i < amount; i++)
+            {
+                // spawn pipe
+                var no = robotDog.SpawnPipe(_angle);
+                // update spawned pipe transform
+                no.transform.position = pipeOutput.transform.position;
+                no.transform.rotation = pipeOutput.transform.rotation;
+
+                objs.Add(no.gameObject);
+                ts.Add(no.transform);
+            }
+
             // start a new timer to let robot deliver
-            SetTimer(() => { robotDog.PickupResult(no.gameObject, no.transform); });
+            SetTimer(() => { robotDog.PickupResult(objs, ts); });
         }
 
         private void Update()
