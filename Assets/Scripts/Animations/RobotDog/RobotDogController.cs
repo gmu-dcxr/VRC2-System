@@ -42,7 +42,7 @@ namespace VRC2.Animations
     public class RobotDogController : NetworkBehaviour
     {
         public GameObject robotDog;
-        public GameObject arm;
+        // public GameObject arm;
         private Animator dogAnimator;
         private AudioSource armSound;
         private AudioSource dogSound;
@@ -91,7 +91,7 @@ namespace VRC2.Animations
         public System.Action<PipeBendAngles, int> ReadyToOperate;
 
         // new design
-        public List<GameObject> processedPipes;
+        [HideInInspector]public List<GameObject> processedPipes;
 
         #endregion
 
@@ -161,7 +161,7 @@ namespace VRC2.Animations
             roboticArm.ReadyToPickup += ReadyToPickup;
             roboticArm.ReadyToDropoff += ReadyToDropoff;
             pipeOutPut = bendcutOutput;
-            armSound = arm.GetComponent<AudioSource>();
+            armSound = robotArmRoot.GetComponent<AudioSource>();
             dogSound = robotDog.GetComponent<AudioSource>();
 
         }
@@ -207,29 +207,29 @@ namespace VRC2.Animations
         private void ReadyToPickup()
         {
             print("ReadyToPickup");
-            // var pipe = GlobalConstants.lastSpawnedPipe;
-            //
-            // // this will happen in Client side (p2)
-            // if (pipe == null) return;
-            //
-            // PipeHelper.BeforeMove(ref pipe);
-            // PipeHelper.UpdateBoxColliders(pipe, false);
-            //
-            // pipe.transform.parent = attachePoint.transform;
-            // pipe.transform.localPosition = Vector3.zero;
-            // pipe.transform.localRotation = Quaternion.identity;
+            var pipe = GlobalConstants.lastSpawnedPipe;
+            
+            // this will happen in Client side (p2)
+            if (pipe == null) return;
+            
+            PipeHelper.BeforeMove(ref pipe);
+            PipeHelper.UpdateBoxColliders(pipe, false);
+            
+            pipe.transform.parent = attachePoint.transform;
+            pipe.transform.localPosition = Vector3.zero;
+            pipe.transform.localRotation = Quaternion.identity;
 
-            // new design
-            foreach (var go in processedPipes)
-            {
-                var pipe = go;
-                PipeHelper.BeforeMove(ref pipe);
-                PipeHelper.UpdateBoxColliders(pipe, false);
-
-                pipe.transform.parent = attachePoint.transform;
-                pipe.transform.localPosition = Vector3.zero;
-                pipe.transform.localRotation = Quaternion.identity;
-            }
+            // // new design
+            // foreach (var go in processedPipes)
+            // {
+            //     var pipe = go;
+            //     PipeHelper.BeforeMove(ref pipe);
+            //     PipeHelper.UpdateBoxColliders(pipe, false);
+            //
+            //     pipe.transform.parent = attachePoint.transform;
+            //     pipe.transform.localPosition = Vector3.zero;
+            //     pipe.transform.localRotation = Quaternion.identity;
+            // }
         }
 
         #region Animation control
@@ -772,6 +772,7 @@ namespace VRC2.Animations
 
         void SpawnPipeUsingSelected()
         {
+            // BUG: can not destory it for multiple spawning
             // unparent
             currentPipe.transform.parent = null;
 
