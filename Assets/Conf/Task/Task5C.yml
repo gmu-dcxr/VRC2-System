@@ -2,11 +2,9 @@ name: "Training" # name for this file
 desc: "Training task" # description
 folder: "Task" # folder name under Assets/Resources/
 image: "Training" # Instruction filename for this task, it will be shown in the instruction for participants
-rule: [ "Ø1\"", "Ø2\"", "Ø3\"", "Ø4\"" ] # construction rule
+rule: [  "Ï•1", "Ï•2", "Ï•3", "Ï•4" ] # construction rule
 P1: [ "size", "length" ] # partial info given to P1
 P2: [ "color", "type" ] # partial info given to P2
-# Layout/Plan is given to the player who does not receive length, here it's P1
-# Construct rule is given to another person, here it's P2
 info:
   - id: 1
     segment: 1
