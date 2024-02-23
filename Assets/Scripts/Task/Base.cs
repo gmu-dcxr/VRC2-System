@@ -18,6 +18,7 @@ namespace VRC2.Task
     {
         [Header("Filename")] [Tooltip("Filename under Assets/Conf, e.g. Task/Training.yml")]
         public string filename;
+        // TODO: set filename for change order and its task
 
         // TODO: refactor based on the task name
         [Space(30)] [Header("Instruction Picture")]
