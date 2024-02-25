@@ -1,0 +1,22 @@
+﻿# name of the scenario, correspond to the yml filename 
+name: "Training"
+# description of this file
+desc: "Scenario training"
+# normal events description in this file
+normal: ""
+# accidents description in this file
+accident: ""
+### the following 4 attributes are not in the slides, but it is referred from the original implementation
+# start timestamp in raw time
+start: "0:00"
+# end timestamp in raw time
+end: "03:00"
+# start task
+taskStart: 0
+# end task
+taskEnd: 0
+# task config filename under ./Task
+task: "Training.yml"
+#########################################################################################################
+# all incidents, including the normal events and accidents
+incidents: []

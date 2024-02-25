@@ -26,6 +26,7 @@ namespace VRC2.ScenariosV2.Scenario
 
         private int taskStart;
         private int taskEnd;
+        private string task; // task config filename
 
         private List<YamlParser.Refer> _incidents;
 
@@ -248,6 +249,7 @@ namespace VRC2.ScenariosV2.Scenario
             endTimeRaw = s.end;
             taskStart = s.taskStart;
             taskEnd = s.taskEnd;
+            task = s.task;
             _incidents = s.incidents;
 
             // parse time
@@ -785,6 +787,7 @@ namespace VRC2.ScenariosV2.Scenario
                 scenariosManager.UpdateInstruction(taskStart, taskEnd);
             }
         }
+        // TODO: load tasks
 
         #endregion
     }
