@@ -45,7 +45,8 @@ namespace VRC2.ScenariosV2.Base
             
             // adaption for Scenario 7
             // default value setting refer: https://github.com/aaubry/YamlDotNet/issues/465
-            [CanBeNull] [DefaultValue(true)] public bool warning { get; set; } = true; 
+            [CanBeNull] [DefaultValue(true)] public bool warning { get; set; } = true;
+            [CanBeNull] [DefaultValue(false)] public bool changeOrder { get; set; } = false;
         }
 
         public class Scenario

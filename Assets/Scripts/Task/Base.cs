@@ -102,7 +102,7 @@ namespace VRC2.Task
             // parse change order task
             ParseChangeOrder();
 
-            UpdateTableRule(false);
+            // UpdateTableRule(false);
         }
 
         public void UpdateTable(ref Table t)

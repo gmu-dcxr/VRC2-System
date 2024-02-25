@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -235,6 +236,9 @@ namespace VRC2.ScenariosV2.Scenario
             }
         }
 
+        // change order
+        private List<int> changeOrderIndices = new List<int>();
+
         #endregion
 
         [Header("Debug UI")] public bool showDebugUI = true;
@@ -284,7 +288,7 @@ namespace VRC2.ScenariosV2.Scenario
             return r.refer[1].ToLower().Equals("normals");
         }
 
-        private Incident GetIncident(YamlParser.Refer refer)
+        private (Incident, bool) GetIncident(YamlParser.Refer refer)
         {
             var arr = refer.refer;
 
@@ -292,6 +296,7 @@ namespace VRC2.ScenariosV2.Scenario
             var idx = int.Parse(arr[2]);
             var normal = IsNormal(refer);
             var warning = refer.warning;
+            var changeOrder = refer.changeOrder;
 
             Incident res = null;
 
@@ -343,7 +348,8 @@ namespace VRC2.ScenariosV2.Scenario
                 res.showWarning = warning;
             }
 
-            return res;
+            // return change order
+            return (res, changeOrder);
         }
 
         private void ParseIncidents()
@@ -353,10 +359,13 @@ namespace VRC2.ScenariosV2.Scenario
 
             timeIncidentIdxMap = new Dictionary<int, List<int>>();
 
+            // clear
+            changeOrderIndices.Clear();
+
             var count = _incidents.Count;
             for (var i = 0; i < count; i++)
             {
-                var inci = GetIncident(_incidents[i]);
+                var (inci, changeOrder) = GetIncident(_incidents[i]);
                 // parse time
                 var t = ParseTime(_incidents[i].time);
 
@@ -374,7 +383,15 @@ namespace VRC2.ScenariosV2.Scenario
                 }
 
                 parsedIncidents.Add(inci);
+
+                if (changeOrder)
+                {
+                    // add index
+                    changeOrderIndices.Add(i);
+                }
             }
+
+            print($"Change Order Index: {string.Join(",", changeOrderIndices)}");
         }
 
         // parse time in scenario definition file
@@ -476,232 +493,29 @@ namespace VRC2.ScenariosV2.Scenario
 
             if (timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
             {
+                // due to the fps, exclude it first
+                startedIncidents.Add(sec);
                 // idx
                 var indices = timeIncidentIdxMap[sec];
 
                 foreach (var idx in indices)
                 {
+                    // change order
+                    if (changeOrderIndices.Contains(idx))
+                    {
+                        // trigger change order
+                        // TODO: maybe better to add a timer?
+                        StartCoroutine(ChangeOrder());
+                    }
+
                     // get incident
                     var pi = parsedIncidents[idx];
-                    // run
                     pi.RunIncident();
                 }
-
-                startedIncidents.Add(sec);
             }
         }
 
         #endregion
-
-        // #region Adaptation from the old version
-        //
-        // // original scenario
-        // public VRC2.Scenarios.Scenario oldScenario;
-        //
-        // private int _taskStart
-        // {
-        //     get => oldScenario.taskStart;
-        // }
-        //
-        // private int _taskEnd
-        // {
-        //     get => oldScenario.taskEnd;
-        // }
-        //
-        // public System.Action ScenarioStart;
-        // public System.Action ScenarioFinish;
-        //
-        // // SAGAT survey UI
-        // private GameObject SAGATRoot;
-        //
-        // private SurveyController _surveyController;
-        //
-        // // warning controller
-        // private WarningController _warningController;
-        //
-        // public WarningController warningController
-        // {
-        //     get
-        //     {
-        //         if (_warningController == null)
-        //         {
-        //             _warningController = GameObject.FindFirstObjectByType<WarningController>();
-        //         }
-        //
-        //         return _warningController;
-        //     }
-        // }
-        //
-        // [HideInInspector]
-        // public SurveyController surveyController
-        // {
-        //     get
-        //     {
-        //         if (SAGATRoot == null)
-        //         {
-        //             SAGATRoot = GameObject.FindWithTag(GlobalConstants.SAGATTag);
-        //             _surveyController = SAGATRoot.GetComponent<SurveyController>();
-        //         }
-        //
-        //         return _surveyController;
-        //     }
-        // }
-        //
-        //
-        // [HideInInspector]
-        // public bool warningShowing
-        // {
-        //     get { return warningController.showing; }
-        // }
-        //
-        // #region Player
-        //
-        // private NetworkRunner _networkRunner;
-        // private GameObject _localPlayer;
-        // private GameObject _remotePlayer;
-        //
-        // [HideInInspector]
-        // public NetworkRunner networkRunner
-        // {
-        //     get
-        //     {
-        //         if (_networkRunner == null)
-        //         {
-        //             _networkRunner = GameObject.FindFirstObjectByType<NetworkRunner>();
-        //         }
-        //
-        //         return _networkRunner;
-        //     }
-        // }
-        //
-        // [HideInInspector]
-        // public GameObject localPlayer // HighFidelityFirstPerson
-        // {
-        //     get
-        //     {
-        //         if (_localPlayer == null)
-        //         {
-        //             var players = GameObject.FindObjectsOfType<OVRCustomSkeleton>(includeInactive: true);
-        //
-        //             if (networkRunner == null || !networkRunner.IsRunning)
-        //             {
-        //                 if (players != null)
-        //                 {
-        //                     _localPlayer = players[0].gameObject;
-        //                     Debug.LogWarning($"Find local player: {_localPlayer.name}");
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 // find the object having input authority
-        //                 foreach (var player in players)
-        //                 {
-        //                     var no = player.gameObject.GetComponent<NetworkObject>();
-        //                     if (no.HasInputAuthority)
-        //                     {
-        //                         _localPlayer = no.gameObject;
-        //
-        //                         Debug.LogWarning($"Find local player: {_localPlayer.name}");
-        //                     }
-        //                     else
-        //                     {
-        //                         _remotePlayer = no.gameObject;
-        //                         Debug.LogWarning($"Find remote player: {_localPlayer.name}");
-        //                     }
-        //                 }
-        //             }
-        //
-        //         }
-        //
-        //         return _localPlayer;
-        //     }
-        // }
-        //
-        // [HideInInspector]
-        // public GameObject remotePlayer // HighFidelityFirstPerson without 
-        // {
-        //     get
-        //     {
-        //         // get local player first, and the remote player will be set
-        //         var lp = localPlayer;
-        //         return _remotePlayer;
-        //     }
-        // }
-        //
-        //
-        //
-        // #endregion
-        //
-        // public virtual void OnScenarioStart()
-        // {
-        //     UpdateInstruction();
-        // }
-        //
-        //
-        //
-        // public virtual void OnScenarioFinish()
-        // {
-        //
-        // }
-        //
-        // public virtual void UpdateInstruction()
-        // {
-        //     if (_taskStart > 0 && _taskEnd > 0)
-        //     {
-        //         scenariosManager.UpdateInstruction(_taskStart, _taskEnd);
-        //     }
-        // }
-        //
-        // public virtual void OnIncidentFinish(int obj)
-        // {
-        //     // hide warning
-        //     HideWarning();
-        //
-        //     // var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Finish);
-        //     // print($"{_name} #{obj} {name}");
-        //     // Invoke(name, 0);
-        // }
-        //
-        // public virtual void OnIncidentStart(int obj, float? delay)
-        // {
-        //     // show warning
-        //     
-        //     // TODO: start
-        //     var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
-        //     ShowWarning(_name, obj, msg, delay);
-        //     //// TODO: end
-        //     
-        //     // var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
-        //     // print($"{_name} #{obj} {name}");
-        //     // Invoke(name, 0);
-        // }
-        //
-        // public void ShowSAGAT()
-        // {
-        //     surveyController.Show();
-        // }
-        //
-        // public void HideSAGAT()
-        // {
-        //     surveyController.Hide();
-        // }
-        //
-        // public void ShowWarning(string sname, int idx, string msg, float? delay)
-        // {
-        //     if (msg == "") return;
-        //
-        //     print($"Show warning: {msg}");
-        //     warningController.Show("Warning", sname, idx, msg, delay);
-        // }
-        //
-        // public void HideWarning()
-        // {
-        //     print("Hide warning");
-        //     warningController.Hide(true);
-        // }
-        //
-        //
-        // #endregion
 
         #region Debug
 
@@ -832,6 +646,20 @@ namespace VRC2.ScenariosV2.Scenario
             var myClassType = Type.GetType(clsName);
 
             taskBase = (TaskBase)FindObjectOfType(myClassType);
+        }
+
+        /// <summary>
+        /// Trigger change order
+        /// </summary>
+        public virtual IEnumerator ChangeOrder()
+        {
+            if (taskBase != null)
+            {
+                Debug.LogWarning($"Change order for {ClsName}");
+                taskBase.ChangeOrder(roleChecker.IsP1());
+            }
+
+            yield break;
         }
 
         #endregion
