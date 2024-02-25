@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityUITable;
 using VRC2.Events;
+using VRC2.ScenariosV2.Tool;
 using VRC2.Utility;
 using TaskData = VRC2.Task.YamlParser.Task;
 using InfoData = VRC2.Task.YamlParser.Info;
@@ -66,7 +67,7 @@ namespace VRC2.Task
         private string srcText;
 
         // data to show in the table
-        [HideInInspector] public List<TableRow> rows;
+        public List<TableRow> rows;
 
 
         #region Private variables
@@ -101,7 +102,7 @@ namespace VRC2.Task
             // parse change order task
             ParseChangeOrder();
 
-            // UpdateTableRule(false);
+            UpdateTableRule(false);
         }
 
         public void UpdateTable(ref Table t)
