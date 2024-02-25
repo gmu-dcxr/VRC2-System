@@ -38,7 +38,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Truck_normals_2(object[] parameters)
         {
             print("Invoked Truck_normals_2");
-            baselineS3.On_BaselineS3_2_Start();
+            //baselineS3.On_BaselineS3_2_Start();
         }
 
         public void Truck_accidents_1(object[] parameters)
