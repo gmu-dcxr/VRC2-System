@@ -58,6 +58,8 @@ namespace VRC2.ScenariosV2.Base
             public string end { get; set; }
             public int taskStart { get; set; }
             public int taskEnd { get; set; }
+            
+            public string task { get; set; }
             public List<Refer> incidents { get; set; }
         }
 
