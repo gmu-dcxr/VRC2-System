@@ -5,7 +5,20 @@ namespace VRC2.Events
 {
     public class ScissorLiftEnterExit : MonoBehaviour
     {
-        [Header("Player")] public PlayerHelper playerHelper;
+        private PlayerHelper _playerHelper;
+
+        private PlayerHelper playerHelper
+        {
+            get
+            {
+                if (_playerHelper == null)
+                {
+                    _playerHelper = FindFirstObjectByType<PlayerHelper>();
+                }
+
+                return _playerHelper;
+            }
+        }
 
         private GameObject player
         {

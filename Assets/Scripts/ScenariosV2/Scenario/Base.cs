@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using VRC2.Network;
 using VRC2.Utility;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Base;
 using VRC2.ScenariosV2.Tool;
 using YamlDotNet.Serialization;
 using Incident = VRC2.ScenariosV2.Base.Incident;
+
+using TaskBase = VRC2.Task.Base;
 
 namespace VRC2.ScenariosV2.Scenario
 {
@@ -57,6 +60,8 @@ namespace VRC2.ScenariosV2.Scenario
         public Dictionary<int, List<int>> timeIncidentIdxMap;
         public HashSet<int> startedIncidents; // started incidents
 
+        [ReadOnly] public TaskBase taskBase;
+
         #endregion
 
         #endregion
@@ -90,6 +95,7 @@ namespace VRC2.ScenariosV2.Scenario
 
         // adapation for Scenario 4
         private Vehicle.Irrelevant _irrelevant;
+
         // Scenario 6
         private Vehicle.Electrocutions _electrocutions;
 
@@ -143,8 +149,8 @@ namespace VRC2.ScenariosV2.Scenario
 
                 return _craneTruck;
             }
-        } 
-        
+        }
+
         public Vehicle.Forklift forklift
         {
             get
@@ -169,8 +175,8 @@ namespace VRC2.ScenariosV2.Scenario
 
                 return _irrelevant;
             }
-        } 
-        
+        }
+
         public Vehicle.Electrocutions electrocutions
         {
             get
@@ -211,6 +217,21 @@ namespace VRC2.ScenariosV2.Scenario
                 }
 
                 return _warningController;
+            }
+        }
+
+        private P1P2RoleChecker _roleChecker;
+
+        public P1P2RoleChecker roleChecker
+        {
+            get
+            {
+                if (_roleChecker == null)
+                {
+                    _roleChecker = FindFirstObjectByType<P1P2RoleChecker>();
+                }
+
+                return _roleChecker;
             }
         }
 
@@ -296,8 +317,8 @@ namespace VRC2.ScenariosV2.Scenario
             if (cname.Equals(craneTruck.ClsName))
             {
                 res = craneTruck.GetIncident(idx, normal);
-            } 
-            
+            }
+
             // forklift
             if (cname.Equals(forklift.ClsName))
             {
@@ -309,7 +330,7 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 res = irrelevant.GetAccidentIncident(idx);
             }
-            
+
             // electrocutions
             if (cname.Equals(electrocutions.ClsName))
             {
@@ -370,6 +391,9 @@ namespace VRC2.ScenariosV2.Scenario
         public void Start()
         {
             ParseYamlFile();
+
+            // load task
+            LoadTask();
 
             this.ScenarioStart += OnScenarioStart;
             this.ScenarioFinish += OnScenarioFinish;
@@ -782,12 +806,33 @@ namespace VRC2.ScenariosV2.Scenario
 
         public virtual void UpdateInstruction()
         {
+            // table instruction
+
+            if (taskBase != null)
+            {
+                taskBase.UpdateTableInstruction(roleChecker.IsP1());
+            }
+
+            // wall instruction
             if (taskStart > 0 && taskEnd > 0)
             {
                 scenariosManager.UpdateInstruction(taskStart, taskEnd);
             }
         }
-        // TODO: load tasks
+
+        /// <summary>
+        /// Load task that is defined in the scenario config file by the field `task`
+        /// </summary>
+        public virtual void LoadTask()
+        {
+            var name = task.Split('.')[0];
+            // find task under VRC2.Task
+            var clsName = $"VRC2.Task.{name}";
+            print($"Load Task: {clsName}");
+            var myClassType = Type.GetType(clsName);
+
+            taskBase = (TaskBase)FindObjectOfType(myClassType);
+        }
 
         #endregion
     }
