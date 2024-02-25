@@ -831,7 +831,7 @@ namespace VRC2.ScenariosV2.Scenario
             print($"Load Task: {clsName}");
             var myClassType = Type.GetType(clsName);
 
-            taskBase = (TaskBase)FindObjectOfType(myClassType);
+            // taskBase = (TaskBase)FindObjectOfType(myClassType);
         }
 
         #endregion
