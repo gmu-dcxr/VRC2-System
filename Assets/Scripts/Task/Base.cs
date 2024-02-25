@@ -97,13 +97,11 @@ namespace VRC2.Task
         {
             srcText = constructionRule.text;
 
-
             ParseYmlFile();
-
             // parse change order task
             ParseChangeOrder();
 
-            UpdateTableRule(false);
+            // UpdateTableRule(false);
         }
 
         public void UpdateTable(ref Table t)
@@ -356,7 +354,7 @@ namespace VRC2.Task
 
             if (GUI.Button(new Rect(500, 200, 200, 50), "Change"))
             {
-                ChangeOrder();
+                ChangeOrder(true);
             }
         }
 
@@ -364,7 +362,7 @@ namespace VRC2.Task
 
         #region Change order
 
-        public void ChangeOrder()
+        public void ChangeOrder(bool p1)
         {
             // return is no corresponding changed task
             if (taskChange == null) return;
@@ -373,7 +371,17 @@ namespace VRC2.Task
             curTask = taskChange;
 
             // update sheet and table
-            UpdateTableRule(false);
+            UpdateTableRule(p1);
+        }
+
+        #endregion
+
+        #region API
+
+        // update instruction on the table
+        public void UpdateTableInstruction(bool p1)
+        {
+            UpdateTableRule(p1);
         }
 
         #endregion
