@@ -82,6 +82,8 @@ public class ExcavAnimPlayer : MonoBehaviour
         done = false;
         clonesArray = new GameObject[50];
         anim.Rebind();
+
+        ready = true;
         //anim.SetBool("Dig", true);
     }
 
@@ -125,7 +127,7 @@ public class ExcavAnimPlayer : MonoBehaviour
 
             if (ReachDestination(destination.position))
             {
-                if (!done)
+                if (!done && truckCheck.active)
                 {
                     anim.SetBool("Forward", false);
                     anim.SetBool("Dig", true);
@@ -181,7 +183,16 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 2
         //then dig
         //then dump
-        ready = true;
+        while (curIndex > 0)
+        {
+            Destroy(clonesArray[curIndex]);
+            curIndex--;
+        }
+        clonesArray = new GameObject[50];
+
+        dirt.SetActive(false);
+        anim.Rebind();
+        //ready = true;
         done = false;
         pt = part.nextTo;
         destination = digPoint1;
