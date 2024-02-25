@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -18,7 +19,6 @@ namespace VRC2.Task
     {
         [Header("Filename")] [Tooltip("Filename under Assets/Conf, e.g. Task/Training.yml")]
         public string filename;
-        // TODO: set filename for change order and its task
 
         // TODO: refactor based on the task name
         [Space(30)] [Header("Instruction Picture")]
@@ -72,6 +72,9 @@ namespace VRC2.Task
         #region Private variables
 
         private TaskData task;
+        private TaskData taskChange = null; // task for changed order
+
+        private TaskData curTask = null; // current task
 
         private readonly string ruleSeparator = " -> ";
 
@@ -79,6 +82,12 @@ namespace VRC2.Task
         public virtual string GetFilename()
         {
             return filename;
+        }
+
+        public virtual string GetChangeOrderFilename()
+        {
+            var f = GetFilename();
+            return f.Split('.')[0] + "C.yml";
         }
 
         #endregion
@@ -90,6 +99,9 @@ namespace VRC2.Task
 
 
             ParseYmlFile();
+
+            // parse change order task
+            ParseChangeOrder();
 
             UpdateTableRule(false);
         }
@@ -130,6 +142,22 @@ namespace VRC2.Task
 
             task = Helper.ParseYamlFile<TaskData>(path);
             print(task);
+            // set current task
+            curTask = task;
+        }
+
+        public void ParseChangeOrder()
+        {
+            var path = Helper.GetConfigureFile(Application.dataPath, GetChangeOrderFilename());
+
+            if (!File.Exists(path))
+            {
+                Debug.LogWarning($"File not found: {path}");
+                return;
+            }
+
+            taskChange = Helper.ParseYamlFile<TaskData>(path);
+            print(taskChange);
         }
 
         public void FormatInfoData(bool p1)
@@ -165,7 +193,7 @@ namespace VRC2.Task
 
         public bool P1HasLength()
         {
-            return task.P1.Contains("length");
+            return curTask.P1.Contains("length");
         }
 
         public bool P2HasLength()
@@ -185,40 +213,40 @@ namespace VRC2.Task
 
         public (List<string>, List<InfoData>) GetP1Info()
         {
-            var keys = task.P1;
+            var keys = curTask.P1;
             var data = GetInfo(keys);
             return (keys, data);
         }
 
         public (List<string>, List<InfoData>) GetP2Info()
         {
-            var keys = task.P2;
+            var keys = curTask.P2;
             var data = GetInfo(keys);
             return (keys, data);
         }
 
         public Texture2D LoadTexture()
         {
-            var folder = task.folder;
-            var filename = task.image;
+            var folder = curTask.folder;
+            var filename = curTask.image;
             return GlobalConstants.LoadTexture(folder, filename);
         }
 
         // shown to who has the length information
         public string GetConstructRule()
         {
-            var rule = task.rule;
+            var rule = curTask.rule;
             return string.Join(ruleSeparator, rule);
         }
 
         private List<InfoData> GetInfo(List<string> keys)
         {
             List<InfoData> result = new List<InfoData>();
-            var count = task.info.Count;
+            var count = curTask.info.Count;
             var keysCount = keys.Count;
             for (var i = 0; i < count; i++)
             {
-                var info = task.info[i];
+                var info = curTask.info[i];
                 var infoData = new InfoData();
                 // update segment
                 infoData.segment = info.segment;
@@ -266,7 +294,7 @@ namespace VRC2.Task
         public void UpdateSheet(bool rule)
         {
             // sheet rule is deprecated. Always use sheet pipe
-            
+
             imageAsTexture.UpdateFolderFilename(folder, sheetPipe);
             // if (rule)
             // {
@@ -325,6 +353,27 @@ namespace VRC2.Task
             {
                 UpdateTableRule(false);
             }
+
+            if (GUI.Button(new Rect(500, 200, 200, 50), "Change"))
+            {
+                ChangeOrder();
+            }
+        }
+
+        #endregion
+
+        #region Change order
+
+        public void ChangeOrder()
+        {
+            // return is no corresponding changed task
+            if (taskChange == null) return;
+
+            // update task
+            curTask = taskChange;
+
+            // update sheet and table
+            UpdateTableRule(false);
         }
 
         #endregion
