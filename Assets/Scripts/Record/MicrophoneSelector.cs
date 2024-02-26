@@ -62,8 +62,13 @@ namespace VRC2.Record
 
         [SerializeField] private GameObject nextQuestionButton;
 
+        [Space(30)] [Header("VR Control")] [SerializeField]
+        private GameObject resumeButton;
+
         [Space(30)] [Header("Question")] [SerializeField]
-        private Text title;
+        Text scenarioTitle;
+
+        [SerializeField] private Text title;
 
         [SerializeField] private Text question;
 
@@ -71,6 +76,8 @@ namespace VRC2.Record
         private Image fillArea;
         private Color defaultFillColor = Color.white;
         private Color speakingFillColor = Color.green;
+
+        public System.Action RequestReturnToVR;
 
 
 #pragma warning restore 649
@@ -90,6 +97,8 @@ namespace VRC2.Record
 
             this.prevQuestionButton.GetComponentInChildren<Button>().onClick.AddListener(PrevQuestion);
             this.nextQuestionButton.GetComponentInChildren<Button>().onClick.AddListener(NextQuestion);
+
+            this.resumeButton.GetComponentInChildren<Button>().onClick.AddListener(ResumeVR);
 
             this.fillArea = this.micLevelSlider.fillRect.GetComponent<Image>();
 
@@ -231,15 +240,27 @@ namespace VRC2.Record
             saver.StopRecording();
         }
 
+        public void SetScenarioText(string s)
+        {
+            scenarioTitle.text = s;
+        }
+
         #endregion
 
         #region Question control
 
         private void Start()
         {
-            var filename = "Environment.yml";
+            // var filename = "Scenario1.yml";
+            // survey.LoadFile(filename);
+            // // fill the 1st question
+            // InitQuestion();
+        }
+
+        public void LoadForClass(string name)
+        {
+            var filename = $"{name}.yml";
             survey.LoadFile(filename);
-            // fill the 1st question
             InitQuestion();
         }
 
@@ -248,18 +269,18 @@ namespace VRC2.Record
             var q = survey.First();
             if (q.IsNone())
             {
-                UpdateQuestion("Label", "Question");
+                UpdateQuestion("Label", "Question", null);
             }
             else
             {
-                UpdateQuestion(q.label, q.question);
+                UpdateQuestion(q.label, q.question, q.options);
             }
         }
 
         public void PrevQuestion()
         {
             var q = survey.PrevQuestion();
-            UpdateQuestion(q.label, q.question);
+            UpdateQuestion(q.label, q.question, q.options);
         }
 
         public void NextQuestion()
@@ -271,13 +292,48 @@ namespace VRC2.Record
             }
 
             var q = survey.NextQuestion();
-            UpdateQuestion(q.label, q.question);
+            UpdateQuestion(q.label, q.question, q.options);
+
+
         }
 
-        private void UpdateQuestion(string t, string q)
+        private List<string> GenerateList(List<string> options)
+        {
+
+            var length = options.Count;
+            List<string> letters = new List<string>();
+
+            for (int i = 0; i < length; i++)
+            {
+                char letter = (char)('a' + i);
+                letters.Add($"<color=blue>{letter}.</color>\t{options[i]}");
+            }
+
+            return letters;
+        }
+
+        private void UpdateQuestion(string t, string q, List<string> options)
         {
             title.text = t;
-            question.text = q;
+
+            // concatenate q and options
+            var s = q;
+            if (options != null)
+            {
+                var list = GenerateList(options);
+                s += "\n\n" + String.Join("\n", list);
+            }
+
+            question.text = s;
+        }
+
+        public void ResumeVR()
+        {
+            // return to vr, basically start the next scenario
+            if (RequestReturnToVR != null)
+            {
+                RequestReturnToVR();
+            }
         }
 
         #endregion

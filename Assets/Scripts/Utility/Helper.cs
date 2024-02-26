@@ -30,7 +30,7 @@ namespace VRC2.Utility
 
         public static string GetSurveyFile(string root, string name)
         {
-            return Path.Combine(root, $"./SAGAT/{name}");
+            return Path.Combine(root, $"./Conf/SAGAT/{name}");
         }
 
         public static int SecondNow()

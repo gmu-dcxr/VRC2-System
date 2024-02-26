@@ -14,6 +14,8 @@ namespace VRC2.SAGAT
             public int level { get; set; }
             public string question { get; set; }
 
+            [CanBeNull] public List<string> options { get; set; }
+
             public static Question None()
             {
                 var q = new Question();
