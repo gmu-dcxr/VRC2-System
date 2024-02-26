@@ -635,6 +635,7 @@ namespace VRC2.ScenariosV2.Scenario
             }
 
             // wall instruction
+            // default is training, nothing to update
             if (taskStart > 0 && taskEnd > 0)
             {
                 scenariosManager.UpdateInstruction(taskStart, taskEnd);
