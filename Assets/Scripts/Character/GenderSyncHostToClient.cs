@@ -48,6 +48,8 @@ namespace VRC2.Character
                 {
                     SetTimer(() =>
                     {
+                        synchronized = true;
+                        
                         var pid = GlobalConstants.localPlayer.PlayerId;
                         var female = GlobalConstants.playerGender == PlayerGender.Female;
                         var hair = GlobalConstants.playerHairIndex;
@@ -56,8 +58,6 @@ namespace VRC2.Character
                         print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
                         // send message
                         RPC_SendMessage(pid, female, hair, skin);
-
-                        synchronized = true;
                     });
                 }
             }
