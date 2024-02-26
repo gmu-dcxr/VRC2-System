@@ -8,14 +8,12 @@ namespace VRC2.Character
 {
     public class GenderSyncHostToClient : GenderSyncBase
     {
-        private bool timerStarted = false;
         private Timer _timer;
 
         public void Start()
         {
             _playerSpawner = FindObjectOfType<PlayerSpawner>();
             synchronized = false;
-            timerStarted = false;
         }
 
         // Note: The reason why we need a timer here is that
@@ -28,8 +26,6 @@ namespace VRC2.Character
         //      already two clones.
         void SetTimer(Action complete)
         {
-            timerStarted = true;
-
             if (_timer != null)
             {
                 Timer.Cancel(_timer);
@@ -44,22 +40,19 @@ namespace VRC2.Character
 
             if (_playerSpawner.ReadyToSyncGender() && Runner.IsServer)
             {
-                if (!timerStarted)
+                synchronized = true;
+
+                SetTimer(() =>
                 {
-                    synchronized = true;
-                    
-                    SetTimer(() =>
-                    {
-                        var pid = GlobalConstants.localPlayer.PlayerId;
-                        var female = GlobalConstants.playerGender == PlayerGender.Female;
-                        var hair = GlobalConstants.playerHairIndex;
-                        var skin = GlobalConstants.playerSkinIndex;
-                        
-                        print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
-                        // send message
-                        RPC_SendMessage(pid, female, hair, skin);
-                    });
-                }
+                    var pid = GlobalConstants.localPlayer.PlayerId;
+                    var female = GlobalConstants.playerGender == PlayerGender.Female;
+                    var hair = GlobalConstants.playerHairIndex;
+                    var skin = GlobalConstants.playerSkinIndex;
+
+                    print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
+                    // send message
+                    RPC_SendMessage(pid, female, hair, skin);
+                });
             }
         }
     }
