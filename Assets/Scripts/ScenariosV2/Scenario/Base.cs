@@ -663,7 +663,7 @@ namespace VRC2.ScenariosV2.Scenario
             if (taskBase != null)
             {
                 Debug.LogWarning($"Change order for {ClsName}");
-                taskBase.ChangeOrder(roleChecker.IsP1());
+                taskBase.ChangeOrder(roleChecker.IsP2());
             }
 
             yield break;
