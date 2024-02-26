@@ -251,9 +251,16 @@ namespace VRC2.Record
 
         private void Start()
         {
-            var filename = "Environment.yml";
+            // var filename = "Scenario1.yml";
+            // survey.LoadFile(filename);
+            // // fill the 1st question
+            // InitQuestion();
+        }
+
+        public void LoadForClass(string name)
+        {
+            var filename = $"{name}.yml";
             survey.LoadFile(filename);
-            // fill the 1st question
             InitQuestion();
         }
 
@@ -262,18 +269,18 @@ namespace VRC2.Record
             var q = survey.First();
             if (q.IsNone())
             {
-                UpdateQuestion("Label", "Question");
+                UpdateQuestion("Label", "Question", null);
             }
             else
             {
-                UpdateQuestion(q.label, q.question);
+                UpdateQuestion(q.label, q.question, q.options);
             }
         }
 
         public void PrevQuestion()
         {
             var q = survey.PrevQuestion();
-            UpdateQuestion(q.label, q.question);
+            UpdateQuestion(q.label, q.question, q.options);
         }
 
         public void NextQuestion()
@@ -285,13 +292,39 @@ namespace VRC2.Record
             }
 
             var q = survey.NextQuestion();
-            UpdateQuestion(q.label, q.question);
+            UpdateQuestion(q.label, q.question, q.options);
+
+
         }
 
-        private void UpdateQuestion(string t, string q)
+        private List<string> GenerateList(List<string> options)
+        {
+
+            var length = options.Count;
+            List<string> letters = new List<string>();
+
+            for (int i = 0; i < length; i++)
+            {
+                char letter = (char)('a' + i);
+                letters.Add($"<color=blue>{letter}.</color>\t{options[i]}");
+            }
+
+            return letters;
+        }
+
+        private void UpdateQuestion(string t, string q, List<string> options)
         {
             title.text = t;
-            question.text = q;
+
+            // concatenate q and options
+            var s = q;
+            if (options != null)
+            {
+                var list = GenerateList(options);
+                s += "\n\n" + String.Join("\n", list);
+            }
+
+            question.text = s;
         }
 
         public void ResumeVR()

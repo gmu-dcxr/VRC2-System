@@ -631,7 +631,7 @@ namespace VRC2.ScenariosV2.Scenario
         public virtual void OnScenarioStart()
         {
             print($"Invoke {name} OnScenarioStart");
-            UpdateSAGATTitle();
+            UpdateSAGAT();
 
             UpdateInstruction();
         }
@@ -641,9 +641,12 @@ namespace VRC2.ScenariosV2.Scenario
             print($"Invoke {name} OnScenarioFinish");
         }
 
-        public virtual void UpdateSAGATTitle()
+        public virtual void UpdateSAGAT()
         {
+            // title
             sagatController.UpdateScenarioText(ClsName);
+            // questions
+            sagatController.UpdateQuestions(ClsName);
         }
 
         #region Task Instruction
