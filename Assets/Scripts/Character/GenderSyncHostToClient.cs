@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Fusion;
 using UnityEngine;
 
@@ -41,19 +42,34 @@ namespace VRC2.Character
             if (_playerSpawner.ReadyToSyncGender() && Runner.IsServer)
             {
                 synchronized = true;
+                StartCoroutine(SendMessageAfter(5.0f));
 
-                SetTimer(() =>
-                {
-                    var pid = GlobalConstants.localPlayer.PlayerId;
-                    var female = GlobalConstants.playerGender == PlayerGender.Female;
-                    var hair = GlobalConstants.playerHairIndex;
-                    var skin = GlobalConstants.playerSkinIndex;
-
-                    print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
-                    // send message
-                    RPC_SendMessage(pid, female, hair, skin);
-                });
+                // SetTimer(() =>
+                // {
+                //     var pid = GlobalConstants.localPlayer.PlayerId;
+                //     var female = GlobalConstants.playerGender == PlayerGender.Female;
+                //     var hair = GlobalConstants.playerHairIndex;
+                //     var skin = GlobalConstants.playerSkinIndex;
+                //
+                //     print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
+                //     // send message
+                //     RPC_SendMessage(pid, female, hair, skin);
+                // });
             }
+        }
+
+        IEnumerator SendMessageAfter(float second)
+        {
+            yield return new WaitForSeconds(second);
+            var pid = GlobalConstants.localPlayer.PlayerId;
+            var female = GlobalConstants.playerGender == PlayerGender.Female;
+            var hair = GlobalConstants.playerHairIndex;
+            var skin = GlobalConstants.playerSkinIndex;
+            
+            print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
+            // send message
+            RPC_SendMessage(pid, female, hair, skin);
+            yield break;
         }
     }
 }
