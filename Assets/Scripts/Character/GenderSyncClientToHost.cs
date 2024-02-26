@@ -18,6 +18,8 @@ namespace VRC2.Character
 
             if (_playerSpawner.ReadyToSyncGender() && Runner.IsClient)
             {
+                synchronized = true;
+                
                 var pid = GlobalConstants.localPlayer.PlayerId;
                 var female = GlobalConstants.playerGender == PlayerGender.Female;
                 var hair = GlobalConstants.playerHairIndex;
@@ -26,7 +28,6 @@ namespace VRC2.Character
                 print($"GenderSyncClientToHost: {pid} {female} {hair} {skin}");
                 // send message
                 RPC_SendMessage(pid, female, hair, skin);
-                synchronized = true;
             }
         }
     }
