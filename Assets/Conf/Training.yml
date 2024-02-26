@@ -25,9 +25,9 @@ incidents:
     time: "0:05" # start time of this incident
     refer: [ "Irrelevant", "accidents", "1" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
   - id: 2
-    time: "0:20"
+    time: "0:10"
     refer: [ "Irrelevant", "accidents", "2" ]
-    changeOrder: true
+    changeOrder: true # test change order
   - id: 3
-    time: "1:00"
-    refer: [ "Irrelevant", "accidents", "3" ]
+    time: "0:20"
+    refer: ["Crane", "accidents", "9"] # test sagat controller
