@@ -13,7 +13,8 @@ namespace VRC2.Scenarios
     {
         private int startTimestamp = -1;
 
-        public bool isTraining = true;
+        // deprecated
+        [HideInInspector] public bool isTraining = true;
 
         public ConditionNumber conditionNumber;
 
@@ -182,33 +183,47 @@ namespace VRC2.Scenarios
         public void UpdateInstruction(int start, int end)
         {
             print("UpdateInstruction");
-            var s = start;
-            var e = end;
 
-            // use mapping
-            s = Math.Min(s, e);
+            // deprecated - start
 
-            // 1-5, 2-6, 3-7, 4-8
-            e = s + 4;
+            // var s = start;
+            // var e = end;
+            //
+            // // use mapping
+            // s = Math.Min(s, e);
+            //
+            // // 1-5, 2-6, 3-7, 4-8
+            // e = s + 4;
+            //
+            // UpdateWallBoxes(s, e);
+            //
+            // Texture2D texture = null;
+            // string folder = "";
+            // string filename = "";
+            //
+            //
+            // if (isTraining)
+            // {
+            //     // (texture, folder, filename) = GlobalConstants.loadTrainingInstruction();
+            //     (texture, folder, filename) = GlobalConstants.LoadTrainingWall();
+            // }
+            // else
+            // {
+            //     (texture, folder, filename) = GlobalConstants.loadTaskInstruction(s, e);
+            // }
+            //
+            // UpdateInstructionPanel(texture);
+            // UpdateWallBackground(texture, folder, filename);
 
-            UpdateWallBoxes(s, e);
+            // deprecated - end
+
+            UpdateWallBoxes(start);
 
             Texture2D texture = null;
             string folder = "";
             string filename = "";
 
-
-            if (isTraining)
-            {
-                // (texture, folder, filename) = GlobalConstants.loadTrainingInstruction();
-                (texture, folder, filename) = GlobalConstants.LoadTrainingWall();
-            }
-            else
-            {
-                (texture, folder, filename) = GlobalConstants.loadTaskInstruction(s, e);
-            }
-
-            UpdateInstructionPanel(texture);
+            (texture, folder, filename) = GlobalConstants.LoadWall(start);
             UpdateWallBackground(texture, folder, filename);
         }
 
@@ -225,6 +240,26 @@ namespace VRC2.Scenarios
             qim.UpdateFolderFilename(folder, filename);
         }
 
+        void UpdateWallBoxes(int start)
+        {
+            var boxes = GameObject.FindWithTag(GlobalConstants.wallBoxesTag);
+            var count = boxes.transform.childCount;
+
+            for (var i = 0; i < count; i++)
+            {
+                if (i == start)
+                {
+                    // enable it
+                    boxes.transform.GetChild(i).gameObject.SetActive(true);
+                }
+                else
+                {
+                    boxes.transform.GetChild(i).gameObject.SetActive(false);
+                }
+            }
+        }
+
+        // deprecated
         void UpdateWallBoxes(int s, int e)
         {
             var boxes = GameObject.FindWithTag(GlobalConstants.wallBoxesTag);
