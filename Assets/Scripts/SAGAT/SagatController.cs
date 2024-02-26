@@ -10,6 +10,8 @@ namespace VRC2.SAGAT
         public GameObject mainEventSystem;
         public GameObject curEventSystem;
 
+        public GameObject centerEyeAnchor;
+
         public MicrophoneSelector microphoneSelector;
 
         private bool mainEventSystemStatus;
@@ -33,6 +35,7 @@ namespace VRC2.SAGAT
         {
             mainEventSystemStatus = mainEventSystem.activeSelf;
 
+            centerEyeAnchor.SetActive(false);
             canvas.SetActive(true);
             mainEventSystem.SetActive(!mainEventSystemStatus);
             curEventSystem.SetActive(true);
@@ -46,6 +49,7 @@ namespace VRC2.SAGAT
 
         public void HideSAGAT()
         {
+            centerEyeAnchor.SetActive(true);
             canvas.SetActive(false);
             curEventSystem.SetActive(false);
         }
