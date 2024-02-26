@@ -28,12 +28,14 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Irrelevant_accidents_2(object[] parameters)
         {
+            print("Invoke Irrelevant_accidents_2");
             var filename = GetAudioFileName(2);
             warningController.PlayAudioClip(filename, null);
         }
 
         public void Irrelevant_accidents_3(object[] parameters)
         {
+            print("Invoke Irrelevant_accidents_3");
             var filename = GetAudioFileName(3);
             warningController.PlayAudioClip(filename, null);
         }

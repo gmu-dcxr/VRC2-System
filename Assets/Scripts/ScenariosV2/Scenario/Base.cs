@@ -493,8 +493,6 @@ namespace VRC2.ScenariosV2.Scenario
 
             if (timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
             {
-                // due to the fps, exclude it first
-                startedIncidents.Add(sec);
                 // idx
                 var indices = timeIncidentIdxMap[sec];
 
@@ -507,12 +505,20 @@ namespace VRC2.ScenariosV2.Scenario
                         // TODO: maybe better to add a timer?
                         StartCoroutine(ChangeOrder());
                     }
-
-                    // get incident
-                    var pi = parsedIncidents[idx];
-                    pi.RunIncident();
+                    
+                    StartCoroutine(CoroutineStartIncident(idx));
                 }
+                // exclude it
+                startedIncidents.Add(sec);
             }
+        }
+
+        IEnumerator CoroutineStartIncident(int idx)
+        {
+            // get incident
+            var pi = parsedIncidents[idx];
+            pi.RunIncident();
+            yield break;
         }
 
         #endregion
@@ -653,6 +659,7 @@ namespace VRC2.ScenariosV2.Scenario
         /// </summary>
         public virtual IEnumerator ChangeOrder()
         {
+            print("Invoke ChangeOrder");
             if (taskBase != null)
             {
                 Debug.LogWarning($"Change order for {ClsName}");
