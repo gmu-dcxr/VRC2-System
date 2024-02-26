@@ -154,8 +154,16 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             yield return new WaitForSeconds(17f);
             anim.SetBool("Reverse", false);
-            good.SetActive(true);
-            currentCargo = good;
+            if (!good.active)
+            {
+                good.SetActive(true);
+                currentCargo = good;
+            }
+            else 
+            {
+                good2.SetActive(true);
+                currentCargo = good2;                 
+            }
             //anim.enabled = false;
             unload.status = Animations.CraneTruck.CraneStatus.PrepareSeize;
             // reset cargo
@@ -246,9 +254,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
 
+            anim.SetBool("Forward", false);
             anim.SetBool("Reverse", true);
             StartCoroutine(WaitForUnload());
             _stage = CraneTruckStage.Backward;
+            
             //On_BaselineS5_3_Start();
             //anim.SetBool("Forward", true);
             //replay.Backward(true);
@@ -265,10 +275,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The unload finishes and the crane truck leaves.
             // get incident
             var incident = GetIncident(3);
-
+            
             anim.SetBool("Unload", false);
             anim.SetBool("Forward", true);
-
+            
             // it already automatically moves forward
             // _stage = CraneTruckStage.Forward;
         }
