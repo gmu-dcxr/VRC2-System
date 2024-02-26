@@ -2,13 +2,14 @@
 using UnityEngine;
 using VRC2.Utility;
 using VRC2.Scenarios;
+using VRC2.ScenariosV2.Tool;
 using YamlDotNet.Serialization;
 
 namespace VRC2.SAGAT
 {
     public class SAGATSurvey : MonoBehaviour
     {
-        [HideInInspector] public string filename;
+        [ReadOnly]public string filename;
 
         // current questions index
         private int index = 0;

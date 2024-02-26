@@ -59,6 +59,11 @@ namespace VRC2.SAGAT
             microphoneSelector.SetScenarioText(s);
         }
 
+        public void UpdateQuestions(string clsname)
+        {
+            microphoneSelector.LoadForClass(clsname);
+        }
+
         #endregion
     }
 }
