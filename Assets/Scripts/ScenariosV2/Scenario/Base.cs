@@ -464,7 +464,7 @@ namespace VRC2.ScenariosV2.Scenario
                     print($"Scenario {_name} Start @ {sec}");
                     // update flag first
                     scenarioStarted = true;
-                    
+
                     if (ScenarioStart != null)
                     {
                         ScenarioStart();
@@ -505,9 +505,10 @@ namespace VRC2.ScenariosV2.Scenario
                         // TODO: maybe better to add a timer?
                         StartCoroutine(ChangeOrder());
                     }
-                    
+
                     StartCoroutine(CoroutineStartIncident(idx));
                 }
+
                 // exclude it
                 startedIncidents.Add(sec);
             }
@@ -663,7 +664,7 @@ namespace VRC2.ScenariosV2.Scenario
             if (taskBase != null)
             {
                 Debug.LogWarning($"Change order for {ClsName}");
-                taskBase.ChangeOrder(roleChecker.IsP2());
+                taskBase.ChangeOrder(roleChecker.IsP1());
             }
 
             yield break;
