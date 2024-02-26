@@ -556,13 +556,13 @@ namespace VRC2.ScenariosV2.Scenario
 
         private void OnGUI()
         {
+            if (!showDebugUI) return;
+
             if (GUI.Button(new Rect(200, 10, 150, 50), $"Start {name}"))
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
             }
-
-            if (!showDebugUI) return;
 
             // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
             var runner = GameObject.FindObjectOfType<NetworkRunner>();

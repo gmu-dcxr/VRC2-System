@@ -69,6 +69,8 @@ namespace VRC2.Task
         // data to show in the table
         public List<TableRow> rows;
 
+        [Space(30)] [Header("Debug")] public bool showDebugUI = true;
+
 
         #region Private variables
 
@@ -331,6 +333,8 @@ namespace VRC2.Task
 
         private void OnGUI()
         {
+            if(!showDebugUI) return;
+            
             if (GUI.Button(new Rect(500, 100, 100, 50), "Table"))
             {
                 table.Initialize();
