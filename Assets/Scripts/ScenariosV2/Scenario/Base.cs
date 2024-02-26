@@ -462,13 +462,13 @@ namespace VRC2.ScenariosV2.Scenario
                 {
                     // scenario started
                     print($"Scenario {_name} Start @ {sec}");
-
+                    // update flag first
+                    scenarioStarted = true;
+                    
                     if (ScenarioStart != null)
                     {
                         ScenarioStart();
                     }
-
-                    scenarioStarted = true;
                 }
             }
 
@@ -479,13 +479,13 @@ namespace VRC2.ScenariosV2.Scenario
                 {
                     // scenario ended
                     print($"Scenario {_name} Finish @ {sec}");
+                    // update flag first
+                    scenarioFinished = true;
 
                     if (ScenarioFinish != null)
                     {
                         ScenarioFinish();
                     }
-
-                    scenarioFinished = true;
                 }
 
                 return;
