@@ -366,7 +366,10 @@ namespace VRC2.Task
         public void ChangeOrder(bool p1)
         {
             // return is no corresponding changed task
-            if (taskChange == null) return;
+            if (taskChange == null)
+            {
+                taskChange = task;
+            }
 
             // update task
             curTask = taskChange;
