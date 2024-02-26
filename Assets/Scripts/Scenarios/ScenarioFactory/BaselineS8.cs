@@ -11,6 +11,7 @@ using VRC2.Animations;
 using WSMGameStudio.Vehicles;
 using Random = UnityEngine.Random;
 using Timer = UnityTimer.Timer;
+using VRC2.ScenariosV2.Adaptor;
 
 namespace VRC2.Scenarios.ScenarioFactory
 {
@@ -58,7 +59,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS8_2_Start");
             normal.SetActive(false);
-            EXCAV.GetComponent<ExcavAnimPlayer>().start_2();
+            EXCAV.GetComponent<ExcavAnimPlayer_2>().start_2();
             TRUCK.GetComponent<TruckAnimPlayer>().Backup1();
 
         }
