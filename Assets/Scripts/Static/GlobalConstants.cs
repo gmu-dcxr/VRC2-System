@@ -347,6 +347,12 @@ namespace VRC2
             return texture;
         }
 
+        public static (Texture2D, string, string) LoadWall(int task)
+        {
+            var filename = GetWallImageName(task);
+            return (LoadTexture(wallImagesResource, filename), wallImagesResource, filename);
+        }
+
         public static (Texture2D, string, string) LoadTrainingWall()
         {
             var filename = GetWallImageName(0, true);
@@ -357,6 +363,23 @@ namespace VRC2
         {
             var s = "wall layout_";
             if (training)
+            {
+                s += "training";
+            }
+            else
+            {
+                s += $"task{task}";
+            }
+
+            // s += ".png";
+            return s;
+        }
+        
+        public static string GetWallImageName(int task)
+        {
+            var s = "wall layout_";
+            // task 0 is set to training task
+            if (task == 0)
             {
                 s += "training";
             }
