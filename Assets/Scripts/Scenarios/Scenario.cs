@@ -6,6 +6,7 @@ using Fusion;
 using Unity.VisualScripting;
 using VRC2.Utility;
 using VRC2.Conditions;
+using VRC2.SAGAT;
 using YamlDotNet.Serialization;
 
 namespace VRC2.Scenarios
@@ -20,7 +21,7 @@ namespace VRC2.Scenarios
     {
 
         [Header("Debug UI")] public bool showDebugUI = true;
-        
+
         [HideInInspector] public List<Incident> incidents = null;
 
         [HideInInspector] public int startInSec;
@@ -33,8 +34,9 @@ namespace VRC2.Scenarios
         private string _shortName;
         private int _taskStart;
         private int _taskEnd;
-        
-        [HideInInspector] public int taskStart
+
+        [HideInInspector]
+        public int taskStart
         {
             get => _taskStart;
         }
@@ -91,6 +93,26 @@ namespace VRC2.Scenarios
                 return _surveyController;
             }
         }
+
+        #region New SAGAT UI using desktop answering
+
+        private SagatController _sagatController;
+
+        public SagatController sagatController
+        {
+            get
+            {
+                if (_sagatController == null)
+                {
+                    _sagatController = FindFirstObjectByType<SagatController>();
+                }
+
+                return _sagatController;
+            }
+        }
+
+
+        #endregion
 
         public string ClsName
         {
@@ -233,7 +255,7 @@ namespace VRC2.Scenarios
         public virtual void OnGUI()
         {
             if (!showDebugUI) return;
-            
+
             // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
             var runner = GameObject.FindObjectOfType<NetworkRunner>();
             if (runner != null && runner.IsRunning && scenariosManager.scenarios != null &&
@@ -374,7 +396,7 @@ namespace VRC2.Scenarios
         // When scenarios are sequenced, it's necessary to override them
         public void OverrideStartEnd(int start, int end)
         {
-       
+
             startInSec = start;
             endInSec = end;
             print($"OverrideStartEnd for {name}: {startInSec} - {endInSec}");
@@ -405,7 +427,7 @@ namespace VRC2.Scenarios
             if (incidents == null || idx > incidents.Count)
             {
                 if (idx > incidents.Count)
-                    print("NULLNULL"+incidents.Count);
+                    print("NULLNULL" + incidents.Count);
                 return null;
             }
 
@@ -534,6 +556,7 @@ namespace VRC2.Scenarios
                 // debug
                 incident.Print();
             }
+
             print("done adding");
         }
 
@@ -593,12 +616,17 @@ namespace VRC2.Scenarios
 
         public void ShowSAGAT()
         {
-            surveyController.Show("");
+            // deprecated
+            // surveyController.Show("");
+            sagatController.StartSAGAT();
         }
 
         public void HideSAGAT()
         {
-            surveyController.Hide();
+            // deprecated
+            // surveyController.Hide();
+
+            sagatController.StopSAGAT();
         }
 
         public void ShowWarning(string sname, int idx, string msg, float? delay)
@@ -652,7 +680,7 @@ namespace VRC2.Scenarios
         public string GetRightMessage(int idx, Context context, Amount amount)
         {
             // original warning
-            print("ID: "+idx);
+            print("ID: " + idx);
             var message = GetIncident(idx).Warning;
 
             if (context == Context.Irrelevant)

@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using VRC2.Network;
+using VRC2.SAGAT;
 using VRC2.Utility;
 using VRC2.Scenarios;
-using VRC2.ScenariosV2.Base;
 using VRC2.ScenariosV2.Tool;
 using YamlDotNet.Serialization;
 using Incident = VRC2.ScenariosV2.Base.Incident;
 
 using TaskBase = VRC2.Task.Base;
+using YamlParser = VRC2.ScenariosV2.Base.YamlParser;
 
 namespace VRC2.ScenariosV2.Scenario
 {
@@ -233,6 +234,21 @@ namespace VRC2.ScenariosV2.Scenario
                 }
 
                 return _roleChecker;
+            }
+        }
+
+        private SagatController _sagatController;
+
+        public SagatController sagatController
+        {
+            get
+            {
+                if (_sagatController == null)
+                {
+                    _sagatController = FindFirstObjectByType<SagatController>();
+                }
+
+                return _sagatController;
             }
         }
 
@@ -615,12 +631,19 @@ namespace VRC2.ScenariosV2.Scenario
         public virtual void OnScenarioStart()
         {
             print($"Invoke {name} OnScenarioStart");
+            UpdateSAGATTitle();
+
             UpdateInstruction();
         }
 
         public virtual void OnScenarioFinish()
         {
             print($"Invoke {name} OnScenarioFinish");
+        }
+
+        public virtual void UpdateSAGATTitle()
+        {
+            sagatController.UpdateScenarioText(ClsName);
         }
 
         #region Task Instruction

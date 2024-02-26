@@ -62,8 +62,13 @@ namespace VRC2.Record
 
         [SerializeField] private GameObject nextQuestionButton;
 
+        [Space(30)] [Header("VR Control")] [SerializeField]
+        private GameObject resumeButton;
+
         [Space(30)] [Header("Question")] [SerializeField]
-        private Text title;
+        Text scenarioTitle;
+
+        [SerializeField] private Text title;
 
         [SerializeField] private Text question;
 
@@ -71,6 +76,8 @@ namespace VRC2.Record
         private Image fillArea;
         private Color defaultFillColor = Color.white;
         private Color speakingFillColor = Color.green;
+
+        public System.Action RequestReturnToVR;
 
 
 #pragma warning restore 649
@@ -90,6 +97,8 @@ namespace VRC2.Record
 
             this.prevQuestionButton.GetComponentInChildren<Button>().onClick.AddListener(PrevQuestion);
             this.nextQuestionButton.GetComponentInChildren<Button>().onClick.AddListener(NextQuestion);
+
+            this.resumeButton.GetComponentInChildren<Button>().onClick.AddListener(ResumeVR);
 
             this.fillArea = this.micLevelSlider.fillRect.GetComponent<Image>();
 
@@ -231,6 +240,11 @@ namespace VRC2.Record
             saver.StopRecording();
         }
 
+        public void SetScenarioText(string s)
+        {
+            scenarioTitle.text = s;
+        }
+
         #endregion
 
         #region Question control
@@ -278,6 +292,15 @@ namespace VRC2.Record
         {
             title.text = t;
             question.text = q;
+        }
+
+        public void ResumeVR()
+        {
+            // return to vr, basically start the next scenario
+            if (RequestReturnToVR != null)
+            {
+                RequestReturnToVR();
+            }
         }
 
         #endregion
