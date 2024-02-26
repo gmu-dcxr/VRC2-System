@@ -46,10 +46,10 @@ namespace VRC2.Character
             {
                 if (!timerStarted)
                 {
+                    synchronized = true;
+                    
                     SetTimer(() =>
                     {
-                        synchronized = true;
-                        
                         var pid = GlobalConstants.localPlayer.PlayerId;
                         var female = GlobalConstants.playerGender == PlayerGender.Female;
                         var hair = GlobalConstants.playerHairIndex;
