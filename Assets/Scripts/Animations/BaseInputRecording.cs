@@ -11,8 +11,7 @@ public class BaseInputRecording : NetworkBehaviour
 
 	#region Buttons
 
-	[Header("Recording Control")]
-	public Button recordButton;
+	[Header("Recording Control")] public Button recordButton;
 	public Button replayButton;
 	public Button saveButton;
 	public Button loadButton;
@@ -24,16 +23,16 @@ public class BaseInputRecording : NetworkBehaviour
 
 	string GetFilePath() =>
 		Path.Combine(Path.GetDirectoryName(Application.dataPath), folder, GetFilename() + ".inputtrace");
-	
-    string ClsName
+
+	string ClsName
 	{
 		get => GetType().Name;
 	}
-    
-    public virtual string GetFilename()
-    {
-	    return ClsName;
-    }
+
+	public virtual string GetFilename()
+	{
+		return ClsName;
+	}
 
 	#region Need implementation in children classes
 
@@ -63,10 +62,10 @@ public class BaseInputRecording : NetworkBehaviour
 		m_Trace = new InputEventTrace(Keyboard.current);
 		m_Trace.onEvent += OnEvent;
 
-		recordButton.onClick.AddListener(ToggleRecording);
-		replayButton.onClick.AddListener(Replay);
-		saveButton.onClick.AddListener(Save);
-		loadButton.onClick.AddListener(Load);
+		recordButton?.onClick.AddListener(ToggleRecording);
+		replayButton?.onClick.AddListener(Replay);
+		saveButton?.onClick.AddListener(Save);
+		loadButton?.onClick.AddListener(Load);
 	}
 
 	void OnDestroy()
