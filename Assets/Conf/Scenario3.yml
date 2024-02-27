@@ -31,22 +31,22 @@ incidents:
     time: "1:30"
     refer: ["Crane", "normals", "1"]
   - id: 4
-    time: "2:00"
+    time: "2:10" #  +10 seconds from original
     refer: ["Truck", "accidents", "3"]
   - id: 5
-    time: "2:30"
-    refer: ["Crane", "normals", "1"] #switch back to crane truck later
+    time: "2:24" # -6 seconds from original
+    refer: ["CraneTruck", "normals", "1"] #switch back to crane truck later
   - id: 6
-    time: "4:00"
+    time: "4:15" # + 15 seconds from original
     refer: ["Truck", "accidents", "5"]
   - id: 7
     time: "4:30"
     refer: ["Drone", "normals", "1"] 
   - id: 8
-    time: "5:30"
+    time: "5:45" # + 15 seconds from original
     refer: ["Truck", "accidents", "7"]
   - id: 9
-    time: "5:40"
+    time: "5:45"
     refer: ["Truck", "accidents", "8"]
 #  - id: 11
 #    time: "5:30"
