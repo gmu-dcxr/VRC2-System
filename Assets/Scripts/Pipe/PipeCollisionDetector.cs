@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using VRC2.Pipe;
+using VRC2.Utility;
 using Object = UnityEngine.Object;
 
 namespace VRC2.Events
@@ -53,13 +54,44 @@ namespace VRC2.Events
 
         #endregion
 
+        #region Refactor controller visual and poke location
+
+        private VRHelper _vrHelper;
+
+        private VRHelper vrHelper
+        {
+            get
+            {
+                if (_vrHelper == null)
+                {
+                    _vrHelper = FindObjectOfType<VRHelper>();
+                    if (_vrHelper == null)
+                    {
+                        Debug.LogError("Failed to find VRHelper.");
+                    }
+                }
+
+                return _vrHelper;
+            }
+        }
+
+        private GameObject _leftVisual;
+
+        private GameObject leftViusal => vrHelper.leftVisual;
+        private GameObject leftPoke => vrHelper.leftPoke;
+
+
+        #endregion
+
 
 
 
         private void Start()
         {
-            InitializeOVRControllerVisual();
-            InitializePokeLocation();
+            // deprecated
+            // InitializeOVRControllerVisual();
+            // InitializePokeLocation();
+
             // pre-load object
             pipeParent = AssetDatabase.LoadAssetAtPath(GlobalConstants.pipePipeConnectorPrefabPath, typeof(GameObject));
         }
@@ -72,6 +104,9 @@ namespace VRC2.Events
             }
         }
 
+        /// <summary>
+        /// Deprecated
+        /// </summary>
         void InitializeOVRControllerVisual()
         {
             try
@@ -105,6 +140,9 @@ namespace VRC2.Events
             }
         }
 
+        /// <summary>
+        /// Deprecated
+        /// </summary>
         void InitializePokeLocation()
         {
             try
@@ -294,7 +332,7 @@ namespace VRC2.Events
                 Debug.LogWarning("Different diameters of pipes can not connect");
                 return;
             }
-            
+
             // can not connector 2 connectors
             if (cip.name.EndsWith("connector") && cip.name.Equals(oip.name))
             {
@@ -366,7 +404,7 @@ namespace VRC2.Events
             //
             // // set parent to attach the the left-hand controller
             // parentObject.GetComponent<PipesContainerManager>()
-            //     .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+            //     .AttachToController(leftVisual);
 
             // update glue hint flags
             // show left one
@@ -597,7 +635,7 @@ namespace VRC2.Events
 
                     // set parent to attach the the left-hand controller
                     parentObject.GetComponent<PipesContainerManager>()
-                        .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+                        .AttachToController(leftViusal);
 
                     // disable networktransform
                     DisableNetworkTransform(ref cip);
@@ -628,10 +666,10 @@ namespace VRC2.Events
                 // update diameter
                 var diameter = oip.GetComponent<PipeManipulation>().diameter;
                 parentObject.GetComponent<PipesContainerManager>().UpdateDiameter(diameter);
-                
+
                 // set parent to attach the the left-hand controller
                 parentObject.GetComponent<PipesContainerManager>()
-                    .AttachToController(GlobalConstants.LeftOVRControllerVisual);
+                    .AttachToController(leftViusal);
             }
         }
 
