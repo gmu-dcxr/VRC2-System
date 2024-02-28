@@ -85,7 +85,14 @@ public class TruckAnimPlayer : MonoBehaviour
 
     public void playSound()
     {
+        /*
         if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
+        {
+            print("start");
+            source.Play();
+        }
+        */
+        if ((anim.GetBool("FirstBackup") || anim.GetBool("SecondBackup") || anim.GetBool("ThirdBackup")))
         {
             print("start");
             source.Play();
