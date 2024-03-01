@@ -5,6 +5,30 @@ gameObject: "ErroneousAI"
 incidents:
   accidents:
     - id: 1
+      condition: "Accident"
+      time: "T1"
+      type: "Potential"
+      desc: "A crane truck backs up nearby, and then starts to unload cargo."
+      warning: "Warning: A truck is going to back up in your surroundings."
     - id: 2
+      condition: "Accident"
+      time: "T1+10s"
+      type: "Potential"
+      desc: "When the crane truck is unloading the cargo."
+      warning: "Warning: Please avoid stepping on the water stain."
     - id: 3
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: "A load is passing overhead."
     - id: 4
+      condition: "Accident"
+      time: "T2"
+      type: "Potential"
+      desc: "A hook (without a load) is passing overhead in the opposite direction."
+      warning: "Warning: A cargo is going to pass overhead."
+    - id: 5
+      condition: "Accident"
+      time: "T3"
+      type: "Potential"
+      desc: "A truck is backing up nearby."
