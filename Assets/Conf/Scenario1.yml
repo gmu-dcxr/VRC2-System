@@ -10,7 +10,7 @@ accident: "Accident events: crane(in bold type)"
 # start timestamp in raw time
 start: "0:00"
 # end timestamp in raw time
-end: "07:40"
+end: "05:40"
 # start task
 taskStart: 1
 # end task
@@ -22,43 +22,52 @@ task: "Task1.yml"
 incidents:
   - id: 1 # the order of the incident
     time: "0:30" # start time of this incident
-    refer: ["Crane", "accidents", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+    refer: [ "Crane", "accidents", "3" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
   - id: 2
     time: "1:00"
-    refer: ["Drone", "normals", "1"]
+    refer: [ "Drone", "normals", "1" ]
   - id: 3
     time: "1:30"
-    refer: ["Crane", "accidents", "2"]
+    refer: [ "Drone", "normals", "2" ]
   - id: 4
-    time: "2:00"
-    refer: ["Forklift", "normals", "1"]
+    time: "1:30"
+    refer: [ "Crane", "accidents", "4" ]
   - id: 5
-    time: "2:30"
-    refer: ["Crane", "accidents", "3"]
+    time: "2:00"
+    refer: [ "Forklift", "normals", "1" ]
   - id: 6
-    time: "3:00"
-    refer: ["Truck", "normals", "1"]
+    time: "2:30"
+    refer: [ "Forklift", "normals", "2" ]
   - id: 7
-    time: "3:30"
-    refer: ["Crane", "accidents", "4"]
+    time: "2:30"
+    refer: [ "Crane", "accidents", "1" ]
   - id: 8
-    time: "4:00"
-    refer: ["Forklift", "normals", "1"]
+    time: "2:40"
+    refer: [ "Truck", "normals", "1" ]
   - id: 9
-    time: "4:30"
-    refer: ["Crane", "accidents", "5"]
+    time: "3:30"
+    refer: [ "Crane", "accidents", "2" ]
   - id: 10
-    time: "4:40"
-    refer: ["Crane", "accidents", "6"]
+    time: "4:00"
+    refer: [ "Crane", "accidents", "5" ]
   - id: 11
-    time: "5:30"
-    refer: ["Crane", "accidents", "7"]
+    time: "4:10"
+    refer: [ "Truck", "normals", "2" ]
   - id: 12
-    time: "5:30" # the same time
-    refer: ["Truck", "normals", "1"]
+    time: "4:10"
+    refer: [ "Crane", "accidents", "6" ]
   - id: 13
-    time: "6:00"
-    refer: ["Crane", "accidents", "8"]
+    time: "4:30"
+    refer: [ "Forklift", "normals", "1" ]
   - id: 14
-    time: "6:10"
-    refer: ["Crane", "accidents", "9"]
+    time: "5:00"
+    refer: [ "Forklift", "normals", "2" ]
+  - id: 15
+    time: "5:00"
+    refer: [ "Crane", "accidents", "7" ]
+  - id: 16
+    time: "5:30"
+    refer: [ "Crane", "accidents", "8" ]
+  - id: 17
+    time: "5:40"
+    refer: [ "Crane", "accidents", "9" ]
