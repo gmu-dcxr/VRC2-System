@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ExitGames.Client.Photon.StructWrapping;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -59,6 +60,29 @@ namespace VRC2.ScenariosV2.Base
 
         [HideInInspector] public Vehicle.Base vehicle;
         [ReadOnly] public string callback;
+        // [ReadOnly] public int scenarioIdx; // index defined in the scenario
+        // [ReadOnly] public string scenarioTime; // time defined in the scenario
+
+        #region Index time dictionary
+
+        private Dictionary<int, string> idxTimeDict; // one incident maybe called several times
+
+        public void AddEntry(int idx, string time)
+        {
+            if (idxTimeDict == null)
+            {
+                idxTimeDict = new Dictionary<int, string>();
+            }
+            idxTimeDict.Add(idx, time);
+        }
+
+        public (int, string) GetEntry(int idx)
+        {
+            return (idx, idxTimeDict[idx]);
+        }
+
+
+        #endregion
 
         public int startTime
         {
