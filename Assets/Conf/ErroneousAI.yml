@@ -1,6 +1,6 @@
 ﻿name: "ErroneousAI"
 desc: "Erroneous AI related incidents"
-variable: ["T1", "T2", "T3"]
+variables: ["T1", "T2", "T3", "T4"]
 gameObject: "ErroneousAI"
 incidents:
   accidents:
@@ -8,27 +8,22 @@ incidents:
       condition: "Accident"
       time: "T1"
       type: "Potential"
-      desc: "A crane truck backs up nearby, and then starts to unload cargo."
-      warning: "Warning: A truck is going to back up in your surroundings."
+      desc: "A load with an unpacked pipe is being hoisted and is going to pass above players. Crane_accident_3, but No warnings"
+      warning: ""
     - id: 2
       condition: "Accident"
-      time: "T1+10s"
-      type: "Potential"
-      desc: "When the crane truck is unloading the cargo."
-      warning: "Warning: Please avoid stepping on the water stain."
-    - id: 3
-      condition: "Accident"
       time: "T2"
       type: "Potential"
-      desc: "A load is passing overhead."
-    - id: 4
-      condition: "Accident"
-      time: "T2"
-      type: "Potential"
-      desc: "A hook (without a load) is passing overhead in the opposite direction."
+      desc: "Nothing happens but a warning."
       warning: "Warning: A cargo is going to pass overhead."
-    - id: 5
+    - id: 3
       condition: "Accident"
       time: "T3"
       type: "Potential"
-      desc: "A truck is backing up nearby."
+      desc: "A hook (without a load) is passing overhead in the opposite direction. Crane_accident_4."
+    - id: 4
+      condition: "Accident"
+      time: "T4"
+      type: "Potential"
+      desc: "A load is being hoisted and is going to pass above players. Crane_accident_1, but No warnings."
+      warning: ""

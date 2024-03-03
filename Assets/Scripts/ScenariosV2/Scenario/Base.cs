@@ -100,6 +100,9 @@ namespace VRC2.ScenariosV2.Scenario
 
         // Scenario 6
         private Vehicle.Electrocutions _electrocutions;
+        
+        // scenario 7
+        private Vehicle.ErroneousAI _erroneousAI;
 
         public Vehicle.Crane crane
         {
@@ -189,6 +192,19 @@ namespace VRC2.ScenariosV2.Scenario
                 }
 
                 return _electrocutions;
+            }
+        }
+
+        public Vehicle.ErroneousAI erroneousAI
+        {
+            get
+            {
+                if (_erroneousAI == null)
+                {
+                    _erroneousAI = FindObjectOfType<Vehicle.ErroneousAI>();
+                }
+
+                return _erroneousAI;
             }
         }
 
@@ -360,6 +376,12 @@ namespace VRC2.ScenariosV2.Scenario
             if (cname.Equals(electrocutions.ClsName))
             {
                 res = electrocutions.GetAccidentIncident(idx);
+            }
+            
+            // erroneous AI
+            if (cname.Equals(erroneousAI.ClsName))
+            {
+                res = erroneousAI.GetAccidentIncident(idx);
             }
 
             if (res != null)
@@ -676,7 +698,7 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 if (GUILayout.Button($"Start {i + 1}"))
                 {
-                    StartIncident(i);
+                    StartIncident(i + 1);
                 }
             }
 

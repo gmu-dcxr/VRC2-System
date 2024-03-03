@@ -344,5 +344,38 @@ namespace VRC2.ScenariosV2.Vehicle
 
 
         #endregion
+
+        #region Warning only for irrelevant
+        
+        #region Audio filename
+        public string GetAudioFileName(int key)
+        {
+            return $"{ClsName}_{key}.wav";
+        }
+
+        public void PlayAudioOnly(int key)
+        {
+            var filename = GetAudioFileName(key);
+            BluePrint(filename);
+            warningController.PlayAudioClip(filename, null);
+        }
+        
+        #endregion
+
+        
+
+        #endregion
+        
+        /// <summary>
+        /// Show bare warning without calling any scenario
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <param name="msg"></param>
+        /// <param name="delay"></param>
+        public void BareWarning(int idx, string msg, float? delay)
+        {
+            // TODO: test
+            warningController.Show("Warning", ClsName, idx, msg, delay);
+        }
     }
 }
