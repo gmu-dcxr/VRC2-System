@@ -99,8 +99,8 @@ namespace VRC2.ScenariosV2.Vehicle
         public virtual void ParseYamlFile()
         {
             // ensure it's parsed once.
-            if(parsed) return;
-            
+            if (parsed) return;
+
             ParseYamlFile(DefaultYamlFile);
             parsed = true;
         }
@@ -164,7 +164,8 @@ namespace VRC2.ScenariosV2.Vehicle
 
                     this._accidents.Add(incident);
                 }
-                print("COUNT::"+count);
+
+                print("COUNT::" + count);
             }
         }
 
@@ -309,5 +310,39 @@ namespace VRC2.ScenariosV2.Vehicle
             ParseYamlFile();
             CheckIncidentsImplementation();
         }
+
+        #region Print log
+
+        public void ColorPrint(string color, string msg)
+        {
+            // Debug.Log("<color=red>This is a red message.</color>");
+            // Debug.Log("<color=blue>This is a blue message.</color>");
+            // Debug.Log("<color=#00FF00>This is a green message using hex code.</color>");
+            // Debug.Log("<color=yellow>This is a yellow message.</color>");
+            print($"<color={color}>{msg}</color>");
+        }
+
+        public void BluePrint(string msg)
+        {
+            ColorPrint("blue", msg);
+        }
+
+        public void RedPrint(string msg)
+        {
+            ColorPrint("red", msg);
+        }
+
+        public void GreenPrint(string msg)
+        {
+            ColorPrint("green", msg);
+        }
+
+        public void YellowPrint(string msg)
+        {
+            ColorPrint("yellow", msg);
+        }
+
+
+        #endregion
     }
 }
