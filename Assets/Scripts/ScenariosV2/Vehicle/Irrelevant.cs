@@ -20,22 +20,22 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Irrelevant_accidents_1(object[] parameters)
         {
-            print("Invoke Irrelevant_accidents_1");
+            BluePrint("Invoke Irrelevant_accidents_1");
             var filename = GetAudioFileName(1);
-            print(filename);
+            BluePrint(filename);
             warningController.PlayAudioClip(filename, null);
         }
 
         public void Irrelevant_accidents_2(object[] parameters)
         {
-            print("Invoke Irrelevant_accidents_2");
+            BluePrint("Invoke Irrelevant_accidents_2");
             var filename = GetAudioFileName(2);
             warningController.PlayAudioClip(filename, null);
         }
 
         public void Irrelevant_accidents_3(object[] parameters)
         {
-            print("Invoke Irrelevant_accidents_3");
+            BluePrint("Invoke Irrelevant_accidents_3");
             var filename = GetAudioFileName(3);
             warningController.PlayAudioClip(filename, null);
         }
@@ -85,7 +85,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Irrelevant_accidents_11(object[] parameters)
         {
             // TODO: generate files and update implementation
-            print("Irrelevant_accidents_11");
+            BluePrint("Irrelevant_accidents_11");
             print(showWaring(parameters));
         }
 

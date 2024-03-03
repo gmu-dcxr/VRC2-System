@@ -28,14 +28,14 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Forklift_normals_1(object[] parameters)
         {
-            print("Invoked Forklift_normals_1");
+            BluePrint("Invoked Forklift_normals_1");
             background.ShowWarning(2);
             background.On_Background_2_Start();
         }
 
         public void Forklift_normals_2(object[] parameters)
         {
-            print("Invoked Forklift_normals_2");            
+            BluePrint("Invoked Forklift_normals_2");            
         }
         #endregion
     }
