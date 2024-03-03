@@ -22,49 +22,77 @@ task: "Task6.yml"
 incidents:
   - id: 1 # the order of the incident
     time: "0:30" # start time of this incident
-    refer: [ "Crane", "accidents", "1" ]
-    warning: false # default is true
+    refer: [ "ErroneousAI", "accidents", "2" ]
   - id: 2
     time: "0:40"
-    refer: [ "Irrelevant", "accidents", "11" ]
+    refer: [ "ErroneousAI", "accidents", "1" ]
   - id: 3
     time: "1:00"
     refer: ["CraneTruck", "normals", "1"]
   - id: 4
-    time: "1:20"
+    time: "1:15"
     refer: ["Crane", "accidents", "2"]
   - id: 5
+    time: "1:20"
+    refer: [ "ErroneousAI", "accidents", "3" ]
+  - id: 6
     time: "1:30"
     refer: ["Drone", "normals", "3"]
     changeOrder: true
-  - id: 6
-    time: "2:10"
-    refer: ["Forklift", "normals", "1"]
   - id: 7
-    time: "2:10"
-    refer: ["Crane", "accident", "3"]
-    warning: false
+    time: "1:50"
+    refer: ["Drone", "normals", "4"]
   - id: 8
+    time: "2:10"
+    refer: [ "ErroneousAI", "accidents", "4" ]
+  - id: 9
+    time: "2:15"
+    refer: ["CraneTruck", "normals", "3"]
+  - id: 10
+    time: "2:20"
+    refer: ["ErroneousAI", "accidents", "2"]
+  - id: 11
     time: "2:30"
     refer: ["Drone", "normals", "1"]
-  - id: 9
+  - id: 12
+    time: "2:45"
+    refer: ["Forklift", "normals", "1"]
+  - id: 13
     time: "3:00"
-    refer: ["Crane", "accidents", "4"]
-  - id: 10
+    refer: [ "ErroneousAI", "accidents", "3" ]
+  - id: 14
+    time: "3:00"
+    refer: ["Drone", "normals", "2"]
+  - id: 15
+    time: "3:15"
+    refer: ["Forklift", "normals", "2"]
+  - id: 16
     time: "3:30"
     refer: ["CraneTruck", "normals", "1"]
-  - id: 11
+  - id: 17
+    time: "3:45"
+    refer: ["CraneTruck", "normals", "2"]
+  - id: 18
     time: "4:00"
     refer: ["Crane", "accidents", "5"]
-  - id: 12
+  - id: 19
     time: "4:10"
     refer: ["Crane", "accidents", "6"]
-  - id: 13
-    time: "4:30"
-    refer: ["Forklift", "normals", "1"]
-  - id: 14
+  - id: 20
+    time: "4:45"
+    refer: ["CraneTruck", "normals", "3"]
+  - id: 21
     time: "5:00"
-    refer: ["Crane", "accidents", "7"]
-  - id: 15
+    refer: ["Forklift", "normals", "1"]
+  - id: 22
     time: "5:10"
+    refer: ["Crane", "accidents", "7"]
+  - id: 23
+    time: "5:30"
+    refer: ["Forklift", "normals", "2"]
+  - id: 24
+    time: "5:30"
     refer: ["Crane", "accidents", "8"]
+  - id: 25
+    time: "5:40"
+    refer: ["Crane", "accidents", "9"]
