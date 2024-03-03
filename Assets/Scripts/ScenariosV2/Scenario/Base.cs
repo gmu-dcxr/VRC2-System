@@ -258,6 +258,10 @@ namespace VRC2.ScenariosV2.Scenario
         #endregion
 
         [Header("Debug UI")] public bool showDebugUI = true;
+        public bool showTimeline = false;
+        private string timelineText = "";
+        private int timelineSecond = 0;
+        private GUIStyle backgroundStyle;
 
         public void ParseYamlFile()
         {
@@ -384,6 +388,8 @@ namespace VRC2.ScenariosV2.Scenario
                 var (inci, changeOrder) = GetIncident(_incidents[i]);
                 // parse time
                 var t = ParseTime(_incidents[i].time);
+                // update index, time defined in scenario
+                inci.AddEntry(i, _incidents[i].time);
 
                 if (!timeIncidentIdxMap.ContainsKey(t))
                 {
@@ -466,6 +472,8 @@ namespace VRC2.ScenariosV2.Scenario
 
             // current second
             var sec = Helper.SecondNow() - startTimestamp;
+            // update timeline second
+            timelineSecond = sec;
 
             // not time to start
             if (sec < startInSec)
@@ -484,6 +492,12 @@ namespace VRC2.ScenariosV2.Scenario
                     if (ScenarioStart != null)
                     {
                         ScenarioStart();
+                    }
+
+                    // show timeline
+                    if (showTimeline)
+                    {
+                        FormatTimelineText(null);
                     }
                 }
             }
@@ -511,6 +525,12 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 // idx
                 var indices = timeIncidentIdxMap[sec];
+
+                // show timeline
+                if (showTimeline)
+                {
+                    FormatTimelineText(indices);
+                }
 
                 foreach (var idx in indices)
                 {
@@ -554,8 +574,102 @@ namespace VRC2.ScenariosV2.Scenario
             pi.RunIncident();
         }
 
+        string FormatIncident(int idx)
+        {
+            var inci = parsedIncidents[idx];
+            var (index, time) = inci.GetEntry(idx);
+            return $"#{index + 1}\t{time}\t{inci.callback}";
+        }
+
+        void FormatTimelineText(List<int> indices)
+        {
+            // [0, idx] black
+            // idx, red
+            // [idx,~], white
+            
+            // clear
+            timelineText = $"<color=blue><b>Timeline of {ClsName}</b></color>\n" +
+                           $"<color=yellow>{startTimeRaw} - {endTimeRaw}</color>\n\n";
+            var count = parsedIncidents.Count;
+
+            // at the beginning
+            if (indices == null)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    // white
+                    timelineText += $"<color=white>{FormatIncident(i)}</color>\n";
+                }
+
+                return;
+            }
+
+            for (var i = 0; i < indices[0]; i++)
+            {
+                // black - passed
+                timelineText += $"<color=black>{FormatIncident(i)}</color>\n";
+            }
+
+            var ic = indices.Count;
+            for (var i = 0; i < ic; i++)
+            {
+                // red - current
+                timelineText += $"<color=red>{FormatIncident(indices[i])}</color>\n";
+            }
+
+            for (var i = indices[ic - 1] + 1; i < count; i++)
+            {
+                // white - coming
+                timelineText += $"<color=white>{FormatIncident(i)}</color>\n";
+            }
+        }
+
+        void ShowTimelineSecond()
+        {
+            if (timelineSecond == 0) return;
+
+            if (backgroundStyle == null)
+            {
+                backgroundStyle = new GUIStyle();
+                Texture2D backgroundTexture = new Texture2D(1, 1);
+                Color backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                backgroundTexture.SetPixel(0, 0, backgroundColor);
+                backgroundTexture.Apply();
+                backgroundStyle.normal.background = backgroundTexture;
+            }
+
+            var text = $"<size=20><color=cyan>{(int)(timelineSecond / 60)} : {timelineSecond % 60}</color></size>\n";
+            GUILayout.BeginVertical(backgroundStyle, GUILayout.ExpandWidth(true));
+            GUILayout.Label(text);
+            GUILayout.EndVertical();
+        }
+
+        void ShowIncidentTimeline(string richtext)
+        {
+            if (backgroundStyle == null)
+            {
+                backgroundStyle = new GUIStyle();
+                Texture2D backgroundTexture = new Texture2D(1, 1);
+                Color backgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+                backgroundTexture.SetPixel(0, 0, backgroundColor);
+                backgroundTexture.Apply();
+                backgroundStyle.normal.background = backgroundTexture;
+            }
+
+            GUILayout.BeginVertical(backgroundStyle, GUILayout.ExpandHeight(true));
+            GUILayout.Label(richtext, GUILayout.ExpandHeight(true));
+            GUILayout.EndVertical();
+        }
+
         private void OnGUI()
         {
+            ShowTimelineSecond();
+
+            if (showTimeline)
+            {
+                ShowIncidentTimeline(timelineText);
+            }
+
             if (!showDebugUI) return;
 
             if (GUI.Button(new Rect(200, 10, 150, 50), $"Start {name}"))
