@@ -586,7 +586,7 @@ namespace VRC2.ScenariosV2.Scenario
             // [0, idx] black
             // idx, red
             // [idx,~], white
-            
+
             // clear
             timelineText = $"<color=blue><b>Timeline of {ClsName}</b></color>\n" +
                            $"<color=yellow>{startTimeRaw} - {endTimeRaw}</color>\n\n";
@@ -661,6 +661,28 @@ namespace VRC2.ScenariosV2.Scenario
             GUILayout.EndVertical();
         }
 
+        void ShowIncidentButtons()
+        {
+            GUILayout.BeginVertical(GUILayout.ExpandHeight(true));
+            // scenario text 
+            if (GUILayout.Button($"Start {ClsName}", GUILayout.ExpandHeight(true)))
+            {
+                var t = Helper.SecondNow();
+                StartScenario(t);
+            }
+
+            var count = parsedIncidents.Count;
+            for (var i = 0; i < count; i++)
+            {
+                if (GUILayout.Button($"Start {i + 1}"))
+                {
+                    StartIncident(i);
+                }
+            }
+
+            GUILayout.EndVertical();
+        }
+
         private void OnGUI()
         {
             ShowTimelineSecond();
@@ -672,72 +694,7 @@ namespace VRC2.ScenariosV2.Scenario
 
             if (!showDebugUI) return;
 
-            if (GUI.Button(new Rect(200, 10, 150, 50), $"Start {name}"))
-            {
-                var t = Helper.SecondNow();
-                StartScenario(t);
-            }
-
-            // only enable for debugging when scenario manager doesn't set scenarios and runner is not running
-            var runner = GameObject.FindObjectOfType<NetworkRunner>();
-            if (runner != null && runner.IsRunning && scenariosManager.scenarios != null &&
-                scenariosManager.scenarios.Count > 0) return;
-
-            if (GUI.Button(new Rect(10, 10, 150, 30), $"Start {ClsName}"))
-            {
-                var t = Helper.SecondNow();
-                StartScenario(t);
-            }
-
-            if (GUI.Button(new Rect(10, 50, 150, 30), $"Start {1}"))
-            {
-                StartIncident(1);
-            }
-
-            if (GUI.Button(new Rect(10, 100, 150, 30), $"Start {2}"))
-            {
-                StartIncident(2);
-            }
-
-            if (GUI.Button(new Rect(10, 150, 150, 30), $"Start {3}"))
-            {
-                StartIncident(3);
-            }
-
-            if (GUI.Button(new Rect(10, 200, 150, 30), $"Start {4}"))
-            {
-                StartIncident(4);
-            }
-
-            if (GUI.Button(new Rect(10, 250, 150, 30), $"Start {5}"))
-            {
-                StartIncident(5);
-            }
-
-            if (GUI.Button(new Rect(10, 300, 150, 30), $"Start {6}"))
-            {
-                StartIncident(6);
-            }
-
-            if (GUI.Button(new Rect(10, 350, 150, 30), $"Start {7}"))
-            {
-                StartIncident(7);
-            }
-
-            if (GUI.Button(new Rect(10, 400, 150, 30), $"Start {8}"))
-            {
-                StartIncident(8);
-            }
-
-            if (GUI.Button(new Rect(10, 450, 150, 30), $"Start {9}"))
-            {
-                StartIncident(9);
-            }
-
-            if (GUI.Button(new Rect(10, 500, 150, 30), $"Start {10}"))
-            {
-                StartIncident(10);
-            }
+            ShowIncidentButtons();
         }
 
         #endregion
