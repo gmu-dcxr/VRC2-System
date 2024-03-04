@@ -24,21 +24,19 @@ namespace VRC2.Voice
 
         [Space(30)] [Header("UI")] public CanvasController canvasController;
 
-        private string prefix;
-
         private void Start()
         {
-            prefix = filename.Split('.')[0];
             canvasController.invoice.text = "IN010002901947";
         }
 
         private string GetAudioFileName(string folder, object key)
         {
+            var prefix = filename.Split('.')[0];
             var name = $"{prefix}_{key}";
             name += ".wav";
             return Path.Combine(folder, name);
         }
-        
+
         private void OnGUI()
         {
             if (GUI.Button(new Rect(10, 10, 150, 50), "YmlGenerator"))
@@ -75,7 +73,7 @@ namespace VRC2.Voice
                     var key = item.GetType().GetProperty(keyString).GetValue(item);
                     var text = (string)item.GetType().GetProperty(keyText).GetValue(item);
 
-                    if (text.Length < 1) continue;
+                    if (text == null || text.Length < 1) continue;
 
                     var audioname = GetAudioFileName(fullFolder, key);
 
