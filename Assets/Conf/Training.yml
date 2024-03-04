@@ -20,14 +20,28 @@ task: "Training.yml"
 #########################################################################################################
 # all incidents, including the normal events and accidents
 incidents:
-# The following is for debugging change order
-  - id: 1 # the order of the incident
-    time: "0:05" # start time of this incident
-    refer: [ "Irrelevant", "accidents", "1" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+## The following is for debugging change order
+#  - id: 1 # the order of the incident
+#    time: "0:05" # start time of this incident
+#    refer: [ "Irrelevant", "accidents", "1" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+#  - id: 2
+#    time: "0:10"
+#    refer: [ "Irrelevant", "accidents", "2" ]
+#    changeOrder: true # test change order
+#  - id: 3
+#    time: "0:20"
+#    refer: ["Crane", "accidents", "9"] # test sagat controller
+  # The following is for debugging erroneous AI
+  - id: 1
+    time: "0:05"
+    refer: [ "ErroneousAI", "accidents", "1" ]
   - id: 2
-    time: "0:10"
-    refer: [ "Irrelevant", "accidents", "2" ]
-    changeOrder: true # test change order
+    time: "0:30"
+    refer: [ "ErroneousAI", "accidents", "2" ]
+    changeOrder: true
   - id: 3
-    time: "0:20"
-    refer: ["Crane", "accidents", "9"] # test sagat controller
+    time: "0:45"
+    refer: ["ErroneousAI", "accidents", "3"]
+  - id: 3
+    time: "1:00"
+    refer: ["ErroneousAI", "accidents", "4"]

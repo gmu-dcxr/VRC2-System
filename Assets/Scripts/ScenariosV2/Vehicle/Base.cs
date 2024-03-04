@@ -280,25 +280,33 @@ namespace VRC2.ScenariosV2.Vehicle
             var @namespace = "VRC2.ScenariosV2.Vehicle";
             var myClassType = Type.GetType($"{@namespace}.{ClsName}");
 
-            foreach (var inc in normals)
+            if (normals != null)
             {
-                var name = GetVehicleCallbackName(true, inc.id);
-                if (myClassType.GetMethod(name) == null)
+                foreach (var inc in normals)
                 {
-                    pass = false;
-                    Debug.LogError($"[{ClsName}] missing method: {name}");
+                    var name = GetVehicleCallbackName(true, inc.id);
+                    if (myClassType.GetMethod(name) == null)
+                    {
+                        pass = false;
+                        Debug.LogError($"[{ClsName}] missing method: {name}");
+                    }
+                }
+
+            }
+
+            if (accidents != null)
+            {
+                foreach (var inc in accidents)
+                {
+                    var name = GetVehicleCallbackName(false, inc.id);
+                    if (myClassType.GetMethod(name) == null)
+                    {
+                        pass = false;
+                        Debug.LogError($"[{ClsName}] missing method: {name}");
+                    }
                 }
             }
 
-            foreach (var inc in accidents)
-            {
-                var name = GetVehicleCallbackName(false, inc.id);
-                if (myClassType.GetMethod(name) == null)
-                {
-                    pass = false;
-                    Debug.LogError($"[{ClsName}] missing method: {name}");
-                }
-            }
 
             Debug.LogWarning($"{ClsName} Check Vehicle Callbacks Result: {pass}");
         }
@@ -346,8 +354,9 @@ namespace VRC2.ScenariosV2.Vehicle
         #endregion
 
         #region Warning only for irrelevant
-        
+
         #region Audio filename
+
         public string GetAudioFileName(int key)
         {
             return $"{ClsName}_{key}.wav";
@@ -359,13 +368,13 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint(filename);
             warningController.PlayAudioClip(filename, null);
         }
-        
-        #endregion
-
-        
 
         #endregion
-        
+
+
+
+        #endregion
+
         /// <summary>
         /// Show bare warning without calling any scenario
         /// </summary>
