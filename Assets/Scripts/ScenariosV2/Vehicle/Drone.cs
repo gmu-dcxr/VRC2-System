@@ -52,6 +52,7 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked Drone_normals_2");
             baselineS4.ShowWarning(3);
             baselineS4.On_BaselineS4_3_Start();
+           // Drone Leaves
         }
 
         public void Drone_normals_3(object[] parameters) 
@@ -65,7 +66,8 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Drone_normals_4");
             baselineS2.ShowWarning(3);
-            baselineS2.On_BaselineS2_3_Start();
+            //baselineS2.On_BaselineS2_3_Start();
+            // Drone leaves
         }
 
         public void Drone_accidents_1(object[] parameters)
