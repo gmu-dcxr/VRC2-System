@@ -360,12 +360,12 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         }*/
 
-        IEnumerator WaitForDelivery()
+        /* IEnumerator WaitForDelivery()
         {
             yield return new WaitForSeconds(38f + timeBetweenDeliveries);
             anim.SetTrigger("Moving2");
             yield return null;
-        }
+        }*/
 
 
         
@@ -449,7 +449,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             customForkLiftController.Animate();
             anim.SetTrigger("Moving");
-            StartCoroutine(WaitForDelivery());
+            //StartCoroutine(WaitForDelivery());
         }
 
         public void On_Background_2_Finish()
