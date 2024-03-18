@@ -73,7 +73,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS8_3_Start");
             normal.SetActive(false);
-            EXCAV.GetComponent<ExcavAnimPlayer>().start_3();
+            EXCAV.GetComponent<ExcavAnimPlayer_2>().start_3();
             TRUCK.GetComponent<TruckAnimPlayer>().Backup2();
         }
 
@@ -86,7 +86,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             print("On_BaselineS8_4_Start");
             normal.SetActive(false);
-            EXCAV.GetComponent<ExcavAnimPlayer>().start_4();
+            EXCAV.GetComponent<ExcavAnimPlayer_2>().start_4();
             TRUCK.GetComponent<TruckAnimPlayer>().Backup3();
         }
 
