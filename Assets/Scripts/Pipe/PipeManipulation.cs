@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC2.Events;
+using VRC2.Hack;
 using VRC2.Pipe;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
@@ -135,7 +136,7 @@ namespace VRC2
         #endregion
 
         #region Distance Grab Interactable
-        
+
         // enable/disable to let the pipe interactable/not-interactable
 
         private DistanceGrabInteractable _distanceGrabInteractable;
@@ -155,8 +156,8 @@ namespace VRC2
 
         private void SetInteractable(bool enabled)
         {
-            if(distanceGrabInteractable == null || distanceGrabInteractable.enabled == enabled) return;
-            
+            if (distanceGrabInteractable == null || distanceGrabInteractable.enabled == enabled) return;
+
             distanceGrabInteractable.enabled = enabled;
         }
 
@@ -225,6 +226,12 @@ namespace VRC2
                     }
                 }
             }
+
+            if (heldByController && collidingWall)
+            {
+                // compensate
+                SelfCompensate();
+            }
         }
 
         public bool ShouldFall()
@@ -233,7 +240,7 @@ namespace VRC2
             {
                 if (chm.Clamped) return false;
             }
-            
+
             return true;
         }
 
@@ -337,7 +344,7 @@ namespace VRC2
         }
 
         #region Pointable Event
-        
+
         public void OnSelect()
         {
             heldByController = true;
@@ -424,6 +431,27 @@ namespace VRC2
         }
 
 
+
+        #endregion
+
+        #region Compensation for single pipe collision with the wall
+
+        private PipeGrabFreeTransformer transformer;
+
+        // make simple pipe not penetrate into the wall 
+        public void SelfCompensate()
+        {
+            if (transformer == null)
+            {
+                transformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+            }
+
+            var t = gameObject.transform;
+            var (pos, rot) = transformer.CompensateWithDirection(t.position, t.rotation.eulerAngles);
+
+            gameObject.transform.position = pos;
+            gameObject.transform.rotation = Quaternion.Euler(rot);
+        }
 
         #endregion
     }
