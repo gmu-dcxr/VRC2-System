@@ -707,7 +707,7 @@ namespace WSMGameStudio.Vehicles
                 }
 
                 // Truck and machinery reverse warning
-                if (backUpBeeperSFX != null)
+                if (backUpBeeperSFX != null && backUpBeeperSFX.gameObject.activeSelf)
                 {
                     if (_movingBackwards && !backUpBeeperSFX.isPlaying)
                         backUpBeeperSFX.Play();
