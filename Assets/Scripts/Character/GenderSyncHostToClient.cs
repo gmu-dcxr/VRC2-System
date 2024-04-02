@@ -35,14 +35,18 @@ namespace VRC2.Character
         IEnumerator SendMessageAfter(float second)
         {
             yield return new WaitForSeconds(second);
-            var pid = GlobalConstants.localPlayer.PlayerId;
+            // fusion
+            // var pid = GlobalConstants.localPlayer.PlayerId;
+            // fishnet
+            var pid = GlobalConstants.localFishNetPlayer;
             var female = GlobalConstants.playerGender == PlayerGender.Female;
             var hair = GlobalConstants.playerHairIndex;
             var skin = GlobalConstants.playerSkinIndex;
             
             print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
             // send message
-            RPC_SendMessage(pid, female, hair, skin);
+            // RPC_SendMessage(pid, female, hair, skin);
+            RPC_SendMessage_FishNet(pid, female, hair, skin);
             yield break;
         }
     }
