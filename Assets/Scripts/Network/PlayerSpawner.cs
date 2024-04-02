@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC2;
 using VRC2.Character;
+using FishNetNetworkObject = FishNet.Object.NetworkObject;
 
 namespace VRC2
 {
@@ -118,6 +119,28 @@ namespace VRC2
             return null;
         }
 
+        #region FishNet
+
+        public int FindLocalFishNetObjectId()
+        {
+            var gos = GameObject.FindObjectsOfType<OVRCustomSkeleton>();
+
+            foreach (var go in gos)
+            {
+                var obj = go.gameObject.GetComponent<FishNetNetworkObject>();
+                if (obj.Owner.IsLocalClient)
+                {
+                    return obj.ObjectId;
+                }
+            }
+
+            return -1;
+        }
+
+
+
+        #endregion
+
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             Debug.LogError("OnPlayerJoined");
@@ -143,6 +166,9 @@ namespace VRC2
                 {
                     // host
                     GlobalConstants.localPlayer = player;
+                    // fishnet
+                    GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
+                    print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
                 }
                 else
                 {
@@ -161,6 +187,10 @@ namespace VRC2
                 // p2 side
                 GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
+                
+                // fishnet
+                GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
+                print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
 
                 // print("Sync in client from client to host");
                 // // sync client to host of local player

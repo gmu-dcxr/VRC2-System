@@ -20,12 +20,6 @@ namespace VRC2.Character
         private void SpawnerOnOnSpawned(NetworkObject obj)
         {
             print($"obj: {obj.IsOwner} {obj.IsClient} {obj.IsServer} {obj.IsHost} {obj.Owner.IsLocalClient}");
-            if (obj.IsOwner)
-            {
-                // local object
-                GlobalConstants.localFishNetPlayer = obj.ObjectId;
-                print($"Set localFishNetPlayer = {obj.ObjectId}");
-            }
         }
     }
 }
