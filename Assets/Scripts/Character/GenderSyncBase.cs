@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using UnityEngine;
+using FishNetNetworkObject = FishNet.Object.NetworkObject;
 
 namespace VRC2.Character
 {
@@ -21,6 +22,19 @@ namespace VRC2.Character
             return PlayerRef.None;
         }
 
+        public GameObject FindSpawnedFishNetObject(int oid)
+        {
+            var gos = GameObject.FindObjectsOfType<OVRCustomSkeleton>();
+
+            foreach (var go in gos)
+            {
+                var obj = go.gameObject.GetComponent<FishNetNetworkObject>();
+                if (obj.ObjectId == oid) return go.gameObject;
+            }
+
+            return null;
+        }
+
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RPC_SendMessage(int playerid, bool female, int hair, int skin, RpcInfo info = default)
         {
@@ -29,6 +43,17 @@ namespace VRC2.Character
             var cms = go.GetComponent<CharacterMaterialSelector>();
 
             print($"RPC_SendMessage: {playerid} {female} {hair} {skin}");
+
+            cms.UpdateAppearance(female, hair, skin);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessage_FishNet(int objectid, bool female, int hair, int skin, RpcInfo info = default)
+        {
+            var go = FindSpawnedFishNetObject(objectid);
+            var cms = go.GetComponent<CharacterMaterialSelector>();
+
+            print($"RPC_SendMessage_FishNet: {objectid} {female} {hair} {skin}");
 
             cms.UpdateAppearance(female, hair, skin);
         }
