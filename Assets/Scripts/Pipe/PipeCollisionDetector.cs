@@ -291,7 +291,8 @@ namespace VRC2.Events
 
         bool IsGlued()
         {
-            if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
+            // enable glue hint for both sides, so this is unnecessary.
+            // if (Runner != null && Runner.IsRunning && Runner.IsClient) return true;
 
             // // fix for connector 
             // if (transform.parent.name.EndsWith("connector")) return true;
@@ -604,6 +605,9 @@ namespace VRC2.Events
             PipeHelper.DisableInteraction(cip);
             PipeHelper.DisableInteraction(oip);
             PipeHelper.DisableInteraction(parentObj);
+            
+            // disable glue hint in cip
+            cip.GetComponent<GlueHintManager>().HideHint();
 
             cip.transform.parent = parentObj.transform;
             oip.transform.parent = parentObj.transform;

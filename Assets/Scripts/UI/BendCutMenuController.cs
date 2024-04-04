@@ -117,7 +117,7 @@ namespace VRC2
                 confirmButton.onClick.AddListener(OnConfirm);
                 resetButton.onClick.AddListener(OnReset);
             }
-            
+
             // debug mode
             if (enableDebug)
             {
@@ -180,9 +180,19 @@ namespace VRC2
 
         void OnReset()
         {
-            // clear input
-            aInputField.text = "";
-            bInputField.text = "";
+            if (newDesign)
+            {
+                pipeLength.text = "";
+                pipeAmount.text = "";
+                connectorAmount.text = "";
+            }
+            else
+            {
+                // clear input
+                aInputField.text = "";
+                bInputField.text = "";
+            }
+
             // reset material
             for (int i = 0; i < buttons.Count; i++)
             {

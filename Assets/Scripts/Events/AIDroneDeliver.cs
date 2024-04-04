@@ -135,7 +135,7 @@ namespace VRC2.Events
 
         private void ReadyToPickUp()
         {
-            print("ReadyToDropOff");
+            print("ReadyToPickUp");
 
             foreach (var spawnedPipe in spawnedPipes)
             {
