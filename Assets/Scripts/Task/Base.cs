@@ -107,7 +107,7 @@ namespace VRC2.Task
             // UpdateTableRule(false);
         }
 
-        public void UpdateTable(ref Table t)
+        public void UpdateTable(Table t)
         {
             // hack it
             t.targetCollection.target = gameObject;
@@ -319,6 +319,9 @@ namespace VRC2.Task
             {
                 rule = P2HasRule();
             }
+            
+            // init table
+            UpdateTable(table);
 
             FormatInfoData(p1);
             // update table
