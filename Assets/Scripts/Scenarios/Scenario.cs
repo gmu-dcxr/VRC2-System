@@ -419,7 +419,6 @@ namespace VRC2.Scenarios
             }
 
             incidents.Add(incident);
-            print(incident.ID);
         }
 
         public Incident GetIncident(int idx)

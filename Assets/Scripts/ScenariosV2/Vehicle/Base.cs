@@ -164,8 +164,6 @@ namespace VRC2.ScenariosV2.Vehicle
 
                     this._accidents.Add(incident);
                 }
-
-                print("COUNT::" + count);
             }
         }
 
