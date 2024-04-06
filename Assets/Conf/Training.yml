@@ -32,16 +32,19 @@ incidents:
 #    time: "0:20"
 #    refer: ["Crane", "accidents", "9"] # test sagat controller
   # The following is for debugging erroneous AI
-  - id: 1
-    time: "0:05"
-    refer: [ "ErroneousAI", "accidents", "1" ]
-  - id: 2
-    time: "0:30"
-    refer: [ "ErroneousAI", "accidents", "2" ]
-    changeOrder: true
-  - id: 3
-    time: "0:45"
-    refer: ["ErroneousAI", "accidents", "3"]
-  - id: 3
-    time: "1:00"
-    refer: ["ErroneousAI", "accidents", "4"]
+#  - id: 1
+#    time: "0:05"
+#    refer: [ "ErroneousAI", "accidents", "1" ]
+#  - id: 2
+#    time: "0:10"
+#    refer: [ "ErroneousAI", "accidents", "1" ]
+#    changeOrder: true
+#  - id: 3
+#    time: "0:15"
+#    refer: ["ErroneousAI", "accidents", "2"]
+#  - id: 4
+#    time: "0:20"
+#    refer: ["ErroneousAI", "accidents", "3"]
+    - id: 1
+      time: "0:05"
+      refer: [ "Crane", "accidents", "9" ] # test sagat controller
