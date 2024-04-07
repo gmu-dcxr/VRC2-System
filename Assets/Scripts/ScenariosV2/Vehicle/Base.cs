@@ -89,6 +89,9 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public bool showWaring(object[] parameters)
         {
+            // default is true
+            if (parameters == null) return true;
+            
             return (bool)parameters[0];
         }
 
