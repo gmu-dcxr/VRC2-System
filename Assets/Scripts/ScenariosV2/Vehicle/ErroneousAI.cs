@@ -52,7 +52,7 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked ErroneousAI_accidents_2");
             // Nothing happens but a warning.
             // Warning: A cargo is going to pass overhead.
-            PlayAudioOnly(2);
+            PlayAudioOnly(false, 2);
         }
 
 
@@ -61,8 +61,8 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked ErroneousAI_accidents_3");
             // A hook (without a load) is passing overhead in the opposite direction. Crane_accident_4.
             // “Warning: A cargo is going to pass overhead.”
-            
-            PlayAudioOnly(3);
+
+            PlayAudioOnly(false, 3);
             crane.Crane_accidents_4(new object[] { false });
         }
 
