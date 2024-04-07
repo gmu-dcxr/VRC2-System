@@ -177,8 +177,22 @@ namespace VRC2.Scenarios
         #region Player
 
         private NetworkRunner _networkRunner;
+        private OVRCameraRig _cameraRig;
         private GameObject _localPlayer;
         private GameObject _remotePlayer;
+
+        public Transform CenterEyeTransform
+        {
+            get
+            {
+                if (_cameraRig == null)
+                {
+                    _cameraRig = FindObjectOfType<OVRCameraRig>();
+                }
+
+                return _cameraRig.centerEyeAnchor;
+            }
+        }
 
         [HideInInspector]
         public NetworkRunner networkRunner

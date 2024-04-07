@@ -23,6 +23,11 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private Vector3 dronePosition;
 
+        private float hoveringThreshold = 0.1f;
+
+        private float normalHeight = 16f;
+        private float changeOrderHeight = 6f;
+
         private bool moving = false;
         private bool goBack = false;
 
@@ -32,13 +37,16 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private PathFollower _pathFollower;
 
+        // resolve the conflicts between of BaselineS2 and BaselineS4
+        [HideInInspector] public bool controllingDrone = true;
+
         private Vector3 targetPosition
         {
             get
             {
                 var pos = player.transform.position;
                 pos += player.transform.forward;
-                pos.y += 2.0f; // minimal height
+                pos.y += changeOrderHeight; // minimal height
                 return pos;
             }
         }
@@ -47,7 +55,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         {
             base.Start();
 
-            player = localPlayer;
+            player = CenterEyeTransform.gameObject;
 
             dronePosition = drone.transform.position;
 
@@ -84,6 +92,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private void Update()
         {
+            if (!controllingDrone) return;
+
             // droneMove();
             if (moving)
             {
@@ -92,7 +102,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                     drone.transform.position = Vector3.MoveTowards(drone.transform.position, dronePosition,
                         speed * Time.deltaTime);
 
-                    if (Vector3.Distance(drone.transform.position, dronePosition) < 0.1f)
+                    if (Vector3.Distance(drone.transform.position, dronePosition) < hoveringThreshold)
                     {
                         // reach the destination
                         moving = false;
@@ -105,19 +115,35 @@ namespace VRC2.Scenarios.ScenarioFactory
                     drone.transform.position = Vector3.MoveTowards(drone.transform.position, targetPosition,
                         speed * Time.deltaTime);
 
-                    if (Vector3.Distance(drone.transform.position, targetPosition) < 0.1f)
+                    if (Vector3.Distance(drone.transform.position, targetPosition) < hoveringThreshold)
                     {
                         // reach the target
                         UpdateInstruction();
 
                         moving = false;
-                        // wait a moment
-                        StartTimer(5);
+                        // wait a moment, leave after 20 seconds
+                        // this is defined in Supervising Drone normals 4
+                        StartTimer(20);
                     }
                 }
             }
         }
 
+        void UpdateDrone(float heightoffset)
+        {
+            // enable it
+            drone.SetActive(true);
+
+            // calculate height
+            var pos = player.transform.position;
+            pos.y += heightoffset;
+
+            // update drone height
+            var dronePos = drone.transform.position;
+            dronePos.y = pos.y;
+
+            drone.transform.position = dronePos;
+        }
 
         #region Accident Events Callbacks
 
@@ -164,7 +190,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident;
             print(warning);
 
-            drone.SetActive(true);
+            UpdateDrone(changeOrderHeight);
 
             moving = true;
             goBack = false;
@@ -181,7 +207,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             print("On_BaselineS2_3_Start");
             // start normal event
             StartNormalIncident();
-            
+
             // SAGAT query
             ShowSAGAT();
         }
