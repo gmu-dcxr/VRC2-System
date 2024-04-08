@@ -42,7 +42,10 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_1");
             // show warning controller
-            baselineS1.ShowWarning(2);
+            if (showWaring(parameters))
+            {
+                baselineS1.ShowWarning(2);
+            }
             baselineS1.On_BaselineS1_2_Start();
         }
 
@@ -69,7 +72,10 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_4");
 
-            baselineS1.ShowWarning(5);
+            if (showWaring(parameters))
+            {
+                baselineS1.ShowWarning(5);
+            }
             baselineS1.On_BaselineS1_5_Start();
         }
 

@@ -83,12 +83,27 @@ namespace VRC2.ScenariosV2.Vehicle
             get => $"{ClsName}.yml";
         }
 
+        #region Keypath defination
+        public List<string> VehicleNormalKeypath
+        {
+            get => new List<string>() { "incidents", "normals" };
+        }
+
+        public List<string> VehicleAccidentsKeypath
+        {
+            get => new List<string>() { "incidents", "accidents" };
+        }
+        #endregion
+
         private bool parsed = false;
 
         #region Adaption for invoke with parameters
 
         public bool showWaring(object[] parameters)
         {
+            // default is true
+            if (parameters == null) return true;
+            
             return (bool)parameters[0];
         }
 
@@ -164,8 +179,6 @@ namespace VRC2.ScenariosV2.Vehicle
 
                     this._accidents.Add(incident);
                 }
-
-                print("COUNT::" + count);
             }
         }
 
@@ -357,14 +370,29 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #region Audio filename
 
-        public string GetAudioFileName(int key)
+        public string GetAudioFileName(List<string> keypath, int key)
         {
-            return $"{ClsName}_{key}.wav";
+            return $"{ClsName}_{String.Join("_", keypath)}_{key}.wav";
+        }
+        
+        public string GetAudioFileName(bool normal, int key)
+        {
+            var s = "";
+            if (normal)
+            {
+                s = String.Join("_", VehicleNormalKeypath);
+            }
+            else
+            {
+                s = String.Join("_", VehicleAccidentsKeypath);
+            }
+            return $"{ClsName}_{s}_{key}.wav";
         }
 
-        public void PlayAudioOnly(int key)
+
+        public void PlayAudioOnly(bool normal, int key)
         {
-            var filename = GetAudioFileName(key);
+            var filename = GetAudioFileName(normal, key);
             BluePrint(filename);
             warningController.PlayAudioClip(filename, null);
         }

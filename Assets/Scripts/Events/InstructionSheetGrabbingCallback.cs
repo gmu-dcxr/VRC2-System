@@ -33,11 +33,15 @@ namespace VRC2.Events
 
         private PointableUnityEventWrapper _wrapper;
 
-        private Transform _cameraTransform;
+        // private Transform _cameraTransform;
+
+        private OVRCameraRig _cameraRig;
 
         private void Start()
         {
-            _cameraTransform = Camera.main.transform;
+
+            _cameraRig = FindObjectOfType<OVRCameraRig>();
+            // _cameraTransform = Camera.main.transform;
 
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
 
@@ -77,10 +81,13 @@ namespace VRC2.Events
 
         void MoveDialogFaceHeadset()
         {
-            var forward = _cameraTransform.forward;
+            var t = _cameraRig.centerEyeAnchor;
 
-            dialog.transform.rotation = _cameraTransform.rotation;
-            dialog.transform.position = _cameraTransform.position + forward * distance;
+            // Fix z rotation
+            var rot = t.eulerAngles;
+            rot.z = 0;
+            dialog.transform.rotation = Quaternion.Euler(rot);
+            dialog.transform.position = t.position + t.forward * distance;
         }
 
         void SyncAttributes()

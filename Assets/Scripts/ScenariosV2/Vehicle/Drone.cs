@@ -8,6 +8,7 @@ namespace VRC2.ScenariosV2.Vehicle
     public class Drone : Base
     {
         #region Baselines
+
         [Header("Adaption")] private BaselineS2 _baselineS2;
         private BaselineS4 _baselineS4;
 
@@ -22,7 +23,7 @@ namespace VRC2.ScenariosV2.Vehicle
 
                 return _baselineS2;
             }
-        }        
+        }
 
         public BaselineS4 baselineS4
         {
@@ -36,13 +37,21 @@ namespace VRC2.ScenariosV2.Vehicle
                 return _baselineS4;
             }
         }
+
         #endregion
+
+        void SetDroneControlAuthority(bool s2, bool s4)
+        {
+            baselineS2.controllingDrone = s2;
+            baselineS4.controllingDrone = s4;
+        }
 
         #region Callbacks
 
         public void Drone_normals_1(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_1");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(2);
             baselineS4.On_BaselineS4_2_Start();
         }
@@ -50,21 +59,25 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_normals_2(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_2");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(3);
             baselineS4.On_BaselineS4_3_Start();
-           // Drone Leaves
+            // Drone Leaves
         }
 
-        public void Drone_normals_3(object[] parameters) 
+        public void Drone_normals_3(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_3");
+            SetDroneControlAuthority(true, false);
             baselineS2.ShowWarning(2);
             baselineS2.On_BaselineS2_2_Start();
-        } 
-        
-        public void Drone_normals_4(object[] parameters) 
+        }
+
+
+        public void Drone_normals_4(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_4");
+            SetDroneControlAuthority(true, false);
             baselineS2.ShowWarning(3);
             //baselineS2.On_BaselineS2_3_Start();
             // Drone leaves
@@ -73,6 +86,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_1(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_1");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(2);
             baselineS4.On_BaselineS4_2_Start();
         }
@@ -80,6 +94,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_2(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_2");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(3);
             baselineS4.On_BaselineS4_3_Start();
         }
@@ -87,6 +102,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_3(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_4");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(4);
             baselineS4.On_BaselineS4_4_Start();
         }
@@ -94,6 +110,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_4(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_4");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(5);
             baselineS4.On_BaselineS4_5_Start();
         }
@@ -101,6 +118,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_5(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_5");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(6);
             baselineS4.On_BaselineS4_6_Start();
         }
@@ -108,6 +126,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_6(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_6");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(7);
             baselineS4.On_BaselineS4_7_Start();
         }
@@ -115,6 +134,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_7(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_7");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(6);
             baselineS4.On_BaselineS4_6_Start();
         }
@@ -122,6 +142,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_accidents_8(object[] parameters)
         {
             BluePrint("Invoked Drone_accidents_8");
+            SetDroneControlAuthority(false, true);
             baselineS4.ShowWarning(7);
             baselineS4.On_BaselineS4_7_Start();
         }

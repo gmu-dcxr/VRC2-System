@@ -29,10 +29,10 @@ namespace VRC2.Voice
             canvasController.invoice.text = "IN010002901947";
         }
 
-        private string GetAudioFileName(string folder, object key)
+        private string GetAudioFileName(string folder, List<string> keypath, object key)
         {
             var prefix = filename.Split('.')[0];
-            var name = $"{prefix}_{key}";
+            var name = $"{prefix}_{String.Join("_", keypath)}_{key}";
             name += ".wav";
             return Path.Combine(folder, name);
         }
@@ -75,7 +75,7 @@ namespace VRC2.Voice
 
                     if (text == null || text.Length < 1) continue;
 
-                    var audioname = GetAudioFileName(fullFolder, key);
+                    var audioname = GetAudioFileName(fullFolder, keyPath, key);
 
                     canvasController.text.text = text;
                     canvasController.fileName.text = audioname;
