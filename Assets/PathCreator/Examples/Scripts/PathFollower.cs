@@ -10,6 +10,10 @@ namespace PathCreation.Examples
         public EndOfPathInstruction endOfPathInstruction;
         public float speed = 5;
         float distanceTravelled;
+        
+        // hack height
+        [HideInInspector] public bool customizedHeight = false;
+        [HideInInspector] public float currentHeight = 16f;
 
         void Start() {
             if (pathCreator != null)
@@ -24,7 +28,13 @@ namespace PathCreation.Examples
             if (pathCreator != null)
             {
                 distanceTravelled += speed * Time.deltaTime;
-                transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
+                var position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
+                if (customizedHeight)
+                {
+                    position.y = currentHeight;
+                }
+
+                transform.position = position;
                 transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
             }
         }

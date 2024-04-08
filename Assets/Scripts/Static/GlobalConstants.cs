@@ -20,6 +20,12 @@ namespace VRC2
         public static PlayerRef localPlayer = PlayerRef.None;
         public static PlayerRef remotePlayer = PlayerRef.None;
 
+        #region FishNet
+        
+        public static int localFishNetPlayer = -1;
+
+        #endregion
+
         public static bool GameStarted = false;
 
         public static void RemovePlayer(PlayerRef player)

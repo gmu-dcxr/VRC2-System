@@ -1471,6 +1471,7 @@ GameObject:
   - component: {fileID: 2935038745000772228}
   - component: {fileID: 2935038745000772231}
   - component: {fileID: 2935038745000772229}
+  - component: {fileID: 2035820663}
   m_Layer: 10
   m_Name: PlayerFishNet
   m_TagString: Untagged
@@ -1664,7 +1665,7 @@ MonoBehaviour:
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: 2
   <SpawnableCollectionId>k__BackingField: 0
-  _scenePathHash: 2529827354
+  _scenePathHash: 931539336
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 785206844230028779
   <IsNested>k__BackingField: 0
@@ -1743,6 +1744,36 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 2935038745000772228}
   _networkObjectCache: {fileID: 2935038745000772228}
+--- !u!114 &2035820663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2935038745000772230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f313706c575b1bf4ea6bb963998f1922, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  faceRenderer: {fileID: 2108784116282575218}
+  handRenderer: {fileID: 7462101097922245078}
+  skinMale: {fileID: 2100000, guid: 45b249546fb1b904093f8707f8a377f0, type: 2}
+  skinMale2: {fileID: 2100000, guid: 6cd9714c647c9e749832327d48f9cec6, type: 2}
+  eyebrowMale: {fileID: 2100000, guid: 450c994960b596349b4445c9005f88d1, type: 2}
+  eyelashMale: {fileID: 2100000, guid: 83fe1c8fcefff3049ab720be0c827726, type: 2}
+  skinFemale: {fileID: 2100000, guid: f11e91263d0a10f4cba68b4d03991f1d, type: 2}
+  eyebrowFemale: {fileID: 2100000, guid: 450c994960b596349b4445c9005f88d1, type: 2}
+  eyelashFemale: {fileID: 2100000, guid: 83fe1c8fcefff3049ab720be0c827726, type: 2}
+  hair1: {fileID: 3860444235251467040}
+  hair2: {fileID: 3496450821833084954}
+  hand1: {fileID: 2100000, guid: a63caced3386f514f848b7da0ee325b2, type: 2}
+  hand2: {fileID: 2100000, guid: 336b39c4be2d3814aa0863acf85268af, type: 2}
+  handfemale: {fileID: 2100000, guid: 7b8f9148a0b44ed46a866034fd3c2dad, type: 2}
+  hairStyleIndex: 0
+  isFemale: 1
+  skinStyleIndex: 0
+  handStyleIndex: 0
 --- !u!1 &2946960927863496774
 GameObject:
   m_ObjectHideFlags: 0
@@ -5457,6 +5488,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1214967fdfe94fd48ae3797964e6fd56, type: 3}
   m_PrefabInstance: {fileID: 4130474059816468081}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &3860444235251467040 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1214967fdfe94fd48ae3797964e6fd56, type: 3}
+  m_PrefabInstance: {fileID: 4130474059816468081}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4342748423808019787
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5533,5 +5569,10 @@ PrefabInstance:
 --- !u!4 &4309438878047767200 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3c4c4e4c3428df04bb66d8fb4f424f7b, type: 3}
+  m_PrefabInstance: {fileID: 4342748423808019787}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3496450821833084954 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3c4c4e4c3428df04bb66d8fb4f424f7b, type: 3}
   m_PrefabInstance: {fileID: 4342748423808019787}
   m_PrefabAsset: {fileID: 0}

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5802115779049313036}
   - component: {fileID: 8954971338570783814}
   - component: {fileID: 8521919870664990593}
+  - component: {fileID: 911400944}
   m_Layer: 0
   m_Name: Clamp Hint (1)
   m_TagString: ClampHint
@@ -109,6 +110,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d590b6039041bdbc500674a12af5ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &911400944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 546447809962702206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff2a54922141dda47928f1dc86b90034, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 1
+  P2Only: 0
+  _authorityUpdated: 0
+  defaultValue: 0
+  bypass: 0
 --- !u!1 &2132608868452749035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1165,6 +1183,7 @@ GameObject:
   - component: {fileID: 8500061127354718134}
   - component: {fileID: 2623196712785646813}
   - component: {fileID: 4354919752069762089}
+  - component: {fileID: 653288052}
   m_Layer: 0
   m_Name: Clamp Hint (2)
   m_TagString: ClampHint
@@ -1261,3 +1280,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34d590b6039041bdbc500674a12af5ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &653288052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8546050695323396401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff2a54922141dda47928f1dc86b90034, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  P1Only: 1
+  P2Only: 0
+  _authorityUpdated: 0
+  defaultValue: 0
+  bypass: 0
