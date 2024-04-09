@@ -24,6 +24,10 @@ namespace VRC2.Voice
 
         [Space(30)] [Header("UI")] public CanvasController canvasController;
 
+        // isScenario == true: use YamlHelper.Scenario for parsing yaml
+        // isScenario == false: use YamlParser.Vehicle for parsing yaml
+        [Space(30)] [Header("Type")] public bool isScenario = false;
+
         private void Start()
         {
             canvasController.invoice.text = "IN010002901947";
@@ -50,12 +54,27 @@ namespace VRC2.Voice
             var fullFolder = Directory.CreateDirectory(Path.Combine(Application.dataPath, folder)).FullName;
 
             var path = Helper.GetConfigureFile(Application.dataPath, filename);
+
             print(path);
-            var data = Helper.ParseYamlFile<YamlParser.Vehicle>(path);
+
+            object data = null;
+            Type type = null;
+
+            if (isScenario)
+            {
+                data = (object)Helper.ParseYamlFile<YamlHelper.Scenario>(path);
+                type = typeof(YamlHelper.Scenario);
+            }
+            else
+            {
+                data = (object)Helper.ParseYamlFile<YamlParser.Vehicle>(path);
+                type = typeof(YamlParser.Vehicle);
+
+            }
+
             print(data);
 
-            object src = (object)data;
-            Type type = typeof(YamlParser.Vehicle);
+            object src = data;
             object value = null;
             for (var i = 0; i < keyPath.Count; i++)
             {
