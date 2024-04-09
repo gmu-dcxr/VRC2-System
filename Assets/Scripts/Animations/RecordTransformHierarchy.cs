@@ -12,6 +12,8 @@ public class RecordTransformHierarchy : MonoBehaviour
 
     public bool started = true;
 
+    public bool showRecordUI = false;
+
     void Start()
     {
         // Create recorder and record the script GameObject.
@@ -32,6 +34,8 @@ public class RecordTransformHierarchy : MonoBehaviour
 
     private void OnGUI()
     {
+        if(!showRecordUI) return;
+        
         if (GUI.Button(new Rect(100, 10, 100, 50), "Start"))
         {
             started = true;
