@@ -40,6 +40,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         // resolve the conflicts between of BaselineS2 and BaselineS4
         [HideInInspector] public bool controllingDrone = true;
 
+        [HideInInspector] public float leaveAfter = 30f; // leave after 30 second
+
         private Vector3 targetPosition
         {
             get
@@ -75,7 +77,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             _audioSource.loop = false;
         }
 
-        void StartTimer(int second)
+        void StartTimer(float second)
         {
             if (_timer != null)
             {
@@ -123,7 +125,7 @@ namespace VRC2.Scenarios.ScenarioFactory
                         moving = false;
                         // wait a moment, leave after 20 seconds
                         // this is defined in Supervising Drone normals 4
-                        StartTimer(20);
+                        StartTimer(leaveAfter);
                     }
                 }
             }
