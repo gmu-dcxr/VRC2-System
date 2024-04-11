@@ -24,6 +24,7 @@ namespace VRC2.SAGAT
 
         private void ParseYamlFile(string name)
         {
+            print($"Parse SAGAT File: {name}");
             var path = Helper.GetSurveyFile(Application.dataPath, name);
             print(path);
 

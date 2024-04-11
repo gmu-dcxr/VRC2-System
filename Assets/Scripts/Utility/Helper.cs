@@ -84,10 +84,10 @@ namespace VRC2.Utility
 
         public static string GetAudioFileName(string scenario, int incidentid, bool context, bool amount)
         {
-            var name = $"{scenario}_{incidentid}";
-            if (context) name += "_C";
-            if (amount) name += "_A";
-            name += ".wav";
+            var s = "incidents";
+            if (context) s = "context";
+            if (amount) s = "amount";
+            var name = $"{scenario}_{s}_{incidentid}.wav";
             return name;
         }
 
