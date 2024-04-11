@@ -18,18 +18,22 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private Vector3 droneInitPosition;
 
-        [Header("Height Offset")]
-        [Tooltip("Off the ground")]
-        public float lowerHeight = 5.0f;
+        [Header("Height Offset")] [Tooltip("Off the ground")]
+        private float normalHeight = 16f;
 
-        [Tooltip("Off the ground")]
-        public float collidingHeight = 0.5f;
+        private float lowerHeight = 9f;
+        private float collidingHeight = 6f;
+
+        private float hoveringThreshold = 0.1f;
 
         private Vector3 destination;
 
         private bool moving = false;
 
         private PathFollower _pathFollower;
+        
+        // resolve the conflicts between of BaselineS2 and BaselineS4
+        [HideInInspector] public bool controllingDrone = true;
 
 
         private void Start()
@@ -37,38 +41,73 @@ namespace VRC2.Scenarios.ScenarioFactory
             base.Start();
 
             droneInitPosition = drone.transform.position;
-            
-            player = localPlayer;
+            // use center eye to represent the player
+            player = CenterEyeTransform.gameObject;
             approaching = false;
-            
+
             _pathFollower = drone.GetComponent<PathFollower>();
-            
+
             // disable at the beginning
             _pathFollower.enabled = false;
         }
 
         private void Update()
         {
-            if(!moving) return;
+            if(!controllingDrone) return;
             
+            if (!moving) return;
+
             if (approaching)
             {
                 drone.transform.position = Vector3.MoveTowards(drone.transform.position, destination,
                     speed * Time.deltaTime);
+
+                if (Vector3.Distance(drone.transform.position, destination) < hoveringThreshold)
+                {
+                    // make it hovering
+                    moving = false;
+                    _pathFollower.enabled = true;
+                    // hack height
+                    _pathFollower.currentHeight = drone.transform.position.y;
+                    _pathFollower.customizedHeight = true;
+                }
             }
             else
             {
                 drone.transform.position = Vector3.MoveTowards(drone.transform.position, droneInitPosition,
                     speed * Time.deltaTime);
+                if (Vector3.Distance(drone.transform.position, droneInitPosition) < hoveringThreshold)
+                {
+                    // make it invisible
+                    drone.SetActive(false);
+                }
             }
         }
 
         void UpdateDestination(float heightoffset)
         {
+            // enable it
+            drone.SetActive(true);
+            
+            // calculate height
             var pos = player.transform.position;
             pos.y += heightoffset;
+            
+            // update drone height
+            var dronePos = drone.transform.position;
+            dronePos.y = pos.y;
 
+            drone.transform.position = dronePos;
+            
+            // set destination
             destination = pos;
+        }
+
+        void ResetPathFollower()
+        {
+            // disable it
+            _pathFollower.enabled = false;
+            _pathFollower.customizedHeight = false;
         }
 
 
@@ -78,10 +117,10 @@ namespace VRC2.Scenarios.ScenarioFactory
         public override void StartNormalIncident()
         {
             print("Start Normal Incident Baseline S4");
-            
+
             _pathFollower.enabled = true;
         }
-        
+
         public void On_BaselineS4_1_Start()
         {
 
@@ -100,12 +139,11 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(2);
             var warning = incident.Warning;
             print(warning);
-            
-            // disable it
-            _pathFollower.enabled = false;
 
-            var offset = drone.transform.position.y - player.transform.position.y;
-            UpdateDestination(offset);
+            ResetPathFollower();
+
+            // var offset = drone.transform.position.y - player.transform.position.y;
+            UpdateDestination(normalHeight);
 
             moving = true;
             approaching = true;
@@ -122,6 +160,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The drone leaves.
             // get incident
             var incident = GetIncident(3);
+
+            ResetPathFollower();
 
             moving = true;
             approaching = false;
@@ -141,8 +181,10 @@ namespace VRC2.Scenarios.ScenarioFactory
             var incident = GetIncident(4);
             var warning = incident.Warning;
 
+            ResetPathFollower();
+
             UpdateDestination(lowerHeight);
-            
+
             moving = true;
             approaching = true;
         }
@@ -158,6 +200,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // The drone leaves.
             // get incident
             var incident = GetIncident(5);
+
+            ResetPathFollower();
 
             moving = true;
             approaching = false;
@@ -178,6 +222,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident.Warning;
             print(warning);
 
+            ResetPathFollower();
+
             UpdateDestination(collidingHeight);
             moving = true;
             approaching = true;
@@ -193,7 +239,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             // make drone runaway
             moving = true;
             approaching = false;
-            
+
+            ResetPathFollower();
+
             print("On_BaselineS4_7_Start");
             // SAGAT query
             ShowSAGAT();

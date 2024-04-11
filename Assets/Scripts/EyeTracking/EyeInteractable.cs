@@ -9,6 +9,7 @@ namespace VRC2
     public class EyeInteractable : MonoBehaviour
     {
         [HideInInspector] public bool IsHovered { get; set; }
+        [HideInInspector] public Transform eyeInteractor { get; set; }
 
         public UnityEvent<GameObject> OnHover;
 
@@ -38,7 +39,7 @@ namespace VRC2
                 OnHover?.Invoke(gameObject);
                 if (_eyeTrackingLogger != null)
                 {
-                    _eyeTrackingLogger.WriteLog(gameObject);
+                    _eyeTrackingLogger.WriteLog(eyeInteractor, gameObject);
                 }
             }
             else

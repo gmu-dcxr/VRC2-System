@@ -62,6 +62,7 @@ namespace VRC2
                 {
                     _eyeInteractables.Add(ei);
                     ei.IsHovered = true;
+                    ei.eyeInteractor = transform;
                 }
             }
             else
