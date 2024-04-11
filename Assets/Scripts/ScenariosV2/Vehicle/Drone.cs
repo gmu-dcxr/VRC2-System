@@ -51,25 +51,29 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Drone_normals_1(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_1");
-            SetDroneControlAuthority(false, true);
-            baselineS4.ShowWarning(2);
-            baselineS4.On_BaselineS4_2_Start();
+            SetDroneControlAuthority(true, false);
+            // update leaveafter second to 30 seconds
+            baselineS2.leaveAfter = 30f;
+            baselineS2.ShowWarning(2);
+            baselineS2.On_BaselineS2_2_Start();
         }
 
         public void Drone_normals_2(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_2");
-            SetDroneControlAuthority(false, true);
-            baselineS4.ShowWarning(3);
-            baselineS4.On_BaselineS4_3_Start();
-            // Drone Leaves
+            SetDroneControlAuthority(true, false);
+            baselineS2.ShowWarning(3);
+            // Drone Leaves automatically
         }
 
         public void Drone_normals_3(object[] parameters)
         {
             BluePrint("Invoked Drone_normals_3");
             SetDroneControlAuthority(true, false);
-            baselineS2.ShowWarning(2);
+            // update leaveafter second to 20 seconds
+            baselineS2.leaveAfter = 20f;
+            // this will inform task changes
+            // baselineS2.ShowWarning(2);
             baselineS2.On_BaselineS2_2_Start();
         }
 
@@ -79,8 +83,7 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked Drone_normals_4");
             SetDroneControlAuthority(true, false);
             baselineS2.ShowWarning(3);
-            //baselineS2.On_BaselineS2_3_Start();
-            // Drone leaves
+            // Drone Leaves automatically
         }
 
         public void Drone_accidents_1(object[] parameters)
