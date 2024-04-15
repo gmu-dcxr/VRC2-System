@@ -1,0 +1,92 @@
+﻿name: "Task4C" # name for this file
+desc: "Task 4 Change Order" # description
+folder: "Task" # folder name under Assets/Resources/
+image: "Training" # Instruction filename for this task, it will be shown in the instruction for participants
+rule: [ "Gas", "Water", "Electricity", "Sewage" ] # construction rule
+P1: [ "color", "size" ] # partial info given to P1
+P2: [ "length", "type" ] # partial info given to P2
+info:
+  - id: 1
+    segment: 1
+    color: green # magenta/yellow/green/blue
+    type: sewage # sewage/gas/electricity/water
+    size:  2 # int
+    length: 3.75 # float
+  - id: 2
+    segment: 2
+    color: magenta
+    type: sewage
+    size: 2
+    length: 1.0
+  - id: 3
+    segment: 3
+    color: blue
+    type: gas
+    size: 3
+    length: 2.0
+  - id: 4
+    segment: 4
+    color: magenta
+    type: gas
+    size: 3
+    length: 4.0
+  - id: 5
+    segment: 5
+    color: blue
+    type: gas
+    size: 3
+    length: 5.75
+  - id: 6
+    segment: 6
+    color: green
+    type: electricity
+    size: 3
+    length: 0.75
+  - id: 7
+    segment: 7
+    color: blue
+    type: electricity
+    size: 3
+    length: 5.0
+  - id: 8
+    segment: 8
+    color: green
+    type: electricity
+    size: 3
+    length: 8.25
+  - id: 9
+    segment: 9
+    color: blue
+    type: electricity
+    size: 3
+    length: 7.0
+  - id: 10
+    segment: 10
+    color: green
+    type: electricity
+    size: 3
+    length: 8.25
+  - id: 11
+    segment: 11
+    color: blue
+    type: electricity
+    size: 3
+    length: 3.0
+  - id: 12
+    segment: 12
+    color: green
+    type: water
+    size: 4
+    length: 3.75
+  - id: 13
+    segment: 13
+    color: magenta
+    type: water
+    size: 4
+    length: 8.0
+  - id: 14
+    segment: 14
+    color: green
+    type: water
+    size: 4
+    length: 11.0
