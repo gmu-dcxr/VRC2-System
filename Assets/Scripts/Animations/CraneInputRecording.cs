@@ -841,8 +841,7 @@ namespace VRC2.Animations
 
         public void TurnLeft()
         {
-            blockSound_B = false;
-            StopRotating = false;
+            blockSound_B = false;           
             if (!soundCrane.isPlaying)
             {
                 soundCrane.PlayOneShot(detaliClip);
@@ -868,13 +867,13 @@ namespace VRC2.Animations
                 var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
                 rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
                     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
-            }   
+            }
+            
         }
 
         public void TurnRight()
         {
             blockSound_B = false;
-            StopRotating = false;
             if (!soundCrane.isPlaying)
             {
                 soundCrane.PlayOneShot(detaliClip);
@@ -901,16 +900,22 @@ namespace VRC2.Animations
                 rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
                     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
             }
+            if (floatRotCabin >= startRotation) 
+            {
+                StopRotating = true;
+            }
         }
 
         public void TurnStop()
         {
-            if (blockSound_A == true && blockSound_C == true && StopRotating == false)
+            print("Cabing rot: "+ floatRotCabin);
+            if (blockSound_A == true && blockSound_C == true && StopRotating == true)
             {
-                print("STOP ROTATING SOUND");
+               // print("STOP ROTATING SOUND");
                 soundCrane.Stop();
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
+                StopRotating = false;
             }
 
             blockPlayOneShot_RotationCrane = true;
@@ -921,8 +926,7 @@ namespace VRC2.Animations
                 var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
                 rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
                     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
-            }
-            StopRotating = true;
+            }            
         }
 
         public void SeizeCargo()
