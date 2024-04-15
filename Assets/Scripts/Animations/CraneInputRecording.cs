@@ -908,7 +908,7 @@ namespace VRC2.Animations
 
         public void TurnStop()
         {
-            print("Cabing rot: "+ floatRotCabin);
+            //print("Cabing rot: "+ floatRotCabin);
             if (blockSound_A == true && blockSound_C == true && StopRotating == true)
             {
                // print("STOP ROTATING SOUND");
