@@ -39,6 +39,7 @@ namespace VRC2.Animations
         public AudioClip detaliClip;
         private bool blockPlayOneShot_RotationCrane = true;
         private bool blockPlayOneShot_BoomCart = true;
+        private bool blockPlayOneShot_Hook = true;
         [HideInInspector] public Transform pointMovingForward;
         [HideInInspector] public Transform pointMovingBack;
         public Transform pointLineArrow_BoomCart;
@@ -335,7 +336,7 @@ namespace VRC2.Animations
                 DownHook();
             }
             else
-            {
+            {              
                 StopHook();
             }
 
@@ -754,11 +755,11 @@ namespace VRC2.Animations
 
         public void StopBoomCart()
         {
-            if (blockSound_B == true && blockSound_C == true)
+            if (blockSound_B == true && blockSound_C == true && blockSound_A == false && blockPlayOneShot_BoomCart == false)
             {
-                soundCrane.Stop();
-                soundCrane.PlayOneShot(detaliClip);
-                soundCrane.PlayOneShot(stopMotorCrane);
+                 soundCrane.Stop();
+                 soundCrane.PlayOneShot(detaliClip);
+                 soundCrane.PlayOneShot(stopMotorCrane);
             }
 
             blockPlayOneShot_BoomCart = true;
@@ -786,9 +787,13 @@ namespace VRC2.Animations
                     soundCrane.pitch += Time.deltaTime * 0.35f;
                 }
             }
-
+            if (offsetAnchor < 1) 
+            {
+                //print("REACHED TOP");
+                blockPlayOneShot_Hook = false;
+            }
+            //print("OffsetAnchor: " + offsetAnchor);
             jointHook.anchor = new Vector3(0, offsetAnchor, 0);
-
         }
 
         public void DownHook()
@@ -809,28 +814,35 @@ namespace VRC2.Animations
 
                 if (soundCrane.isPlaying && blockSound_A == false && soundCrane.pitch < 1.3f)
                 {
-                    soundCrane.pitch += Time.deltaTime * 0.35f;
+                    soundCrane.pitch += Time.deltaTime * 0.35f;   
                 }
+                
             }
-
+            if (maxOffset < 2)
+            {
+                //print("REACHED BOTTOM\n");
+                blockPlayOneShot_Hook = false;
+            }
+           // print("MinDownHook: " + minDownHook + "\nMaxOffset: " + maxOffset);
             jointHook.anchor = new Vector3(0, offsetAnchor, 0);
         }
 
         public void StopHook()
         {
-            if (blockSound_A == true && blockSound_B == true)
+            if (blockSound_A == true && blockSound_B == true && blockPlayOneShot_Hook == false)
             {
                 soundCrane.Stop();
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
             }
-
+            blockPlayOneShot_Hook = true;
             blockSound_C = true;
         }
 
         public void TurnLeft()
         {
             blockSound_B = false;
+            StopRotating = false;
             if (!soundCrane.isPlaying)
             {
                 soundCrane.PlayOneShot(detaliClip);
@@ -856,12 +868,13 @@ namespace VRC2.Animations
                 var crane = Quaternion.AngleAxis(floatRotCabin, Vector3.up);
                 rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
                     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
-            }
+            }   
         }
 
         public void TurnRight()
         {
             blockSound_B = false;
+            StopRotating = false;
             if (!soundCrane.isPlaying)
             {
                 soundCrane.PlayOneShot(detaliClip);
@@ -892,8 +905,9 @@ namespace VRC2.Animations
 
         public void TurnStop()
         {
-            if (blockSound_A == true && blockSound_C == true)
+            if (blockSound_A == true && blockSound_C == true && StopRotating == false)
             {
+                print("STOP ROTATING SOUND");
                 soundCrane.Stop();
                 soundCrane.PlayOneShot(detaliClip);
                 soundCrane.PlayOneShot(stopMotorCrane);
@@ -908,10 +922,11 @@ namespace VRC2.Animations
                 rotationElementCrane.localRotation = Quaternion.Lerp(rotationElementCrane.localRotation, crane,
                     Time.deltaTime * speedRotationCrane / smoothRotationCrane);
             }
+            StopRotating = true;
         }
 
         public void SeizeCargo()
-        {
+        {            
             if (connectedCargo_Bool == true)
             {
                 ConnectedCargo();
