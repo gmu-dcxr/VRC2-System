@@ -1,80 +1,68 @@
-name: "Task5" # name for this file
-desc: "Task 5" # description
+﻿name: "Task6" # name for this file
+desc: "Task 6" # description
 folder: "Task" # folder name under Assets/Resources/
 image: "Training" # Instruction filename for this task, it will be shown in the instruction for participants
-rule: [ "ϕ1", "ϕ2", "ϕ3", "ϕ4" ] # construction rule
+rule: [ "Water", "Gas", "Sewage", "Electricity" ] # construction rule
 P1: [ "color", "length" ] # partial info given to P1
 P2: [ "size", "type" ] # partial info given to P2
 info:
   - id: 1
     segment: 1
-    color: magenta # magenta/yellow/green/blue
+    color: green # magenta/yellow/green/blue
     type: gas # sewage/gas/electricity/water
-    size: 3 # int
+    size: 1 # int
     length: 1.0 # float
   - id: 2
     segment: 2
     color: blue
     type: gas
-    size: 3
-    length: 4.5
+    size: 1
+    length: 3.5
   - id: 3
     segment: 3
-    color: magenta
+    color: green
     type: gas
-    size: 3
-    length: 7.25
+    size: 1
+    length: 7.0
   - id: 4
     segment: 4
     color: blue
     type: gas
-    size: 3
-    length: 9.0
+    size: 1
+    length: 6.0
   - id: 5
     segment: 5
-    color: magenta
+    color: green
     type: gas
-    size: 3
-    length: 1.0
+    size: 1
+    length: 10.0
   - id: 6
     segment: 6
-    color: green
-    type: sewage
+    color: blue
+    type: gas
     size: 1
-    length: 4.25
+    length: 2.0
   - id: 7
     segment: 7
     color: yellow
-    type: sewage
-    size: 1
-    length: 9.5
+    type: electricity
+    size: 4
+    length: 4.25
   - id: 8
     segment: 8
-    color: green
+    color: magenta
     type: electricity
-    size: 2
-    length: 1.0
+    size: 4
+    length: 18.25
   - id: 9
     segment: 9
     color: magenta
-    type: electricity
+    type: water
     size: 2
-    length: 4.0
+    length: 4.25
   - id: 10
     segment: 10
-    color: green
-    type: electricity
+    color: blue
+    type: water
     size: 2
-    length: 7.25
-  - id: 11
-    segment: 11
-    color: magenta
-    type: electricity
-    size: 2
-    length: 8.5
-  - id: 12
-    segment: 12
-    color: green
-    type: electricity
-    size: 2
-    length: 1.0
+    length: 0.75
