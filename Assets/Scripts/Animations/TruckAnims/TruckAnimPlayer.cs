@@ -64,6 +64,9 @@ public class TruckAnimPlayer : MonoBehaviour
         anim.SetBool("FirstForward", false);
         anim.SetBool("SecondForward", false);
         anim.SetBool("ThirdBackup", true);
+
+        anim.SetBool("ThirdForward", false);
+        ThirdBackup.active = true;
     }
 
     public void Forward()
@@ -85,13 +88,7 @@ public class TruckAnimPlayer : MonoBehaviour
 
     public void playSound()
     {
-        /*
-        if (!(anim.GetBool("FirstForward") || anim.GetBool("SecondForward") || anim.GetBool("ThirdForward")))
-        {
-            print("start");
-            source.Play();
-        }
-        */
+       
         if ((anim.GetBool("FirstBackup") || anim.GetBool("SecondBackup") || anim.GetBool("ThirdBackup")))
         {
             print("start");
