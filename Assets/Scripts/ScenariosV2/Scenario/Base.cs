@@ -703,6 +703,12 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 if (GUILayout.Button($"Start {i + 1}"))
                 {
+                    // change order
+                    if (changeOrderIndices.Contains(i))
+                    {
+                        StartCoroutine(ChangeOrder());
+                    }
+
                     StartIncident(i + 1);
                 }
             }
