@@ -12,12 +12,15 @@ namespace VRC2.Task
         [Tooltip("No filetype extension, e.g., using `image` not `image.png`")]
         public string filename;
 
+        [Tooltip("Set when start")] public bool setWhenStart = true;
+
         private Texture2D _texture;
 
         private MeshRenderer renderer
         {
             get => gameObject.GetComponent<MeshRenderer>();
         }
+        
 
         private Image image
         {
@@ -27,7 +30,10 @@ namespace VRC2.Task
         // Start is called before the first frame update
         void Start()
         {
-            SetImageAsTexture();
+            if (setWhenStart)
+            {
+                SetImageAsTexture();
+            }
         }
 
         // Update is called once per frame
