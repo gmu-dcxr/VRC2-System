@@ -479,6 +479,11 @@ namespace VRC2.ScenariosV2.Scenario
         public void Execute(int timestamp)
         {
             StartScenario(timestamp);
+            // start by clicking button on GUI
+            if (startInSec == 0)
+            {
+                OnScenarioStart();
+            }
         }
 
         public void OverrideStartEnd(int start, int end)
@@ -698,6 +703,12 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 if (GUILayout.Button($"Start {i + 1}"))
                 {
+                    // change order
+                    if (changeOrderIndices.Contains(i))
+                    {
+                        StartCoroutine(ChangeOrder());
+                    }
+
                     StartIncident(i + 1);
                 }
             }
@@ -724,7 +735,16 @@ namespace VRC2.ScenariosV2.Scenario
         public virtual void OnScenarioStart()
         {
             print($"Invoke {name} OnScenarioStart");
-            UpdateSAGAT();
+
+            // bypass SAGAT errors
+            try
+            {
+                UpdateSAGAT();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
 
             UpdateInstruction();
         }
@@ -755,7 +775,7 @@ namespace VRC2.ScenariosV2.Scenario
 
             // wall instruction
             // default is training, nothing to update
-            if (taskStart > 0 && taskEnd > 0)
+            if (taskStart >= 0 && taskEnd >= 0)
             {
                 scenariosManager.UpdateInstruction(taskStart, taskEnd);
             }

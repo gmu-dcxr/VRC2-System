@@ -137,11 +137,11 @@ public class ExcavAnimPlayer : MonoBehaviour
                 if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
                 {
                     anim.SetBool("Dig", false);
+                    anim.enabled = false;
                     done = true;
-                    //anim.enabled = false;
-                    //lid.SetActive(true);
+                    anim.enabled = true;
 
-                    if (pt == part.nextTo)
+                if (pt == part.nextTo)
                     {
                         FirstBackup.SetActive(false);
                     }
@@ -238,19 +238,6 @@ public class ExcavAnimPlayer : MonoBehaviour
 
     public void makeDirt()
     {
-        //dirt.transform.SetParent(endPiece);
-        //dirt.transform.position = new Vector3(7.629f, 9.5367f, 1.9073f);
-        //dirt.transform.rotation = Quaternion.Euler(-1.628f, 4.071f, 0f);
-        //endPiece.transform.rotation.z);
-        //endPiece.transform.position.z);
-        //dirt.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y,
-        //endPiece.transform.position.z);
-        //dirt.transform.rotation = Quaternion.Euler(endPiece.transform.rotation.x, endPiece.transform.rotation.y,
-        //endPiece.transform.rotation.z);
-        //dirt.GetComponent<Rigidbody>().useGravity = false;
-        //dirt.GetComponent<Rigidbody>().isKinematic = false;
-        //dirt.GetComponent<MeshCollider>().convex = false;
-        //dirt.GetComponent<MeshCollider>().convex = false;
         UpdateHole(hole);
         dirt.SetActive(true);
     }
@@ -265,46 +252,29 @@ public class ExcavAnimPlayer : MonoBehaviour
     public void dirtDupe()
     {
         GameObject dupe = Instantiate(dirt);
-        //dirtSpawned = true;
-        //dupe.SetActive(false);
+     
         dupe.transform.SetParent(endPiece);
         if (pt == part.into2)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-0.80f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-1.5f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
         }
         if (pt == part.into1)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x - 0.51f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
+            dupe.transform.position = new Vector3(endPiece.transform.position.x - 1.71f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
             dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
         }
         if(pt == part.nextTo)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-1.0f, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
             dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
-        }
-        
-        //dupe.transform.SetParent(endPiece);
-        
+        }        
         dupe.GetComponent<Rigidbody>().isKinematic = false;
-        //dupe.GetComponent<MeshCollider>().convex = false;
         dupe.transform.localScale = initScale;
-        //dupe.SetActive(true);
-
-
         dupe.transform.SetParent(null);
         dupe.GetComponent<Rigidbody>().useGravity = true;
-        //dupe.GetComponent<MeshCollider>().convex = true;
-        //dupe.transform.SetParent(truck.transform);
         curIndex++;
         clonesArray[curIndex] = dupe;
-        //print(curIndex);
-        //print("INDEX");
         dirt.SetActive(false);
-        //print("xxxxx");
-
-        //dirt.transform.SetParent(null);
-        //dirt.GetComponent<Rigidbody>().useGravity = true;
-        //dirt.GetComponent<MeshCollider>().convex = true;
     }
 
     public void spillUpdate()

@@ -1,0 +1,86 @@
+﻿name: "Task2" # name for this file
+desc: "Task 2" # description
+folder: "Task" # folder name under Assets/Resources/
+image: "Training" # Instruction filename for this task, it will be shown in the instruction for participants
+rule: [ "ϕ1", "ϕ2", "ϕ3", "ϕ4" ] # construction rule
+P1: [ "color", "type" ] # partial info given to P1
+P2: [ "size", "length" ] # partial info given to P2
+info:
+  - id: 1
+    segment: 1
+    color: magenta # magenta/yellow/green/blue
+    type: gas # sewage/gas/electricity/water
+    size: 3 # int
+    length: 0.5 # float
+  - id: 2
+    segment: 2
+    color: blue
+    type: gas
+    size: 3
+    length: 5.0
+  - id: 3
+    segment: 3
+    color: blue
+    type: sewage
+    size: 1
+    length: 7.0
+  - id: 4
+    segment: 4
+    color: magenta
+    type: sewage
+    size: 1
+    length: 7.25
+  - id: 5
+    segment: 5
+    color: blue
+    type: sewage
+    size: 1
+    length: 6.0
+  - id: 6
+    segment: 6
+    color: magenta
+    type: sewage
+    size: 1
+    length: 8.0
+  - id: 7
+    segment: 7
+    color: blue
+    type: sewage
+    size: 1
+    length: 0.75
+  - id: 8
+    segment: 8
+    color: yellow
+    type: electricity
+    size: 2
+    length: 4.75
+  - id: 9
+    segment: 9
+    color: green
+    type: electricity
+    size: 2
+    length: 8.25
+  - id: 10
+    segment: 10
+    color: green
+    type: water
+    size: 4
+    length: 1.0
+  - id: 11
+    segment: 11
+    color: yellow
+    type: water
+    size: 4
+    length: 5.0
+  - id: 12
+    segment: 12
+    color: green
+    type: water
+    size: 4
+    length: 7.0
+  - id: 13
+    segment: 13
+    color: yellow
+    type: water
+    size: 4
+    length: 9.0
