@@ -35,12 +35,14 @@ namespace VRC2
         [Header("Fly Settings")] public float flyHeight = 10.0f;
 
         public float moveForce = 0.5f;
+        private float moveForceSmall = 0.1f;
         public float turnForce = 0.05f;
         public float liftForce = 0.2f;
 
         private float heightThreshold = 0.5f;
         private float angleThrehold = 1f;
-        private float distanceThrehold = 0.5f;
+        private float distanceThrehold = 2.0f;
+        private float distanceThreholdSmall = 0.5f;
 
         // actions
 
@@ -56,11 +58,19 @@ namespace VRC2
 
         private Vector3 _objective;
 
+        // backup transform
+        private Vector3 _backupPosition;
+        private Quaternion _backupRotation;
+
 
         // Start is called before the first frame update
         void Start()
         {
             _controller = gameObject.GetComponent<PA_DroneController>();
+
+            // backup
+            _backupPosition = transform.position;
+            _backupRotation = transform.rotation;
         }
 
         // Update is called once per frame
@@ -99,12 +109,23 @@ namespace VRC2
                     // calculate distance
                     var distance = GetDistance();
 
+                    print(distance);
+
+                    // use two-thresholds to fix passing by problem
                     if (distance < distanceThrehold)
                     {
-                        // go down
-                        ForwardBack(0);
-                        _status = DroneStatus.Down;
-                        Lift(-liftForce);
+                        if (distance > distanceThreholdSmall)
+                        {
+                            // move slower
+                            ForwardBack(moveForceSmall);
+                        }
+                        else
+                        {
+                            // go down
+                            ForwardBack(0);
+                            _status = DroneStatus.Down;
+                            Lift(-liftForce);
+                        }
                     }
 
                     break;
@@ -235,6 +256,9 @@ namespace VRC2
         {
             _controller.motorOn = false;
             _status = DroneStatus.Stop;
+            // restore transform
+            transform.position = _backupPosition;
+            transform.rotation = _backupRotation;
         }
     }
 }

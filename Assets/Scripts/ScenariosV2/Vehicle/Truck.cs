@@ -96,7 +96,7 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked Truck_accidents_7");
 
             //baselineS3.ShowWarning(8); <-- ADD BACK LATER?
-            baselineS3.On_BaselineS3_6_Start();
+            baselineS3.On_BaselineS3_7_Start();
         }
 
         public void Truck_accidents_8(object[] parameters)
