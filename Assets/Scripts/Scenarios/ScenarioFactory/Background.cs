@@ -454,7 +454,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_Background_2_Finish()
         {
-            
+            anim.SetTrigger("Moving2");
         }
 
         public void On_Background_3_Start()
