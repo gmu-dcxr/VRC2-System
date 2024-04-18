@@ -41,7 +41,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject good2;
         public GameObject good3;
 
-        public float timeToHideCargoAfterLeaving = 0f;
+        public float timeToHideCargoAfterLeaving = 5f;
 
 
         private GameObject currentCargo;
