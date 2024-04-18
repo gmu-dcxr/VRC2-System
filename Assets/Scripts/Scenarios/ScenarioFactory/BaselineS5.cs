@@ -41,6 +41,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject good2;
         public GameObject good3;
 
+        public float timeToHideCargoAfterLeaving = 5f;
+
 
         private GameObject currentCargo;
 
@@ -205,6 +207,12 @@ namespace VRC2.Scenarios.ScenarioFactory
             yield return null;
         }
 
+        IEnumerator HideCargo(GameObject cargoObj) 
+        {
+            yield return new WaitForSeconds(timeToHideCargoAfterLeaving);
+            cargoObj.SetActive(false);
+        }
+
         #region craneTruck control
 
         bool ReachedDestination(Vector3 des)
@@ -278,6 +286,7 @@ namespace VRC2.Scenarios.ScenarioFactory
             
             anim.SetBool("Unload", false);
             anim.SetBool("Forward", true);
+            StartCoroutine(HideCargo(currentCargo));
             
             // it already automatically moves forward
             // _stage = CraneTruckStage.Forward;
@@ -322,6 +331,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             anim.SetBool("Tilt", false);
             anim.SetBool("Forward", true);
+            StartCoroutine(HideCargo(currentCargo));
 
 
             // _stage = CraneTruckStage.Forward;
