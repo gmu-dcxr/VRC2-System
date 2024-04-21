@@ -36,6 +36,8 @@ namespace VRC2
         public float segmentALength = 1.0f;
         public float segmentBLength = 1.0f;
 
+        [Header("Pipe Type Label")] public TextMesh pipeLabel;
+
         // the default length for each segment
         private float defaultSegmentLengthInFeet = 5;
 
@@ -265,6 +267,17 @@ namespace VRC2
             if (_renderMid != null)
             {
                 _renderMid.material = m;
+            }
+
+            UpdatePipeTypeLabel(pipeType);
+        }
+
+        void UpdatePipeTypeLabel(PipeType t)
+        {
+            if (pipeLabel != null && pipeLabel.text == "" && t != PipeType.Default)
+            {
+                // update type
+                pipeLabel.text = Utils.GetDisplayName<PipeType>(t);
             }
         }
 
