@@ -39,7 +39,7 @@ namespace VRC2.Hack
                 // p1 side, call the parent method
                 return false;
             }
-            
+
             // return false if it is not a basic pipe
             var root = PipeHelper.GetRoot(gameObject);
             if (root != gameObject) return false;
@@ -60,6 +60,10 @@ namespace VRC2.Hack
                 case PointerEventType.Select:
                     // let p2 to manipulate it
                     nt.enabled = false;
+
+                    // update last spawned pipe to enable it to be able to be picked up by the robot dog
+                    GlobalConstants.lastSpawnedPipe = gameObject;
+                    Debug.LogWarning("Last spawned pipe was updated.");
 
                     EndTransform();
                     break;
