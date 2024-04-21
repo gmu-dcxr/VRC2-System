@@ -282,4 +282,13 @@ public class ExcavAnimPlayer : MonoBehaviour
         spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y+0.030f, spill.transform.position.z);
     }
 
+    public void deleteDirt()
+    {
+        while (curIndex > 0)
+        {
+            Destroy(clonesArray[curIndex]);
+            curIndex--;
+        }
+    }
+
 }

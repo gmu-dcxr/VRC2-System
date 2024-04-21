@@ -239,19 +239,7 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
 
     public void makeDirt()
     {
-        //dirt.transform.SetParent(endPiece);
-        //dirt.transform.position = new Vector3(7.629f, 9.5367f, 1.9073f);
-        //dirt.transform.rotation = Quaternion.Euler(-1.628f, 4.071f, 0f);
-        //endPiece.transform.rotation.z);
-        //endPiece.transform.position.z);
-        //dirt.transform.position = new Vector3(endPiece.transform.position.x, endPiece.transform.position.y,
-        //endPiece.transform.position.z);
-        //dirt.transform.rotation = Quaternion.Euler(endPiece.transform.rotation.x, endPiece.transform.rotation.y,
-        //endPiece.transform.rotation.z);
-        //dirt.GetComponent<Rigidbody>().useGravity = false;
-        //dirt.GetComponent<Rigidbody>().isKinematic = false;
-        //dirt.GetComponent<MeshCollider>().convex = false;
-        //dirt.GetComponent<MeshCollider>().convex = false;
+        
         UpdateHole(hole);
         dirt.SetActive(true);
     }
@@ -284,9 +272,9 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         dupe.GetComponent<Rigidbody>().useGravity = true;
         //dupe.GetComponent<MeshCollider>().convex = true;
         //dupe.transform.SetParent(truck.transform);
-        print("PREINDEX: " + curIndex);
+        //print("PREINDEX: " + curIndex);
         curIndex++;
-        print("CURINDEX: " + curIndex);
+        //print("CURINDEX: " + curIndex);
         clonesArray[curIndex] = dupe;
         //print(curIndex);
         //print("INDEX");
@@ -310,4 +298,15 @@ public class ExcavAnimPlayer_2 : MonoBehaviour
         }
     }
 
+    public void deleteDirt2()
+    {
+        while (curIndex > 0)
+        {
+            Destroy(clonesArray[curIndex]);
+            curIndex--;
+        }
+    }
+
 }
+
+
