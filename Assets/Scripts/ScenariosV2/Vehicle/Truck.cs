@@ -31,7 +31,8 @@ namespace VRC2.ScenariosV2.Vehicle
 
         public void Truck_normals_1(object[] parameters)
         {
-            BluePrint("Invoked Truck_normals_2");
+            BluePrint("Invoked Truck_normals_1");
+            PlayAudioOnly(true, 1);
             baselineS3.On_BaselineS3_2_Start();
         }
 
@@ -45,9 +46,8 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_1");
             // show warning controller
-            //BluePrint("555555");
-            //baselineS3.ShowWarning(2);   //<-- ADD BACK LATER?
-            //BluePrint("we showed the warning!!!");
+            // baselineS3.ShowWarning(2);
+            PlayAudioOnly(false, 1);
             baselineS3.On_BaselineS3_2_Start();
         }
 
@@ -55,15 +55,16 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_2");
 
-            //baselineS3.ShowWarning(3); <-- ADD BACK LATER?
             //baselineS3.On_BaselineS3_3_Start();
+            PlayAudioOnly(false, 2);
         }
 
         public void Truck_accidents_3(object[] parameters)
         {
             BluePrint("Invoked Truck_accidents_3");
 
-            //baselineS3.ShowWarning(4); <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(4);
+            PlayAudioOnly(false, 3);
             baselineS3.On_BaselineS3_4_Start();
         }
 
@@ -71,7 +72,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_4");
 
-            //baselineS3.ShowWarning(5); <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(5);
             //baselineS3.On_BaselineS3_5_Start();
         }
 
@@ -79,7 +80,8 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_5");
 
-            //baselineS3.ShowWarning(6); <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(6);
+            PlayAudioOnly(false, 5);
             baselineS3.On_BaselineS3_6_Start();
         }
 
@@ -87,7 +89,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_6");
 
-            //baselineS3.ShowWarning(7); <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(7);
             //baselineS3.On_BaselineS3_7_Start();
         }
 
@@ -95,7 +97,8 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_7");
 
-            //baselineS3.ShowWarning(8); <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(8);
+            PlayAudioOnly(false, 7);
             baselineS3.On_BaselineS3_7_Start();
         }
 
@@ -103,13 +106,9 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Truck_accidents_8");
 
-            //baselineS3.ShowWarning(8); <-- ADD BACK LATER?
+            //baselineS3.ShowWarning(8);
             //baselineS3.On_BaselineS3_8_Start();
         }
-
-
-
-
 
         #endregion
     }
