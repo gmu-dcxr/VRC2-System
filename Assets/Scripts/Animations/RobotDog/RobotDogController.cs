@@ -52,8 +52,8 @@ namespace VRC2.Animations
 
         private RobotStage stage;
 
-        private float angleThreshold = 2f;
-        private float distanceThreshold = 0.1f;
+        private float angleThreshold = 5f; // increase it to make it not stuck, original: 2f
+        private float distanceThreshold = 0.2f; // original: 0.1f
         public float pickupOffset = 1f;
 
         private bool pickingup = false;
@@ -93,6 +93,16 @@ namespace VRC2.Animations
 
         // new design
         [HideInInspector] public List<GameObject> processedPipes;
+
+        #endregion
+
+        #region Find available pipe
+        
+        // TODO: find pipe in the storage place
+        public GameObject FindAvailablePipe()
+        {
+            return null;
+        }
 
         #endregion
 

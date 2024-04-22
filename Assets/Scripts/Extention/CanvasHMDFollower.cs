@@ -12,7 +12,9 @@ namespace VRC2.Extention
         [SerializeField] private float _minDistance = 0.05f;
         [SerializeField] private float _minZDistance = 0.05f;
 
-        [SerializeField] private bool _useOriginalY = true;
+        // [SerializeField] private bool _useOriginalY = true;
+
+        public float yOffset = 0.5f;
         
         private OVRCameraRig _cameraRig;
         private Vector3 _panelInitialPosition = Vector3.zero;
@@ -56,10 +58,7 @@ namespace VRC2.Extention
         private Vector3 CalculateIdealAnchorPosition()
         {
             var pos = _cameraRig.centerEyeAnchor.position + _panelInitialPosition;
-            if (_useOriginalY)
-            {
-                pos.y = _panelInitialPosition.y;
-            }
+            pos.y += yOffset;
 
             return pos;
         }
