@@ -42,6 +42,8 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [HideInInspector] public float leaveAfter = 30f; // leave after 30 second
 
+        [HideInInspector] public bool changeOrder = false; // indicate if it is change order
+
         private Vector3 targetPosition
         {
             get
@@ -119,8 +121,11 @@ namespace VRC2.Scenarios.ScenarioFactory
 
                     if (Vector3.Distance(drone.transform.position, targetPosition) < hoveringThreshold)
                     {
-                        // reach the target
-                        UpdateInstruction();
+                        if (changeOrder)
+                        {
+                            // reach the target
+                            UpdateInstruction();   
+                        }
 
                         moving = false;
                         // wait a moment, leave after 20 seconds
@@ -192,7 +197,15 @@ namespace VRC2.Scenarios.ScenarioFactory
             var warning = incident;
             print(warning);
 
-            UpdateDrone(changeOrderHeight);
+            if (changeOrder)
+            {
+                UpdateDrone(changeOrderHeight);   
+            }
+            else
+            {
+                // set normal height
+                UpdateDrone(normalHeight);
+            }
 
             moving = true;
             goBack = false;
