@@ -256,7 +256,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         dupe.transform.SetParent(endPiece);
         if (pt == part.into2)
         {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-1.5f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
+            dupe.transform.position = new Vector3(endPiece.transform.position.x-1.7f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
         }
         if (pt == part.into1)
         {
