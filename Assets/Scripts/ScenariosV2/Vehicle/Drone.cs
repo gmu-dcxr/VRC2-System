@@ -54,6 +54,8 @@ namespace VRC2.ScenariosV2.Vehicle
             SetDroneControlAuthority(true, false);
             // update leaveafter second to 30 seconds
             baselineS2.leaveAfter = 30f;
+            // set change order to false
+            baselineS2.changeOrder = false;
             baselineS2.ShowWarning(2);
             baselineS2.On_BaselineS2_2_Start();
         }
@@ -70,9 +72,11 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Drone_normals_3");
             SetDroneControlAuthority(true, false);
-            // update leaveafter second to 20 seconds
+            // update leaveafter second to 20 seconds, inform change order
             baselineS2.leaveAfter = 20f;
             // this will inform task changes
+            // set change order to true
+            baselineS2.changeOrder = true;
             // baselineS2.ShowWarning(2);
             baselineS2.On_BaselineS2_2_Start();
         }
