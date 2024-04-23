@@ -25,7 +25,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private float hoveringThreshold = 0.1f;
 
-        private float normalHeight = 16f;
+        private float normalHeight = 7f;
         private float changeOrderHeight = 6f;
 
         private bool moving = false;
