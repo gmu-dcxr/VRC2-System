@@ -19,10 +19,10 @@ namespace VRC2.Scenarios.ScenarioFactory
         private Vector3 droneInitPosition;
 
         [Header("Height Offset")] [Tooltip("Off the ground")]
-        private float normalHeight = 16f;
+        private float normalHeight = 7f;
 
-        private float lowerHeight = 9f;
-        private float collidingHeight = 6f;
+        private float lowerHeight = 6f;
+        private float collidingHeight = 5f;
 
         private float hoveringThreshold = 0.1f;
 
