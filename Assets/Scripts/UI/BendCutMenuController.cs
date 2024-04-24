@@ -198,7 +198,7 @@ namespace VRC2
             {
                 var button = buttons[i];
                 var bclm = button.gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     bclm.ChangeMaterial();
                 }
@@ -211,7 +211,7 @@ namespace VRC2
             {
                 var button = buttons[i];
                 var bclm = button.gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     return (PipeBendAngles)i;
                 }
@@ -227,7 +227,7 @@ namespace VRC2
             for (var i = 0; i < diameterButtons.Count; i++)
             {
                 var bclm = diameterButtons[i].gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     return (PipeDiameter)i;
                 }
@@ -345,7 +345,7 @@ namespace VRC2
             foreach (var btn in buttons)
             {
                 var bclm = btn.gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     bclm.ChangeMaterial();
                 }
