@@ -142,12 +142,12 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         public void On_BaselineS3_8_Start()
         {
-
+            ShowSAGAT();
         }
 
         public void On_BaselineS3_8_Finish()
         {
-
+            HideSAGAT();
         }
 
         #endregion
