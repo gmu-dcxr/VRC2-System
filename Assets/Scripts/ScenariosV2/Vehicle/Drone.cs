@@ -64,7 +64,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Drone_normals_2");
             SetDroneControlAuthority(true, false);
-            baselineS2.ShowWarning(3);
+            // baselineS2.ShowWarning(3);
             // Drone Leaves automatically
         }
 
