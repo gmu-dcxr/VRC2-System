@@ -204,7 +204,9 @@ namespace VRC2.Task
 
         public bool P1HasRule()
         {
-            return P1HasLength();
+            // return P1HasLength();
+            // P1 always has the rule
+            return true;
         }
 
         public bool P2HasRule()
