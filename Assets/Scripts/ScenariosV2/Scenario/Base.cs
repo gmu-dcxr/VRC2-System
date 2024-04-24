@@ -85,6 +85,9 @@ namespace VRC2.ScenariosV2.Scenario
         public System.Action ScenarioStart;
         public System.Action ScenarioFinish;
 
+        // last sagat incident
+        public System.Action SAGATStart;
+
         #endregion
 
         #region Vehicles
@@ -100,7 +103,7 @@ namespace VRC2.ScenariosV2.Scenario
 
         // Scenario 6
         private Vehicle.Electrocutions _electrocutions;
-        
+
         // scenario 7
         private Vehicle.ErroneousAI _erroneousAI;
 
@@ -274,6 +277,7 @@ namespace VRC2.ScenariosV2.Scenario
         #endregion
 
         [Header("Debug UI")] public bool showDebugUI = true;
+        private bool showTime = true;
         public bool showTimeline = false;
         private string timelineText = "";
         private int timelineSecond = 0;
@@ -377,7 +381,7 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 res = electrocutions.GetAccidentIncident(idx);
             }
-            
+
             // erroneous AI
             if (cname.Equals(erroneousAI.ClsName))
             {
@@ -458,6 +462,12 @@ namespace VRC2.ScenariosV2.Scenario
 
             this.ScenarioStart += OnScenarioStart;
             this.ScenarioFinish += OnScenarioFinish;
+            this.SAGATStart += OnSagatStart;
+        }
+
+        private void OnSagatStart()
+        {
+            HideTimeline();
         }
 
         public void StartScenario(int ts)
@@ -570,6 +580,15 @@ namespace VRC2.ScenariosV2.Scenario
                     }
 
                     StartCoroutine(CoroutineStartIncident(idx));
+                    // last event
+                    if (idx == parsedIncidents.Count - 1)
+                    {
+                        // assume it's sagat
+                        if (SAGATStart != null)
+                        {
+                            SAGATStart();
+                        }
+                    }
                 }
 
                 // exclude it
@@ -718,7 +737,10 @@ namespace VRC2.ScenariosV2.Scenario
 
         private void OnGUI()
         {
-            ShowTimelineSecond();
+            if (showTime)
+            {
+                ShowTimelineSecond();
+            }
 
             if (showTimeline)
             {
@@ -747,6 +769,15 @@ namespace VRC2.ScenariosV2.Scenario
             }
 
             UpdateInstruction();
+        }
+
+        public virtual void HideTimeline()
+        {
+            // hide timeline and ui to let player answer questions
+            showTime = false;
+            showTimeline = false;
+            showDebugUI = false;
+            Debug.LogWarning($"[{ClsName}] Disable Timeline and DebugUI");
         }
 
         public virtual void OnScenarioFinish()

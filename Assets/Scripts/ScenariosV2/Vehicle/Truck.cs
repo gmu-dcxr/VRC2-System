@@ -107,7 +107,7 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked Truck_accidents_8");
 
             //baselineS3.ShowWarning(8);
-            //baselineS3.On_BaselineS3_8_Start();
+            baselineS3.On_BaselineS3_8_Start();
         }
 
         #endregion
