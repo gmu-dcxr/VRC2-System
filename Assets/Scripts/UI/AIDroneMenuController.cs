@@ -92,7 +92,7 @@ namespace VRC2
             foreach (var btn in buttons)
             {
                 var bclm = btn.gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     bclm.ChangeMaterial();
                 }
@@ -137,7 +137,7 @@ namespace VRC2
             for (var i = 0; i < pipeTypeButtons.Count; i++)
             {
                 var bclm = pipeTypeButtons[i].gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     return (PipeType)i;
                 }
@@ -151,7 +151,7 @@ namespace VRC2
             for (var i = 0; i < pipeColorButtons.Count; i++)
             {
                 var bclm = pipeColorButtons[i].gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     return (PipeConstants.PipeColor)i;
                 }
@@ -165,7 +165,7 @@ namespace VRC2
             for (var i = 0; i < pipeDiameterButtons.Count; i++)
             {
                 var bclm = pipeDiameterButtons[i].gameObject.GetComponent<ButtonMaterialController>();
-                if (bclm.currentMaterial == bclm.selectedMaterial)
+                if (bclm.isSelected)
                 {
                     return (PipeDiameter)i;
                 }
