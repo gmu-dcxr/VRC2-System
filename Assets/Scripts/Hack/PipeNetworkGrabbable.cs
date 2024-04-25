@@ -42,13 +42,13 @@ namespace VRC2.Hack
 
             // return false if it is not a basic pipe
             var root = PipeHelper.GetRoot(gameObject);
-            if (root != gameObject) return false;
+            if (root != gameObject) Debug.Log("Root is not same as pipe"); return false;
 
             // p2 can only manipulate straight non-cut pipe
             var pm = gameObject.GetComponent<PipeManipulation>();
 
             // if it is bent or cut, directly return
-            if (!pm.IsStraight || !pm.NotBeingCut) return false;
+            if (!pm.IsStraight || !pm.NotBeingCut) Debug.Log("Pipe is bent");return false;
 
             // p2 side
             // in order to make p2 can manipulate the pipe, it should disable networkTransform component
@@ -63,17 +63,18 @@ namespace VRC2.Hack
 
                     // update last spawned pipe to enable it to be able to be picked up by the robot dog
                     GlobalConstants.lastSpawnedPipe = gameObject;
-                    Debug.LogWarning("Last spawned pipe was updated.");
+                    Debug.Log("Last spawned pipe was updated.");
 
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
                     // restore the networkTransform
                     nt.enabled = true;
-
+                    Debug.Log("Event Type Unselect");
                     EndTransform();
                     break;
                 case PointerEventType.Cancel:
+                    Debug.Log("Event Type Cancel");
                     EndTransform();
                     break;
             }
