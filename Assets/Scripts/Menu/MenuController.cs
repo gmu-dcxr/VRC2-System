@@ -101,7 +101,7 @@ namespace VRC2.Menu
             // MenuItem.VoiceControl, // disable
             // MenuItem.GiveInstruction, // disable
             // MenuItem.CheckPipeSizeColor, // disable
-            MenuItem.MeasureDistance,
+            // MenuItem.MeasureDistance, // disable
             MenuItem.CommandRobot,
             // MenuItem.CheckPipeLengthAngle, // disable
             // MenuItem.CheckLevel // disable
