@@ -40,9 +40,9 @@ namespace VRC2
         public float liftForce = 0.2f;
 
         private float heightThreshold = 0.5f;
-        private float angleThrehold = 1f;
-        private float distanceThrehold = 2.0f;
-        private float distanceThreholdSmall = 0.5f;
+        private float angleThrehold = 3f;
+        private float distanceThrehold = 10.0f;
+        private float distanceThreholdSmall = 3f;
 
         // actions
 
