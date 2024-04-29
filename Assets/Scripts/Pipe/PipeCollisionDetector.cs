@@ -211,7 +211,7 @@ namespace VRC2.Events
             {
                 // handle it in ClampHintCollisionDetector
 
-                // HandleClampCollision(go);
+                //HandleClampCollision(go);
             }
 
             // collision with glue
@@ -314,7 +314,7 @@ namespace VRC2.Events
 
             if (!IsGlued())
             {
-                // Debug.LogWarning("Please glue it first");
+                Debug.LogWarning("Please glue it first");
                 return;
             }
 
