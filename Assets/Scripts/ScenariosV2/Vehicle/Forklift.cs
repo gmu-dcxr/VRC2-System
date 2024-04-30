@@ -29,7 +29,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void Forklift_normals_1(object[] parameters)
         {
             BluePrint("Invoked Forklift_normals_1");
-            background.ShowWarning(2);
+            background.ShowWarning(2, audioSource);
             background.On_Background_2_Start();
         }
 

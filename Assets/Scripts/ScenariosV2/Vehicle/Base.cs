@@ -109,6 +109,34 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #endregion
 
+        #region Independent audio source for warning
+
+        private AudioSource _audioSource;
+
+        public AudioSource audioSource
+        {
+            get
+            {
+                if (_audioSource == null)
+                {
+                    _audioSource = gameObject.GetComponent<AudioSource>();
+                }
+
+                return _audioSource;
+            }
+        }
+
+        public void UpdateAudioSource()
+        {
+            if(warningController == null || audioSource == null) return;
+            
+            warningController.SetAudioSource(audioSource);
+        }
+
+        
+
+        #endregion
+
         #region Methods
 
         public virtual void ParseYamlFile()
@@ -394,6 +422,8 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             var filename = GetAudioFileName(normal, key);
             BluePrint(filename);
+            // update audio source
+            UpdateAudioSource();
             warningController.PlayAudioClip(filename, null);
         }
 

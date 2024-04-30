@@ -69,7 +69,15 @@ incidents:
 #    time: "0:05"
 #    refer: ["Crane", "normals", "1"]
   
-# The following is for debugging cranetruck
+## The following is for debugging cranetruck
+#  - id: 1
+#    time: "0:05"
+#    refer: ["CraneTruck", "normals", "1"]
+
+## The following is to test independent audio sources
   - id: 1
     time: "0:05"
     refer: ["CraneTruck", "normals", "1"]
+  - id: 2
+    time: "0:05"
+    refer: [ "Truck", "accidents", "1" ]
