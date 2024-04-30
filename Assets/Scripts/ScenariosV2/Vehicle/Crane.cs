@@ -24,17 +24,22 @@ namespace VRC2.ScenariosV2.Vehicle
 
         #region Callbacks
 
+        private void ShowWarning(int idx)
+        {
+            baselineS1.ShowWarning(idx, audioSource);
+        }
+
         public void Crane_normals_1(object[] parameters)
         {
             BluePrint("Invoked Crane_normals_1");
-            baselineS1.ShowWarning(2);
+            ShowWarning(2);
             baselineS1.On_BaselineS1_2_Start();
         }
 
         public void Crane_normals_2(object[] parameters)
         {
             BluePrint("Invoked Crane_normals_2");
-            baselineS1.ShowWarning(3);
+            ShowWarning(3);
             baselineS1.On_BaselineS1_3_Start();
         }
 
@@ -44,8 +49,9 @@ namespace VRC2.ScenariosV2.Vehicle
             // show warning controller
             if (showWaring(parameters))
             {
-                baselineS1.ShowWarning(2);
+                ShowWarning(2);
             }
+
             baselineS1.On_BaselineS1_2_Start();
         }
 
@@ -53,7 +59,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_2");
 
-            baselineS1.ShowWarning(3);
+            ShowWarning(3);
             baselineS1.On_BaselineS1_3_Start();
         }
 
@@ -62,9 +68,9 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked Crane_accidents_3");
             if (showWaring(parameters))
             {
-                baselineS1.ShowWarning(4);    
+                ShowWarning(4);
             }
-            
+
             baselineS1.On_BaselineS1_4_Start();
         }
 
@@ -74,8 +80,9 @@ namespace VRC2.ScenariosV2.Vehicle
 
             if (showWaring(parameters))
             {
-                baselineS1.ShowWarning(5);
+                ShowWarning(5);
             }
+
             baselineS1.On_BaselineS1_5_Start();
         }
 
@@ -83,7 +90,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_5");
 
-            baselineS1.ShowWarning(6);
+            ShowWarning(6);
             baselineS1.On_BaselineS1_6_Start();
         }
 
@@ -91,7 +98,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_6");
 
-            baselineS1.ShowWarning(7);
+            ShowWarning(7);
             baselineS1.On_BaselineS1_7_Start();
         }
 
@@ -99,7 +106,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_7");
 
-            baselineS1.ShowWarning(8);
+            ShowWarning(8);
             baselineS1.On_BaselineS1_8_Start();
         }
 
@@ -107,7 +114,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_8");
 
-            baselineS1.ShowWarning(9);
+            ShowWarning(9);
             baselineS1.On_BaselineS1_9_Start();
         }
 
@@ -115,7 +122,7 @@ namespace VRC2.ScenariosV2.Vehicle
         {
             BluePrint("Invoked Crane_accidents_9");
 
-            baselineS1.ShowWarning(10);
+            ShowWarning(10);
             baselineS1.On_BaselineS1_10_Start();
         }
 

@@ -26,6 +26,11 @@ namespace VRC2.ScenariosV2.Vehicle
 
         // TODO: WARNING: warning sound defined in cranetruck rather than in BaselineS5
 
+        private void ShowWarning(int idx)
+        {
+            baselineS5.ShowWarning(idx, audioSource);
+        }
+
         public void CraneTruck_normals_1(object[] parameters)
         {
             BluePrint("Invoked CraneTruck_normals_1");
@@ -44,7 +49,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void CraneTruck_normals_3(object[] parameters)
         {
             BluePrint("Invoked CraneTruck_normals_3");
-            baselineS5.ShowWarning(3);
+            ShowWarning(3);
             baselineS5.On_BaselineS5_3_Start();
         }
 
@@ -69,7 +74,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void CraneTruck_accidents_3(object[] parameters)
         {
             BluePrint("Invoked CraneTruck_accidents_3");
-            baselineS5.ShowWarning(3);
+            ShowWarning(3);
             baselineS5.On_BaselineS5_3_Start();
         }
 
@@ -91,7 +96,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void CraneTruck_accidents_6(object[] parameters)
         {
             BluePrint("Invoked CraneTruck_accidents_6");
-            baselineS5.ShowWarning(5);
+            ShowWarning(5);
             baselineS5.On_BaselineS5_5_Start();
         }
 
@@ -113,7 +118,7 @@ namespace VRC2.ScenariosV2.Vehicle
         public void CraneTruck_accidents_9(object[] parameters)
         {
             BluePrint("Invoked CraneTruck_accidents_9");
-            baselineS5.ShowWarning(7);
+            ShowWarning(7);
             baselineS5.On_BaselineS5_7_Start();
         }
 

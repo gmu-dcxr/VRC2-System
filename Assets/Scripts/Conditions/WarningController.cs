@@ -47,7 +47,32 @@ public class WarningController : MonoBehaviour
 
     private Timer _timer;
 
-    private AudioSource _audioSource;
+    private AudioSource _defaultSource;
+
+    private AudioSource _updatedSource;
+
+    private AudioSource _audioSource
+    {
+        get
+        {
+            if (_updatedSource == null) return _defaultSource;
+
+            return _updatedSource;
+        }
+    }
+
+    #region Use specific audio source for each vehicle
+    
+    public void SetAudioSource(AudioSource source)
+    {
+        if (source != null)
+        {
+            _updatedSource = source;
+            Debug.LogWarning("[WarningController] AudioSource is updated.");
+        }
+    }
+
+    #endregion
 
     #region Conditions
 
@@ -105,8 +130,8 @@ public class WarningController : MonoBehaviour
         //
         // _cameraTransform = cam.transform;
 
-        _audioSource = gameObject.GetComponent<AudioSource>();
-        _audioSource.playOnAwake = false;
+        _defaultSource = gameObject.GetComponent<AudioSource>();
+        _defaultSource.playOnAwake = false;
 
 
         dialog.SetActive(false);

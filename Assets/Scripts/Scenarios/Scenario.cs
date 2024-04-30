@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Fusion;
+using JetBrains.Annotations;
 using Unity.VisualScripting;
 using VRC2.Utility;
 using VRC2.Conditions;
@@ -592,7 +593,7 @@ namespace VRC2.Scenarios
         {
             // show warning
             var msg = GetRightMessage(obj, scenariosManager.condition.Context, scenariosManager.condition.Amount);
-            ShowWarning(_name, obj, msg, delay);
+            ShowWarning(_name, obj, msg, delay, null);
             var name = Helper.GetIncidentCallbackName(ClsName, obj, ScenarioCallback.Start);
             print($"{_name} #{obj} {name}");
             Invoke(name, 0);
@@ -642,7 +643,7 @@ namespace VRC2.Scenarios
             sagatController.StopSAGAT();
         }
 
-        public void ShowWarning(string sname, int idx, string msg, float? delay)
+        public void ShowWarning(string sname, int idx, string msg, float? delay, [CanBeNull] AudioSource _source)
         {
             if (msg == "")
             {
@@ -652,14 +653,16 @@ namespace VRC2.Scenarios
             }
 
             print($"Show warning: {msg}");
+            // update source
+            warningController.SetAudioSource(_source);
             warningController.Show("Warning", sname, idx, msg, delay);
         }
 
-        public void ShowWarning(int idx)
+        public void ShowWarning(int idx, [CanBeNull] AudioSource _source)
         {
             var msg = GetRightMessage(idx, scenariosManager.condition.Context, scenariosManager.condition.Amount);
             var wdelay = GetIncident(idx).WDelay;
-            ShowWarning(_name, idx, msg, wdelay);
+            ShowWarning(_name, idx, msg, wdelay, _source);
         }
 
         public void HideWarning()
