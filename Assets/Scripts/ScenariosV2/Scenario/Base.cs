@@ -824,6 +824,11 @@ namespace VRC2.ScenariosV2.Scenario
             var myClassType = Type.GetType(clsName);
 
             taskBase = (TaskBase)FindObjectOfType(myClassType);
+
+            if (taskBase == null)
+            {
+                Debug.LogError($"[ScenarioV2-Base] Failed to load task: {clsName}");
+            }
         }
 
         /// <summary>
