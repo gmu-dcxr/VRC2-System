@@ -2,6 +2,7 @@
 using UnityEngine;
 using VRC2.Hack;
 using VRC2.Pipe;
+using VRC2.ScenariosV2.Tool;
 
 namespace VRC2.Pipe
 {
@@ -9,18 +10,18 @@ namespace VRC2.Pipe
     {
         public GameObject hint;
 
-        private bool positioned = false;
+        [ReadOnly] public bool positioned = false;
 
         // whether to show it, the right part of the connected pipe will be set to false
-        [HideInInspector] public bool CanShow = true;
+        [ReadOnly] public bool CanShow = true;
 
         private PipeManipulation _pipeManipulation;
         private PipesContainerManager _pipesContainerManager;
 
         // show it only when it's on the wall
-        [HideInInspector] public bool OnTheWall;
+        [ReadOnly] public bool OnTheWall;
 
-        [HideInInspector] public bool Clamped = false;
+        [ReadOnly] public bool Clamped = false;
 
         private MeshRenderer _meshRenderer;
 
