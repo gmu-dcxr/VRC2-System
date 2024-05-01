@@ -605,9 +605,13 @@ namespace VRC2.Events
             PipeHelper.DisableInteraction(cip);
             PipeHelper.DisableInteraction(oip);
             PipeHelper.DisableInteraction(parentObj);
-            
-            // disable glue hint in cip
-            cip.GetComponent<GlueHintManager>().HideHint();
+
+            // cip might be a container
+            if (cip.TryGetComponent<GlueHintManager>(out GlueHintManager manger))
+            {
+                // disable glue hint in cip
+                manger.HideHint();
+            }
 
             cip.transform.parent = parentObj.transform;
             oip.transform.parent = parentObj.transform;
@@ -652,6 +656,11 @@ namespace VRC2.Events
 
                     var cipt = cip.transform;
                     var oipt = oip.transform;
+
+                    print(
+                        $"local cip: {cipt.localPosition.ToString("f5")} {cipt.localRotation.eulerAngles.ToString("f5")}");
+                    print(
+                        $"local oip: {oipt.localPosition.ToString("f5")} {oipt.localRotation.eulerAngles.ToString("f5")}");
 
                     RPC_SendMessage(cid, oid, pid,
                         cipt.localPosition, cipt.localRotation,
