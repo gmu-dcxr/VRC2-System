@@ -20,13 +20,13 @@ namespace VRC2.Task
     {
         [Header("Filename")] [Tooltip("Filename under Assets/Conf, e.g. Task/Training.yml")]
         public string filename;
-
-        // TODO: refactor based on the task name
-        [Space(30)] [Header("Instruction Picture")]
-        public string folder;
-
-        public string sheetRule;
-        public string sheetPipe;
+        
+        // Use Task yml file to load files
+        // [Space(30)] [Header("Instruction Picture")]
+        // public string folder;
+        //
+        // public string sheetRule;
+        // public string sheetPipe;
 
         #region Instruction related components
 
@@ -298,7 +298,7 @@ namespace VRC2.Task
         {
             // sheet rule is deprecated. Always use sheet pipe
 
-            imageAsTexture.UpdateFolderFilename(folder, sheetPipe);
+            imageAsTexture.UpdateFolderFilename(curTask.folder, curTask.image);
             // if (rule)
             // {
             //     // set sheet_rule picture
