@@ -720,7 +720,14 @@ namespace VRC2.ScenariosV2.Scenario
             var count = parsedIncidents.Count;
             for (var i = 0; i < count; i++)
             {
-                if (GUILayout.Button($"Start {i + 1}"))
+                var text = $"Start {i + 1}";
+                // add change order mark
+                if (changeOrderIndices.Contains(i))
+                {
+                    text += " (C)";
+                }
+
+                if (GUILayout.Button(text))
                 {
                     // change order
                     if (changeOrderIndices.Contains(i))
