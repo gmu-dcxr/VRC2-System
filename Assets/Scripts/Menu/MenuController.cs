@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Oculus.Interaction;
 using TMPro;
 using UnityEngine;
@@ -540,6 +541,21 @@ namespace VRC2.Menu
                 var items = safetyManagerMenu.GetSubMenuNames(cur);
                 InitializeMenuText(items, leaveUnusedBlank);
                 InitializeUIMenuInitializerAction(menu, items.Count);
+            }
+
+            if (cur.action != null && cur.action.Count > 1)
+            {
+                print($"Customized action for {text}");
+                // customized action
+                var cls = cur.action[0];
+                var method = cur.action[1];
+
+                // invoke using reflection
+                var myClassType = Type.GetType(cls);
+                var obj = FindObjectOfType(myClassType);
+
+                var mi = myClassType.GetMethod(method);
+                mi.Invoke(obj, null);
             }
         }
 

@@ -14,6 +14,7 @@ namespace VRC2.Menu
             public int level { get; set; }
             public string text { get; set; }
             [CanBeNull] public string desc { get; set; }
+            [CanBeNull] public List<string> action { get; set; }
             [CanBeNull] public List<Menu> menu { get; set; }
         }
 
