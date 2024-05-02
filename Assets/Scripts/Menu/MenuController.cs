@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Oculus.Interaction;
 using TMPro;
 using UnityEngine;
 using VRC2.Record;
+using VRC2.ScenariosV2.Tool;
 
 namespace VRC2.Menu
 {
@@ -239,8 +241,17 @@ namespace VRC2.Menu
 
         private List<MenuItem> _initializedMenuItems = null;
 
+        private DateTime unixStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         [Space(30)] [Header("Runtime Menus")] public UIMenuInitializer safetyManagerMenu;
         public UIMenuInitializer supervisorMenu;
+
+        [Space(30)] [Header("Report Log")] [ReadOnly]
+        public string folder = "../Report";
+
+        [ReadOnly] public string fullFolder;
+        [ReadOnly] public string filename;
+        [ReadOnly] public string fullpath;
 
         // Start is called before the first frame update
         void Start()
@@ -248,6 +259,17 @@ namespace VRC2.Menu
             _menuInitializer = new MenuInitializer();
 
             _menuHandler = gameObject.GetComponent<PipeMenuHandler>();
+
+            InitReportLog();
+        }
+
+        void InitReportLog()
+        {
+            fullFolder = Directory.CreateDirectory(Path.Combine(Application.dataPath, folder)).FullName;
+            filename = $"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.log";
+            fullpath = Path.Combine(fullFolder, filename);
+
+            print($"[Report] Use Log: {fullpath}");
         }
 
         // Update is called once per frame
@@ -534,7 +556,7 @@ namespace VRC2.Menu
             if (menu.IsLeaf(cur))
             {
                 print($"Leaf menu: {cur.desc}");
-                // TODO: write to log
+                WriteLog(menu, cur);
             }
             else
             {
@@ -568,6 +590,27 @@ namespace VRC2.Menu
 
             RevertMainMenuText();
             InitializeMenuAction();
+        }
+
+        void WriteLog(UIMenuInitializer menu, VRC2.Menu.YamlParser.Menu cur)
+        {
+            // time in real
+            var realTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            // Get the time in seconds since the start of the game
+            float timeAfterStart = Time.time;
+            // Convert the UTC time to milliseconds since the Unix epoch (January 1, 1970)
+            long unixTime = (long)(DateTime.UtcNow - unixStart).TotalMilliseconds;
+
+            var stack = menu.MenuStackToString(" - ");
+
+            using (TextWriter writer = File.AppendText(fullpath))
+            {
+                // write text
+                // time, time, time, stack, desc
+                writer.WriteLine($"{realTime},{timeAfterStart},{unixTime}," +
+                                 $"{stack}," +
+                                 $"{cur.desc}");
+            }
         }
 
         #endregion

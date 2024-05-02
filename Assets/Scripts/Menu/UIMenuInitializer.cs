@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using VRC2.Utility;
 using VRC2.Scenarios;
@@ -13,8 +14,7 @@ namespace VRC2.Menu
     {
         #region Input file
 
-        [Header("Filename")] 
-        [Tooltip("The full name under Conf/, e.g., Menu/a.yml")]
+        [Header("Filename")] [Tooltip("The full name under Conf/, e.g., Menu/a.yml")]
         public string filename;
 
         #endregion
@@ -40,7 +40,7 @@ namespace VRC2.Menu
         private void Start()
         {
             ParseYamlFile(filename);
-            
+
             // initialize menustack
             menuStack = new List<UIMenu>();
             menuStack.Add(rootMenu);
@@ -53,6 +53,16 @@ namespace VRC2.Menu
             // sub menu
             var submenu = GetSubMenuByName(header, name);
             menuStack.Add(submenu);
+        }
+
+        public String MenuStackToString(String sep)
+        {
+            if (menuStack == null || menuStack.Count == 0)
+            {
+                return null;
+            }
+
+            return String.Join(sep, menuStack.Select(x => x.text));
         }
 
         public UIMenu GetCurrentMenu()
@@ -106,7 +116,7 @@ namespace VRC2.Menu
             {
                 names.Add(subs[i].text);
             }
-            
+
             // add Back at last
             names.Add(BackString);
 
