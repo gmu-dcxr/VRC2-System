@@ -1,19 +1,20 @@
 ﻿using System;
 using System.IO;
 using UnityEngine;
+using VRC2.ScenariosV2.Tool;
 
 namespace VRC2
 {
     public class EyeTrackingLogger : MonoBehaviour
     {
-        public string folder = "../Eyetracking";
+        [ReadOnly] public string folder = "../Eyetracking";
 
-        private string fullFolder;
-        private string filename;
-        private string fullpath;
+        [ReadOnly] public string fullFolder;
+        [ReadOnly] public string filename;
+        [ReadOnly] public string fullpath;
 
         private DateTime unixStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        
+
         private void Start()
         {
             fullFolder = Directory.CreateDirectory(Path.Combine(Application.dataPath, folder)).FullName;

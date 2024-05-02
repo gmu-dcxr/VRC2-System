@@ -35,7 +35,8 @@ namespace VRC2.ScenariosV2.Scenario
             _id = 9;
 
             // backup
-            (backupFolder, backupFilename) = instructionCallBack.BackupInstruction();
+            (backupFolder, backupFilename) = taskBase.BackupImageInConfig();
+            Debug.LogError($"[Scenario9] backup: {backupFolder} {backupFilename}");
         }
 
         public override void OnScenarioStart()
@@ -52,12 +53,14 @@ namespace VRC2.ScenariosV2.Scenario
 
         public void SetIncorrectInstruction()
         {
-            // backup first
+            // update instruction
+            Debug.LogError($"[Scenario9] SetIncorrectInstruction ({folder}, {filename})");
             instructionCallBack.UpdateInstruction(folder, filename);
         }
-
-        // TODO: trigger after reporting
+        
         // After they report it to the supervisor(Task>Incorrect instructions), they will receive a correct plan.
+        // This method is invoked via reflection.
+        // It's defined in `SupervisorMenu.yml` L31 `action: ["VRC2.ScenariosV2.Scenario.Scenario9", "RestoreInstruction"] # [class name (including namespace), method]`
         public void RestoreInstruction()
         {
             instructionCallBack.UpdateInstruction(backupFolder, backupFilename);

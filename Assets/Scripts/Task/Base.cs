@@ -81,6 +81,20 @@ namespace VRC2.Task
 
         private readonly string ruleSeparator = " -> ";
 
+        #region Backup information from configuration file
+
+        public (string, string) BackupImageInConfig()
+        {
+            if (task == null)
+            {
+                return (null, null);
+            }
+
+            return (task.folder, task.image);
+        }
+
+        #endregion
+
 
         public virtual string GetFilename()
         {
