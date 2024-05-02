@@ -42,7 +42,7 @@ namespace VRC2
         private float heightThreshold = 0.5f;
         private float angleThrehold = 3f;
         private float distanceThrehold = 10.0f;
-        private float distanceThreholdSmall = 2f;
+        private float distanceThreholdSmall = 3f;
 
         // actions
 
