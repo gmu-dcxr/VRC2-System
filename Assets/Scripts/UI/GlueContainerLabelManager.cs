@@ -20,7 +20,7 @@ namespace VRC2
         {
             // update the label
             var value = GlobalConstants.currentGlueCapacitiy * 100;
-            _textMeshPro.text = $"Glue: {value.ToString("f2")}%";
+            _textMeshPro.text = $"{value.ToString("f0")}%";
         }
     }
 }
