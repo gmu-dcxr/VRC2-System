@@ -11,6 +11,7 @@ using UnityEngine.Serialization;
 using VRC2.Events;
 using VRC2.Pipe;
 using VRC2.ScenariosV2.Tool;
+using VRC2.Utility;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using AgentHelper = VRC2.Agent.AgentHelper;
 using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
@@ -143,6 +144,12 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region Storage place manager
+
+        [Header("Storage Manager")] public PipeStorageManager storageManager;
+
+        #endregion
+
         #region Compensate rotation when preparing pickup
 
         private Vector3 GetCompensateForward(Transform t)
@@ -228,6 +235,9 @@ namespace VRC2.Animations
                 // update box colliders
                 PipeHelper.UpdateBoxColliders(pipe, true);
             }
+            
+            // enable rigidbody of pipes on storage place
+            storageManager.SetRigidBody(true);
         }
 
         private void ReadyToPickup()
@@ -884,6 +894,8 @@ namespace VRC2.Animations
 
         public void Execute()
         {
+            // disable rigidbody of pipes on storage place
+            storageManager.SetRigidBody(false);
             PickUp();
         }
 
