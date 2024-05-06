@@ -19,7 +19,8 @@ namespace VRC2.Events
     {
         [Header("Settings")] public NavMeshAgent experimenter;
         public GameObject experimenterBase; // where is the experimenter position
-        public GameObject clampbox; // clamp box to store the box
+        public GameObject stopPoint; // experimenter to stop
+        public GameObject dropPoint; // clamp to drop from
         public int amount = 1; // how many to refill for each size of clamp
 
         [Header("Clamp Prefabs")] public List<NetworkPrefabRef> clampsTemplate;
@@ -53,7 +54,7 @@ namespace VRC2.Events
             Debug.Log("MoveToClampBox");
             animator.SetBool(animationString, true);
             _routine = ExperimenterRoutine.Go;
-            experimenter.SetDestination(clampbox.transform.position);
+            experimenter.SetDestination(stopPoint.transform.position);
         }
 
         void RefillClamp()
@@ -64,7 +65,7 @@ namespace VRC2.Events
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
 
-            var pos = clampbox.transform.position;
+            var pos = dropPoint.transform.position;
 
             for (int i = 0; i < amount; i++)
             {
