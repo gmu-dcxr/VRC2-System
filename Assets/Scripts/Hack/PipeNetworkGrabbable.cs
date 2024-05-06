@@ -3,6 +3,7 @@ using Oculus.Interaction;
 using UnityEngine;
 
 using VRC2.Events;
+using VRC2.Network;
 using VRC2.Pipe;
 
 namespace VRC2.Hack
@@ -24,6 +25,14 @@ namespace VRC2.Hack
             OneGrabTransformer.Initialize(this);
 
             this.EndStart(ref _started);
+        }
+        
+        // sync last spawned pipe via rpc
+        void UpdateLastSpawnedPipe(GameObject go)
+        {
+            var message = FindObjectOfType<RPCMessager>();
+            var no = go.GetComponent<NetworkObject>();
+            message.UpdateLastSpawnedPipe(no.Id);
         }
 
         public override bool NetworkedPointerEvent(PointerEvent evt)
@@ -63,6 +72,7 @@ namespace VRC2.Hack
 
                     // update last spawned pipe to enable it to be able to be picked up by the robot dog
                     GlobalConstants.lastSpawnedPipe = gameObject;
+                    UpdateLastSpawnedPipe(gameObject);
                     Debug.LogWarning("Last spawned pipe was updated.");
 
                     EndTransform();
