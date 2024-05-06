@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
 using VRC2.Events;
+using VRC2.Network;
 using VRC2.Pipe;
 using VRC2.ScenariosV2.Tool;
 using VRC2.Utility;
@@ -118,10 +119,10 @@ namespace VRC2.Animations
         public float strafeThreshold = 0.3f;
 
         // rotate speed for pickup
-        [ReadOnly]public float rotateSpeed = 1f;
+        [ReadOnly] public float rotateSpeed = 1f;
 
         // rotate speed for moving forward
-        [ReadOnly]public float moveRotateSpeed = 5f;
+        [ReadOnly] public float moveRotateSpeed = 5f;
 
         //
         private Transform body
@@ -173,6 +174,13 @@ namespace VRC2.Animations
 
         #endregion
 
+        #region RPC related
+
+
+        private RPCMessager _rpcMessager;
+
+        #endregion
+
         private void Start()
         {
             stage = RobotStage.Default;
@@ -190,6 +198,7 @@ namespace VRC2.Animations
             armSound = robotArmRoot.GetComponent<AudioSource>();
             dogSound = robotDog.GetComponent<AudioSource>();
 
+            _rpcMessager = FindObjectOfType<RPCMessager>();
         }
 
         private void ReadyToDropoff()
@@ -235,7 +244,7 @@ namespace VRC2.Animations
                 // update box colliders
                 PipeHelper.UpdateBoxColliders(pipe, true);
             }
-            
+
             // enable rigidbody of pipes on storage place
             storageManager.SetRigidBody(true);
         }
@@ -929,6 +938,11 @@ namespace VRC2.Animations
             foreach (var obj in objs)
             {
                 processedPipes.Add(obj);
+
+                var p = obj;
+
+                PipeHelper.BeforeMove(ref p);
+                PipeHelper.UpdateBoxColliders(p, false);
             }
 
             var count = objs.Count;

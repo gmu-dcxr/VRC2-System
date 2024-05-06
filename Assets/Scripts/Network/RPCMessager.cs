@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using UnityEngine;
+using VRC2.Pipe;
 
 namespace VRC2.Network
 {
@@ -9,6 +10,11 @@ namespace VRC2.Network
         public void UpdateLastSpawnedPipe(NetworkId nid)
         {
             RPC_UpdateLastSpawnedPipe(nid);
+        }
+
+        public void SetPipeRigidBody(NetworkId nid, bool enable)
+        {
+            RPC_SetPipeRigidBody(nid, enable);
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
@@ -25,6 +31,22 @@ namespace VRC2.Network
                 print("remote");
                 var go = Runner.FindObject(nid).gameObject;
                 GlobalConstants.lastSpawnedPipe = go;
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SetPipeRigidBody(NetworkId nid, bool enable, RpcInfo info = default)
+        {
+            print($"RPC_SetPipeRigidBody: {nid}");
+            var go = Runner.FindObject(nid).gameObject;
+
+            if (enable)
+            {
+                PipeHelper.AfterMove(ref go);
+            }
+            else
+            {
+                PipeHelper.BeforeMove(ref go);
             }
         }
     }
