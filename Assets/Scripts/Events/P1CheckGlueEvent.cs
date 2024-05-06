@@ -10,7 +10,7 @@ namespace VRC2.Events
     {
         [Header("Settings")] public NavMeshAgent experimenter;
         public GameObject experimenterBase; // where is the experimenter position
-        public GameObject gluebox; // glue box to store the glue
+        public GameObject stopPoint; // experimenter to stop
 
         [Header("Animation")] public string animationString = "Walking";
         private Animator animator;
@@ -32,7 +32,7 @@ namespace VRC2.Events
             Debug.Log("MoveToGlueBox");
             animator.SetBool(animationString, true);
             _routine = ExperimenterRoutine.Go;
-            experimenter.SetDestination(gluebox.transform.position);
+            experimenter.SetDestination(stopPoint.transform.position);
         }
 
         void RefillGlue()
