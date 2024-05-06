@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using VRC2.Animations;
 using VRC2.Pipe;
 
 namespace VRC2.Utility
 {
-    public class PipeStorageManager : MonoBehaviour
+    public class PipeStorageManager : NetworkBehaviour
     {
         [Header("Storage")] public Transform storageRoot;
 
@@ -22,9 +23,9 @@ namespace VRC2.Utility
 
             SetAsRoot();
 
-            InitMeshColliders();
+            // InitMeshColliders();
 
-            DisableRigidBody();
+            // DisableRigidBody();
             // disable
             // DisableMeshColliders();
         }
@@ -92,6 +93,22 @@ namespace VRC2.Utility
             }
         }
 
+        void SetRigidBodyImpl(bool enable)
+        {
+            foreach (var pipe in pipes)
+            {
+                var p = pipe;
+                if (enable)
+                {
+                    PipeHelper.AfterMove(ref p);
+                }
+                else
+                {
+                    PipeHelper.BeforeMove(ref p);
+                }
+            }
+        }
+
         public void EnableMeshColliders()
         {
             SetMeshColliders(true);
@@ -100,6 +117,22 @@ namespace VRC2.Utility
         public void DisableMeshColliders()
         {
             SetMeshColliders(false);
+        }
+
+        #endregion
+
+        #region RPC events
+
+        public void SetRigidBody(bool enable)
+        {
+            RPC_SetRigidBody(enable);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SetRigidBody(bool enable, RpcInfo info = default)
+        {
+            print($"RPC_SetRigidBody: {enable}");
+            SetRigidBodyImpl(enable);
         }
 
         #endregion
