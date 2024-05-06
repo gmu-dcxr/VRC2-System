@@ -98,6 +98,8 @@ namespace VRC2.Utility
             foreach (var pipe in pipes)
             {
                 var p = pipe;
+                // destroyed pipe
+                if(p == null) continue;
                 if (enable)
                 {
                     PipeHelper.AfterMove(ref p);
