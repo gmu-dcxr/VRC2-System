@@ -1,27 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using VRC2.Animations;
+using VRC2.Pipe;
 
 namespace VRC2.Utility
 {
     public class PipeStorageManager : MonoBehaviour
     {
-        public Transform storageRoot;
+        [Header("Storage")] public Transform storageRoot;
 
         private List<GameObject> pipes;
 
         private List<MeshCollider> _meshColliders;
 
+        [Header("RobotDog Debug")] public GameObject debugPipe;
+
         private void Start()
         {
             InitPipes();
-            
+
             SetAsRoot();
-            
+
             InitMeshColliders();
-            
+
+            DisableRigidBody();
             // disable
-            DisableMeshColliders();
+            // DisableMeshColliders();
         }
 
         #region Pipe management
@@ -67,7 +72,7 @@ namespace VRC2.Utility
                 pipe.transform.parent = storageRoot;
             }
         }
-        
+
         // remove mesh colliders to let robot dog pickup
 
         void SetMeshColliders(bool enable)
@@ -75,6 +80,15 @@ namespace VRC2.Utility
             foreach (var mc in _meshColliders)
             {
                 mc.enabled = enable;
+            }
+        }
+
+        void DisableRigidBody()
+        {
+            foreach (var pipe in pipes)
+            {
+                var p = pipe;
+                PipeHelper.BeforeMove(ref p);
             }
         }
 
@@ -86,6 +100,33 @@ namespace VRC2.Utility
         public void DisableMeshColliders()
         {
             SetMeshColliders(false);
+        }
+
+        #endregion
+
+        #region Debug
+
+        void DebugRobotDog()
+        {
+            var go = GameObject.Find(GlobalConstants.BendCutRobot);
+            var rdc = go.GetComponent<RobotDogController>();
+            // update current pipe
+            rdc.currentPipe = debugPipe;
+
+            rdc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 1.0f, 1.0f, 2,
+                PipeConstants.PipeDiameter.Diameter_1, 3);
+            rdc.Execute();
+        }
+
+        private void OnGUI()
+        {
+            GUILayout.BeginVertical();
+            if (GUILayout.Button("RobotDog"))
+            {
+                DebugRobotDog();
+            }
+
+            GUILayout.EndVertical();
         }
 
         #endregion

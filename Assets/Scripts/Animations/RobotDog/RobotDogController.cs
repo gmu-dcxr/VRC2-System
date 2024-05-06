@@ -97,7 +97,7 @@ namespace VRC2.Animations
         #endregion
 
         #region Find available pipe
-        
+
         // TODO: find pipe in the storage place
         public GameObject FindAvailablePipe()
         {
@@ -110,7 +110,10 @@ namespace VRC2.Animations
 
         [Space(30)] [Header("Speed")] public float moveSpeed = 1f;
 
-        public float strafeSpeed = 0.1f;
+        public float strafeSpeed = 0.5f;
+
+        // To make robot is just above the pipe, original is 0.15
+        public float strafeThreshold = 0.3f;
 
         public float rotateSpeed = 0.5f;
 
@@ -201,7 +204,7 @@ namespace VRC2.Animations
 
                 // spawn connectors
                 SpawnConnectors(pos);
-                
+
                 // clear for next call
                 processedPipes.Clear();
             }
@@ -326,8 +329,7 @@ namespace VRC2.Animations
         bool StrafeRobot()
         {
             var distance = GetDistance(targetTransform);
-            // 0.15 is to make robot is just above the pipe
-            if (distance < 0.15f)
+            if (distance < strafeThreshold)
             {
                 return true;
             }
@@ -587,7 +589,7 @@ namespace VRC2.Animations
                             dogAnimator.enabled = false;
                             armAnimator.enabled = true;
 
-                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                            UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                             StartPickupAnimation();
                             dogSound.loop = false;
@@ -607,7 +609,7 @@ namespace VRC2.Animations
                             armAnimator.enabled = false;
                             dogAnimator.enabled = true;
 
-                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                            UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                             turn = false;
                             walk = false;
@@ -642,7 +644,7 @@ namespace VRC2.Animations
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
 
-                        RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                        UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                         StartDropoffAnimation();
                         dogSound.loop = false;
@@ -664,7 +666,7 @@ namespace VRC2.Animations
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
 
-                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                            UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                             turn = false;
                             walk = false;
@@ -708,7 +710,7 @@ namespace VRC2.Animations
                         dogAnimator.enabled = false;
                         armAnimator.enabled = true;
 
-                        RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                        UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
 
                         turn = false;
                         walk = false;
@@ -726,7 +728,7 @@ namespace VRC2.Animations
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
 
-                            RPC_UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
+                            UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
                             // MoveToTarget();
                             //reset = false;
                             if (targetTransform == standbyPoint)
@@ -1031,6 +1033,14 @@ namespace VRC2.Animations
                    armAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
         }
 
+        void UpdateAnimatorStatus(bool dog, bool arm)
+        {
+            if (Runner != null && Runner.IsRunning)
+            {
+                RPC_UpdateAnimatorStatus(dog, arm);
+            }
+        }
+
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         private void RPC_UpdateAnimatorStatus(bool dog, bool arm, RpcInfo info = default)
@@ -1065,7 +1075,17 @@ namespace VRC2.Animations
             for (int i = 0; i < camount; i++)
             {
                 spawnedPipe = runner.Spawn(prefab, position, rot, localPlayer);
+                RPC_UpdateConnectorKinematic(spawnedPipe.Id);
             }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        void RPC_UpdateConnectorKinematic(NetworkId cid, RpcInfo info = default)
+        {
+            print($"Sync connector kinematic status: {cid}");
+            var cip = Runner.FindObject(cid).gameObject;
+            var rb = cip.GetComponent<Rigidbody>();
+            rb.isKinematic = false;
         }
 
         #endregion
