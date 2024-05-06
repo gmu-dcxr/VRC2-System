@@ -112,6 +112,7 @@ namespace VRC2.Utility
             var rdc = go.GetComponent<RobotDogController>();
             // update current pipe
             rdc.currentPipe = debugPipe;
+            GlobalConstants.lastSpawnedPipe = debugPipe;
 
             rdc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 1.0f, 1.0f, 2,
                 PipeConstants.PipeDiameter.Diameter_1, 3);

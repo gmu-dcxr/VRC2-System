@@ -10,6 +10,7 @@ using UnityEngine.AI;
 using UnityEngine.Serialization;
 using VRC2.Events;
 using VRC2.Pipe;
+using VRC2.ScenariosV2.Tool;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using AgentHelper = VRC2.Agent.AgentHelper;
 using PipeParameters = VRC2.Pipe.PipeConstants.PipeParameters;
@@ -115,7 +116,11 @@ namespace VRC2.Animations
         // To make robot is just above the pipe, original is 0.15
         public float strafeThreshold = 0.3f;
 
-        public float rotateSpeed = 0.5f;
+        // rotate speed for pickup
+        [ReadOnly]public float rotateSpeed = 1f;
+
+        // rotate speed for moving forward
+        [ReadOnly]public float moveRotateSpeed = 5f;
 
         //
         private Transform body
@@ -348,6 +353,16 @@ namespace VRC2.Animations
                 actions.Idle1();
                 turn = false;
 
+                // fix rotation
+                var pos1 = body.position;
+                var pos2 = targetTransform.position;
+                pos1.y = 0;
+                pos2.y = 0;
+
+                // update directly to speed up rotating
+                var targetRot = Quaternion.LookRotation(pos2 - pos1, body.transform.up);
+                body.transform.rotation = targetRot;
+
                 // return true is turn is done
                 return true;
             }
@@ -360,28 +375,20 @@ namespace VRC2.Animations
                 dogSound.Play();
             }
 
-            var pos1 = body.position;
-            var pos2 = targetTransform.position;
-            pos1.y = 0;
-            pos2.y = 0;
+            var speed = moveRotateSpeed;
 
-            // update directly to speed up rotating
-            var targetRot = Quaternion.LookRotation(pos2 - pos1, body.transform.up);
-
-            var rb = body.transform.rotation;
-
-            if (diff > 15 * angleThreshold)
+            if (diff < 5 * angleThreshold)
             {
-                targetRot = Quaternion.RotateTowards(rb, targetRot, Time.deltaTime * rotateSpeed);
+                // use small speed
+                speed = rotateSpeed;
             }
 
-            body.transform.rotation = targetRot;
+            body.transform.Rotate(Vector3.up, speed, Space.World);
 
             return false;
-
         }
 
-        bool TurnLeftUntil(Vector3 angle, float yoffset)
+        bool TurnLeftUntil()
         {
             if (!turn)
             {
@@ -391,11 +398,7 @@ namespace VRC2.Animations
                 dogSound.Play();
             }
 
-            // add y offset
-            angle.y += yoffset;
-            var rot = Quaternion.Euler(angle);
-            var newRot = Quaternion.RotateTowards(body.transform.rotation, rot, Time.deltaTime * rotateSpeed);
-            body.transform.rotation = newRot;
+            body.transform.Rotate(Vector3.up, rotateSpeed, Space.World);
 
             var diff = Vector3.SignedAngle(body.transform.forward, targetTransform.forward, Vector3.up);
 
@@ -559,9 +562,9 @@ namespace VRC2.Animations
 
                 case RobotStage.PickupRotate:
                     print("prepare");
-                    var f1 = GetCompensateForward(targetGameObject.transform);
+                    // var f1 = GetCompensateForward(targetGameObject.transform);
 
-                    if (TurnLeftUntil(f1, rotationOffset))
+                    if (TurnLeftUntil())
                     {
                         print("TurnLeftUntil is done");
                         strafeDirection = StrafeDirection.Unknown;
