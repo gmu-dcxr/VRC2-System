@@ -136,13 +136,12 @@ namespace VRC2
 
         public void Show()
         {
-            // reset 
-            OnReset();
-
             rootCanvas.SetActive(true);
             GlobalConstants.SetLaserPointer(true);
             reticleLeft.SetActive(false);
             reticleRight.SetActive(false);
+            // reset after shown
+            OnReset();
         }
 
         public void Hide()
