@@ -46,6 +46,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         private GameObject currentCargo;
 
+        private Vector3 originalGoodPosition;
+        private Vector3 originalGoodRotation;
+
         public Transform startPoint;
         public Transform dropoffPoint;
 
@@ -73,6 +76,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             base.Start();
 
             _stage = CraneTruckStage.Stop;
+
+            originalGoodPosition = good.transform.position;
 
             truckTransform = BackupableTransform.Clone(craneTruck);
             cargoTransform = BackupableTransform.Clone(cargo);
@@ -261,6 +266,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             // get incident
             var incident = GetIncident(2);
             var warning = incident.Warning;
+            
+            good.transform.position = originalGoodPosition;
 
             anim.SetBool("Forward", false);
             anim.SetBool("Reverse", true);
