@@ -425,6 +425,17 @@ namespace VRC2.ScenariosV2.Vehicle
             // update audio source
             UpdateAudioSource();
             warningController.PlayAudioClip(filename, null);
+            ShowVisualOnly(normal, key);
+        }
+
+        // this is to show the warning text defined in the vehicle configuration files.
+        public void ShowVisualOnly(bool normal, int key)
+        {
+            // this will check the warning format and do nothing if it's an audio-based only scenario.
+            var title = $"Warning";
+            var content = GetIncident(key, normal).warning;
+            print($"Visual Warning: {content}");
+            warningController.ShowVisualOnly(title, content);
         }
 
         #endregion
