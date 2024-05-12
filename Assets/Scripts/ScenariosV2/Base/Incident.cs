@@ -62,6 +62,9 @@ namespace VRC2.ScenariosV2.Base
         [ReadOnly] public string callback;
         // [ReadOnly] public int scenarioIdx; // index defined in the scenario
         // [ReadOnly] public string scenarioTime; // time defined in the scenario
+        
+        // warning text
+        public string warning => rawWarning;
 
         #region Index time dictionary
 

@@ -522,7 +522,6 @@ namespace VRC2.Scenarios
 
         public virtual void InitFromFile()
         {
-            print("INNIT");
             var filename = $"{ClsName}.yml";
             var path = Helper.GetConfigureFile(Application.dataPath, filename);
             var text = System.IO.File.ReadAllText(path);
