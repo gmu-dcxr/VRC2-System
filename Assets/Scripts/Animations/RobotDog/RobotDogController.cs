@@ -884,12 +884,20 @@ namespace VRC2.Animations
             parameters.angle = angle;
             parameters.a = a;
             parameters.b = b;
+
             // color and type and from global constants
             // get color and type
-            var pm = currentPipe.GetComponent<PipeManipulation>();
-            parameters.color = pm.pipeColor;
-            parameters.type = pm.pipeType;
-            parameters.diameter = pm.diameter;
+            if (currentPipe != null) // null will happen if only connectors are ordered
+            {
+                var pm = currentPipe.GetComponent<PipeManipulation>();
+                if (pm == null)
+                {
+                    Debug.LogError("[RobotDogController] PipeManipulation is null.");
+                }
+                parameters.color = pm.pipeColor;
+                parameters.type = pm.pipeType;
+                parameters.diameter = pm.diameter;
+            }
         }
 
         public void InitParameters(PipeBendAngles angle, float a, float b, int amount, PipeDiameter cdiamater,
