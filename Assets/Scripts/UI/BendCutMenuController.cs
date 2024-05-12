@@ -259,7 +259,8 @@ namespace VRC2
             {
             }
 
-            return -1;
+            // default is 0
+            return 0;
         }
 
         int GetConnectorAmount()
@@ -271,8 +272,8 @@ namespace VRC2
             catch (Exception e)
             {
             }
-
-            return -1;
+            // default is 0
+            return 0;
         }
 
         void OnConfirmNew()

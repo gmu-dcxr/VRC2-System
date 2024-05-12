@@ -99,7 +99,7 @@ namespace VRC2.Utility
             {
                 var p = pipe;
                 // destroyed pipe
-                if(p == null) continue;
+                if (p == null) continue;
                 if (enable)
                 {
                     PipeHelper.AfterMove(ref p);
@@ -141,7 +141,7 @@ namespace VRC2.Utility
 
         #region Debug
 
-        void DebugRobotDog()
+        void DebugRobotDog(int pcount, int ccount)
         {
             var go = GameObject.Find(GlobalConstants.BendCutRobot);
             var rdc = go.GetComponent<RobotDogController>();
@@ -149,17 +149,32 @@ namespace VRC2.Utility
             rdc.currentPipe = debugPipe;
             GlobalConstants.lastSpawnedPipe = debugPipe;
 
-            rdc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 1.0f, 1.0f, 2,
-                PipeConstants.PipeDiameter.Diameter_1, 3);
+            rdc.InitParameters(PipeConstants.PipeBendAngles.Angle_0, 1.0f, 1.0f, pcount,
+                PipeConstants.PipeDiameter.Diameter_1, ccount);
             rdc.Execute();
         }
 
         private void OnGUI()
         {
             GUILayout.BeginVertical();
-            if (GUILayout.Button("RobotDog"))
+            if (GUILayout.Button("RobotDog(2+3)"))
             {
-                DebugRobotDog();
+                DebugRobotDog(2, 3);
+            }
+
+            if (GUILayout.Button("RobotDog(2+0)"))
+            {
+                DebugRobotDog(2, 0);
+            }
+
+            if (GUILayout.Button("RobotDog(0+3)"))
+            {
+                DebugRobotDog(0, 3);
+            }
+
+            if (GUILayout.Button("RobotDog(0+0)"))
+            {
+                DebugRobotDog(0, 0);
             }
 
             GUILayout.EndVertical();
