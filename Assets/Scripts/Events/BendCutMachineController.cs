@@ -17,7 +17,12 @@ namespace VRC2.Events
         public AudioSource audioSource;
 
         [Header("RobotDog")] public RobotDogController robotDog;
-        public float duration = 5.0f;
+
+        // time of waiting for the cutting
+        public float cutDuration = 5.0f;
+
+        // time before going to pickup the result
+        public float pickupDuration = 2.0f;
 
         [Header("Error")] public bool enableError = false;
 
@@ -62,10 +67,10 @@ namespace VRC2.Events
             RPC_SendMessage(_angle);
 
             // start timer
-            SetTimer(() => { SpawnPipe(amount); });
+            SetTimer(cutDuration, () => { SpawnPipe(amount); });
         }
 
-        void SetTimer(Action complete)
+        void SetTimer(float duration, Action complete)
         {
             if (_timer != null)
             {
@@ -86,7 +91,7 @@ namespace VRC2.Events
             List<Transform> ts = new List<Transform>();
 
             var (pos, rot) = robotDog.GetCurrentPipeTransform();
-            
+
             // destroy current pipe
             robotDog.DestroyCurrentPipe();
 
@@ -104,7 +109,7 @@ namespace VRC2.Events
             }
 
             // start a new timer to let robot deliver
-            SetTimer(() => { robotDog.PickupResult(objs, ts); });
+            SetTimer(pickupDuration, () => { robotDog.PickupResult(objs, ts); });
         }
 
         private void Update()
