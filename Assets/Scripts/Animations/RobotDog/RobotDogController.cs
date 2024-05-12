@@ -205,52 +205,66 @@ namespace VRC2.Animations
         {
             print("ReadyToDropoff");
 
-            if (processedPipes != null && processedPipes.Count > 0)
+            if (parameters.amount > 0)
             {
-                // new design
-                var pos = Vector3.zero; // for spawning connectors
-
-                foreach (var go in processedPipes)
+                // pipes are required
+                if (processedPipes != null && processedPipes.Count > 0)
                 {
-                    var pipe = go;
+                    // new design
+                    var pos = Vector3.zero; // for spawning connectors
+
+                    foreach (var go in processedPipes)
+                    {
+                        var pipe = go;
+                        pipe.transform.parent = null;
+
+                        // Add rigid body, etc.
+                        PipeHelper.AfterMove(ref pipe);
+                        // update box colliders
+                        PipeHelper.UpdateBoxColliders(pipe, true);
+
+                        pos = pipe.transform.position;
+                    }
+
+                    // spawn connectors
+                    SpawnConnectors(pos);
+
+                    // clear for next call
+                    processedPipes.Clear();
+                }
+                else
+                {
+                    var pipe = GlobalConstants.lastSpawnedPipe;
+
+                    // this will happen in Client side (p2)
+                    if (pipe == null) return;
+
+
                     pipe.transform.parent = null;
 
                     // Add rigid body, etc.
                     PipeHelper.AfterMove(ref pipe);
                     // update box colliders
                     PipeHelper.UpdateBoxColliders(pipe, true);
-
-                    pos = pipe.transform.position;
                 }
 
-                // spawn connectors
-                SpawnConnectors(pos);
-
-                // clear for next call
-                processedPipes.Clear();
+                // enable rigidbody of pipes on storage place
+                storageManager.SetRigidBody(true);
             }
             else
             {
-                var pipe = GlobalConstants.lastSpawnedPipe;
-
-                // this will happen in Client side (p2)
-                if (pipe == null) return;
-
-
-                pipe.transform.parent = null;
-
-                // Add rigid body, etc.
-                PipeHelper.AfterMove(ref pipe);
-                // update box colliders
-                PipeHelper.UpdateBoxColliders(pipe, true);
+                // only connectors are requested
+                // spawn connectors
+                SpawnConnectors(deliveryPoint.position);
             }
-
-            // enable rigidbody of pipes on storage place
-            storageManager.SetRigidBody(true);
+           
         }
 
         private void ReadyToPickup()
         {
+            // no pickup if no pipes are requested
+            if(parameters.amount <= 0) return;
+            
             print("ReadyToPickup");
 
             if (processedPipes != null && processedPipes.Count > 0)
@@ -901,11 +915,35 @@ namespace VRC2.Animations
             MoveToTarget();
         }
 
+        bool ValidateParameters()
+        {
+            return (parameters.amount > 0 || parameters.connectorAmount > 0) ;
+        }
+
         public void Execute()
         {
-            // disable rigidbody of pipes on storage place
-            storageManager.SetRigidBody(false);
-            PickUp();
+            // validate parameters first
+
+            if (!ValidateParameters())
+            {
+                Debug.LogError("[RobotDogController] Parameters validation failed.");
+                return;
+            }
+
+            if (parameters.amount > 0)
+            {
+                // normal process if pipes and connectors are required
+
+                // disable rigidbody of pipes on storage place
+                storageManager.SetRigidBody(false);
+                PickUp();
+            }
+            else
+            {
+                // process only if connectors are required
+                targetTransform = deliveryPoint;
+                MoveToTarget();
+            }
         }
 
         public NetworkObject SpawnPipe(PipeBendAngles angle, Vector3 pos, Quaternion rot)
@@ -1092,13 +1130,14 @@ namespace VRC2.Animations
 
         void SpawnConnectors(Vector3 position)
         {
+            var camount = parameters.connectorAmount;
+            if (camount <= 0) return;
             print("spawn connectors");
             var rot = Quaternion.identity;
             // spawn object
             var runner = GlobalConstants.networkRunner;
             var localPlayer = GlobalConstants.localPlayer;
 
-            var camount = parameters.connectorAmount;
             var prefab = PipeHelper.GetPipeConnectorPrefabRef(parameters);
 
             for (int i = 0; i < camount; i++)

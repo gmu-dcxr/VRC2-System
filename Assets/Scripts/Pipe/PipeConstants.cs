@@ -51,11 +51,12 @@ namespace VRC2.Pipe
 
             public float b;
 
-            // add amount
+            // add amount, 0 is invalid
             public int amount;
 
             // add connector
             public PipeDiameter connectorDiamter;
+            // 0 is invalid
             public int connectorAmount;
 
             public string ToString()
