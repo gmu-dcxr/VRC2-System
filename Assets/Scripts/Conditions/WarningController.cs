@@ -229,10 +229,20 @@ public class WarningController : MonoBehaviour
         StartTimer();
     }
 
-    public void ShowVisualOnly()
+    public void ShowVisualOnly(string title, string content)
     {
-        ProcessVisualWarning();
-        StartTimer();
+        if (format == Format.Audio)
+        {
+            // hide
+            dialog.SetActive(false);
+        }
+        else
+        {
+            this.title.text = title;
+            this.content.text = content;
+            ProcessVisualWarning();
+            StartTimer();   
+        }
     }
 
     public void Hide(bool force = false)
