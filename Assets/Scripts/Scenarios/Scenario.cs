@@ -438,13 +438,8 @@ namespace VRC2.Scenarios
 
         public Incident GetIncident(int idx)
         {
-            if (incidents == null || idx > incidents.Count)
-            {
-                if (idx > incidents.Count)
-                    print("NULLNULL" + incidents.Count);
-                return null;
-            }
-
+            if (incidents == null) return null;
+            
             foreach (var incident in incidents)
             {
                 if (incident.ID == idx) return incident;
