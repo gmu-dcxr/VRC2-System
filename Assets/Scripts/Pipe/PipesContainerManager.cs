@@ -141,6 +141,12 @@ namespace VRC2
             oipContact = contact;
         }
 
+        public void SetReference(ref GameObject c, ref GameObject o)
+        {
+            cip = c;
+            oip = o;
+        }
+
         #endregion
 
         private PipeGrabFreeTransformer transformer;

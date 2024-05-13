@@ -226,8 +226,8 @@ namespace VRC2.Events
             // only process if glue is being selected
             // glue interactable
             var gip = glue.transform.parent.gameObject;
-            if(!gip.GetComponent<GlueGrabbingCallback>().beingSelected) return;
-            
+            if (!gip.GetComponent<GlueGrabbingCallback>().beingSelected) return;
+
             // check glue capacity
             if (GlobalConstants.IsGlueUsedOut)
             {
@@ -609,6 +609,12 @@ namespace VRC2.Events
             print(parentObj.name);
             print($"{_cid} - {_oid} - {_pid}");
 
+            // update reference
+            if (parentObj.TryGetComponent<PipesContainerManager>(out PipesContainerManager pcm1))
+            {
+                pcm1.SetReference(ref cip, ref oip);
+            }
+
             // disable network transform
             DisableNetworkTransform(ref cip);
             DisableNetworkTransform(ref oip);
@@ -618,18 +624,19 @@ namespace VRC2.Events
             PipeHelper.DisableInteraction(oip);
             PipeHelper.DisableInteraction(parentObj);
 
-            // cip might be a container
-            if (cip.TryGetComponent<GlueHintManager>(out GlueHintManager manger))
+            // cip is a pipe
+            if (cip.TryGetComponent<GlueHintManager>(out GlueHintManager m1))
             {
                 // disable glue hint in cip
-                manger.HideHint();
+                m1.HideHint();
             }
 
-            if (cip.TryGetComponent<PipesContainerManager>(out PipesContainerManager pcm))
+            // cip is a container
+            if (cip.TryGetComponent<PipesContainerManager>(out PipesContainerManager pcm2))
             {
-                if (pcm.TryGetComponent<GlueHintManager>(out GlueHintManager manager))
+                if (pcm2.oip.TryGetComponent<GlueHintManager>(out GlueHintManager m2))
                 {
-                    manger.HideHint();
+                    m2.HideHint();
                 }
             }
 
