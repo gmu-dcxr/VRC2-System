@@ -17,6 +17,8 @@ namespace VRC2.Utility
 
         [Header("RobotDog Debug")] public GameObject debugPipe;
 
+        [Header("Debug")] public bool enableDebug = true;
+
         private void Start()
         {
             InitPipes();
@@ -156,6 +158,8 @@ namespace VRC2.Utility
 
         private void OnGUI()
         {
+            if (!enableDebug) return;
+
             GUILayout.BeginVertical();
             if (GUILayout.Button("RobotDog(2+3)"))
             {
