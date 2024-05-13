@@ -307,7 +307,7 @@ namespace VRC2
         {
             if (!heldByController) return;
 
-            var pressed = OVRInput.Get(OVRInput.RawButton.LIndexTrigger, OVRInput.Controller.LTouch);
+            var pressed = OVRInput.GetUp(OVRInput.RawButton.LIndexTrigger, OVRInput.Controller.LTouch);
             if (pressed)
             {
                 var cid = cip.GetComponent<NetworkObject>().Id;
