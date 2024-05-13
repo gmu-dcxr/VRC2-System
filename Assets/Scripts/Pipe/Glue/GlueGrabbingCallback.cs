@@ -35,6 +35,8 @@ namespace VRC2.Events
             }
         }
 
+        [HideInInspector] public bool beingSelected = false;
+
         #region Glue log
         
         private LoggerBase _logger;
@@ -59,6 +61,8 @@ namespace VRC2.Events
 
         void OnSelect()
         {
+            beingSelected = true;
+            
             if (provider == null || !provider.IsValid) return;
 
             // enable horizontal object and disable vertical object to make it look real
@@ -75,6 +79,8 @@ namespace VRC2.Events
 
         public void OnRelease()
         {
+            beingSelected = false;
+            
             if (provider == null || !provider.IsValid) return;
 
             // restore it

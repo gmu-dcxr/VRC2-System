@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Fusion;
 using Oculus.Interaction;
 using UnityEngine;
 using VRC2.Hack;
 using VRC2.Pipe;
+using VRC2.ScenariosV2.Tool;
 
 
 namespace VRC2
 {
     [RequireComponent(typeof(PointableUnityEventWrapper))]
-    public class PipesContainerManager : MonoBehaviour
+    public class PipesContainerManager : NetworkBehaviour
     {
         private GameObject _controller;
 
@@ -124,6 +126,23 @@ namespace VRC2
 
         #endregion
 
+        #region References
+
+        [Header("Children")] [ReadOnly] public GameObject cip;
+
+        [ReadOnly] public GameObject oip;
+        [ReadOnly] public GameObject oipContact;
+
+        // To control the pipe after being connected
+        public void SetReference(ref GameObject c, ref GameObject o, ref GameObject contact)
+        {
+            cip = c;
+            oip = o;
+            oipContact = contact;
+        }
+
+        #endregion
+
         private PipeGrabFreeTransformer transformer;
 
         [HideInInspector] public bool selfCompensated = false;
@@ -180,11 +199,14 @@ namespace VRC2
         {
             print($"Detach object from the controller: {gameObject.name}");
             _controller = null;
+            heldByController = false;
         }
 
         // Update is called once per frame
         void Update()
         {
+            ControlConnectedPipe();
+
             // check the left controller trigger released event
             if (_controller != null)
             {
@@ -275,6 +297,68 @@ namespace VRC2
             }
 
             return true;
+        }
+
+        #endregion
+
+        #region Connected pipe control
+
+        void ControlConnectedPipe()
+        {
+            if (!heldByController) return;
+
+            var pressed = OVRInput.Get(OVRInput.RawButton.LIndexTrigger, OVRInput.Controller.LTouch);
+            if (pressed)
+            {
+                var cid = cip.GetComponent<NetworkObject>().Id;
+
+                // calculate the left rotation after rotating
+                // get relative transform under the other pipe contact part
+                var ot = oipContact.transform;
+                var p = ot.InverseTransformPoint(cip.transform.position);
+                var rf = ot.InverseTransformVector(cip.transform.forward);
+                var ru = ot.InverseTransformVector(cip.transform.up);
+                // rotate ot
+                oipContact.transform.Rotate(Vector3.right, 90, Space.Self);
+                // change it backup to the word coordinate
+                ot = oipContact.transform;
+                p = ot.TransformPoint(p);
+                rf = ot.TransformVector(rf);
+                ru = ot.TransformVector(ru);
+                // update cip
+                cip.transform.position = p;
+                cip.transform.rotation = Quaternion.LookRotation(rf, ru);
+                // sync it
+                var localPos = cip.transform.localPosition;
+                var localRot = cip.transform.localRotation;
+
+                SyncCIPRotation(cid, localPos, localRot);
+            }
+        }
+
+        void SyncCIPRotation(NetworkId cid, Vector3 localPos, Quaternion localRot)
+        {
+            if (Runner != null && Runner.IsRunning)
+            {
+                RPC_SendMessage(cid, localPos, localRot);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessage(NetworkId cid, Vector3 localPos, Quaternion localRot, RpcInfo info = default)
+        {
+            // sync local rotation of other pipe (the last connected pipe/connector)
+            if (info.IsInvokeLocal)
+            {
+                print($"SyncCIPRotation {cid}");
+            }
+            else
+            {
+                print($"SyncCIPRotation of {cid}");
+                var go = Runner.FindObject(cid).gameObject;
+                go.transform.localPosition = localPos;
+                go.transform.localRotation = localRot;
+            }
         }
 
         #endregion

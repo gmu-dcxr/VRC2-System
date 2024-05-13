@@ -223,6 +223,11 @@ namespace VRC2.Events
 
         void HandleGlueCollision(GameObject glue)
         {
+            // only process if glue is being selected
+            // glue interactable
+            var gip = glue.transform.parent.gameObject;
+            if(!gip.GetComponent<GlueGrabbingCallback>().beingSelected) return;
+            
             // check glue capacity
             if (GlobalConstants.IsGlueUsedOut)
             {
@@ -401,7 +406,7 @@ namespace VRC2.Events
             // get the rotation based on the left controller's rotation
             var rot = GetParentRotation(oip);
 
-            InitializeParent(cipRoot.gameObject, oip, pos, rot);
+            InitializeParent(cipRoot.gameObject, oip, pos, rot, otherpipe);
 
             // // initialize a parent object
             // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
@@ -633,7 +638,7 @@ namespace VRC2.Events
         }
 
 
-        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot)
+        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot, GameObject contact)
         {
             if (Runner != null && Runner.IsRunning)
             {
@@ -649,8 +654,10 @@ namespace VRC2.Events
                     cip.transform.parent = parentObject.transform;
 
                     // set parent to attach the the left-hand controller
-                    parentObject.GetComponent<PipesContainerManager>()
-                        .AttachToController(leftViusal);
+                    var pcm = parentObject.GetComponent<PipesContainerManager>();
+                    pcm.AttachToController(leftViusal);
+                    // update reference
+                    pcm.SetReference(ref cip, ref oip, ref contact);
 
                     // disable networktransform
                     DisableNetworkTransform(ref cip);
@@ -685,11 +692,14 @@ namespace VRC2.Events
 
                 // update diameter
                 var diameter = oip.GetComponent<PipeManipulation>().diameter;
-                parentObject.GetComponent<PipesContainerManager>().UpdateDiameter(diameter);
+                var pcm = parentObject.GetComponent<PipesContainerManager>();
+                pcm.UpdateDiameter(diameter);
 
                 // set parent to attach the the left-hand controller
-                parentObject.GetComponent<PipesContainerManager>()
-                    .AttachToController(leftViusal);
+                pcm.AttachToController(leftViusal);
+
+                // update reference
+                pcm.SetReference(ref cip, ref oip, ref contact);
             }
         }
 

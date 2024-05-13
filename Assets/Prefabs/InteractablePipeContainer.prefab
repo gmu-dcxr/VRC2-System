@@ -111,6 +111,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 7338638701623026070}
+  - {fileID: 5608847506769983691}
   SimulationBehaviours: []
 --- !u!114 &5608847506769983691
 MonoBehaviour:
@@ -124,9 +125,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e2e6a9b018505944990cc41c911446c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   diameter: 0
   heldByController: 0
   distanceGrabInteractable: {fileID: 5195097504754371578}
+  cip: {fileID: 0}
+  oip: {fileID: 0}
+  selfCompensated: 0
 --- !u!54 &5835886917005753850
 Rigidbody:
   m_ObjectHideFlags: 0
