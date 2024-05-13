@@ -625,6 +625,14 @@ namespace VRC2.Events
                 manger.HideHint();
             }
 
+            if (cip.TryGetComponent<PipesContainerManager>(out PipesContainerManager pcm))
+            {
+                if (pcm.TryGetComponent<GlueHintManager>(out GlueHintManager manager))
+                {
+                    manger.HideHint();
+                }
+            }
+
             cip.transform.parent = parentObj.transform;
             oip.transform.parent = parentObj.transform;
 
