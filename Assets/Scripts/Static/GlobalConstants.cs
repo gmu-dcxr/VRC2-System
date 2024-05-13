@@ -162,7 +162,7 @@ namespace VRC2
 
         public static bool IsGlueUsedOut
         {
-            get => currentGlueCapacitiy == 0;
+            get => currentGlueCapacitiy <= 0;
         }
 
         public static bool UseClamp()
@@ -184,6 +184,9 @@ namespace VRC2
         {
             if (IsGlueUsedOut) return false;
             currentGlueCapacitiy -= glueConsumption;
+            
+            if (currentGlueCapacitiy <= 0) currentGlueCapacitiy = 0;
+            
             return true;
         }
 

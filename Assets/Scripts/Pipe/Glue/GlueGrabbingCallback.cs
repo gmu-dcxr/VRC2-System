@@ -1,8 +1,11 @@
 ﻿using System;
+using FlowCanvas.Nodes;
 using Fusion;
 using Oculus.Interaction;
 using UnityEngine;
 using VRC2.Hack;
+using VRC2.Loggers;
+using VRC2.ScenariosV2.Tool;
 
 namespace VRC2.Events
 {
@@ -32,6 +35,14 @@ namespace VRC2.Events
             }
         }
 
+        #region Glue log
+        
+        private LoggerBase _logger;
+
+        private string folder = "../Glue";
+
+        #endregion
+
         void Start()
         {
             _rigidbody = gameObject.GetComponent<Rigidbody>();
@@ -40,6 +51,10 @@ namespace VRC2.Events
 
             _wrapper.WhenSelect.AddListener(OnSelect);
             _wrapper.WhenRelease.AddListener(OnRelease);
+            
+            // init log
+            _logger = gameObject.AddComponent<LoggerBase>();
+            _logger.InitConfig(folder);
         }
 
         void OnSelect()
@@ -87,6 +102,10 @@ namespace VRC2.Events
             {
                 // fail because of used out
             }
+
+            var cap = GlobalConstants.currentGlueCapacitiy * 100;
+            var text = $"{cap.ToString("f0")}%";
+            _logger.WriteLog(text);
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]

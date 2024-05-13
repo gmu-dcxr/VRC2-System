@@ -223,6 +223,13 @@ namespace VRC2.Events
 
         void HandleGlueCollision(GameObject glue)
         {
+            // check glue capacity
+            if (GlobalConstants.IsGlueUsedOut)
+            {
+                Debug.LogError("[PipeCollisionDetector] Glue is used out.");
+                return;
+            }
+
             glued += 1;
             if (glued >= minimumGlue)
             {
