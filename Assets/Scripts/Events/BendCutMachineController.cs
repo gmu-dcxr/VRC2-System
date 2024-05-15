@@ -19,10 +19,10 @@ namespace VRC2.Events
         [Header("RobotDog")] public RobotDogController robotDog;
 
         // time of waiting for the cutting
-        public float cutDuration = 5.0f;
+        public float cutDuration = 2.0f;
 
         // time before going to pickup the result
-        public float pickupDuration = 2.0f;
+        public float pickupDuration = 0.5f;
 
         [Header("Error")] public bool enableError = false;
 
