@@ -44,6 +44,9 @@ namespace VRC2.Scenarios.ScenarioFactory
 
         [HideInInspector] public bool changeOrder = false; // indicate if it is change order
 
+        // this text is hard coded, corresponding to the orderchanged.wav file
+        private string changeOrderWarning = "Installment order changed. Please use the new plan.";
+
         private Vector3 targetPosition
         {
             get
@@ -124,7 +127,8 @@ namespace VRC2.Scenarios.ScenarioFactory
                         if (changeOrder)
                         {
                             // reach the target
-                            UpdateInstruction();   
+                            UpdateInstruction();
+                            // update visual warning
                         }
 
                         moving = false;
@@ -164,6 +168,9 @@ namespace VRC2.Scenarios.ScenarioFactory
             sheetObject.SetActive(true);
 
             _audioSource.Play();
+
+            // show warning
+            warningController.ShowVisualOnly("Warning", changeOrderWarning);
         }
 
         // normal event
@@ -199,7 +206,7 @@ namespace VRC2.Scenarios.ScenarioFactory
 
             if (changeOrder)
             {
-                UpdateDrone(changeOrderHeight);   
+                UpdateDrone(changeOrderHeight);
             }
             else
             {

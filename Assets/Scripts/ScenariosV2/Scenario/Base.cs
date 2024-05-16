@@ -575,7 +575,6 @@ namespace VRC2.ScenariosV2.Scenario
                     if (changeOrderIndices.Contains(idx))
                     {
                         // trigger change order
-                        // TODO: maybe better to add a timer?
                         StartCoroutine(ChangeOrder());
                     }
 

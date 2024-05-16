@@ -62,7 +62,7 @@ public class WarningController : MonoBehaviour
     }
 
     #region Use specific audio source for each vehicle
-    
+
     public void SetAudioSource(AudioSource source)
     {
         if (source != null)
@@ -199,9 +199,26 @@ public class WarningController : MonoBehaviour
         }
     }
 
-    private void ProcessVisualWarning()
+    private void ProcessVisualWarning(float? delay)
     {
+        if (delay == null)
+        {
+            dialog.SetActive(true);
+        }
+        else
+        {
+            StartCoroutine(ShowVisual(delay.Value));
+        }
+    }
+
+    // show visual with delay
+    private IEnumerator ShowVisual(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
         dialog.SetActive(true);
+
+        yield return null;
     }
 
     public void Show(string title, string scenename, int incidentid, string content, float? delay)
@@ -218,11 +235,11 @@ public class WarningController : MonoBehaviour
         }
         else if (format == Format.Visual)
         {
-            ProcessVisualWarning();
+            ProcessVisualWarning(delay);
         }
         else if (format == Format.Both)
         {
-            ProcessVisualWarning();
+            ProcessVisualWarning(delay);
             ProcessAudioWarning(scenename, incidentid, delay);
         }
 
@@ -240,8 +257,9 @@ public class WarningController : MonoBehaviour
         {
             this.title.text = title;
             this.content.text = content;
-            ProcessVisualWarning();
-            StartTimer();   
+            // show without delay
+            ProcessVisualWarning(null);
+            StartTimer();
         }
     }
 
@@ -354,7 +372,7 @@ public class WarningController : MonoBehaviour
         {
             Timer.Cancel(_CounterDowntimer);
         }
-        
+
         counterDownDialog.SetActive(true);
 
         _CounterDowntimer = Timer.Register(1, () => { SetCounterDown(); }, isLooped: true, useRealTime: true);

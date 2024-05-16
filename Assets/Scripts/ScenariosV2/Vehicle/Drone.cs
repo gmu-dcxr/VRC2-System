@@ -83,7 +83,8 @@ namespace VRC2.ScenariosV2.Vehicle
             BluePrint("Invoked Drone_normals_3");
             SetDroneControlAuthority(true, false);
             // update leaveafter second to 20 seconds, inform change order
-            baselineS2.leaveAfter = 20f;                           //5sec from spawning point to players, then it spends 20s above players delivering change order, leaves at 25th sec
+            //5sec from spawning point to players, then it spends 20s above players delivering change order, leaves at 25th sec
+            baselineS2.leaveAfter = 20f;
             // this will inform task changes
             // set change order to true
             baselineS2.changeOrder = true;
