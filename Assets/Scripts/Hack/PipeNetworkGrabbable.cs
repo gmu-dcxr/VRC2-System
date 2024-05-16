@@ -53,11 +53,11 @@ namespace VRC2.Hack
             var root = PipeHelper.GetRoot(gameObject);
             if (root != gameObject) return false;
 
-            // p2 can only manipulate straight non-cut pipe
-            var pm = gameObject.GetComponent<PipeManipulation>();
-
-            // if it is bent or cut, directly return
-            if (!pm.IsStraight || !pm.NotBeingCut) return false;
+            // // p2 can only manipulate straight non-cut pipe
+            // var pm = gameObject.GetComponent<PipeManipulation>();
+            //
+            // // if it is bent or cut, directly return
+            // if (!pm.IsStraight || !pm.NotBeingCut) return false;
 
             // p2 side
             // in order to make p2 can manipulate the pipe, it should disable networkTransform component
