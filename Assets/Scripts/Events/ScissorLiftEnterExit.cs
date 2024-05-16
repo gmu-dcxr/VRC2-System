@@ -24,19 +24,24 @@ namespace VRC2.Events
         {
             get => playerHelper.localPlayer;
         }
+
         public GameObject centerEyeAnchor;
 
         [Space(30)] [Header("Camera")] public Transform cameraRig;
 
         [Space(30)] [Header("Settings")] public Transform targetTransform;
         public float distanceThreshold = 0.5f;
-        
+
+        [Space(30)] [Header("Text Hint")] public TextMesh textMesh;
+
+        private string enterText = "Press X to Enter";
+        private string exitText = "Press X to Exit";
 
         void EnterLift()
         {
             // re-find local player
             playerHelper.ResetLocalPlayer();
-            
+
             player.transform.parent = targetTransform;
             // update position
             var p = Vector3.zero;
@@ -60,8 +65,12 @@ namespace VRC2.Events
         // force player can not move in lift
         private void Update()
         {
-            // check button event
-            var keyX = OVRInput.Get(OVRInput.Button.One, OVRInput.Controller.LTouch);
+            // return if player is not found
+            if (player == null)
+            {
+                textMesh.text = "";
+                return;
+            }
 
             var p = player.transform;
 
@@ -71,18 +80,33 @@ namespace VRC2.Events
             p1.y = 0;
             p2.y = 0;
 
-            if ((Input.GetKeyUp(KeyCode.E) || keyX) && Vector3.Distance(p1, p2) < distanceThreshold)
+            // check button event
+            var keyX = OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch);
+
+            if (Vector3.Distance(p1, p2) < distanceThreshold)
             {
                 if (p.parent == null)
                 {
-                    // enter
-                    EnterLift();
+                    textMesh.text = enterText;
+                    if (keyX)
+                    {
+                        // enter
+                        EnterLift();
+                    }
                 }
                 else
                 {
-                    // exit
-                    ExitLift();
+                    textMesh.text = exitText;
+                    if (keyX)
+                    {
+                        // exit
+                        ExitLift();
+                    }
                 }
+            }
+            else
+            {
+                textMesh.text = "";
             }
         }
     }
