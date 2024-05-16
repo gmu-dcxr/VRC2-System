@@ -21,11 +21,12 @@ task: "Task4.yml"
 # all incidents, including the normal events and accidents
 incidents:
   - id: 1 # the order of the incident
-    time: "0:30" # start time of this incident
-    refer: [ "CraneTruck", "accidents", "1" ]
+    time: "0:10" # start time of this incident
+    refer: [ "Crane", "normals", "1" ]
   - id: 2 
-    time: "0:45" 
-    refer: [ "CraneTruck", "accidents", "2" ]
+    time: "0:30"
+    refer: [ "Drone", "normals", "3" ]
+    changeOrder: true
   - id: 3
     time: "1:30" 
     refer: [ "Crane", "normals", "1" ]
