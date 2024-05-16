@@ -1,5 +1,7 @@
-﻿using Fusion;
-using UnityEngine;
+﻿using UnityEngine;
+
+using NetworkRunner = Fusion.NetworkRunner;
+using NetworkObject = FishNet.Object.NetworkObject;
 
 namespace VRC2.Events
 {
@@ -32,11 +34,12 @@ namespace VRC2.Events
             {
                 if (_localPlayer == null)
                 {
-                    var players = GameObject.FindObjectsOfType<OVRCustomSkeleton>(includeInactive: true);
+                    var players = GameObject.FindObjectsOfType<OVRCustomSkeleton>(includeInactive: false);
 
+                    // Fusion
                     if (networkRunner == null || !networkRunner.IsRunning)
                     {
-                        if (players != null)
+                        if (players != null && players.Length > 0)
                         {
                             _localPlayer = players[0].gameObject;
                             Debug.LogWarning($"Find local player: {_localPlayer.name}");
@@ -44,11 +47,12 @@ namespace VRC2.Events
                     }
                     else
                     {
-                        // find the object having input authority
+                        // FishNet
+                        // find the object that is the owner
                         foreach (var player in players)
                         {
                             var no = player.gameObject.GetComponent<NetworkObject>();
-                            if (no.HasInputAuthority)
+                            if (no.IsOwner)
                             {
                                 _localPlayer = no.gameObject;
 
