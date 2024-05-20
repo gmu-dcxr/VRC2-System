@@ -567,6 +567,7 @@ namespace VRC2
             parameter.type = PipeConstants.PipeType.Sewage;
             parameter.color = PipeConstants.PipeColor.Blue;
             parameter.diameter = PipeConstants.PipeDiameter.Diameter_1;
+            parameter.amount = 1;
 
             add.InitParameters(parameter);
             add.Execute();

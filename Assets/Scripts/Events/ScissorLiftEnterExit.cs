@@ -66,7 +66,7 @@ namespace VRC2.Events
         private void Update()
         {
             // return if player is not found
-            if (player == null)
+            if (!GlobalConstants.GameStarted || player == null)
             {
                 textMesh.text = "";
                 return;

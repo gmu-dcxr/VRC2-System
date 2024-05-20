@@ -159,6 +159,7 @@ namespace VRC2
 
                     break;
                 case DroneStatus.Stop:
+                    RestoreTransform();
                     break;
 
                 default:
@@ -256,9 +257,15 @@ namespace VRC2
         {
             _controller.motorOn = false;
             _status = DroneStatus.Stop;
-            // restore transform
-            transform.position = _backupPosition;
-            transform.rotation = _backupRotation;
+        }
+
+        private void RestoreTransform()
+        {
+            while (Vector3.Distance(transform.position, _backupPosition) > 0.05f)
+            {
+                transform.position = _backupPosition;
+                transform.rotation = _backupRotation;
+            }
         }
     }
 }
