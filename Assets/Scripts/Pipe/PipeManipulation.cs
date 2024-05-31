@@ -334,6 +334,21 @@ namespace VRC2
             return (sax == 1) && (sbx == 1);
         }
 
+        float GetSegmentLength(GameObject go)
+        {
+            return PipeHelper.GetExtendsX(go);
+        }
+
+        public float GetSegmentALength()
+        {
+             return GetSegmentLength(segmentA);
+        }
+
+        public float GetSegmentBLength()
+        {
+            return GetSegmentLength(segmentB);
+        }
+
         void UpdateTexture(GameObject pipe, float xValue, float yValue = 1.0f)
         {
             // By: Will @ willfredranc@gmail.com

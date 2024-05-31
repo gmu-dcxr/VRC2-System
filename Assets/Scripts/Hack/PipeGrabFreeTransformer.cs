@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GameKit.Utilities;
 using UnityEngine;
 using Oculus.Interaction;
 using VRC2.Hack;
@@ -20,6 +21,61 @@ namespace VRC2.Hack
         private PipesContainerManager _pipesContainerManager;
 
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
+
+        // move pipe on hand for the convenience of clamping/connecting
+        private int _offsetTimes = 0;
+        private float _offsetFactor = 0.8f;
+
+        private Vector3 _moveOffset = Vector3.zero;
+
+        private float _halfPipeLength
+        {
+            get
+            {
+                var length = 0.0f;
+                if (pipeManipulation != null)
+                {
+                    // simple pipe
+                    length = pipeManipulation.GetSegmentALength();
+                }
+                else
+                {
+                    if (pipesContainerManager != null)
+                    {
+                        // connected pipe
+                        var oipContact = pipesContainerManager.oipContact;
+                        length = PipeHelper.GetExtendsX(oipContact);
+                    }
+                }
+
+                return length;
+            }
+        }
+
+        private float GetOffset()
+        {
+            if (_offsetTimes == 0) return 0;
+
+            bool negative = false;
+            if (_offsetTimes < 0)
+            {
+                negative = true;
+                _offsetTimes = -_offsetTimes;
+            }
+
+            var result = _offsetFactor;
+            for (var i = 1; i < _offsetTimes; i++)
+            {
+                result = (1 - result) * _offsetFactor + _offsetFactor;
+            }
+
+            if (negative)
+            {
+                result *= -1;
+            }
+
+            return result;
+        }
 
         [HideInInspector]
         public DistanceLimitedAutoMoveTowardsTargetProvider provider
@@ -235,11 +291,14 @@ namespace VRC2.Hack
 
             targetTransform.rotation = Quaternion.Euler(rotation);
             targetTransform.position = pos;
-
+            // translate offset
+            targetTransform.Translate(_moveOffset, Space.Self);
         }
 
         public void EndTransform()
         {
+            // unset
+            _moveOffset.x = 0;
         }
 
         #region Pipe Wall Compensation
@@ -304,5 +363,48 @@ namespace VRC2.Hack
 
 
         #endregion
+
+        bool IsConnector
+        {
+            get
+            {
+                // it should be root object
+                if (gameObject.transform.parent != null) return true;
+
+                // simple case
+                var name = gameObject.name;
+                if (name.ToLower().Contains("connector")) return true;
+                // container case
+                if (pipesContainerManager != null)
+                {
+                    var oip = pipesContainerManager.oip;
+                    name = oip.name;
+                    if (name.ToLower().Contains("connector")) return true;
+                }
+
+                // default return false
+                return false;
+            }
+        }
+
+        private void LateUpdate()
+        {
+            if (provider == null || !provider.IsValid || IsConnector) return;
+
+            var offset = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
+
+            if (offset.x > 0)
+            {
+                _moveOffset.x = _offsetFactor * _halfPipeLength;
+            }
+            else if (offset.x < 0)
+            {
+                _moveOffset.x = -_offsetFactor * _halfPipeLength;
+            }
+            else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
+            {
+                _moveOffset.x = 0;
+            }
+        }
     }
 }
