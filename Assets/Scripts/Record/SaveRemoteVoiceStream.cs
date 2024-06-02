@@ -36,6 +36,8 @@ namespace VRC2.Record
 
         private void Start()
         {
+            // this is deprecated
+            return;
             monitor.OnVoiceLinkDetermined += OnVoiceLinkDetermined;
         }
 
