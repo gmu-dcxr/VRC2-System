@@ -58,9 +58,11 @@ namespace VRC2
 
         public bool ReadyToSyncGender()
         {
-            var clones = GetAllClones();
-            if (clones.ToList<GameObject>().Count < 2) return false;
-            return true;
+            // return false if _runner is null or not running
+            if (_runner == null || !_runner.IsRunning) return false;
+
+            // runner is running and active players count > 1
+            return _runner.IsRunning && _runner.ActivePlayers.Count() > 1;
         }
 
         // Update is called once per frame
@@ -187,7 +189,7 @@ namespace VRC2
                 // p2 side
                 GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
-                
+
                 // fishnet
                 GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
                 print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
@@ -199,7 +201,7 @@ namespace VRC2
             }
 
             // _genderSyncer.RequestSync(GlobalConstants.localPlayer.PlayerId,
-                // GlobalConstants.playerGender == PlayerGender.Male);
+            // GlobalConstants.playerGender == PlayerGender.Male);
 
             if (hideSelf)
             {
