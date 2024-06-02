@@ -61,7 +61,7 @@ namespace VRC2.Events
                             else
                             {
                                 _remotePlayer = no.gameObject;
-                                Debug.LogWarning($"Find remote player: {_localPlayer.name}");
+                                Debug.LogWarning($"Find remote player: {_remotePlayer.name}");
                             }
                         }
                     }
