@@ -326,7 +326,8 @@ namespace VRC2.Events
 
             if (!IsGlued())
             {
-                Debug.LogWarning("Please glue it first");
+                // disable this warning as it will print a lot
+                // Debug.LogWarning("Please glue it first");
                 return;
             }
 
