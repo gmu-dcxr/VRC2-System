@@ -30,6 +30,9 @@ namespace VRC2.Record
 
         private void Update()
         {
+            // this is deprecated
+            return;
+            
             if (voiceLinkDetermined) return;
 
             if (runner != null && runner.IsRunning)
