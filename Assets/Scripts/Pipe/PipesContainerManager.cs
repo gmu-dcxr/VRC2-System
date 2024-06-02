@@ -149,6 +149,47 @@ namespace VRC2
 
         #endregion
 
+        #region Right hand control
+
+        // use the same variables as those in PipeGrabFreeTransformer.cs
+
+        private float _offsetFactor = 0.8f;
+
+        private Vector3 _moveOffset = Vector3.zero;
+
+        private float _halfPipeLength
+        {
+            get
+            {
+                var length = 0.0f;
+
+                if (oipContact != null)
+                {
+                    length = PipeHelper.GetExtendsX(oipContact);
+                }
+
+                return length;
+            }
+        }
+
+        // do nothing if held is a connector
+        bool IsConnector
+        {
+            get
+            {
+                if (oip != null)
+                {
+                    name = oip.name;
+                    if (oip.name.ToLower().Contains("connector")) return true;
+                }
+
+                // default return false
+                return false;
+            }
+        }
+
+        #endregion
+
         private PipeGrabFreeTransformer transformer;
 
         [HideInInspector] public bool selfCompensated = false;
@@ -206,6 +247,8 @@ namespace VRC2
             print($"Detach object from the controller: {gameObject.name}");
             _controller = null;
             heldByController = false;
+            // reset offset
+            _moveOffset.x = 0;
         }
 
         // Update is called once per frame
@@ -253,6 +296,12 @@ namespace VRC2
                 // synchronize transform of the parent
                 transform.position = pos;
                 transform.rotation = Quaternion.Euler(rot);
+
+                if (!IsConnector && _moveOffset.x != 0)
+                {
+                    // make an offset
+                    transform.Translate(_moveOffset, Space.Self);
+                }
             }
             else
             {
@@ -364,6 +413,32 @@ namespace VRC2
                 var go = Runner.FindObject(cid).gameObject;
                 go.transform.localPosition = localPos;
                 go.transform.localRotation = localRot;
+            }
+        }
+
+        #endregion
+
+        #region Right hand control
+
+
+        private void LateUpdate()
+        {
+            // it should be attached to controller first
+            if (_controller == null) return;
+
+            var offset = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
+
+            if (offset.x > 0)
+            {
+                _moveOffset.x = _offsetFactor * _halfPipeLength;
+            }
+            else if (offset.x < 0)
+            {
+                _moveOffset.x = -_offsetFactor * _halfPipeLength;
+            }
+            else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
+            {
+                _moveOffset.x = 0;
             }
         }
 
