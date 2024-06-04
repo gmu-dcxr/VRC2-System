@@ -110,7 +110,7 @@ namespace Hack
             // enable compensating when a single pipe collides the wall
             if (collidingWall)
             {
-                // print("Colliding Wall. Apply compensation.");
+                print("Colliding Wall. Apply compensation.");
                 (pos, rotation) = CompensateWithDirection(pos, rotation);
 
                 // make it not fall
@@ -130,20 +130,20 @@ namespace Hack
 
         public (Vector3, Vector3) Compensate(Vector3 pos, Vector3 rot)
         {
-            // get clamp z
-            var clampz = clampManipulation.GetClampExtendsZ();
-
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
-            var wrot = wt.rotation.eulerAngles;
-
+            // var wrot = wt.rotation.eulerAngles;
             // clamp has the same x rotation with the wall
-            rot.x = wrot.x;
-            rot.y = wrot.y + wallCollisionDetector.clampYRotationOffset;
+            // rot.x = wrot.x;
+            // rot.y = wrot.y + wallCollisionDetector.clampYRotationOffset;
+
+            // as the wall rotation is (0,0,0), hardcode this rotation to make the clamp always perpendicular to the wall
+            rot.x = 0;
+            rot.y = -90;
 
             // update distance
-            pos.x = wpos.x + wallCollisionDetector._wallExtends.x + clampz * 2;
+            pos.x = wpos.x + wallCollisionDetector._wallExtends.x;
 
             return (pos, rot);
         }
