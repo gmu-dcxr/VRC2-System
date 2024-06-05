@@ -18,7 +18,7 @@ namespace VRC2.Events
     {
         private Object pipeParent;
 
-        private bool connected = false;
+        [HideInInspector]public bool connected = false;
 
         private GlueHintManager _glueHintManager;
 
@@ -425,6 +425,9 @@ namespace VRC2.Events
             gameObject.GetComponent<ClampHintManager>().CanShow = true;
             // hide right one
             otherpipe.GetComponent<ClampHintManager>().CanShow = false;
+
+            // make the end of the other pipe not connectable
+            otherpipe.GetComponent<PipeCollisionDetector>().connected = true;
 
             connected = true;
         }
