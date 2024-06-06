@@ -210,30 +210,36 @@ namespace VRC2
         // Update is called once per frame
         void Update()
         {
-            if (isSimplePipe && !heldByController)
-            {
-                if (_rigidbody != null)
-                {
-                    if (ShouldFall())
-                    {
-                        _rigidbody.isKinematic = false;
-                        // make it interactable
-                        SetInteractable(true);
-                    }
-                    else
-                    {
-                        _rigidbody.isKinematic = true;
-                        // make it not interactable
-                        SetInteractable(false);
-                    }
-                }
-            }
 
-            if (heldByController && collidingWall)
+        }
+
+        public void CheckAfterUnclamp()
+        {
+            // this is necessary when unclamping
+            if (!heldByController)
             {
-                // compensate
-                SelfCompensate();
+                // simulate release
+                freeTransformer.SimulateRelease();
+
+                SetInteraction(ShouldFall());
             }
+        }
+
+        public void SetHeldByController(bool held)
+        {
+            heldByController = held;
+            // release when the state is updated outside
+            if (!held)
+            {
+                // simulate release
+                freeTransformer.SimulateRelease();
+            }
+        }
+
+        public void SetInteraction(bool enable)
+        {
+            SetKinematic(!enable);
+            SetInteractable(enable);
         }
 
         public bool ShouldFall()
@@ -341,12 +347,18 @@ namespace VRC2
 
         public float GetSegmentALength()
         {
-             return GetSegmentLength(segmentA);
+            return GetSegmentLength(segmentA);
         }
 
         public float GetSegmentBLength()
         {
             return GetSegmentLength(segmentB);
+        }
+
+        // the real diameter is the extents y or z
+        public float GetRealDiameter()
+        {
+            return PipeHelper.GetExtendsZ(segmentA);
         }
 
         void UpdateTexture(GameObject pipe, float xValue, float yValue = 1.0f)
@@ -373,34 +385,36 @@ namespace VRC2
 
         #region Pointable Event
 
+        void SetKinematic(bool enable)
+        {
+            if (_rigidbody == null) return;
+
+            _rigidbody.isKinematic = enable;
+        }
+
         public void OnSelect()
         {
+            print("OnSelect");
             heldByController = true;
             // enable kinematic
-            _rigidbody.isKinematic = true;
+            SetKinematic(true);
+            // force move pipe away
+            StartCoroutine(freeTransformer.ForceMovePipeAway());
         }
 
         public void OnRelease()
         {
+            print("OnRelease");
             heldByController = false;
 
-            if (collidingWall)
+            if (freeTransformer.Compensated)
             {
-                // pipe is on the wall
-                if (ShouldFall())
-                {
-                    // disable kinematic to let it drop
-                    _rigidbody.isKinematic = false;
-                }
-                else
-                {
-                    _rigidbody.isKinematic = true;
-                }
+                // disable kinematic to let it drop when should fall
+                SetKinematic(!ShouldFall());
             }
             else
             {
-                // pipe is not on the wall
-                _rigidbody.isKinematic = false;
+                SetKinematic(false);
             }
         }
 
@@ -464,21 +478,19 @@ namespace VRC2
 
         #region Compensation for single pipe collision with the wall
 
-        private PipeGrabFreeTransformer transformer;
+        private PipeGrabFreeTransformer _freeTransformer;
 
-        // make simple pipe not penetrate into the wall 
-        public void SelfCompensate()
+        private PipeGrabFreeTransformer freeTransformer
         {
-            if (transformer == null)
+            get
             {
-                transformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                if (_freeTransformer == null)
+                {
+                    _freeTransformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                }
+
+                return _freeTransformer;
             }
-
-            var t = gameObject.transform;
-            var (pos, rot) = transformer.CompensateWithDirection(t.position, t.rotation.eulerAngles);
-
-            gameObject.transform.position = pos;
-            gameObject.transform.rotation = Quaternion.Euler(rot);
         }
 
         #endregion
