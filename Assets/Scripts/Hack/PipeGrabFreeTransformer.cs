@@ -320,24 +320,28 @@ namespace VRC2.Hack
             // get diameter
             var diameter = GetDiameter();
 
-            var pipeYRotationOffset = wallCollisionDetector.pipeYRotationOffset;
+            // var pipeYRotationOffset = wallCollisionDetector.pipeYRotationOffset;
             // get real diameter
             var pipez = wallCollisionDetector.GetPipeZByDiameter(diameter);
 
-            var wallExtends = wallCollisionDetector._wallExtends;
+            var wallExtends = wallCollisionDetector._wallExtents;
 
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
-            var wrot = wt.rotation.eulerAngles;
+            // var wrot = wt.rotation.eulerAngles;
 
-            // set pipe's x rotation to the wall's x rotation
-            rot.x = wrot.x;
-            // set pipe's y rotation to the wall's y rotation
-            rot.y = wrot.y + pipeYRotationOffset;
+            // // set pipe's x rotation to the wall's x rotation
+            // rot.x = wrot.x;
+            // // set pipe's y rotation to the wall's y rotation
+            // rot.y = wrot.y + pipeYRotationOffset;
+
+            // as the wall is fixed and its rotation is (0,0,0), use the hard-code rotation to save computation
+            rot.x = 0;
+            rot.y = -90;
 
             // update the pipe's distance to the wall
-            pos.x = wpos.x + wallExtends.x + pipez;
+            pos.x = wpos.x + wallExtends.x + 2 * pipez;
 
             return (pos, rot);
         }
@@ -347,15 +351,14 @@ namespace VRC2.Hack
             // print("Colliding Wall. Apply compensation.");
             var (newPos, newRot) = Compensate(pos, rot);
             
-            // BUG: check the compensated rotation same as the clamp logic
             var dir = (newPos - pos).normalized;
             var angle = Vector3.Angle(dir, wall.transform.right);
 
             // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
-            if (angle < 180)
+            // if (angle < 180)
             {
                 rot = newRot;
-                pos = newPos;
+                // pos = newPos;
             }
 
             return (pos, rot);

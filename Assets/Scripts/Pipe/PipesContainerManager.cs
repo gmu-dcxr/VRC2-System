@@ -290,6 +290,8 @@ namespace VRC2
                 {
                     // enable Compensate
                     var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                    
+                    Debug.LogError("pgft is null");
                     // BUG: sometimes pgqt doesn't exist
                     (pos, rot) = pgft.CompensateWithDirection(pos, rot);
                 }

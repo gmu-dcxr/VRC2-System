@@ -9,7 +9,6 @@ namespace Hack
     public class ClampGrabFreeTransformer : MonoBehaviour, ITransformer
     {
         private IGrabbable _grabbable;
-        private Pose _grabDeltaInLocalSpace;
 
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
 
@@ -72,11 +71,18 @@ namespace Hack
             }
         }
 
+        private float wallExtentsX => wallCollisionDetector._wallExtents.x;
+        private float extentsZ => wallCollisionDetector.GetClampZBySize(clampManipulation.ClampSize);
+
+        [HideInInspector] public bool Compensated = false;
+
         [HideInInspector]
         public bool collidingWall
         {
             get => clampManipulation.collidingWall;
         }
+
+        [HideInInspector] public Pose LastCompensation = new Pose();
 
         public void Initialize(IGrabbable grabbable)
         {
@@ -86,82 +92,56 @@ namespace Hack
         public void BeginTransform()
         {
             if (provider == null || !provider.IsValid) return;
-
-            Pose grabPoint = _grabbable.GrabPoints[0];
-            var targetTransform = _grabbable.Transform;
-            _grabDeltaInLocalSpace = new Pose(
-                targetTransform.InverseTransformVector(grabPoint.position - targetTransform.position),
-                Quaternion.Inverse(grabPoint.rotation) * targetTransform.rotation);
         }
 
         public void UpdateTransform()
         {
-            if (provider == null || !provider.IsValid || clampManipulation.compensated) return;
+            if (provider == null || !provider.IsValid || Compensated) return;
 
             Pose grabPoint = _grabbable.GrabPoints[0];
             var targetTransform = _grabbable.Transform;
 
-            var rot = grabPoint.rotation * _grabDeltaInLocalSpace.rotation;
+            var rotation = grabPoint.rotation;
 
-            var rotation = rot.eulerAngles;
-
-            var pos = grabPoint.position - targetTransform.TransformVector(_grabDeltaInLocalSpace.position);
+            var pos = grabPoint.position;
 
             // enable compensating when a single pipe collides the wall
             if (collidingWall)
             {
-                print("Colliding Wall. Apply compensation.");
-                (pos, rotation) = CompensateWithDirection(pos, rotation);
+                print("Clamp colliding wall. Apply compensation.");
+                (pos, rotation) = Compensate(pos, rotation);
+                // update the cache
+                LastCompensation.position = pos;
+                LastCompensation.rotation = rotation;
 
-                // make it not fall
-                clampManipulation.SetKinematic(true);
-                // update flag
-                clampManipulation.compensated = true;
+                // do nothing once compensated
+                Compensated = true;
             }
 
-            targetTransform.rotation = Quaternion.Euler(rotation);
+            targetTransform.rotation = rotation;
             targetTransform.position = pos;
-
         }
 
         public void EndTransform()
         {
         }
 
-        public (Vector3, Vector3) Compensate(Vector3 pos, Vector3 rot)
+        public (Vector3, Quaternion) Compensate(Vector3 pos, Quaternion rot)
         {
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
-            // var wrot = wt.rotation.eulerAngles;
-            // clamp has the same x rotation with the wall
-            // rot.x = wrot.x;
-            // rot.y = wrot.y + wallCollisionDetector.clampYRotationOffset;
 
             // as the wall rotation is (0,0,0), hardcode this rotation to make the clamp always perpendicular to the wall
-            rot.x = 0;
-            rot.y = -90;
+
+            var rotation = rot.eulerAngles;
+            rotation.x = 0;
+            rotation.y = -90;
 
             // update distance
-            pos.x = wpos.x + wallCollisionDetector._wallExtends.x;
+            pos.x = wpos.x + wallExtentsX + 2 * extentsZ;
 
-            return (pos, rot);
-        }
-
-        public (Vector3, Vector3) CompensateWithDirection(Vector3 pos, Vector3 rot)
-        {
-            // print("Colliding Wall. Apply compensation.");
-            var (newPos, newRot) = Compensate(pos, rot);
-
-            var dir = (newPos - pos).normalized;
-            var angle = Vector3.Angle(dir, wall.transform.right);
-
-            // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
-            if (angle < 180)
-            {
-                rot = newRot;
-                pos = newPos;
-            }
+            rot = Quaternion.Euler(rotation);
 
             return (pos, rot);
         }

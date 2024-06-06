@@ -18,7 +18,7 @@ namespace VRC2.Events
     {
         private Object pipeParent;
 
-        [HideInInspector]public bool connected = false;
+        [HideInInspector] public bool connected = false;
 
         private GlueHintManager _glueHintManager;
 
@@ -407,6 +407,9 @@ namespace VRC2.Events
             // get the rotation based on the left controller's rotation
             var rot = GetParentRotation(oip);
 
+            // disable all components
+            DisableAllComponents(cipRoot.gameObject);
+
             InitializeParent(cipRoot.gameObject, oip, pos, rot, otherpipe);
 
             // // initialize a parent object
@@ -433,6 +436,26 @@ namespace VRC2.Events
         }
 
         #region Pipe Connecting
+
+        /// <summary>
+        /// This is a hack way to disable all components
+        /// </summary>
+        /// <param name="obj"></param>
+        void DisableAllComponents(GameObject obj)
+        {
+            // backup parent
+            var p = obj.transform.parent;
+            // disable cip components
+            var t = new GameObject();
+            t.transform.position = obj.transform.position;
+            t.transform.rotation = obj.transform.rotation;
+
+            obj.transform.parent = t.transform;
+            GameObject.Destroy(t);
+
+            // restore parent
+            obj.transform.parent = p;
+        }
 
         Vector3 GetRightPipeNewPivot(GameObject currentpipe, GameObject otherpipe)
         {
@@ -510,6 +533,7 @@ namespace VRC2.Events
 
             rot = otherpipe.transform.parent.rotation;
 
+            // this action will disable otherpipe.transform.parent's components
             GameObject.Destroy(obj);
 
             otherpipe.transform.parent.parent = null;
