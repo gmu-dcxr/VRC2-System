@@ -10,6 +10,9 @@ namespace VRC2.Hack
 {
     public class PipeNetworkGrabbable : NetworkGrabbable
     {
+
+        [HideInInspector] public PointerEvent lastPointerEvent;
+
         protected override void Start()
         {
             this.BeginStart(ref _started, () => base.Start());
@@ -26,7 +29,7 @@ namespace VRC2.Hack
 
             this.EndStart(ref _started);
         }
-        
+
         // sync last spawned pipe via rpc
         void UpdateLastSpawnedPipe(GameObject go)
         {
@@ -37,6 +40,9 @@ namespace VRC2.Hack
 
         public override bool NetworkedPointerEvent(PointerEvent evt)
         {
+            // update
+            lastPointerEvent = evt;
+
             // process pointer event for networked pipe objects.
             // state authority and input authority are all at P1 side,
             // if game not started, directly return false to let parent handle it
@@ -104,6 +110,11 @@ namespace VRC2.Hack
             }
 
             return true;
+        }
+
+        public void OriginalProcessPointerEvent(PointerEvent evt)
+        {
+            base.OriginalProcessPointerEvent(evt);
         }
     }
 }

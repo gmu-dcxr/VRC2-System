@@ -285,7 +285,7 @@ namespace VRC2
 
                 var t = _controller.transform;
                 var pos = t.position;
-                var rot = t.rotation.eulerAngles;
+                var rot = t.rotation;
                 if (collidingWall)
                 {
                     // enable Compensate
@@ -298,7 +298,7 @@ namespace VRC2
 
                 // synchronize transform of the parent
                 transform.position = pos;
-                transform.rotation = Quaternion.Euler(rot);
+                transform.rotation = rot;
 
                 if (!IsConnector && _moveOffset.x != 0)
                 {
@@ -337,10 +337,10 @@ namespace VRC2
             }
 
             var t = gameObject.transform;
-            var (pos, rot) = transformer.CompensateWithDirection(t.position, t.rotation.eulerAngles);
+            var (pos, rot) = transformer.CompensateWithDirection(t.position, t.rotation);
 
             gameObject.transform.position = pos;
-            gameObject.transform.rotation = Quaternion.Euler(rot);
+            gameObject.transform.rotation = rot;
 
             selfCompensated = true;
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameKit.Utilities;
 using UnityEngine;
@@ -11,7 +12,6 @@ namespace VRC2.Hack
     public class PipeGrabFreeTransformer : MonoBehaviour, ITransformer
     {
         private IGrabbable _grabbable;
-        private Pose _grabDeltaInLocalSpace;
 
         private bool offsetSet = false;
 
@@ -23,7 +23,6 @@ namespace VRC2.Hack
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
 
         // move pipe on hand for the convenience of clamping/connecting
-        private int _offsetTimes = 0;
         private float _offsetFactor = 0.8f;
 
         private Vector3 _moveOffset = Vector3.zero;
@@ -52,29 +51,28 @@ namespace VRC2.Hack
             }
         }
 
-        private float GetOffset()
+        private float _extentsZ
         {
-            if (_offsetTimes == 0) return 0;
-
-            bool negative = false;
-            if (_offsetTimes < 0)
+            get
             {
-                negative = true;
-                _offsetTimes = -_offsetTimes;
-            }
+                var z = 0.0f;
+                if (pipeManipulation != null)
+                {
+                    // simple pipe
+                    z = pipeManipulation.GetRealDiameter();
+                }
+                else
+                {
+                    if (pipesContainerManager != null)
+                    {
+                        // connected pipe
+                        var oipContact = pipesContainerManager.oipContact;
+                        z = PipeHelper.GetExtendsZ(oipContact);
+                    }
+                }
 
-            var result = _offsetFactor;
-            for (var i = 1; i < _offsetTimes; i++)
-            {
-                result = (1 - result) * _offsetFactor + _offsetFactor;
+                return z;
             }
-
-            if (negative)
-            {
-                result *= -1;
-            }
-
-            return result;
         }
 
         [HideInInspector]
@@ -189,6 +187,13 @@ namespace VRC2.Hack
             }
         }
 
+        private float wallExtentsX => wallCollisionDetector._wallExtents.x;
+
+        // after compensated is true and before trigger is released, only z rotation and y and z translation are supported
+        [HideInInspector] public bool Compensated = false;
+
+        private bool forceMoving = false;
+
         #region Clamp Hints Managers
 
         private List<ClampHintManager> _clampHintManagers;
@@ -259,37 +264,33 @@ namespace VRC2.Hack
         public void BeginTransform()
         {
             if (provider == null || !provider.IsValid) return;
-
-            Pose grabPoint = _grabbable.GrabPoints[0];
-            var targetTransform = _grabbable.Transform;
-            _grabDeltaInLocalSpace = new Pose(
-                targetTransform.InverseTransformVector(grabPoint.position - targetTransform.position),
-                Quaternion.Inverse(grabPoint.rotation) * targetTransform.rotation);
         }
 
         public void UpdateTransform()
         {
-            if (provider == null || !provider.IsValid) return;
+            if (provider == null || !provider.IsValid || forceMoving) return;
 
             Pose grabPoint = _grabbable.GrabPoints[0];
-            var targetTransform = _grabbable.Transform;
+            var rot = grabPoint.rotation;
+            var pos = grabPoint.position;
 
-            var rot = grabPoint.rotation * _grabDeltaInLocalSpace.rotation;
+            var targetTransform = _grabbable.Transform;
 
             // add offset
             var rotation = rot.eulerAngles;
             rotation.z += zOffset;
+            rot = Quaternion.Euler(rotation);
 
-            var pos = grabPoint.position - targetTransform.TransformVector(_grabDeltaInLocalSpace.position);
-
-            // enable compensating when a single pipe collides the wall
+            // enable compensating
             if (collidingWall)
             {
                 // print("Colliding Wall. Apply compensation.");
-                (pos, rotation) = CompensateWithDirection(pos, rotation);
+                (pos, rot) = Compensate(targetTransform, pos, rot, Compensated);
+                // update flag
+                Compensated = true;
             }
 
-            targetTransform.rotation = Quaternion.Euler(rotation);
+            targetTransform.rotation = rot;
             targetTransform.position = pos;
             // translate offset
             targetTransform.Translate(_moveOffset, Space.Self);
@@ -315,51 +316,76 @@ namespace VRC2.Hack
             }
         }
 
-        public (Vector3, Vector3) Compensate(Vector3 pos, Vector3 rot)
+        public (Vector3, Quaternion) Compensate(Transform target, Vector3 pos, Quaternion rot, bool compensated)
         {
-            // get diameter
-            var diameter = GetDiameter();
-
-            // var pipeYRotationOffset = wallCollisionDetector.pipeYRotationOffset;
-            // get real diameter
-            var pipez = wallCollisionDetector.GetPipeZByDiameter(diameter);
-
-            var wallExtends = wallCollisionDetector._wallExtents;
-
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
-            // var wrot = wt.rotation.eulerAngles;
-
-            // // set pipe's x rotation to the wall's x rotation
-            // rot.x = wrot.x;
-            // // set pipe's y rotation to the wall's y rotation
-            // rot.y = wrot.y + pipeYRotationOffset;
 
             // as the wall is fixed and its rotation is (0,0,0), use the hard-code rotation to save computation
-            rot.x = 0;
-            rot.y = -90;
+            var rotation = rot.eulerAngles;
+            rotation.x = 0;
+            rotation.y = -90;
 
-            // update the pipe's distance to the wall
-            pos.x = wpos.x + wallExtends.x + 2 * pipez;
+            if (compensated)
+            {
+                // only change the y and the z
+                pos.x = target.position.x;
+            }
+            else
+            {
+                // set the x
+                pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
+            }
+
+            rot = Quaternion.Euler(rotation);
 
             return (pos, rot);
         }
 
-        public (Vector3, Vector3) CompensateWithDirection(Vector3 pos, Vector3 rot)
+        public IEnumerator ForceMovePipeAway()
         {
-            // print("Colliding Wall. Apply compensation.");
-            var (newPos, newRot) = Compensate(pos, rot);
-            
-            var dir = (newPos - pos).normalized;
-            var angle = Vector3.Angle(dir, wall.transform.right);
-
-            // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
-            // if (angle < 180)
+            if (Compensated)
             {
-                rot = newRot;
-                // pos = newPos;
+                forceMoving = true;
+                var pos = _grabbable.Transform.position;
+                pos.x += 2 * _extentsZ;
+
+                _grabbable.Transform.position = pos;
+
+                yield return new WaitForSeconds(0.5f);
+
+                Compensated = false;
+                forceMoving = false;
             }
+
+            yield return null;
+        }
+
+        public void SimulateRelease()
+        {
+            print("SimulateRelease");
+            var png = GetComponent<PipeNetworkGrabbable>();
+            var evt = png.lastPointerEvent;
+            // change type
+            var evt2 = new PointerEvent(evt.Identifier, PointerEventType.Unselect, evt.Pose, evt.Data);
+            png.OriginalProcessPointerEvent(evt2);
+        }
+
+        public (Vector3, Quaternion) CompensateWithDirection(Vector3 pos, Quaternion rot)
+        {
+            // // print("Colliding Wall. Apply compensation.");
+            // var (newPos, newRot) = Compensate(_grabbable.Transform, pos, rot);
+            //
+            // var dir = (newPos - pos).normalized;
+            // var angle = Vector3.Angle(dir, wall.transform.right);
+            //
+            // // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
+            // if (angle < 180)
+            // {
+            //     rot = newRot;
+            //     pos = newPos;
+            // }
 
             return (pos, rot);
         }

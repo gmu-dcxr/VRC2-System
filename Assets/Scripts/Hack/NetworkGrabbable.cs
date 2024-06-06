@@ -176,6 +176,37 @@ namespace VRC2.Events
             }
         }
 
+        public void OriginalProcessPointerEvent(PointerEvent evt)
+        {
+            switch (evt.Type)
+            {
+                case PointerEventType.Select:
+                    EndTransform();
+                    break;
+                case PointerEventType.Unselect:
+                    EndTransform();
+                    break;
+                case PointerEventType.Cancel:
+                    EndTransform();
+                    break;
+            }
+
+            BaseProcessPointerEvent(evt);
+
+            switch (evt.Type)
+            {
+                case PointerEventType.Select:
+                    BeginTransform();
+                    break;
+                case PointerEventType.Unselect:
+                    BeginTransform();
+                    break;
+                case PointerEventType.Move:
+                    UpdateTransform();
+                    break;
+            }
+        }
+
         // Whenever we change the number of grab points, we save the
         // current transform data
         public void BeginTransform()

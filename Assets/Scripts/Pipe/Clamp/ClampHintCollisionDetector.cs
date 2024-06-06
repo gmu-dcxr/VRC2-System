@@ -25,13 +25,27 @@ namespace VRC2.Pipe
 
         private PipeGrabFreeTransformer _transformer;
 
+        private GameObject _root;
+
+        private GameObject root
+        {
+            get
+            {
+                if (_root == null)
+                {
+                    _root = PipeHelper.GetRoot(gameObject);
+                }
+
+                return _root;
+            }
+        }
+
         private PipeGrabFreeTransformer transformer
         {
             get
             {
                 if (_transformer == null)
                 {
-                    var root = PipeHelper.GetRoot(gameObject);
                     _transformer = root.GetComponent<PipeGrabFreeTransformer>();
                 }
 
@@ -39,7 +53,7 @@ namespace VRC2.Pipe
             }
         }
 
-        private GameObject root;
+        private PipeManipulation pm => root.GetComponent<PipeManipulation>();
 
         private bool requested = false;
 
@@ -65,7 +79,10 @@ namespace VRC2.Pipe
             {
                 hintManager.Clamped = false;
                 requested = false;
-            }else if (go.CompareTag(GlobalConstants.wallTag))
+                // check
+                CheckPipeInteractable();
+            }
+            else if (go.CompareTag(GlobalConstants.wallTag))
             {
                 hintManager.OnTheWall = false;
             }
@@ -77,9 +94,12 @@ namespace VRC2.Pipe
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
                 hintManager.Clamped = true;
+                // disable pipe interaction, set to not held
+                UpdatePipeInteraction(false, false);
                 // request update
                 UpdatePipeContainer();
-            } else if (go.CompareTag(GlobalConstants.wallTag))
+            }
+            else if (go.CompareTag(GlobalConstants.wallTag))
             {
                 hintManager.OnTheWall = true;
             }
@@ -87,17 +107,30 @@ namespace VRC2.Pipe
 
         void UpdatePipeContainer()
         {
-            if (root == null)
-            {
-                root = PipeHelper.GetRoot(gameObject);
-            }
-
             var pcm = root.GetComponent<PipesContainerManager>();
             if (!requested && pcm != null && pcm.collidingWall && !pcm.heldByController)
             {
                 requested = true;
                 pcm.selfCompensated = false;
                 pcm.SelfCompensate();
+            }
+        }
+
+        void UpdatePipeInteraction(bool enable, bool held)
+        {
+            if (pm != null)
+            {
+                pm.SetInteraction(enable);
+                pm.SetHeldByController(held);
+            }
+        }
+
+        void CheckPipeInteractable()
+        {
+            // check whether to fall
+            if (pm != null)
+            {
+                pm.CheckAfterUnclamp();
             }
         }
 
