@@ -27,10 +27,10 @@ namespace VRC2
         public float boxDistanceOffset = 0.25f;
 
         [HideInInspector] public Bounds _wallBounds;
-        [HideInInspector] public Vector3 _wallExtends;
+        [HideInInspector] public Vector3 _wallExtents;
 
         private IDictionary<PipeDiameter, float> _pipeDiameters;
-        private IDictionary<int, float> _clampExtendsZ;
+        private IDictionary<int, float> _clampExtentsZ;
 
         private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
 
@@ -39,8 +39,9 @@ namespace VRC2
         void Start()
         {
             InitPipeDiameters();
-            _wallBounds = gameObject.GetComponent<MeshCollider>().bounds;
-            _wallExtends = gameObject.GetComponent<MeshCollider>().bounds.extents;
+            InitClampExtentZ();
+            _wallBounds = gameObject.GetComponent<BoxCollider>().bounds;
+            _wallExtents = gameObject.GetComponent<BoxCollider>().bounds.extents;
         }
 
         void Update()
@@ -75,6 +76,26 @@ namespace VRC2
                     _pipeDiameters.Add(diameter, z);
 
                     // destroy it
+                    GameObject.Destroy(go);
+                }
+            }
+        }
+
+        void InitClampExtentZ()
+        {
+            if (_clampExtentsZ == null)
+            {
+                _clampExtentsZ = new Dictionary<int, float>();
+                for (var i = 1; i <= 4; i++)
+                {
+                    var prefab = PipeHelper.GetClampPrefab(i);
+                    var go = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+                    var csi = go.GetComponentInChildren<ClampScaleInitializer>();
+                    var z = csi.GetComponent<MeshCollider>().bounds.extents.z;
+
+                    print($"Clamp {i} - {z.ToString("f5")}");
+                    _clampExtentsZ.Add(i, z);
+
                     GameObject.Destroy(go);
                 }
             }
@@ -125,7 +146,16 @@ namespace VRC2
             }
         }
 
-        #region Handle Pipe's Collision with the Wall
+        #region Hanle clamp's collision with the wall
+
+        public float GetClampZBySize(int size)
+        {
+            return _clampExtentsZ[size];
+        }
+
+        #endregion
+
+        #region Handle pipe's collision with the wall
 
         public float GetPipeZByDiameter(PipeDiameter diameter)
         {

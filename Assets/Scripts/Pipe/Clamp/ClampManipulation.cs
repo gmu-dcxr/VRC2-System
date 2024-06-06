@@ -9,8 +9,20 @@ namespace VRC2.Pipe.Clamp
     {
         [HideInInspector] public bool collidingWall { get; set; }
 
-        // whether the transform is compensated
-        [HideInInspector] public bool compensated { get; set; }
+        private ClampScaleInitializer _clampScaleInitializer;
+
+        public int ClampSize
+        {
+            get
+            {
+                if (_clampScaleInitializer == null)
+                {
+                    _clampScaleInitializer = GetComponentInChildren<ClampScaleInitializer>();
+                }
+
+                return _clampScaleInitializer.clampSize;
+            }
+        }
 
         private Rigidbody _rigidbody;
 

@@ -108,7 +108,7 @@ namespace VRC2
         #region Clamp Collision with the Wall
 
         public static string clampObjectTag = "Clamp";
-        public static string ClampPrefabsPath = "Assets/Prefabs/";
+        public static string ClampPrefabsPath = "Assets/Prefabs/Clamp/";
 
         #endregion
 
