@@ -346,7 +346,8 @@ namespace VRC2.Hack
         {
             // print("Colliding Wall. Apply compensation.");
             var (newPos, newRot) = Compensate(pos, rot);
-
+            
+            // BUG: check the compensated rotation same as the clamp logic
             var dir = (newPos - pos).normalized;
             var angle = Vector3.Angle(dir, wall.transform.right);
 
