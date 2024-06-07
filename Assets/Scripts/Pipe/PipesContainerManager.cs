@@ -190,7 +190,8 @@ namespace VRC2
 
         #endregion
 
-        private PipeGrabFreeTransformer transformer;
+        private PipeGrabFreeTransformer transformer => gameObject.GetComponent<PipeGrabFreeTransformer>();
+        private float wallExtentsX => wallCollisionDetector._wallExtents.x;
 
         [HideInInspector] public bool selfCompensated = false;
 
@@ -289,11 +290,7 @@ namespace VRC2
                 if (collidingWall)
                 {
                     // enable Compensate
-                    var pgft = gameObject.GetComponent<PipeGrabFreeTransformer>();
-                    
-                    Debug.LogError("pgft is null");
-                    // BUG: sometimes pgqt doesn't exist
-                    (pos, rot) = pgft.CompensateWithDirection(pos, rot);
+                    (pos, rot) = CompensateLocal(pos, rot);
                 }
 
                 // synchronize transform of the parent
@@ -327,17 +324,31 @@ namespace VRC2
             }
         }
 
+        public (Vector3 pos, Quaternion rot) CompensateLocal(Vector3 pos, Quaternion rot)
+        {
+            var wt = wall.transform;
+            var wpos = wt.position;
+
+            var z = PipeHelper.GetExtendsZ(oipContact);
+
+            // as the wall is fixed and its rotation is (0,0,0), use the hard-code rotation to save computation
+            var rotation = rot.eulerAngles;
+            rotation.x = 0;
+            rotation.y = -90;
+            // set the x
+            pos.x = wpos.x + wallExtentsX + 2 * z;
+
+            rot = Quaternion.Euler(rotation);
+
+            return (pos, rot);
+        }
+
         public void SelfCompensate()
         {
             if (selfCompensated) return;
 
-            if (transformer == null)
-            {
-                transformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
-            }
-
             var t = gameObject.transform;
-            var (pos, rot) = transformer.CompensateWithDirection(t.position, t.rotation);
+            var (pos, rot) = transformer.Compensate(t.position, t.rotation);
 
             gameObject.transform.position = pos;
             gameObject.transform.rotation = rot;
