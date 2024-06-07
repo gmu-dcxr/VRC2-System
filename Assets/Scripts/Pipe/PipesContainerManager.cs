@@ -193,8 +193,6 @@ namespace VRC2
         private PipeGrabFreeTransformer transformer => gameObject.GetComponent<PipeGrabFreeTransformer>();
         private float wallExtentsX => wallCollisionDetector._wallExtents.x;
 
-        [HideInInspector] public bool selfCompensated = false;
-
         // Start is called before the first frame update
         void Start()
         {
@@ -205,23 +203,21 @@ namespace VRC2
         public void OnSelect()
         {
             heldByController = true;
-            selfCompensated = false;
-
-            if (_rigidbody == null) return;
-
-            _rigidbody.isKinematic = true;
+            SetKinematic(true);
         }
 
         public void OnRelease()
         {
             heldByController = false;
 
-            // compensate to make it look nicer
-            SelfCompensate();
-
-            if (_rigidbody == null) return;
-
-            _rigidbody.isKinematic = false;
+            if (freeTransformer.Compensated)
+            {
+                SetKinematic(!ShouldFall());
+            }
+            else
+            {
+                SetKinematic(false);
+            }
         }
 
         public void AttachToController(GameObject controller)
@@ -229,8 +225,6 @@ namespace VRC2
             _controller = controller;
             // set held by controller, it's to simulate holding
             heldByController = true;
-
-            selfCompensated = false;
         }
 
         public void UpdateDiameter(PipeConstants.PipeDiameter d)
@@ -268,17 +262,18 @@ namespace VRC2
                     heldByController = false;
                     _controller = null;
 
+                    // this happens when the pipes are just connected and freetransform is null
                     if (collidingWall && !ShouldFall())
                     {
                         // compensate to make it look nicer
                         SelfCompensate();
 
-                        _rigidbody.isKinematic = true;
+                        SetKinematic(true);
                     }
                     else
                     {
                         // make it able to fall
-                        _rigidbody.isKinematic = false;
+                        SetKinematic(false);
                     }
 
                     return;
@@ -362,15 +357,10 @@ namespace VRC2
 
         public void SelfCompensate()
         {
-            if (selfCompensated) return;
-
-            var t = gameObject.transform;
-            var (pos, rot) = transformer.Compensate(t.position, t.rotation);
-
-            gameObject.transform.position = pos;
-            gameObject.transform.rotation = rot;
-
-            selfCompensated = true;
+            var t = transform;
+            var (pos, rot) = CompensateLocal(t.position, t.rotation);
+            transform.position = pos;
+            transform.rotation = rot;
         }
 
         #region Check if pipe can drop when clamphint changes
