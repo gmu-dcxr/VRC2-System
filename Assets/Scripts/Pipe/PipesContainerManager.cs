@@ -261,8 +261,8 @@ namespace VRC2
             if (_controller != null)
             {
                 // This only works when the pipe is first connected
-                var pressed = OVRInput.Get(OVRInput.RawButton.LHandTrigger, OVRInput.Controller.LTouch);
-                if (!pressed)
+                var pressed = OVRInput.GetUp(OVRInput.RawButton.LHandTrigger, OVRInput.Controller.LTouch);
+                if (pressed)
                 {
                     Debug.Log("Released from the left hand controller.");
                     heldByController = false;
@@ -303,25 +303,42 @@ namespace VRC2
                     transform.Translate(_moveOffset, Space.Self);
                 }
             }
-            else
+        }
+
+        void SetKinematic(bool enable)
+        {
+            if (_rigidbody == null) return;
+
+            _rigidbody.isKinematic = enable;
+        }
+
+        public void CheckAfterUnclamp()
+        {
+            // this is necessary when unclamping
+            if (!heldByController)
             {
-                // _controller is none, it is selected by controller
-                if (!heldByController && _rigidbody != null)
-                {
-                    if (ShouldFall())
-                    {
-                        _rigidbody.isKinematic = false;
-                        // make it interactable
-                        SetInteractable(true);
-                    }
-                    else
-                    {
-                        _rigidbody.isKinematic = true;
-                        // make it not interactable
-                        SetInteractable(false);
-                    }
-                }
+                // simulate release
+                freeTransformer.SimulateRelease();
+
+                SetInteraction(ShouldFall());
             }
+        }
+
+        public void SetHeldByController(bool held)
+        {
+            heldByController = held;
+            // release when the state is updated outside
+            if (!held && freeTransformer != null)
+            {
+                // simulate release
+                freeTransformer.SimulateRelease();
+            }
+        }
+
+        public void SetInteraction(bool enable)
+        {
+            SetKinematic(!enable);
+            SetInteractable(enable);
         }
 
         public (Vector3 pos, Quaternion rot) CompensateLocal(Vector3 pos, Quaternion rot)
@@ -453,6 +470,25 @@ namespace VRC2
             else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
                 _moveOffset.x = 0;
+            }
+        }
+
+        #endregion
+
+        #region Compensation for connected pipes collision with the wall
+
+        private PipeGrabFreeTransformer _freeTransformer;
+
+        private PipeGrabFreeTransformer freeTransformer
+        {
+            get
+            {
+                if (_freeTransformer == null)
+                {
+                    _freeTransformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                }
+
+                return _freeTransformer;
             }
         }
 

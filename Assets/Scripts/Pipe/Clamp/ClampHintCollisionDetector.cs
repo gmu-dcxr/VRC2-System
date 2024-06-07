@@ -55,7 +55,7 @@ namespace VRC2.Pipe
 
         private PipeManipulation pm => root.GetComponent<PipeManipulation>();
 
-        private bool requested = false;
+        private PipesContainerManager pcm => root.GetComponent<PipesContainerManager>();
 
         private void Start()
         {
@@ -78,7 +78,6 @@ namespace VRC2.Pipe
             if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
                 hintManager.Clamped = false;
-                requested = false;
                 // check
                 CheckPipeInteractable();
             }
@@ -96,23 +95,10 @@ namespace VRC2.Pipe
                 hintManager.Clamped = true;
                 // disable pipe interaction, set to not held
                 UpdatePipeInteraction(false, false);
-                // request update
-                UpdatePipeContainer();
             }
             else if (go.CompareTag(GlobalConstants.wallTag))
             {
                 hintManager.OnTheWall = true;
-            }
-        }
-
-        void UpdatePipeContainer()
-        {
-            var pcm = root.GetComponent<PipesContainerManager>();
-            if (!requested && pcm != null && pcm.collidingWall && !pcm.heldByController)
-            {
-                requested = true;
-                pcm.selfCompensated = false;
-                pcm.SelfCompensate();
             }
         }
 
@@ -123,6 +109,11 @@ namespace VRC2.Pipe
                 pm.SetInteraction(enable);
                 pm.SetHeldByController(held);
             }
+            else if (pcm != null)
+            {
+                pcm.SetInteraction(enable);
+                pcm.SetHeldByController(held);
+            }
         }
 
         void CheckPipeInteractable()
@@ -131,6 +122,9 @@ namespace VRC2.Pipe
             if (pm != null)
             {
                 pm.CheckAfterUnclamp();
+            } else if (pcm != null)
+            {
+                pcm.CheckAfterUnclamp();
             }
         }
 
