@@ -24,21 +24,9 @@ namespace VRC2.Pipe
         }
 
         private PipeGrabFreeTransformer _transformer;
-
-        private GameObject _root;
-
-        private GameObject root
-        {
-            get
-            {
-                if (_root == null)
-                {
-                    _root = PipeHelper.GetRoot(gameObject);
-                }
-
-                return _root;
-            }
-        }
+        
+        // get root everytime as connecting pipe will change it
+        private GameObject root => PipeHelper.GetRoot(gameObject);
 
         private PipeGrabFreeTransformer transformer
         {
