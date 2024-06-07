@@ -37,43 +37,75 @@ namespace VRC2.Events
         private string enterText = "Press X to Enter";
         private string exitText = "Press X to Exit";
 
+        private bool entered = false;
+
+        public bool Entered => entered;
+
+        // set tempParent to be the parent of camera rig and the player,
+        // and set it to be the child of targetTransform
+        private GameObject tempParent = null;
+
+        private void Start()
+        {
+            textMesh.text = "";
+        }
+
         void EnterLift()
         {
-            // re-find local player
-            playerHelper.ResetLocalPlayer();
 
-            player.transform.parent = targetTransform;
-            // update position
-            var p = Vector3.zero;
-            p.y = targetTransform.position.y;
-            player.transform.position = p;
+            if (tempParent == null)
+            {
+                tempParent = new GameObject();
+            }
 
-            cameraRig.parent = targetTransform;
-            cameraRig.transform.position = p;
+            // reset position and rotation
+            tempParent.transform.position = Vector3.zero;
+            tempParent.transform.rotation = Quaternion.identity;
+
+            // set parent
+            if (player != null)
+            {
+                player.transform.parent = tempParent.transform;
+            }
+
+            cameraRig.parent = tempParent.transform;
+
+            // set parent
+            tempParent.transform.parent = targetTransform;
+
+            entered = true;
         }
 
         void ExitLift()
         {
-            player.transform.parent = null;
-            // update position
-            player.transform.position = Vector3.zero;
+            // get y offset
+            var y = tempParent.transform.position.y;
+            tempParent.transform.parent = null;
 
+            // unparent
             cameraRig.transform.parent = null;
-            cameraRig.transform.position = Vector3.zero;
+
+            // update y
+            var pos = cameraRig.transform.position;
+            pos.y -= y;
+            cameraRig.transform.position = pos;
+
+            if (player != null)
+            {
+                player.transform.parent = null;
+
+                pos = player.transform.position;
+                pos.y -= y;
+
+                player.transform.position = pos;
+            }
+
+            entered = false;
         }
 
         // force player can not move in lift
         private void Update()
         {
-            // return if player is not found
-            if (!GlobalConstants.GameStarted || player == null)
-            {
-                textMesh.text = "";
-                return;
-            }
-
-            var p = player.transform;
-
             var p1 = centerEyeAnchor.transform.position;
             var p2 = targetTransform.position;
 
@@ -83,9 +115,20 @@ namespace VRC2.Events
             // check button event
             var keyX = OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.LTouch);
 
-            if (Vector3.Distance(p1, p2) < distanceThreshold)
+            // text always shows up when entered
+            if (entered)
             {
-                if (p.parent == null)
+                textMesh.text = exitText;
+                if (keyX)
+                {
+                    // exit
+                    ExitLift();
+                }
+            }
+            else
+            {
+                // show text only if distance threshold is satisfied
+                if (Vector3.Distance(p1, p2) < distanceThreshold)
                 {
                     textMesh.text = enterText;
                     if (keyX)
@@ -96,17 +139,8 @@ namespace VRC2.Events
                 }
                 else
                 {
-                    textMesh.text = exitText;
-                    if (keyX)
-                    {
-                        // exit
-                        ExitLift();
-                    }
+                    textMesh.text = "";
                 }
-            }
-            else
-            {
-                textMesh.text = "";
             }
         }
     }

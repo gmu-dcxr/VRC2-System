@@ -9,9 +9,13 @@ namespace VRC2.Events
         public float leftRight = 0.1f;
         private Animator animator;
 
+        private ScissorLiftEnterExit _scissorLiftEnterExit;
+
         private void Start()
         {
             animator = GetComponent<Animator>();
+
+            _scissorLiftEnterExit = GetComponentInChildren<ScissorLiftEnterExit>();
         }
 
         void PlayAnimator(float speed)
@@ -62,6 +66,9 @@ namespace VRC2.Events
 
         private void Update()
         {
+            // do nothing if not entered
+            if (!_scissorLiftEnterExit.Entered) return;
+
             // ovr input
             float horizontalInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch).x;
             float verticalInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.LTouch).y;
