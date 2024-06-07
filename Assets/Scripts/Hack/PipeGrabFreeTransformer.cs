@@ -285,7 +285,7 @@ namespace VRC2.Hack
             if (collidingWall)
             {
                 // print("Colliding Wall. Apply compensation.");
-                (pos, rot) = Compensate(targetTransform, pos, rot, Compensated);
+                (pos, rot) = Compensate(targetTransform, pos, rot);
                 // update flag
                 Compensated = true;
             }
@@ -316,7 +316,7 @@ namespace VRC2.Hack
             }
         }
 
-        public (Vector3, Quaternion) Compensate(Transform target, Vector3 pos, Quaternion rot, bool compensated)
+        public (Vector3, Quaternion) Compensate(Transform target, Vector3 pos, Quaternion rot)
         {
             // get the wall transform
             var wt = wall.transform;
@@ -327,16 +327,8 @@ namespace VRC2.Hack
             rotation.x = 0;
             rotation.y = -90;
 
-            if (compensated)
-            {
-                // only change the y and the z
-                pos.x = target.position.x;
-            }
-            else
-            {
-                // set the x
-                pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
-            }
+            // set the x
+            pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
 
             rot = Quaternion.Euler(rotation);
 
