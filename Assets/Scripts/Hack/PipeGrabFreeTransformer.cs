@@ -285,7 +285,7 @@ namespace VRC2.Hack
             if (collidingWall)
             {
                 // print("Colliding Wall. Apply compensation.");
-                (pos, rot) = Compensate(targetTransform, pos, rot);
+                (pos, rot) = Compensate(targetTransform, pos, rot, Compensated);
                 // update flag
                 Compensated = true;
             }
@@ -294,6 +294,26 @@ namespace VRC2.Hack
             targetTransform.position = pos;
             // translate offset
             targetTransform.Translate(_moveOffset, Space.Self);
+        }
+
+        public void ForceUpdateTransform()
+        {
+            if (provider == null || !provider.IsValid || _grabbable.GrabPoints == null ||
+                _grabbable.GrabPoints.Count < 1) return;
+
+            Pose grabPoint = _grabbable.GrabPoints[0];
+            var rot = grabPoint.rotation;
+            var pos = grabPoint.position;
+
+            var targetTransform = _grabbable.Transform;
+
+            // add offset
+            var rotation = rot.eulerAngles;
+            rotation.z += zOffset;
+            rot = Quaternion.Euler(rotation);
+
+            targetTransform.rotation = rot;
+            targetTransform.position = pos;
         }
 
         public void EndTransform()
@@ -316,7 +336,7 @@ namespace VRC2.Hack
             }
         }
 
-        public (Vector3, Quaternion) Compensate(Transform target, Vector3 pos, Quaternion rot)
+        public (Vector3, Quaternion) Compensate(Transform target, Vector3 pos, Quaternion rot, bool compensated)
         {
             // get the wall transform
             var wt = wall.transform;
@@ -327,25 +347,35 @@ namespace VRC2.Hack
             rotation.x = 0;
             rotation.y = -90;
 
-            // set the x
-            pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
+            if (compensated)
+            {
+                // only change the y and the z
+                pos.x = target.position.x;
+            }
+            else
+            {
+                // set the x
+                pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
+            }
 
             rot = Quaternion.Euler(rotation);
 
             return (pos, rot);
         }
 
-        public IEnumerator ForceMovePipeAway()
+        // due to the compensation, it will be stuck on the wall.
+        // this method is to force moving away from the wall.
+        public IEnumerator ForceMoveAway()
         {
             if (Compensated)
             {
                 forceMoving = true;
-                var pos = _grabbable.Transform.position;
-                pos.x += 2 * _extentsZ;
-
-                _grabbable.Transform.position = pos;
-
-                yield return new WaitForSeconds(0.5f);
+                while (collidingWall)
+                {
+                    print("force moving");
+                    ForceUpdateTransform();
+                    yield return new WaitForSeconds(0.1f);
+                }
 
                 Compensated = false;
                 forceMoving = false;

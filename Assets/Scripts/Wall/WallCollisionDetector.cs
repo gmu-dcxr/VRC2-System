@@ -189,7 +189,8 @@ namespace VRC2
                 if (!enter)
                 {
                     // check whether the pipe is fully away from the wall
-                    enter = PipeFullyLeft(root);
+                    var left = PipeFullyLeft(root);
+                    enter = !left;
                 }
 
                 pcm.collidingWall = enter;
