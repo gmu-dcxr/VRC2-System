@@ -190,7 +190,25 @@ namespace VRC2
 
         #endregion
 
-        private PipeGrabFreeTransformer transformer => gameObject.GetComponent<PipeGrabFreeTransformer>();
+        #region Compensation for connected pipes collision with the wall
+
+        private PipeGrabFreeTransformer _freeTransformer;
+
+        private PipeGrabFreeTransformer freeTransformer
+        {
+            get
+            {
+                if (_freeTransformer == null)
+                {
+                    _freeTransformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                }
+
+                return _freeTransformer;
+            }
+        }
+
+        #endregion
+
         private float wallExtentsX => wallCollisionDetector._wallExtents.x;
 
         // Start is called before the first frame update
@@ -204,6 +222,8 @@ namespace VRC2
         {
             heldByController = true;
             SetKinematic(true);
+            // force move pipe away
+            StartCoroutine(freeTransformer.ForceMoveAway());
         }
 
         public void OnRelease()
@@ -460,25 +480,6 @@ namespace VRC2
             else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
                 _moveOffset.x = 0;
-            }
-        }
-
-        #endregion
-
-        #region Compensation for connected pipes collision with the wall
-
-        private PipeGrabFreeTransformer _freeTransformer;
-
-        private PipeGrabFreeTransformer freeTransformer
-        {
-            get
-            {
-                if (_freeTransformer == null)
-                {
-                    _freeTransformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
-                }
-
-                return _freeTransformer;
             }
         }
 

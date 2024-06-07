@@ -189,6 +189,25 @@ namespace VRC2
 
         #endregion
 
+        #region Compensation for single pipe collision with the wall
+
+        private PipeGrabFreeTransformer _freeTransformer;
+
+        private PipeGrabFreeTransformer freeTransformer
+        {
+            get
+            {
+                if (_freeTransformer == null)
+                {
+                    _freeTransformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
+                }
+
+                return _freeTransformer;
+            }
+        }
+
+        #endregion
+
 
         // Start is called before the first frame update
         void Start()
@@ -399,7 +418,7 @@ namespace VRC2
             // enable kinematic
             SetKinematic(true);
             // force move pipe away
-            StartCoroutine(freeTransformer.ForceMovePipeAway());
+            StartCoroutine(freeTransformer.ForceMoveAway());
         }
 
         public void OnRelease()
@@ -470,27 +489,6 @@ namespace VRC2
             }
 
             return false;
-        }
-
-
-
-        #endregion
-
-        #region Compensation for single pipe collision with the wall
-
-        private PipeGrabFreeTransformer _freeTransformer;
-
-        private PipeGrabFreeTransformer freeTransformer
-        {
-            get
-            {
-                if (_freeTransformer == null)
-                {
-                    _freeTransformer = gameObject.GetComponent<PipeGrabFreeTransformer>();
-                }
-
-                return _freeTransformer;
-            }
         }
 
         #endregion
