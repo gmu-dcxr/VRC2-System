@@ -1,8 +1,10 @@
-﻿using Oculus.Interaction;
+﻿using System.Collections;
+using Oculus.Interaction;
 using UnityEngine;
 using VRC2;
 using VRC2.Hack;
 using VRC2.Pipe.Clamp;
+using VRC2.Utility;
 
 namespace Hack
 {
@@ -82,7 +84,63 @@ namespace Hack
             get => clampManipulation.collidingWall;
         }
 
-        [HideInInspector] public Pose LastCompensation = new Pose();
+        #region Haptic feedback
+
+        private VRHelper _vrHelper;
+
+        private VRHelper vrHelper
+        {
+            get
+            {
+                if (_vrHelper == null)
+                {
+                    _vrHelper = FindObjectOfType<VRHelper>();
+                    if (_vrHelper == null)
+                    {
+                        Debug.LogError("Failed to find VRHelper.");
+                    }
+                }
+
+                return _vrHelper;
+            }
+        }
+
+        OVRInput.Controller GetController()
+        {
+            var result = OVRInput.Controller.RTouch;
+
+            var left = Vector3.Distance(transform.position, vrHelper.leftVisual.transform.position);
+            var right = Vector3.Distance(transform.position, vrHelper.rightVisual.transform.position);
+
+            if (left < right)
+            {
+                result = OVRInput.Controller.LTouch;
+            }
+
+            return result;
+        }
+
+        void VibrateFeedback()
+        {
+            StartCoroutine(Vibrate(1f));
+        }
+
+        IEnumerator Vibrate(float duration)
+        {
+            var ctl = GetController();
+            var amp = 1.0f;
+            while (duration > 0)
+            {
+                duration -= Time.deltaTime;
+                OVRInput.SetControllerLocalizedVibration(OVRInput.HapticsLocation.Hand, 0f, amp, ctl);
+            }
+
+            yield return null;
+        }
+
+
+        #endregion
+
 
         public void Initialize(IGrabbable grabbable)
         {
@@ -110,10 +168,8 @@ namespace Hack
             {
                 print("Clamp colliding wall. Apply compensation.");
                 (pos, rotation) = Compensate(pos, rotation);
-                // update the cache
-                LastCompensation.position = pos;
-                LastCompensation.rotation = rotation;
-
+                // add feedback
+                VibrateFeedback();
                 // do nothing once compensated
                 Compensated = true;
             }
