@@ -2,12 +2,14 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using Fusion;
+using Hack;
 using NodeCanvas.Tasks.Actions;
 using Oculus.Interaction;
 using Oculus.Interaction.DistanceReticles;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using VRC2.Hack;
 using VRC2.Pipe;
 using VRC2.Utility;
 using Object = UnityEngine.Object;
@@ -320,6 +322,22 @@ namespace VRC2.Events
             return parent.parent == null;
         }
 
+        bool OnTheWall(GameObject root)
+        {
+            PipeManipulation pm = root.GetComponent<PipeManipulation>();
+            PipesContainerManager pcm = root.GetComponent<PipesContainerManager>();
+            if (pm != null)
+            {
+                return pm.collidingWall;
+            }
+            else if (pcm != null)
+            {
+                return pcm.collidingWall;
+            }
+
+            return false;
+        }
+
         void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
@@ -410,7 +428,10 @@ namespace VRC2.Events
             // disable all components
             DisableAllComponents(cipRoot.gameObject);
 
-            InitializeParent(cipRoot.gameObject, oip, pos, rot, otherpipe);
+            // if cip is on th wall
+            var cipOnWall = OnTheWall(cipRoot.gameObject);
+
+            InitializeParent(cipRoot.gameObject, oip, pos, rot, otherpipe, cipOnWall);
 
             // // initialize a parent object
             // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
@@ -680,8 +701,18 @@ namespace VRC2.Events
             requiredUpdatedDone = true;
         }
 
+        void ReleaseOip(GameObject oip)
+        {
+            var pgft = oip.GetComponent<PipeGrabFreeTransformer>();
+            if (pgft != null)
+            {
+                pgft.SimulateRelease();
+            }
+        }
 
-        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot, GameObject contact)
+
+        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot, GameObject contact,
+            bool ciponwall)
         {
             if (Runner != null && Runner.IsRunning)
             {
@@ -696,9 +727,21 @@ namespace VRC2.Events
                     oip.transform.parent = parentObject.transform;
                     cip.transform.parent = parentObject.transform;
 
-                    // set parent to attach the the left-hand controller
                     var pcm = parentObject.GetComponent<PipesContainerManager>();
-                    pcm.AttachToController(leftViusal);
+                    if (ciponwall)
+                    {
+                        // cip is on the wall, disable interaction
+                        pcm.SetInteraction(false);
+                    }
+                    else
+                    {
+                        // set parent to attach to the left-hand controller only if it's not on the wall
+                        pcm.AttachToController(leftViusal);
+                    }
+
+                    // release oip
+                    ReleaseOip(oip);
+
                     // update reference
                     pcm.SetReference(ref cip, ref oip, ref contact);
 
@@ -738,8 +781,19 @@ namespace VRC2.Events
                 var pcm = parentObject.GetComponent<PipesContainerManager>();
                 pcm.UpdateDiameter(diameter);
 
-                // set parent to attach the the left-hand controller
-                pcm.AttachToController(leftViusal);
+                if (ciponwall)
+                {
+                    // cip is on the wall, disable interaction
+                    pcm.SetInteraction(false);
+                }
+                else
+                {
+                    // set parent to attach to the left-hand controller only if it's not on the wall
+                    pcm.AttachToController(leftViusal);
+                }
+
+                // release oip
+                ReleaseOip(oip);
 
                 // update reference
                 pcm.SetReference(ref cip, ref oip, ref contact);
