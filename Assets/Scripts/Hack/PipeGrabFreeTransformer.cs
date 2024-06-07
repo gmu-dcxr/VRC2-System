@@ -75,6 +75,9 @@ namespace VRC2.Hack
             }
         }
 
+        // scale the extents z, 1.1 is the scale of the clamp hint
+        public static float ScaleFactor = 1.1f;
+
         [HideInInspector]
         public DistanceLimitedAutoMoveTowardsTargetProvider provider
         {
@@ -355,12 +358,17 @@ namespace VRC2.Hack
             else
             {
                 // set the x
-                pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
+                pos.x = GetCompensatedX(wpos.x);
             }
 
             rot = Quaternion.Euler(rotation);
 
             return (pos, rot);
+        }
+
+        private float GetCompensatedX(float wallx)
+        {
+            return wallx + wallExtentsX + 2 * _extentsZ * ScaleFactor;
         }
 
         // due to the compensation, it will be stuck on the wall.
@@ -372,9 +380,8 @@ namespace VRC2.Hack
                 forceMoving = true;
                 while (collidingWall)
                 {
-                    print("force moving");
                     ForceUpdateTransform();
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForFixedUpdate();
                 }
 
                 Compensated = false;
@@ -404,7 +411,7 @@ namespace VRC2.Hack
             rotation.x = 0;
             rotation.y = -90;
             // set the x
-            pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
+            pos.x = GetCompensatedX(wpos.x);
 
             rot = Quaternion.Euler(rotation);
 

@@ -368,7 +368,7 @@ namespace VRC2
             rotation.x = 0;
             rotation.y = -90;
             // set the x
-            pos.x = wpos.x + wallExtentsX + 2 * z;
+            pos.x = wpos.x + wallExtentsX + 2 * z * PipeGrabFreeTransformer.ScaleFactor;
 
             rot = Quaternion.Euler(rotation);
 
