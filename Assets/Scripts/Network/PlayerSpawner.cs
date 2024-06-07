@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRC2;
 using VRC2.Character;
+using VRC2.Events;
 using FishNetNetworkObject = FishNet.Object.NetworkObject;
 
 namespace VRC2
@@ -34,6 +35,25 @@ namespace VRC2
         // private GenderSyncer _genderSyncer;
 
         public System.Action OnGameStarted;
+
+        #region Player helper
+
+        private PlayerHelper _playerHelper;
+
+        private PlayerHelper playerHelper
+        {
+            get
+            {
+                if (_playerHelper == null)
+                {
+                    _playerHelper = FindFirstObjectByType<PlayerHelper>();
+                }
+
+                return _playerHelper;
+            }
+        }
+
+        #endregion
 
         // Start is called before the first frame update
         void Start()
@@ -207,6 +227,9 @@ namespace VRC2
             {
                 HideSelfNetworkObject();
             }
+            
+            // reset player helper
+            playerHelper.ResetLocalPlayer();
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
