@@ -372,24 +372,22 @@ namespace VRC2.Hack
             png.OriginalProcessPointerEvent(evt2);
         }
 
-        public (Vector3, Quaternion) CompensateWithDirection(Vector3 pos, Quaternion rot)
+        public (Vector3, Quaternion) Compensate(Vector3 pos, Quaternion rot)
         {
-            // // print("Colliding Wall. Apply compensation.");
-            // var (newPos, newRot) = Compensate(_grabbable.Transform, pos, rot);
-            //
-            // var dir = (newPos - pos).normalized;
-            // var angle = Vector3.Angle(dir, wall.transform.right);
-            //
-            // // angle: 0 - controller passes through the wall, 180 - controller is outside the wall
-            // if (angle < 180)
-            // {
-            //     rot = newRot;
-            //     pos = newPos;
-            // }
+            var wt = wall.transform;
+            var wpos = wt.position;
+
+            // as the wall is fixed and its rotation is (0,0,0), use the hard-code rotation to save computation
+            var rotation = rot.eulerAngles;
+            rotation.x = 0;
+            rotation.y = -90;
+            // set the x
+            pos.x = wpos.x + wallExtentsX + 2 * _extentsZ;
+
+            rot = Quaternion.Euler(rotation);
 
             return (pos, rot);
         }
-
 
 
         #endregion

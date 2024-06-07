@@ -229,7 +229,7 @@ namespace VRC2
         {
             heldByController = held;
             // release when the state is updated outside
-            if (!held)
+            if (!held && freeTransformer != null)
             {
                 // simulate release
                 freeTransformer.SimulateRelease();
