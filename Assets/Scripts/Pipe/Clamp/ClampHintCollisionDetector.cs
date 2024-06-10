@@ -87,8 +87,10 @@ namespace VRC2.Pipe
             {
                 hintManager.SetClamped(true);
 
+                var no = _networkObject;
+
                 // only set kinematic to true on p2 side
-                if (_networkObject != null && _networkObject.Runner != null && _networkObject.Runner.IsClient)
+                if (no != null && no.Runner != null && no.Runner.IsClient)
                 {
                     if (_rigidbody != null)
                     {
