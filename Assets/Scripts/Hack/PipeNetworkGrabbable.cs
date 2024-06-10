@@ -13,6 +13,8 @@ namespace VRC2.Hack
 
         [HideInInspector] public PointerEvent lastPointerEvent;
 
+        [HideInInspector] public bool simulateReleased = false;
+
         protected override void Start()
         {
             this.BeginStart(ref _started, () => base.Start());
@@ -40,6 +42,7 @@ namespace VRC2.Hack
 
         public override bool NetworkedPointerEvent(PointerEvent evt)
         {
+            simulateReleased = false;
             // update
             lastPointerEvent = evt;
 

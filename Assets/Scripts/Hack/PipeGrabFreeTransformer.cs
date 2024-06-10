@@ -393,12 +393,17 @@ namespace VRC2.Hack
 
         public void SimulateRelease()
         {
-            print("SimulateRelease");
             var png = GetComponent<PipeNetworkGrabbable>();
-            var evt = png.lastPointerEvent;
-            // change type
-            var evt2 = new PointerEvent(evt.Identifier, PointerEventType.Unselect, evt.Pose, evt.Data);
-            png.OriginalProcessPointerEvent(evt2);
+            if (!png.simulateReleased)
+            {
+                print("SimulateRelease");
+
+                png.simulateReleased = true;
+                var evt = png.lastPointerEvent;
+                // change type
+                var evt2 = new PointerEvent(evt.Identifier, PointerEventType.Unselect, evt.Pose, evt.Data);
+                png.OriginalProcessPointerEvent(evt2);
+            }
         }
 
         public (Vector3, Quaternion) Compensate(Vector3 pos, Quaternion rot)
