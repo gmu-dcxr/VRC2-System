@@ -82,7 +82,6 @@ namespace VRC2.Pipe
             var runner = clamp.GetComponent<NetworkObject>().Runner;
             if (runner != null && runner.IsClient)
             {
-                print($"Update clamp kinematic: {kinematic}");
                 // p2 side
                 var rb = clamp.GetComponent<Rigidbody>();
                 rb.isKinematic = kinematic;
