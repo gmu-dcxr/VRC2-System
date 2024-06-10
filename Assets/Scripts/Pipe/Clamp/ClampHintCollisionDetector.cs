@@ -46,10 +46,6 @@ namespace VRC2.Pipe
 
         private PipesContainerManager pcm => root.GetComponent<PipesContainerManager>();
 
-        private Rigidbody _rigidbody => root.GetComponent<Rigidbody>();
-
-        private NetworkObject _networkObject => root.GetComponent<NetworkObject>();
-
         private void Start()
         {
         }
@@ -80,28 +76,27 @@ namespace VRC2.Pipe
             }
         }
 
+        void UpdateP2Clamp(GameObject go, bool kinematic)
+        {
+            var clamp = go.transform.parent;
+            if (clamp != null && clamp.GetComponent<NetworkObject>().Runner.IsClient)
+            {
+                print($"Update clamp kinematic: {kinematic}");
+                // p2 side
+                var rb = clamp.GetComponent<Rigidbody>();
+                rb.isKinematic = kinematic;
+            }
+        }
+
         void OnTriggerEnterAndStay(Collider other)
         {
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && !hintManager.Clamped)
             {
                 hintManager.SetClamped(true);
-
-                var no = _networkObject;
-
-                // only set kinematic to true on p2 side
-                if (no != null && no.Runner != null && no.Runner.IsClient)
-                {
-                    if (_rigidbody != null)
-                    {
-                        _rigidbody.isKinematic = true;
-                    }
-                }
-                else
-                {
-                    // disable pipe interaction, set to not held
-                    UpdatePipeInteraction(false, false);
-                }
+                UpdateP2Clamp(go, true);
+                // disable pipe interaction, set to not held
+                UpdatePipeInteraction(false, false);
             }
             else if (go.CompareTag(GlobalConstants.wallTag))
             {
