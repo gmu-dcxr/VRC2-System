@@ -1,9 +1,10 @@
 ﻿using System;
+using Fusion;
 using UnityEngine;
 
 namespace VRC2.Events
 {
-    public class ScissorLiftController : MonoBehaviour
+    public class ScissorLiftController : NetworkBehaviour
     {
         [Header("Speed")] public float upDown = 1.0f;
         public float leftRight = 0.1f;
@@ -11,11 +12,17 @@ namespace VRC2.Events
 
         private ScissorLiftEnterExit _scissorLiftEnterExit;
 
+        private NetworkObject _networkObject;
+
+        private NetworkRunner _runner => _networkObject.Runner;
+
         private void Start()
         {
             animator = GetComponent<Animator>();
 
             _scissorLiftEnterExit = GetComponentInChildren<ScissorLiftEnterExit>();
+
+            _networkObject = GetComponent<NetworkObject>();
         }
 
         void PlayAnimator(float speed)
@@ -64,6 +71,55 @@ namespace VRC2.Events
             return frame < 0.0f;
         }
 
+        #region Use RPC to sync animation
+
+        void ProcessInput(float horizontal, float vertical)
+        {
+            if (vertical > 0)
+            {
+                if (!ReachTop())
+                {
+                    Up(upDown);
+                }
+                else
+                {
+                    StopAnimator();
+                }
+            }
+            else if (vertical < 0)
+            {
+                if (!ReachBottom())
+                {
+                    Down(upDown);
+                }
+                else
+                {
+                    StopAnimator();
+                }
+            }
+            else if (horizontal < 0)
+            {
+                Left(leftRight);
+            }
+            else if (horizontal > 0)
+            {
+                Right(leftRight);
+            }
+            else
+            {
+                StopAnimator();
+            }
+        }
+
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessage(float horizontal, float vertical, RpcInfo info = default)
+        {
+            ProcessInput(horizontal, vertical);
+        }
+
+        #endregion
+
         private void Update()
         {
             // do nothing if not entered
@@ -82,40 +138,15 @@ namespace VRC2.Events
                 horizontalInput = 0;
             }
 
-            if (Input.GetKey(KeyCode.UpArrow) || verticalInput > 0)
+            if (_runner != null && _runner.IsRunning)
             {
-                if (!ReachTop())
-                {
-                    Up(upDown);
-                }
-                else
-                {
-                    StopAnimator();
-                }
-            }
-            else if (Input.GetKey(KeyCode.DownArrow) || verticalInput < 0)
-            {
-                if (!ReachBottom())
-                {
-                    Down(upDown);
-                }
-                else
-                {
-                    StopAnimator();
-                }
-            }
-            else if (Input.GetKey(KeyCode.LeftArrow) || horizontalInput < 0)
-            {
-                Left(leftRight);
-            }
-            else if (Input.GetKey(KeyCode.RightArrow) || horizontalInput > 0)
-            {
-                Right(leftRight);
+                RPC_SendMessage(horizontalInput, verticalInput);
             }
             else
             {
-                StopAnimator();
+                ProcessInput(horizontalInput, verticalInput);
             }
+
         }
     }
 }

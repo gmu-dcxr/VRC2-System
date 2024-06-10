@@ -79,7 +79,8 @@ namespace VRC2.Pipe
         void UpdateP2Clamp(GameObject go, bool kinematic)
         {
             var clamp = go.transform.parent;
-            if (clamp != null && clamp.GetComponent<NetworkObject>().Runner.IsClient)
+            var runner = clamp.GetComponent<NetworkObject>().Runner;
+            if (runner != null && runner.IsClient)
             {
                 print($"Update clamp kinematic: {kinematic}");
                 // p2 side
