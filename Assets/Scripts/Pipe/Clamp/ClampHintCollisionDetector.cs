@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using VRC2.Events;
 using VRC2.Hack;
@@ -45,6 +46,10 @@ namespace VRC2.Pipe
 
         private PipesContainerManager pcm => root.GetComponent<PipesContainerManager>();
 
+        private Rigidbody _rigidbody => root.GetComponent<Rigidbody>();
+
+        private NetworkObject _networkObject => root.GetComponent<NetworkObject>();
+
         private void Start()
         {
         }
@@ -81,8 +86,20 @@ namespace VRC2.Pipe
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && !hintManager.Clamped)
             {
                 hintManager.SetClamped(true);
-                // disable pipe interaction, set to not held
-                UpdatePipeInteraction(false, false);
+
+                // only set kinematic to true on p2 side
+                if (_networkObject != null && _networkObject.Runner != null && _networkObject.Runner.IsClient)
+                {
+                    if (_rigidbody != null)
+                    {
+                        _rigidbody.isKinematic = true;
+                    }
+                }
+                else
+                {
+                    // disable pipe interaction, set to not held
+                    UpdatePipeInteraction(false, false);
+                }
             }
             else if (go.CompareTag(GlobalConstants.wallTag))
             {
