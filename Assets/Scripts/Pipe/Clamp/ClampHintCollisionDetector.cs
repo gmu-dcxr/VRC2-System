@@ -24,7 +24,7 @@ namespace VRC2.Pipe
         }
 
         private PipeGrabFreeTransformer _transformer;
-        
+
         // get root everytime as connecting pipe will change it
         private GameObject root => PipeHelper.GetRoot(gameObject);
 
@@ -63,7 +63,7 @@ namespace VRC2.Pipe
         {
             var go = other.gameObject;
             // update Clamped flag 
-            if (go.CompareTag(GlobalConstants.clampObjectTag))
+            if (go.CompareTag(GlobalConstants.clampObjectTag) && hintManager.Clamped)
             {
                 hintManager.SetClamped(false);
                 // check
@@ -78,7 +78,7 @@ namespace VRC2.Pipe
         void OnTriggerEnterAndStay(Collider other)
         {
             var go = other.gameObject;
-            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
+            if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && !hintManager.Clamped)
             {
                 hintManager.SetClamped(true);
                 // disable pipe interaction, set to not held
@@ -110,7 +110,8 @@ namespace VRC2.Pipe
             if (pm != null)
             {
                 pm.CheckAfterUnclamp();
-            } else if (pcm != null)
+            }
+            else if (pcm != null)
             {
                 pcm.CheckAfterUnclamp();
             }
