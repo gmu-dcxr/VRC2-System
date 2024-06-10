@@ -52,7 +52,11 @@ namespace VRC2.Events
         private Quaternion _oLocalRot;
         private NetworkId _cid;
         private NetworkId _oid;
+
         private NetworkId _pid;
+
+        // right hand half pipe name
+        private string _oconnected;
 
         #endregion
 
@@ -608,7 +612,7 @@ namespace VRC2.Events
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RPC_SendMessage(NetworkId cid, NetworkId oid, NetworkId parent,
-            Vector3 clocalpos, Quaternion clocalrot, Vector3 olocalpos, Quaternion olocalrot,
+            Vector3 clocalpos, Quaternion clocalrot, Vector3 olocalpos, Quaternion olocalrot, string oconnected,
             RpcInfo info = default)
         {
             var message = "";
@@ -626,6 +630,7 @@ namespace VRC2.Events
                 _cLocalRot = clocalrot;
                 _oLocalPos = olocalpos;
                 _oLocalRot = olocalrot;
+                _oconnected = oconnected;
 
                 requiredUpdated = true;
             }
@@ -658,7 +663,7 @@ namespace VRC2.Events
             print(cip.name);
             print(oip.name);
             print(parentObj.name);
-            print($"{_cid} - {_oid} - {_pid}");
+            print($"{_cid} - {_oid} - {_pid} - {_oconnected}");
 
             // update reference
             if (parentObj.TryGetComponent<PipesContainerManager>(out PipesContainerManager pcm1))
@@ -688,6 +693,16 @@ namespace VRC2.Events
                 if (pcm2.oip.TryGetComponent<GlueHintManager>(out GlueHintManager m2))
                 {
                     m2.HideHint();
+                }
+            }
+
+            // hide right one glue hint
+            var chms = oip.GetComponentsInChildren<ClampHintManager>();
+            foreach (var chm in chms)
+            {
+                if (chm.gameObject.name.Equals(_oconnected))
+                {
+                    chm.SetCanShow(false);
                 }
             }
 
@@ -766,7 +781,8 @@ namespace VRC2.Events
 
                     RPC_SendMessage(cid, oid, pid,
                         cipt.localPosition, cipt.localRotation,
-                        oipt.localPosition, oipt.localRotation);
+                        oipt.localPosition, oipt.localRotation,
+                        contact.name);
                 }
             }
             else
