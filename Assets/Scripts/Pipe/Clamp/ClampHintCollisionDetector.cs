@@ -65,13 +65,13 @@ namespace VRC2.Pipe
             // update Clamped flag 
             if (go.CompareTag(GlobalConstants.clampObjectTag))
             {
-                hintManager.Clamped = false;
+                hintManager.SetClamped(false);
                 // check
                 CheckPipeInteractable();
             }
             else if (go.CompareTag(GlobalConstants.wallTag))
             {
-                hintManager.OnTheWall = false;
+                hintManager.SetOnTheWall(false);
             }
         }
 
@@ -80,13 +80,13 @@ namespace VRC2.Pipe
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go))
             {
-                hintManager.Clamped = true;
+                hintManager.SetClamped(true);
                 // disable pipe interaction, set to not held
                 UpdatePipeInteraction(false, false);
             }
             else if (go.CompareTag(GlobalConstants.wallTag))
             {
-                hintManager.OnTheWall = true;
+                hintManager.SetOnTheWall(true);
             }
         }
 
