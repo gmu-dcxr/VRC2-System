@@ -191,7 +191,7 @@ namespace VRC2.Events
                 // Enable ClampHintCollisionDetector
                 var chm = gameObject.GetComponent<ClampHintManager>();
                 chm.gameObject.SetActive(true);
-                chm.Clamped = false;
+                chm.SetClamped(false);
             }
         }
 
@@ -446,9 +446,9 @@ namespace VRC2.Events
 
             // update glue hint flags
             // show left one
-            gameObject.GetComponent<ClampHintManager>().CanShow = true;
+            gameObject.GetComponent<ClampHintManager>().SetCanShow(true);
             // hide right one
-            otherpipe.GetComponent<ClampHintManager>().CanShow = false;
+            otherpipe.GetComponent<ClampHintManager>().SetCanShow(false);
 
             // make the end of the other pipe not connectable
             otherpipe.GetComponent<PipeCollisionDetector>().connected = true;
