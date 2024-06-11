@@ -2,37 +2,91 @@
 desc: "incorrect task for scenario 9" # description
 folder: "SheetsTables/t8" # folder name under Assets/Resources/
 image: "IncorrectT8" # Instruction filename for this task, it will be shown in the instruction for participants
-rule: [ "Gas", "Sewage", "Electricity", "Water" ] # construction rule
-P1: [ "color", "type" ] # partial info given to P1
-P2: [ "size", "length" ] # partial info given to P2
+rule: [ "Gas", "Water", "Sewage", "Electricity" ] # construction rule
+P1: [ "color", "length" ] # partial info given to P1
+P2: [ "size", "type" ] # partial info given to P2
 info:
   - id: 1
-    segment: 11
-    color: magenta
-    type: electricity
-    size:  1
-    length: 0.5
+    segment: 1
+    color: magenta # magenta/yellow/green/blue
+    type: sewage # sewage/gas/electricity/water
+    size:  1 # int
+    length: 0.5 # float
   - id: 2
-    segment: 22
+    segment: 2
     color: blue
-    type: electricity
+    type: sewage
     size: 1
     length: 6.5
   - id: 3
-    segment: 33
+    segment: 3
     color: blue
     type: gas
     size: 2
-    length: 2.5
-  - id: 44
+    length: 8.0
+  - id: 4
     segment: 4
     color: yellow
     type: gas
     size: 2
     length: 4.5
-  - id: 55
+  - id: 5
     segment: 5
     color: blue
     type: gas
     size: 2
-    length: 6.5
+    length: 4.0
+  - id: 6
+    segment: 6
+    color: yellow
+    type: gas
+    size: 2
+    length: 7.0
+  - id: 7
+    segment: 7
+    color: blue
+    type: gas
+    size: 2
+    length: 5.5
+  - id: 8
+    segment: 8
+    color: magenta
+    type: electricity
+    size: 3
+    length: 1.7
+  - id: 9
+    segment: 9
+    color: green
+    type: electricity
+    size: 3
+    length: 0.5
+  - id: 10
+    segment: 10
+    color: green
+    type: water
+    size: 4
+    length: 5.25
+  - id: 11
+    segment: 11
+    color: yellow
+    type: water
+    size: 4
+    length: 13.25
+  - id: 12
+    segment: 12
+    color: green
+    type: water
+    size: 4
+    length: 2.0
+  - id: 13
+    segment: 13
+    color: yellow
+    type: water
+    size: 4
+    length: 3.0
+  - id: 14
+    segment: 14
+    color: green
+    type: water
+    size: 4
+    length: 3.0
