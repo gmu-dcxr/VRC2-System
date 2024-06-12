@@ -16,7 +16,6 @@ public class GroundCollisionSounds : MonoBehaviour
         if (collision.gameObject.tag == "ground") 
         {
             collisionNoise.Play();
-            print("working");
         }
     }
 }
