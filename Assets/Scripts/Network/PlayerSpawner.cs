@@ -230,6 +230,8 @@ namespace VRC2
             
             // reset player helper
             playerHelper.ResetLocalPlayer();
+            // merge and move up
+            playerHelper.MergeLocalPlayer();
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)

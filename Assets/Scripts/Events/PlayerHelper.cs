@@ -91,5 +91,32 @@ namespace VRC2.Events
         {
             _localPlayer = null;
         }
+
+        private GameObject _localParent;
+
+        // merge camera rig and avatar and move to top
+        public void MergeLocalPlayer()
+        {
+            // generate parent
+            if (_localParent == null)
+            {
+                _localParent = new GameObject();
+                _localParent.name = "Local Player";
+            }
+            
+            var rig = GameObject.FindObjectOfType<OVRCameraRig>().gameObject;
+            _localParent.transform.position = Vector3.zero;
+            _localParent.transform.rotation = Quaternion.identity;
+
+            rig.transform.parent = _localParent.transform;
+            
+            if (localPlayer != null)
+            {
+                localPlayer.transform.parent = _localParent.transform;   
+            }
+
+            // move to top
+            _localParent.transform.SetAsFirstSibling();
+        }
     }
 }
