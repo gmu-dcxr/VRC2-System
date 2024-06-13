@@ -29,6 +29,10 @@ namespace VRC2.Events
 
         [Space(30)] [Header("Camera")] public Transform cameraRig;
 
+        // local player
+        private Transform _localPlayer => cameraRig.transform.parent;
+        private float _enterY = 0;
+
         [Space(30)] [Header("Settings")] public Transform targetTransform;
         public float distanceThreshold = 0.5f;
 
@@ -63,12 +67,10 @@ namespace VRC2.Events
             tempParent.transform.rotation = Quaternion.identity;
 
             // set parent
-            if (player != null)
-            {
-                player.transform.parent = tempParent.transform;
-            }
+            _localPlayer.transform.parent = tempParent.transform;
 
-            cameraRig.parent = tempParent.transform;
+            // enter Y
+            _enterY = _localPlayer.transform.position.y;
 
             // set parent
             tempParent.transform.parent = targetTransform;
@@ -83,22 +85,12 @@ namespace VRC2.Events
             tempParent.transform.parent = null;
 
             // unparent
-            cameraRig.transform.parent = null;
+            _localPlayer.transform.parent = null;
 
             // update y
-            var pos = cameraRig.transform.position;
-            pos.y -= y;
-            cameraRig.transform.position = pos;
-
-            if (player != null)
-            {
-                player.transform.parent = null;
-
-                pos = player.transform.position;
-                pos.y -= y;
-
-                player.transform.position = pos;
-            }
+            var pos = _localPlayer.transform.position;
+            pos.y = _enterY;
+            _localPlayer.transform.position = pos;
 
             entered = false;
         }
