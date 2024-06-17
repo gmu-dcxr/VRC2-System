@@ -11,6 +11,7 @@ namespace VRC2.Character
 
         [HideInInspector] public bool synchronized = false;
 
+        [HideInInspector] public NetworkRunner runner => GetComponent<NetworkObject>().Runner;
         public PlayerRef GetPlayerByPID(int pid)
         {
             var players = Runner.ActivePlayers;
@@ -51,8 +52,10 @@ namespace VRC2.Character
         public void RPC_SendMessage_FishNet(int objectid, bool female, int hair, int skin, RpcInfo info = default)
         {
             var go = FindSpawnedFishNetObject(objectid);
+            
+            if(go == null) return;
+            
             var cms = go.GetComponent<CharacterMaterialSelector>();
-
             print($"RPC_SendMessage_FishNet: {objectid} {female} {hair} {skin}");
 
             cms.UpdateAppearance(female, hair, skin);
