@@ -16,10 +16,10 @@ namespace VRC2.Character
         {
             if (synchronized) return;
 
-            if (_playerSpawner.ReadyToSyncGender() && Runner.IsClient)
+            if (_playerSpawner.ReadyToSyncGender() && runner != null && runner.IsClient)
             {
                 synchronized = true;
-                
+
                 // Fusion
                 // var pid = GlobalConstants.localPlayer.PlayerId;
                 // fishnet
