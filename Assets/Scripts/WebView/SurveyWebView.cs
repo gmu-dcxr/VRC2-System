@@ -11,6 +11,8 @@ namespace VRC2.WebView
         WebViewPrefab _webViewPrefab;
         Keyboard _keyboard;
 
+        public System.Action OnInitialized;
+
         #region WebView Initialization refer to OculusWebViewDemo
 
         
@@ -42,6 +44,11 @@ namespace VRC2.WebView
             // After the prefab has initialized, you can use the IWebView APIs via its WebView property.
             // https://developer.vuplex.com/webview/IWebView
             _webViewPrefab.WebView.LoadUrl("https://google.com");
+
+            if (OnInitialized != null)
+            {
+                OnInitialized();
+            }
         }
         
         #endregion
@@ -55,8 +62,7 @@ namespace VRC2.WebView
 
         public void SetVisibility(bool show)
         {
-            _webViewPrefab.enabled = show;
-            _keyboard.enabled = show;
+            _webViewPrefab.gameObject.SetActive(show);
         }
         
         #endregion
