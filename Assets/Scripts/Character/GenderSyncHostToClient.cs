@@ -17,7 +17,7 @@ namespace VRC2.Character
         {
             if (synchronized) return;
 
-            if (_playerSpawner.ReadyToSyncGender(true))
+            if (_playerSpawner.ReadyToSyncGender(false))
             {
                 synchronized = true;
                 StartCoroutine(SendMessageAfter(5.0f));
