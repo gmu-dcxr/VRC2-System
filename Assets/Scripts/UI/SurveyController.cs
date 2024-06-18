@@ -29,18 +29,27 @@ namespace VRC2
 
         [Header("SurveyView")] public SurveyWebView webView;
 
+        [Header("Event System")] public GameObject currentES;
+        public GameObject webviewES;
+
 
         [HideInInspector]
         public bool showing
         {
             get => webView.enabled;
-        } 
+        }
 
         // Start is called before the first frame update
         void Start()
         {
             // confirmButton.onClick.AddListener(OnConfirmed);
             // clearButton.onClick.AddListener(OnCleared);
+
+            webView.OnInitialized += OnInitialized;
+        }
+
+        private void OnInitialized()
+        {
             // Hide();
         }
 
@@ -52,12 +61,14 @@ namespace VRC2
 
         private void Show()
         {
+            SetEventSystem(false);
             webView.SetVisibility(true);
             GlobalConstants.SetLaserPointer(true);
         }
 
         public void Hide()
         {
+            SetEventSystem(true);
             webView.SetVisibility(false);
             GlobalConstants.SetLaserPointer(false);
         }
@@ -66,6 +77,12 @@ namespace VRC2
         {
             webView.LoadUrl(url);
             Show();
+        }
+
+        void SetEventSystem(bool current)
+        {
+            currentES.SetActive(current);
+            webviewES.SetActive(!current);
         }
 
         // void OnConfirmed()

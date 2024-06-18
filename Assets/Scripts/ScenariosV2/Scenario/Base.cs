@@ -8,6 +8,7 @@ using VRC2.SAGAT;
 using VRC2.Utility;
 using VRC2.Scenarios;
 using VRC2.ScenariosV2.Tool;
+using VRC2.ScenariosV2.Vehicle;
 using YamlDotNet.Serialization;
 using Incident = VRC2.ScenariosV2.Base.Incident;
 
@@ -106,6 +107,9 @@ namespace VRC2.ScenariosV2.Scenario
 
         // scenario 7
         private Vehicle.ErroneousAI _erroneousAI;
+
+        // survey
+        private Vehicle.Survey _survey;
 
         public Vehicle.Crane crane
         {
@@ -210,6 +214,20 @@ namespace VRC2.ScenariosV2.Scenario
                 return _erroneousAI;
             }
         }
+
+        public Vehicle.Survey survey
+        {
+            get
+            {
+                if (_survey == null)
+                {
+                    _survey = FindObjectOfType<Vehicle.Survey>();
+                }
+
+                return _survey;
+            }
+        }
+
 
         private ScenariosManager _scenariosManager;
 
@@ -386,6 +404,12 @@ namespace VRC2.ScenariosV2.Scenario
             if (cname.Equals(erroneousAI.ClsName))
             {
                 res = erroneousAI.GetAccidentIncident(idx);
+            }
+
+            // survey
+            if (cname.Equals(survey.ClsName))
+            {
+                res = survey.GetIncident(idx, normal);
             }
 
             if (res != null)
