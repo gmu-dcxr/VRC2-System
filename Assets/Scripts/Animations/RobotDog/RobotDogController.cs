@@ -257,14 +257,14 @@ namespace VRC2.Animations
                 // spawn connectors
                 SpawnConnectors(deliveryPoint.position);
             }
-           
+
         }
 
         private void ReadyToPickup()
         {
             // no pickup if no pipes are requested
-            if(parameters.amount <= 0) return;
-            
+            if (parameters.amount <= 0) return;
+
             print("ReadyToPickup");
 
             if (processedPipes != null && processedPipes.Count > 0)
@@ -631,6 +631,10 @@ namespace VRC2.Animations
                             dogSound.loop = false;
                             armSound.loop = true;
                             armSound.Play();
+
+                            // sync
+                            SyncDogSound(true, false, false, false);
+                            SyncArmSound(true, true, true, false);
                         }
                     }
                     else
@@ -641,6 +645,9 @@ namespace VRC2.Animations
                             // move to target
                             print("pickup is done");
                             armSound.loop = false;
+                            // sync
+                            SyncArmSound(true, false, false, false);
+
                             // enable dog animator, disable arm animator
                             armAnimator.enabled = false;
                             dogAnimator.enabled = true;
@@ -686,6 +693,10 @@ namespace VRC2.Animations
                         dogSound.loop = false;
                         armSound.loop = true;
                         armSound.Play();
+
+                        // sync
+                        SyncDogSound(true, false, false, false);
+                        SyncArmSound(true, true, true, false);
                     }
                     else
                     {
@@ -694,6 +705,8 @@ namespace VRC2.Animations
                             print("dropoff done");
                             droppingoff = false;
                             armSound.loop = false;
+                            //sync
+                            SyncArmSound(true, false, false, false);
                             // reset arm
                             // roboticArm.ResetRotations();                            
 
@@ -733,6 +746,8 @@ namespace VRC2.Animations
                         }
 
                         armSound.PlayOneShot(armSound.clip, 0.1f);
+                        // sync
+                        SyncArmSound(false, false, false, true);
                     }
 
                     break;
@@ -754,6 +769,9 @@ namespace VRC2.Animations
                         dogSound.loop = false;
                         armSound.loop = true;
                         armSound.Play();
+                        // sync
+                        SyncDogSound(true, false, false, false);
+                        SyncArmSound(true, true, true, false);
                     }
                     else
                     {
@@ -763,6 +781,9 @@ namespace VRC2.Animations
                             armSound.loop = false;
                             dogAnimator.enabled = true;
                             armAnimator.enabled = false;
+
+                            // sync
+                            SyncArmSound(true, false, false, false);
 
                             UpdateAnimatorStatus(dogAnimator.enabled, armAnimator.enabled);
                             // MoveToTarget();
@@ -894,6 +915,7 @@ namespace VRC2.Animations
                 {
                     Debug.LogError("[RobotDogController] PipeManipulation is null.");
                 }
+
                 parameters.color = pm.pipeColor;
                 parameters.type = pm.pipeType;
                 parameters.diameter = pm.diameter;
@@ -925,7 +947,7 @@ namespace VRC2.Animations
 
         bool ValidateParameters()
         {
-            return (parameters.amount > 0 || parameters.connectorAmount > 0) ;
+            return (parameters.amount > 0 || parameters.connectorAmount > 0);
         }
 
         public void Execute()
@@ -1163,6 +1185,65 @@ namespace VRC2.Animations
             var rb = cip.GetComponent<Rigidbody>();
             rb.isKinematic = false;
         }
+
+        void SyncArmSound(bool setloop, bool loop, bool play, bool oneshot)
+        {
+            if (Runner == null || !Runner.IsRunning) return;
+            RPC_UpdateArmSound(setloop, loop, play, oneshot);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        void RPC_UpdateArmSound(bool setloop, bool loop, bool play, bool oneshot, RpcInfo info = default)
+        {
+            if (info.IsInvokeLocal) return;
+
+            print("RPC_UpdateArmSound");
+
+            if (setloop)
+            {
+                armSound.loop = loop;
+            }
+
+            if (play)
+            {
+                armSound.Play();
+            }
+
+            if (oneshot)
+            {
+                armSound.PlayOneShot(armSound.clip, 0.1f);
+            }
+        }
+
+        void SyncDogSound(bool setloop, bool loop, bool play, bool oneshot)
+        {
+            if (Runner == null || !Runner.IsRunning) return;
+            RPC_UpdateDogSound(setloop, loop, play, oneshot);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        void RPC_UpdateDogSound(bool setloop, bool loop, bool play, bool oneshot, RpcInfo info = default)
+        {
+            if (info.IsInvokeLocal) return;
+
+            print("RPC_UpdateDogSound");
+
+            if (setloop)
+            {
+                dogSound.loop = loop;
+            }
+
+            if (play)
+            {
+                dogSound.Play();
+            }
+
+            if (oneshot)
+            {
+                dogSound.PlayOneShot(dogSound.clip, 0.1f);
+            }
+        }
+
 
         #endregion
     }
