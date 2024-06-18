@@ -76,13 +76,13 @@ namespace VRC2
             }
         }
 
-        public bool ReadyToSyncGender()
+        public bool ReadyToSyncGender(bool client)
         {
             // return false if _runner is null or not running
             if (_runner == null || !_runner.IsRunning) return false;
 
             // runner is running and active players count > 1
-            return _runner.IsRunning && _runner.ActivePlayers.Count() > 1;
+            return _runner.IsRunning && (_runner.IsClient == client) && _runner.ActivePlayers.Count() > 1;
         }
 
         // Update is called once per frame
