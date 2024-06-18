@@ -583,6 +583,12 @@ public class OVRSkeleton : MonoBehaviour
             var data = _dataProvider.GetSkeletonPoseData();
 
             IsDataValid = data.IsDataValid;
+            
+            if (!data.IsDataValid)
+            {
+                return;
+            }
+            
             IsDataHighConfidence = data.IsDataHighConfidence;
 
             for (int i = 0; i < _capsules.Count; ++i)

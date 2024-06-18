@@ -12,18 +12,18 @@ namespace VRC2.Character
             _playerSpawner = FindObjectOfType<PlayerSpawner>();
             synchronized = false;
         }
-        
+
         public void Update()
         {
             if (synchronized) return;
 
-            if (_playerSpawner.ReadyToSyncGender() && runner != null && runner.IsClient)
+            if (_playerSpawner.ReadyToSyncGender(true))
             {
                 synchronized = true;
                 StartCoroutine(SendMessageAfter(5.0f));
             }
         }
-        
+
         // Note: The reason why we need a wait here is that
         // 1) Fusion network process in the following order:
         //  a) Host: host in the scene
@@ -42,7 +42,7 @@ namespace VRC2.Character
             var female = GlobalConstants.playerGender == PlayerGender.Female;
             var hair = GlobalConstants.playerHairIndex;
             var skin = GlobalConstants.playerSkinIndex;
-            
+
             print($"GenderSyncHostToClient: {pid} {female} {hair} {skin}");
             // send message
             // RPC_SendMessage(pid, female, hair, skin);
