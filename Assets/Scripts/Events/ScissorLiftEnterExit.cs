@@ -20,20 +20,9 @@ namespace VRC2.Events
             }
         }
 
-        private GameObject player
-        {
-            get => playerHelper.localPlayer;
-        }
-
         public GameObject centerEyeAnchor;
 
-        [Space(30)] [Header("Camera")] public Transform cameraRig;
-
-        // local player
-        private Transform _localPlayer => cameraRig.transform.parent;
-        private float _enterY = 0;
-
-        [Space(30)] [Header("Settings")] public Transform targetTransform;
+        [Space(30)] [Header("Settings")] public Transform anchor;
         public float distanceThreshold = 0.5f;
 
         [Space(30)] [Header("Text Hint")] public TextMesh textMesh;
@@ -45,9 +34,13 @@ namespace VRC2.Events
 
         public bool Entered => entered;
 
-        // set tempParent to be the parent of camera rig and the player,
-        // and set it to be the child of targetTransform
-        private GameObject tempParent = null;
+
+        // refactor
+        private Vector3 enterAnchor;
+        private Vector3 enterPosition;
+
+        private GameObject _cam => playerHelper.CameraRig;
+        private GameObject _player => playerHelper.localPlayer;
 
         private void Start()
         {
@@ -56,50 +49,25 @@ namespace VRC2.Events
 
         void EnterLift()
         {
-
-            if (tempParent == null)
-            {
-                tempParent = new GameObject();
-            }
-
-            // reset position and rotation
-            tempParent.transform.position = Vector3.zero;
-            tempParent.transform.rotation = Quaternion.identity;
-
-            // set parent
-            _localPlayer.transform.parent = tempParent.transform;
-
-            // enter Y
-            _enterY = _localPlayer.transform.position.y;
-
-            // set parent
-            tempParent.transform.parent = targetTransform;
-
+            enterAnchor = anchor.position;
+            enterPosition = _cam.transform.position;
             entered = true;
         }
 
         void ExitLift()
         {
-            // get y offset
-            var y = tempParent.transform.position.y;
-            tempParent.transform.parent = null;
-
-            // unparent
-            _localPlayer.transform.parent = null;
-
-            // update y
-            var pos = _localPlayer.transform.position;
-            pos.y = _enterY;
-            _localPlayer.transform.position = pos;
-
             entered = false;
+            // update y only
+            var position = _cam.transform.position;
+            position.y = enterPosition.y;
+            _cam.transform.position = position;
+            _player.transform.position = position;
         }
 
-        // force player can not move in lift
-        private void Update()
+        private void LateUpdate()
         {
             var p1 = centerEyeAnchor.transform.position;
-            var p2 = targetTransform.position;
+            var p2 = anchor.position;
 
             p1.y = 0;
             p2.y = 0;
@@ -134,6 +102,18 @@ namespace VRC2.Events
                     textMesh.text = "";
                 }
             }
+        }
+
+        // force player can not move in lift
+        private void Update()
+        {
+            if (!entered) return;
+            // calculate offset
+            var offset = anchor.position - enterAnchor;
+            var position = enterPosition + offset;
+
+            _cam.transform.position = position;
+            _player.transform.position = position;
         }
     }
 }
