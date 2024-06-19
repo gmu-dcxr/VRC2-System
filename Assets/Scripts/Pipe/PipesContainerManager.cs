@@ -188,6 +188,24 @@ namespace VRC2
             }
         }
 
+        // check if glued
+        bool IsGlued
+        {
+            get
+            {
+                if (oip != null)
+                {
+                    var ghm = oip.GetComponent<GlueHintManager>();
+                    if (ghm != null)
+                    {
+                        return ghm.glued;
+                    }
+                }
+
+                return false;
+            }
+        }
+
         #endregion
 
         #region Compensation for connected pipes collision with the wall
@@ -467,15 +485,18 @@ namespace VRC2
             // it should be attached to controller first
             if (_controller == null) return;
 
+            // reverse if glued
+            var reverse = IsGlued ? -1 : 1;
+
             var offset = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
 
             if (offset.x > 0)
             {
-                _moveOffset.x = _offsetFactor * _halfPipeLength;
+                _moveOffset.x = _offsetFactor * _halfPipeLength * reverse;
             }
             else if (offset.x < 0)
             {
-                _moveOffset.x = -_offsetFactor * _halfPipeLength;
+                _moveOffset.x = -_offsetFactor * _halfPipeLength * reverse;
             }
             else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {

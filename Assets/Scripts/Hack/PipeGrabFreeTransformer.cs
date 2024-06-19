@@ -75,6 +75,29 @@ namespace VRC2.Hack
             }
         }
 
+        private bool _isGlued
+        {
+            get
+            {
+                var g = false;
+                if (pipeManipulation != null)
+                {
+                    // simple pipe
+                    g = pipeManipulation.gameObject.GetComponent<GlueHintManager>().glued;
+                }
+                else
+                {
+                    if (pipesContainerManager != null)
+                    {
+                        // connected pipe
+                        g = pipesContainerManager.oip.GetComponent<GlueHintManager>().glued;
+                    }
+                }
+
+                return g;
+            }
+        }
+
         // scale the extents z, 1.1 is the scale of the clamp hint
         public static float ScaleFactor = 1.1f;
 
@@ -453,15 +476,18 @@ namespace VRC2.Hack
         {
             if (provider == null || !provider.IsValid || IsConnector) return;
 
+            // reverse if glued
+            var reverse = _isGlued ? -1 : 1;
+
             var offset = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
 
             if (offset.x > 0)
             {
-                _moveOffset.x = _offsetFactor * _halfPipeLength;
+                _moveOffset.x = _offsetFactor * _halfPipeLength * reverse;
             }
             else if (offset.x < 0)
             {
-                _moveOffset.x = -_offsetFactor * _halfPipeLength;
+                _moveOffset.x = -_offsetFactor * _halfPipeLength * reverse;
             }
             else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
             {
