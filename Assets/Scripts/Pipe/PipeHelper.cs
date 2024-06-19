@@ -489,7 +489,7 @@ namespace VRC2.Pipe
 
             switch (para.type)
             {
-                case PipeConstants.PipeType.Electrical:
+                case PipeConstants.PipeType.Electricity:
                     path += "electrical ";
                     break;
                 case PipeConstants.PipeType.Gas:
