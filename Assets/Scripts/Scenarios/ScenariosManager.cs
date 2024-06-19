@@ -23,6 +23,8 @@ namespace VRC2.Scenarios
         public System.Action OnStart;
         public System.Action OnFinish;
 
+        private bool started = false;
+
         private Condition _condition;
 
         public Condition condition
@@ -51,6 +53,8 @@ namespace VRC2.Scenarios
 
         private void OnGUI()
         {
+            if (started) return;
+
             var runner = GameObject.FindObjectOfType<NetworkRunner>();
             if (runner != null && runner.IsRunning)
             {
@@ -60,6 +64,7 @@ namespace VRC2.Scenarios
                     // host, show GUI
                     if (GUI.Button(new Rect(500, 10, 150, 50), "Start Manager"))
                     {
+                        started = true;
                         RPC_SendMessage();
                     }
                 }
@@ -68,6 +73,8 @@ namespace VRC2.Scenarios
             {
                 if (GUI.Button(new Rect(500, 10, 150, 50), "Start Manager"))
                 {
+                    started = true;
+
                     StartScenarios();
                 }
             }
