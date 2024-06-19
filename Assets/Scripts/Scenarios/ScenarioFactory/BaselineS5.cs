@@ -27,6 +27,7 @@ namespace VRC2.Scenarios.ScenarioFactory
         public GameObject cargo;
         public Animator anim;
         public AudioSource ReverseBeep;
+        public AudioSource collisionNoise;
 
         // [Space(30)] [Header("Recording/Replay")]
         // public CraneTruckInputRecording recording;
@@ -74,6 +75,8 @@ namespace VRC2.Scenarios.ScenarioFactory
         private void Start()
         {
             base.Start();
+
+            collisionNoise = craneTruck.GetComponent<AudioSource>();
 
             _stage = CraneTruckStage.Stop;
 
@@ -208,6 +211,8 @@ namespace VRC2.Scenarios.ScenarioFactory
             unload.armForwardThreshold = 7.5f;
             // reset cargo
             unload.ResetCargo(ref currentCargo);
+            yield return new WaitForSeconds(30f);
+            collisionNoise.Play();
 
             yield return null;
         }

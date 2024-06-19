@@ -6,6 +6,8 @@ public class GroundCollisionSounds : MonoBehaviour
 {
     public AudioSource collisionNoise;
 
+    public string collisionTag;
+
     void Start()
     {
         collisionNoise = GetComponent<AudioSource>();
@@ -13,7 +15,7 @@ public class GroundCollisionSounds : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "ground") 
+        if (collision.gameObject.tag == collisionTag) 
         {
             collisionNoise.Play();
         }
