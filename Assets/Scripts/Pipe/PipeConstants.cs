@@ -20,7 +20,7 @@ namespace VRC2.Pipe
             Sewage = 0, // pipe is the normal one (cylinder)
             Gas = 1, //  pipe with intense wrinkle
             Water = 2, // Water pipe: cylinder with metal material
-            Electrical = 3 // pipe with loose wrinkle
+            Electricity = 3 // pipe with loose wrinkle
         }
 
         public enum PipeBendAngles
