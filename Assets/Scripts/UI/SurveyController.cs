@@ -50,7 +50,7 @@ namespace VRC2
 
         private void OnInitialized()
         {
-            // Hide();
+            Hide();
         }
 
         // Update is called once per frame
