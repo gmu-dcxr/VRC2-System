@@ -589,7 +589,8 @@ namespace VRC2.ScenariosV2.Scenario
                 return;
             }
 
-            if (timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
+            // in some cases timeIncidentIdxMap could be null if there is no incident in some scenario
+            if (timeIncidentIdxMap != null && timeIncidentIdxMap.ContainsKey(sec) && !startedIncidents.Contains(sec))
             {
                 // idx
                 var indices = timeIncidentIdxMap[sec];
