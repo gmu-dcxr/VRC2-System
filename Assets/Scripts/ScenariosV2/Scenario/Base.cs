@@ -406,10 +406,17 @@ namespace VRC2.ScenariosV2.Scenario
                 res = erroneousAI.GetAccidentIncident(idx);
             }
 
-            // survey
-            if (cname.Equals(survey.ClsName))
+            try
             {
-                res = survey.GetIncident(idx, normal);
+                // survey
+                if (cname.Equals(survey.ClsName))
+                {
+                    res = survey.GetIncident(idx, normal);
+                }
+            }
+            catch (Exception e)
+            {
+                ;
             }
 
             if (res != null)
