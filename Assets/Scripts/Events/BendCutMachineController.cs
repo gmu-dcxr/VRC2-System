@@ -51,6 +51,8 @@ namespace VRC2.Events
 
             // play noise 
             audioSource.Play();
+            // sync
+            SyncSound(true);
 
             var pipeInput = robotDog.bendcutInput;
 
@@ -84,6 +86,8 @@ namespace VRC2.Events
         {
             // stop noise
             audioSource.Stop();
+            // sync
+            SyncSound(false);
 
             var pipeOutput = robotDog.bendcutOutput;
 
@@ -149,6 +153,27 @@ namespace VRC2.Events
             {
                 // remote side
                 imageManager.UpdateFilename(GetImageName(angle));
+            }
+        }
+
+        void SyncSound(bool play)
+        {
+            if (Runner == null || !Runner.IsRunning) return;
+            RPC_SyncSound(play);
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SyncSound(bool play, RpcInfo info = default)
+        {
+            if (info.IsInvokeLocal) return;
+
+            if (play)
+            {
+                audioSource.Play();
+            }
+            else
+            {
+                audioSource.Stop();
             }
         }
     }
