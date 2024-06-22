@@ -15,6 +15,8 @@ namespace VRC2.Utility
 
         private List<MeshCollider> _meshColliders;
 
+        public bool onlyEnabled = false;
+
         [Header("RobotDog Debug")] public GameObject debugPipe;
 
         [Header("Debug")] public bool enableDebug = true;
@@ -25,6 +27,7 @@ namespace VRC2.Utility
 
             SetAsRoot();
 
+            debugPipe.SetActive(enableDebug);
             // InitMeshColliders();
 
             // DisableRigidBody();
@@ -40,7 +43,11 @@ namespace VRC2.Utility
             var count = storageRoot.transform.childCount;
             for (var i = 0; i < count; i++)
             {
-                pipes.Add(storageRoot.GetChild(i).gameObject);
+                var go = storageRoot.GetChild(i).gameObject;
+                if (onlyEnabled && go.activeSelf)
+                {
+                    pipes.Add(go);
+                }
             }
         }
 

@@ -302,7 +302,11 @@ namespace VRC2
             if (pipeLabel != null && pipeLabel.text == "" && t != PipeType.Default)
             {
                 // update type
-                pipeLabel.text = Utils.GetDisplayName<PipeType>(t);
+                // format: type (length)
+                var type = Utils.GetDisplayName<PipeType>(t);
+                var length = segmentALength * 2;
+                var len = length == (int)length ? length.ToString("f0") : length.ToString("f1");
+                pipeLabel.text = $"{type} ({len})";
             }
         }
 
