@@ -17,14 +17,14 @@ namespace VRC2
     public class WallCollisionDetector : MonoBehaviour
     {
         // pipe's axes are different from wall's 
-        [Header("Pipe")] public float pipeYRotationOffset = -90f;
+        [Header("Pipe")] private float pipeYRotationOffset = -90f;
 
-        [Header("Clamp")] public float clampYRotationOffset = 90;
-        public float clampZRotationOffset = -90; // fixed
+        [Header("Clamp")] private float clampYRotationOffset = 90;
+        private float clampZRotationOffset = -90; // fixed
 
-        [Header("Box")] public float boxYRotationOffset = -90f;
+        [Header("Box")] private float boxYRotationOffset = -90f;
 
-        public float boxDistanceOffset = 0.25f;
+        private float boxDistanceOffset = 0.25f;
 
         [HideInInspector] public Bounds _wallBounds;
         [HideInInspector] public Vector3 _wallExtents;
@@ -34,6 +34,11 @@ namespace VRC2
 
         private ConcurrentQueue<Action> _mainThreadWorkQueue = new ConcurrentQueue<Action>();
 
+        private Plane _wallPlane;
+
+        // when the distance is less than this value, start compensation
+        [HideInInspector] public float compensationThreshold = 0.2f;
+
 
         // Start is called before the first frame update
         void Start()
@@ -42,6 +47,9 @@ namespace VRC2
             InitClampExtentZ();
             _wallBounds = gameObject.GetComponent<BoxCollider>().bounds;
             _wallExtents = gameObject.GetComponent<BoxCollider>().bounds.extents;
+
+            // init wall plane, this is to calculate the distance between object and the wall
+            _wallPlane = new Plane(transform.right, transform.position);
         }
 
         void Update()
@@ -253,5 +261,19 @@ namespace VRC2
 
 
         #endregion
+
+        // distance between the wall and the position
+        public float GetDistance(Vector3 position)
+        {
+            var distance = _wallPlane.GetDistanceToPoint(position);
+            distance = Mathf.Abs(distance);
+            return distance;
+        }
+
+        public bool ShouldCompensate(Vector3 position)
+        {
+            var d = GetDistance(position);
+            return d < compensationThreshold;
+        }
     }
 }
