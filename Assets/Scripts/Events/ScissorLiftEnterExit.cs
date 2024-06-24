@@ -113,7 +113,10 @@ namespace VRC2.Events
             var position = enterPosition + offset;
 
             _cam.transform.position = position;
-            _player.transform.position = position;
+            if (_player != null)
+            {
+                _player.transform.position = position;
+            }
         }
     }
 }

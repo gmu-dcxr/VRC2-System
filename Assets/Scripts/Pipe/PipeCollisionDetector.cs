@@ -37,6 +37,38 @@ namespace VRC2.Events
             }
         }
 
+        private GameObject _wall;
+
+        private GameObject wall
+        {
+            get
+            {
+                if (_wall == null)
+                {
+                    print("_wall is set");
+                    _wall = GameObject.FindGameObjectWithTag(GlobalConstants.wallTag);
+                }
+
+                return _wall;
+            }
+        }
+
+        private WallCollisionDetector _wallCollisionDetector;
+
+        private WallCollisionDetector wallCollisionDetector
+        {
+            get
+            {
+                if (_wallCollisionDetector == null)
+                {
+                    print("_wallCollisionDetector is set");
+                    _wallCollisionDetector = wall.GetComponent<WallCollisionDetector>();
+                }
+
+                return _wallCollisionDetector;
+            }
+        }
+
         // minimum glue collision count
         private int minimumGlue = 10;
         private int glued = 0;
@@ -434,8 +466,8 @@ namespace VRC2.Events
             // disable all components
             DisableAllComponents(cipRoot.gameObject);
 
-            // if cip is on th wall
-            var cipOnWall = OnTheWall(cipRoot.gameObject);
+            // if cip is on th wall and distance is small enough
+            var cipOnWall = OnTheWall(cipRoot.gameObject) && wallCollisionDetector.ShouldCompensate(cipRoot.position);
 
             InitializeParent(cipRoot.gameObject, oip, pos, rot, otherpipe, cipOnWall);
 
