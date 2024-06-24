@@ -48,12 +48,12 @@ namespace VRC2.Menu
         public static string empty = "";
         public static string VoiceControl = "Voice Control";
         public static string GiveInstruction = "Give Instruction";
-        public static string CheckStorage = "Raw Pipe";
+        public static string CheckStorage = "AI Drone";
         public static string Deprecate = "Deprecate";
         public static string PickupPipe = "Pickup Pipe";
         public static string CheckPipeSizeColor = "Check Size/Color";
         public static string MeasureDistance = "Measure Distance";
-        public static string CommandRobot = "Cut Pipe & Connector";
+        public static string CommandRobot = "RobotDog";
         public static string CheckGlue = "Glue";
         public static string CheckClamp = "Clamp";
         public static string CheckPipeLengthAngle = "Check Length/Angle";

@@ -229,6 +229,8 @@ namespace VRC2
 
         private float wallExtentsX => wallCollisionDetector._wallExtents.x;
 
+        private bool compensatedLocally = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -301,7 +303,7 @@ namespace VRC2
                     _controller = null;
 
                     // this happens when the pipes are just connected and freetransform is null
-                    if (collidingWall && !ShouldFall())
+                    if (collidingWall && wallCollisionDetector.ShouldCompensate(transform.position) && !ShouldFall())
                     {
                         // compensate to make it look nicer
                         SelfCompensate();
@@ -314,16 +316,19 @@ namespace VRC2
                         SetKinematic(false);
                     }
 
+                    compensatedLocally = false;
+
                     return;
                 }
 
                 var t = _controller.transform;
                 var pos = t.position;
                 var rot = t.rotation;
-                if (collidingWall)
+                if (collidingWall && wallCollisionDetector.ShouldCompensate(pos))
                 {
                     // enable Compensate
-                    (pos, rot) = CompensateLocal(pos, rot);
+                    (pos, rot) = CompensateLocal(pos, rot, compensatedLocally);
+                    compensatedLocally = true;
                 }
 
                 // synchronize transform of the parent
@@ -374,7 +379,7 @@ namespace VRC2
             SetInteractable(enable);
         }
 
-        public (Vector3 pos, Quaternion rot) CompensateLocal(Vector3 pos, Quaternion rot)
+        public (Vector3 pos, Quaternion rot) CompensateLocal(Vector3 pos, Quaternion rot, bool compensated)
         {
             var wt = wall.transform;
             var wpos = wt.position;
@@ -385,8 +390,16 @@ namespace VRC2
             var rotation = rot.eulerAngles;
             rotation.x = 0;
             rotation.y = -90;
-            // set the x
-            pos.x = wpos.x + wallExtentsX + 2 * z * PipeGrabFreeTransformer.ScaleFactor;
+
+            if (compensated)
+            {
+                pos.x = transform.position.x;
+            }
+            else
+            {
+                // set the x
+                pos.x = wpos.x + wallExtentsX + 2 * z * PipeGrabFreeTransformer.ScaleFactor;
+            }
 
             rot = Quaternion.Euler(rotation);
 
@@ -396,7 +409,7 @@ namespace VRC2
         public void SelfCompensate()
         {
             var t = transform;
-            var (pos, rot) = CompensateLocal(t.position, t.rotation);
+            var (pos, rot) = CompensateLocal(t.position, t.rotation, false);
             transform.position = pos;
             transform.rotation = rot;
         }

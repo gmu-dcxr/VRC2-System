@@ -306,9 +306,9 @@ namespace VRC2.Hack
             var rotation = rot.eulerAngles;
             rotation.z += zOffset;
             rot = Quaternion.Euler(rotation);
-
+            
             // enable compensating
-            if (collidingWall)
+            if (collidingWall && wallCollisionDetector.ShouldCompensate(pos))
             {
                 // print("Colliding Wall. Apply compensation.");
                 (pos, rot) = Compensate(targetTransform, pos, rot, Compensated);
@@ -398,6 +398,9 @@ namespace VRC2.Hack
         // this method is to force moving away from the wall.
         public IEnumerator ForceMoveAway()
         {
+            // reset move offset
+            _moveOffset.x = 0;
+
             if (Compensated)
             {
                 forceMoving = true;
