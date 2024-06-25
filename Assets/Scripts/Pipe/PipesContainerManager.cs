@@ -437,14 +437,23 @@ namespace VRC2
             var pressed = OVRInput.GetUp(OVRInput.RawButton.LIndexTrigger, OVRInput.Controller.LTouch);
             if (pressed)
             {
-                var cid = cip.GetComponent<NetworkObject>().Id;
+                // rotate the connector if oip is a connector, otherwise rotate the left part
+                NetworkId _nid = cip.GetComponent<NetworkObject>().Id;
+                // object that is to be transformed
+                GameObject _transform = cip;
+
+                if (IsConnector)
+                {
+                    _nid = oip.GetComponent<NetworkObject>().Id;
+                    _transform = oip;
+                }
 
                 // calculate the left rotation after rotating
                 // get relative transform under the other pipe contact part
                 var ot = oipContact.transform;
-                var p = ot.InverseTransformPoint(cip.transform.position);
-                var rf = ot.InverseTransformVector(cip.transform.forward);
-                var ru = ot.InverseTransformVector(cip.transform.up);
+                var p = ot.InverseTransformPoint(_transform.transform.position);
+                var rf = ot.InverseTransformVector(_transform.transform.forward);
+                var ru = ot.InverseTransformVector(_transform.transform.up);
                 // rotate ot
                 oipContact.transform.Rotate(Vector3.right, 90, Space.Self);
                 // change it backup to the word coordinate
@@ -453,36 +462,36 @@ namespace VRC2
                 rf = ot.TransformVector(rf);
                 ru = ot.TransformVector(ru);
                 // update cip
-                cip.transform.position = p;
-                cip.transform.rotation = Quaternion.LookRotation(rf, ru);
-                // sync it
-                var localPos = cip.transform.localPosition;
-                var localRot = cip.transform.localRotation;
+                _transform.transform.position = p;
+                _transform.transform.rotation = Quaternion.LookRotation(rf, ru);
 
-                SyncCIPRotation(cid, localPos, localRot);
+                var localPos = _transform.transform.localPosition;
+                var localRot = _transform.transform.localRotation;
+
+                SyncRotation(_nid, localPos, localRot);
             }
         }
 
-        void SyncCIPRotation(NetworkId cid, Vector3 localPos, Quaternion localRot)
+        void SyncRotation(NetworkId nid, Vector3 localPos, Quaternion localRot)
         {
             if (Runner != null && Runner.IsRunning)
             {
-                RPC_SendMessage(cid, localPos, localRot);
+                RPC_SendMessage(nid, localPos, localRot);
             }
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId cid, Vector3 localPos, Quaternion localRot, RpcInfo info = default)
+        public void RPC_SendMessage(NetworkId nid, Vector3 localPos, Quaternion localRot, RpcInfo info = default)
         {
             // sync local rotation of other pipe (the last connected pipe/connector)
             if (info.IsInvokeLocal)
             {
-                print($"SyncCIPRotation {cid}");
+                print($"SyncCIPRotation {nid}");
             }
             else
             {
-                print($"SyncCIPRotation of {cid}");
-                var go = Runner.FindObject(cid).gameObject;
+                print($"SyncCIPRotation of {nid}");
+                var go = Runner.FindObject(nid).gameObject;
                 go.transform.localPosition = localPos;
                 go.transform.localRotation = localRot;
             }
