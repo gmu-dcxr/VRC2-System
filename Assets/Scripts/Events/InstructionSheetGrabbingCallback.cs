@@ -15,6 +15,7 @@ namespace VRC2.Events
         // public TextMeshProUGUI titleUI;
         // public TextMeshProUGUI contentUI;
         public float distance;
+        public float yOffset;
 
         [HideInInspector] public string title = "Instruction";
         [HideInInspector] public string content = "This is instruction";
@@ -82,12 +83,13 @@ namespace VRC2.Events
         void MoveDialogFaceHeadset()
         {
             var t = _cameraRig.centerEyeAnchor;
+            var rotation = Quaternion.LookRotation(t.forward, t.up);
 
-            // Fix z rotation
-            var rot = t.eulerAngles;
-            rot.z = 0;
+            var rot = rotation.eulerAngles;
+            rot.x += 25f;
+            
             dialog.transform.rotation = Quaternion.Euler(rot);
-            dialog.transform.position = t.position + t.forward * distance;
+            dialog.transform.position = t.position + t.forward * distance + t.up * yOffset;
         }
 
         void SyncAttributes()
