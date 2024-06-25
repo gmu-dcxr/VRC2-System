@@ -124,6 +124,11 @@ namespace VRC2
             reticleRight.SetActive(false);
         }
 
+        public bool showing
+        {
+            get => rootCanvas.activeSelf;
+        }
+
         public void Hide()
         {
             rootCanvas.SetActive(false);
