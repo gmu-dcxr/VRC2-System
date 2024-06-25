@@ -23,6 +23,8 @@ namespace VRC2
         public string prefabName;
 
         private NetworkRunner _runner;
+        
+        [Header("Spawn Transform")] public Transform spawnTransform;
 
         [Header("Setting")] public bool hideSelf = false;
 
@@ -173,8 +175,10 @@ namespace VRC2
                 // Create a unique position for the player
                 // Vector3 spawnPosition =
                 // new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
+                var position = spawnTransform.position;
+                var rotation = spawnTransform.rotation;
                 NetworkObject networkPlayerObject =
-                    runner.Spawn(_playerPrefab, Vector3.zero, Quaternion.identity, player);
+                    runner.Spawn(_playerPrefab, position, rotation, player);
                 // Keep track of the player avatars so we can remove it when they disconnect
                 _spawnedCharacters.Add(player, networkPlayerObject);
 

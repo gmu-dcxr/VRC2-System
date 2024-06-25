@@ -43,6 +43,8 @@ namespace FishNet.Component.Spawning
         public Transform[] Spawns = new Transform[0];
         #endregion
 
+        [Header("Spawn Transform")] public Transform spawnTransform;
+
         #region Private.
         /// <summary>
         /// NetworkManager on this object or within this objects parents.
@@ -97,6 +99,9 @@ namespace FishNet.Component.Spawning
             Vector3 position;
             Quaternion rotation;
             SetSpawn(_playerPrefab.transform, out position, out rotation);
+            
+            position = spawnTransform.position; 
+            rotation = spawnTransform.rotation;
 
             NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
             _networkManager.ServerManager.Spawn(nob, conn);
