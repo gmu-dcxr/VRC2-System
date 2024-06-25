@@ -97,6 +97,9 @@ namespace VRC2
 
                     if (angle < angleThrehold)
                     {
+                        // force update direction
+                        var rot = Quaternion.LookRotation(direction, transform.up);
+                        transform.rotation = rot;
                         // move forward
                         Turn(0);
                         _status = DroneStatus.Move;

@@ -150,7 +150,8 @@ namespace VRC2.Events
                 pos.y -= pipeDroneDistance;
 
                 spawnedPipe.transform.position = pos;
-                spawnedPipe.transform.localRotation = Quaternion.identity;
+                // change the rotation to make it drop parallelly
+                spawnedPipe.transform.localRotation = Quaternion.Euler(0, 90, 0);
             }
 
             _droneController.DropOff();

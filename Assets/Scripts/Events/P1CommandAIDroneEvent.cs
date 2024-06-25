@@ -41,7 +41,15 @@ namespace VRC2.Events
         public override void Execute()
         {
             Debug.Log("AI drone is going to deliver pipes");
-            _controller.Show();
+
+            if (_controller.showing)
+            {
+                _controller.Hide();
+            }
+            else
+            {
+                _controller.Show();
+            }
         }
     }
 }
