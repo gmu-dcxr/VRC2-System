@@ -37,7 +37,7 @@ namespace VRC2
         private Plane _wallPlane;
 
         // when the distance is less than this value, start compensation
-        [HideInInspector] public float compensationThreshold = 0.2f;
+        [HideInInspector] public float compensationThreshold = 0.1f;
 
 
         // Start is called before the first frame update
@@ -202,12 +202,24 @@ namespace VRC2
                 }
 
                 pcm.collidingWall = enter;
+
+                // update clamp hint managers
+                foreach (var chm in pcm.clampHintsManagers)
+                {
+                    chm.SetOnTheWall(enter);
+                }
             }
             else
             {
                 // it's a simple pipe
                 var pm = ipipe.GetComponent<PipeManipulation>();
                 pm.collidingWall = enter;
+
+                // update clamp hint managers
+                foreach (var chm in pm.clampHintsManagers)
+                {
+                    chm.SetOnTheWall(enter);
+                }
             }
         }
 
