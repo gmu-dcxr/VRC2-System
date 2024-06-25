@@ -31,6 +31,9 @@ namespace UnityUITable
 			if (property == null || property.IsEmpty)
 				return;
 			object o = property.GetValue(obj);
+			// update font size
+			label.fontSize = 20;
+			label.fontStyle = FontStyle.Bold;
 			if (o == null)
 				label.text = "null";
 			else if (Table.IsCollection(o.GetType()))
