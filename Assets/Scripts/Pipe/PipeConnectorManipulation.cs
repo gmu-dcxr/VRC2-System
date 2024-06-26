@@ -6,7 +6,7 @@ using UnityEngine;
 namespace VRC2.Pipe
 {
     [RequireComponent(typeof(PointableUnityEventWrapper))]
-    public class PipeConnectorManipulation : MonoBehaviour
+    public class PipeConnectorManipulation : NetworkBehaviour
     {
         private PointableUnityEventWrapper _wrapper;
 
@@ -31,6 +31,8 @@ namespace VRC2.Pipe
 
         [HideInInspector] public bool Flipped = false;
 
+        [HideInInspector] public bool Selected = false;
+
         private Rigidbody _rigidbody
         {
             get => GetComponent<Rigidbody>();
@@ -47,12 +49,14 @@ namespace VRC2.Pipe
         {
             // enable kinematic
             _rigidbody.isKinematic = true;
+            Selected = true;
         }
 
         public void OnRelease()
         {
             // disable kinematic
             _rigidbody.isKinematic = false;
+            Selected = false;
         }
 
         private (Vector3, Vector3, Vector3) GetRelTransform(GameObject from, GameObject to)
