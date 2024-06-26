@@ -33,6 +33,12 @@ namespace VRC2.Events
                     _glueHintManager = gameObject.transform.parent.GetComponent<GlueHintManager>();
                 }
 
+                // make sure it is enabled
+                if (_glueHintManager != null && !_glueHintManager.enabled)
+                {
+                    _glueHintManager.enabled = true;
+                }
+
                 return _glueHintManager;
             }
         }
@@ -113,9 +119,8 @@ namespace VRC2.Events
             }
         }
 
-        private GameObject _leftVisual;
-
         private GameObject leftViusal => vrHelper.leftVisual;
+        private GameObject rightViusal => vrHelper.leftVisual;
         private GameObject leftPoke => vrHelper.leftPoke;
 
 
@@ -325,8 +330,12 @@ namespace VRC2.Events
 
             // current interactable pipe
             // only move the pipe held by the right hand to right
-            var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
-            var rightHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+            // BUG: sometimes it doesn't work
+            // var leftHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.LTouch);
+            // var rightHandPos = OVRInput.GetLocalControllerPosition(OVRInput.Controller.RTouch);
+
+            var leftHandPos = leftViusal.transform.position;
+            var rightHandPos = rightViusal.transform.position;
 
             // other pipe distance should be left hand > right hand
             var otherIpipePos = otherpipe.transform.position;
