@@ -148,10 +148,11 @@ namespace VRC2
             {
                 HandleClampCollision(go, true);
             }
-            else if (go.CompareTag(GlobalConstants.boxObjectTag))
-            {
-                HandleBoxCollision(go);
-            }
+            // box is deprecated
+            // else if (go.CompareTag(GlobalConstants.boxObjectTag))
+            // {
+            //     HandleBoxCollision(go);
+            // }
         }
 
         #region Hanle clamp's collision with the wall
@@ -189,10 +190,17 @@ namespace VRC2
 
             var ipipe = pipe.transform.parent.gameObject;
 
+            // distance between the wall plane
+            // distance < 0 means it is inside the wall
+            var distance = GetSignedDistance(root.transform.position);
+
             if (root != ipipe)
             {
                 // root is a pipe container
                 var pcm = root.GetComponent<PipesContainerManager>();
+
+                // return if collidingwall is true and it is inside the wall
+                if (pcm.collidingWall && distance < 0) return;
 
                 if (!enter)
                 {
@@ -213,6 +221,10 @@ namespace VRC2
             {
                 // it's a simple pipe
                 var pm = ipipe.GetComponent<PipeManipulation>();
+
+                // return if collidingwall is true and it is inside the wall
+                if (pm.collidingWall && distance < 0) return;
+
                 pm.collidingWall = enter;
 
                 // update clamp hint managers
@@ -233,7 +245,12 @@ namespace VRC2
             // get the Interactable clamp
             var iclamp = clamp.transform.parent.gameObject;
 
+            var distance = GetSignedDistance(iclamp.transform.position);
             var cm = iclamp.GetComponent<ClampManipulation>();
+
+            // do nothing when colliding with the wall and inside the wall
+            if (cm.collidingWall && distance < 0) return;
+
             cm.collidingWall = enter;
         }
 
@@ -275,16 +292,20 @@ namespace VRC2
         #endregion
 
         // distance between the wall and the position
-        public float GetDistance(Vector3 position)
+        public float GetSignedDistance(Vector3 position)
         {
-            var distance = _wallPlane.GetDistanceToPoint(position);
-            distance = Mathf.Abs(distance);
-            return distance;
+            return _wallPlane.GetDistanceToPoint(position);
+        }
+
+        public float GetAbsDistance(Vector3 position)
+        {
+            return Mathf.Abs(GetSignedDistance(position));
         }
 
         public bool ShouldCompensate(Vector3 position)
         {
-            var d = GetDistance(position);
+            // it compensates even inside the wall
+            var d = GetSignedDistance(position);
             return d < compensationThreshold;
         }
     }
