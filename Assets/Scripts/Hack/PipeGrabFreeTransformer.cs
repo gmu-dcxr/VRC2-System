@@ -15,7 +15,7 @@ namespace VRC2.Hack
 
         private bool offsetSet = false;
 
-        private float _zOffset = 0;
+        public float _zOffset = 0;
 
         private PipeManipulation _pipeManipulation;
         private PipesContainerManager _pipesContainerManager;
@@ -248,30 +248,48 @@ namespace VRC2.Hack
         {
             get
             {
-                if (isSimplePipe && !offsetSet)
+                // override the logic for the connector
+                if (!offsetSet && IsSimpleConnector)
                 {
-                    // this will happen in connected pipe mode
-                    var angle = pipeManipulation.angle;
-
-                    _zOffset = 0;
-                    switch (angle)
+                    if (ConnectorFliped)
                     {
-                        case PipeConstants.PipeBendAngles.Angle_0:
-                            break;
-                        case PipeConstants.PipeBendAngles.Angle_45:
-                            _zOffset = -180;
-                            break;
-                        case PipeConstants.PipeBendAngles.Angle_90:
-                            _zOffset = -135;
-                            break;
-                        case PipeConstants.PipeBendAngles.Angle_135:
-                            _zOffset = -180;
-                            break;
-                        default:
-                            break;
+                        _zOffset = 0;
+                    }
+                    else
+                    {
+                        _zOffset = -90;
                     }
 
                     offsetSet = true;
+                }
+                else
+                {
+                    if (isSimplePipe && !offsetSet)
+                    {
+                        _zOffset = 0;
+
+                        // this will happen in connected pipe mode
+                        var angle = pipeManipulation.angle;
+
+                        switch (angle)
+                        {
+                            case PipeConstants.PipeBendAngles.Angle_0:
+                                break;
+                            case PipeConstants.PipeBendAngles.Angle_45:
+                                _zOffset = -180;
+                                break;
+                            case PipeConstants.PipeBendAngles.Angle_90:
+                                _zOffset = -135;
+                                break;
+                            case PipeConstants.PipeBendAngles.Angle_135:
+                                _zOffset = -180;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        offsetSet = true;
+                    }
                 }
 
                 return _zOffset;
@@ -507,6 +525,8 @@ namespace VRC2.Hack
 
         #region Connector controlling when being hold
 
+        private bool ConnectorFliped = false;
+
         public bool IsSimpleConnector
         {
             get
@@ -528,7 +548,10 @@ namespace VRC2.Hack
             var pressed = OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger, OVRInput.Controller.RTouch);
             if (pressed && connectorManipulation != null && connectorManipulation.Selected)
             {
-                connectorManipulation.Rotate();
+                // deprecated
+                // connectorManipulation.Flip();
+                ConnectorFliped = !ConnectorFliped;
+                offsetSet = false;
             }
         }
 
