@@ -79,9 +79,13 @@ namespace VRC2.Pipe
             return (p, Quaternion.LookRotation(f, u));
         }
 
-        public void Rotate()
+        public void Flip()
         {
             Flipped = !Flipped;
+            
+            print("before");
+            print(Segment2.transform.localRotation.eulerAngles);
+            print(Segment1.transform.localRotation.eulerAngles);
             // rotate around x of seg 2
             var (p1, f1, u1) = GetRelTransform(Segment2, Segment1);
             var (pm, fm, um) = GetRelTransform(Segment2, SegmentM);
@@ -98,6 +102,11 @@ namespace VRC2.Pipe
 
             SegmentM.transform.position = posm;
             SegmentM.transform.rotation = rotm;
+            
+            // after
+            print("after");
+            print(Segment2.transform.localRotation.eulerAngles);
+            print(Segment1.transform.localRotation.eulerAngles);
 
             // use rpc to sync
             var l1 = Segment1.transform.localPosition;

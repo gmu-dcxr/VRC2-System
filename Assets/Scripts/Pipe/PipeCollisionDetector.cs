@@ -461,6 +461,9 @@ namespace VRC2.Events
 
             var (oipp, oipr, parentRot) = GetRightPipeRootTransform(gameObject, otherpipe, newPivot);
 
+            // precess the label
+            // PostprocessOIPLabel(cipRoot.gameObject, oip.gameObject);
+
             oip.transform.position = oipp;
             oip.transform.rotation = oipr;
 
@@ -550,6 +553,7 @@ namespace VRC2.Events
             return pos;
         }
 
+        // Deprecated because of a simpler implementation, i.e., changing the zoffset
         /// <summary>
         /// Post process the calculated oip transform for the simple connector
         /// </summary>
@@ -630,13 +634,41 @@ namespace VRC2.Events
 
             oip.parent = null;
 
-            (pp, pr) = PostProcessConnector(oip, obj, pp, pr);
+            // (pp, pr) = PostProcessConnector(oip, obj, pp, pr);
 
             // destroy
             GameObject.Destroy(obj);
 
             // get parent position
             return (pp, pr, newRot);
+        }
+
+        // Deprecated because of a simpler implementation, i.e., changing the zoffset
+        /// <summary>
+        /// Flip the label because of the flipped connector
+        /// </summary>
+        /// <param name="ciproot"></param>
+        /// <param name="oip"></param>
+        void PostprocessOIPLabel(GameObject ciproot, GameObject oip)
+        {
+            var pcm = ciproot.GetComponent<PipesContainerManager>();
+            var pconnm = oip.GetComponent<PipeConnectorManipulation>();
+
+            if (pcm != null && pconnm == null)
+            {
+                // left is a container and right is not a container
+                var oippcm = pcm.oip.GetComponent<PipeConnectorManipulation>();
+                if (oippcm != null && oippcm.Flipped)
+                {
+                    // oip in container is a connector and flipped
+                    // flip the text label to make it look nicer
+                    var pm = oip.GetComponent<PipeManipulation>();
+                    var scale = pm.pipeLabel.transform.localScale;
+                    // just flip the x
+                    scale.x *= -1;
+                    pm.pipeLabel.transform.localScale = scale;
+                }
+            }
         }
 
         #endregion

@@ -630,6 +630,7 @@ MonoBehaviour:
   _twoGrabTransformer: {fileID: 0}
   _targetTransform: {fileID: 0}
   _maxGrabPoints: -1
+  simulateReleased: 0
 --- !u!114 &1824585137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -949,7 +950,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7599758523995724681}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0.149, y: -0.003, z: 0.127}
+  m_LocalPosition: {x: 0, y: 0, z: 0.127}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 3768126099360955882}
@@ -1008,8 +1009,8 @@ TextMesh:
   m_OffsetZ: 0
   m_CharacterSize: 0.01
   m_LineSpacing: 1
-  m_Anchor: 0
-  m_Alignment: 0
+  m_Anchor: 1
+  m_Alignment: 1
   m_TabSize: 4
   m_FontSize: 300
   m_FontStyle: 0
@@ -1131,6 +1132,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  connected: 0
 --- !u!114 &336386091279088295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1144,6 +1146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hint: {fileID: 6201115066163687867}
+  positioned: 0
   CanShow: 1
   OnTheWall: 0
   Clamped: 0
@@ -1260,6 +1263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  connected: 0
 --- !u!114 &3089924494215832016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1273,6 +1277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hint: {fileID: 3856409300025790024}
+  positioned: 0
   CanShow: 1
   OnTheWall: 0
   Clamped: 0
