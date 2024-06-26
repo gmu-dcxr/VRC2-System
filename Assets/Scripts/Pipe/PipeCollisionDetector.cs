@@ -459,18 +459,10 @@ namespace VRC2.Events
             //// Fix the left part, and move the right part
             var newPivot = GetRightPipeNewPivot(gameObject, otherpipe);
 
-            var parentPos = GetRightPipeRootPivot(gameObject, otherpipe, newPivot);
+            var (oipp, oipr, parentRot) = GetRightPipeRootTransform(gameObject, otherpipe, newPivot);
 
-            var parentRot = GetRightPipeRootRotation(gameObject, otherpipe, newPivot);
-
-            oip.transform.position = parentPos;
-            oip.transform.rotation = parentRot;
-
-            // initialize parent at the other pipe position
-            var pos = oip.transform.position;
-
-            // get the rotation based on the left controller's rotation
-            var rot = GetParentRotation(oip);
+            oip.transform.position = oipp;
+            oip.transform.rotation = oipr;
 
             // disable all components
             DisableAllComponents(cipRoot.gameObject);
@@ -478,7 +470,7 @@ namespace VRC2.Events
             // if cip is on th wall and distance is small enough
             var cipOnWall = OnTheWall(cipRoot.gameObject) && wallCollisionDetector.ShouldCompensate(cipRoot.position);
 
-            InitializeParent(cipRoot.gameObject, oip, pos, rot, otherpipe, cipOnWall);
+            InitializeParent(cipRoot.gameObject, oip, newPivot, parentRot, otherpipe, cipOnWall);
 
             // // initialize a parent object
             // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
@@ -525,6 +517,14 @@ namespace VRC2.Events
             obj.transform.parent = p;
         }
 
+        /// <summary>
+        /// Get the new pivot position of right pipe segment
+        ///
+        /// current pipe is the segment not the whole pipe, the same as other pipe
+        /// </summary>
+        /// <param name="currentpipe"></param>
+        /// <param name="otherpipe"></param>
+        /// <returns></returns>
         Vector3 GetRightPipeNewPivot(GameObject currentpipe, GameObject otherpipe)
         {
             // pipe length in the x direction
@@ -545,106 +545,98 @@ namespace VRC2.Events
 
             var pos = obj.transform.position; // this is where the right pipe's pivot should be
 
-            // destory the new object
+            // destroy the new object
             GameObject.Destroy(obj);
             return pos;
         }
 
-        Vector3 GetRightPipeRootPivot(GameObject currentpipe, GameObject otherpipe, Vector3 newpivot)
+        /// <summary>
+        /// Post process the calculated oip transform for the simple connector
+        /// </summary>
+        /// <param name="oip"></param> the right hand whole pipe (should be a connector) transform
+        /// <param name="refer"></param>
+        /// <param name="pp"></param>
+        /// <param name="pr"></param>
+        /// <returns></returns>
+        (Vector3, Quaternion) PostProcessConnector(Transform oip, GameObject refer, Vector3 pp, Quaternion pr)
+        {
+            var pft = oip.GetComponent<PipeGrabFreeTransformer>();
+            var pcm = oip.GetComponent<PipeConnectorManipulation>();
+
+            if (pft == null || pcm == null || !pft.IsSimpleConnector || !pcm.Flipped)
+            {
+                // return if not a simple connector or not flipped
+                return (pp, pr);
+            }
+
+            // rotate the parent
+            var ot = refer.transform;
+            var p = ot.InverseTransformPoint(oip.position);
+            var f = ot.InverseTransformVector(oip.forward);
+            var u = ot.InverseTransformVector(oip.up);
+            // rotate ot
+            refer.transform.Rotate(Vector3.right, 180f, Space.Self);
+            // change it backup to the word coordinate
+            ot = refer.transform;
+            pp = ot.TransformPoint(p);
+            f = ot.TransformVector(f);
+            u = ot.TransformVector(u);
+            // update cip
+            pr = Quaternion.LookRotation(f, u);
+
+            return (pp, pr);
+        }
+
+
+        /// <summary>
+        /// Get the right hand whole pipe transform
+        ///
+        /// current pipe and other pipe are both segments, new pivot is for the other pipe segment
+        /// </summary>
+        /// <param name="currentpipe"></param>
+        /// <param name="otherpipe"></param>
+        /// <param name="newPivot"></param>
+        /// <returns>oip position, oip rotation, and parent rotation</returns>
+        (Vector3, Quaternion, Quaternion) GetRightPipeRootTransform(GameObject currentpipe, GameObject otherpipe,
+            Vector3 newpivot)
         {
             var (cc, cr) = PipeHelper.GetRightMostCenter(currentpipe);
 
-            var parent = otherpipe.transform.parent;
+            // whole pipe 
+            var oip = otherpipe.transform.parent;
 
+            // initialize a new object using the other pipe transform
             var obj = new GameObject();
             obj.transform.position = otherpipe.transform.position;
             obj.transform.rotation = otherpipe.transform.rotation;
 
-            var parentLocalPos = obj.transform.InverseTransformPoint(parent.position);
+            // set to parent
+            oip.parent = obj.transform;
+
+            var forward = currentpipe.transform.forward;
+            // get up vector from forward and left (-cr) of the left-hand pipe
+            var up = Vector3.Cross(-cr, forward);
+            // generate a rotation use the left-hand pipe forward and up
+            var newRot = Quaternion.LookRotation(forward, up);
 
             // set new position
             obj.transform.position = newpivot;
-
-            var forward = currentpipe.transform.forward;
-            var up = Vector3.Cross(-cr, forward);
-            var newRot = Quaternion.LookRotation(forward, up);
-
             // set new rotation
             obj.transform.rotation = newRot;
 
-            // get the new position of the parent object
-            var pos = obj.transform.TransformPoint(parentLocalPos);
+            // get parent position and rotation
+            var pp = oip.position;
+            var pr = oip.rotation;
+
+            oip.parent = null;
+
+            (pp, pr) = PostProcessConnector(oip, obj, pp, pr);
 
             // destroy
             GameObject.Destroy(obj);
 
-            return pos;
-        }
-
-        Quaternion GetRightPipeRootRotation(GameObject currentpipe, GameObject otherpipe, Vector3 newPivot)
-        {
-            var rot = currentpipe.transform.rotation;
-
-            var (cc, cr) = PipeHelper.GetRightMostCenter(currentpipe);
-            var forward = currentpipe.transform.forward;
-            var up = Vector3.Cross(-cr, forward);
-            var newRot = Quaternion.LookRotation(forward, up);
-
-            var obj = new GameObject();
-            obj.transform.position = otherpipe.transform.position;
-            obj.transform.rotation = otherpipe.transform.rotation;
-
-            otherpipe.transform.parent.parent = obj.transform;
-
-            obj.transform.position = newPivot;
-            obj.transform.rotation = newRot;
-
-            rot = otherpipe.transform.parent.rotation;
-
-            // this action will disable otherpipe.transform.parent's components
-            GameObject.Destroy(obj);
-
-            otherpipe.transform.parent.parent = null;
-
-            return rot;
-        }
-
-        Quaternion GetParentRotation(GameObject oip)
-        {
-            // get angle
-            var angle = oip.GetComponent<PipeManipulation>().angle;
-
-            // var rot = OVRInput.GetLocalControllerRotation(OVRInput.Controller.LTouch);
-
-            var rot = oip.transform.rotation;
-
-            var zoffset = 0;
-
-            // rotate according to different pipe angles
-
-            switch (angle)
-            {
-                case PipeConstants.PipeBendAngles.Angle_0:
-                    break;
-                case PipeConstants.PipeBendAngles.Angle_45:
-                    zoffset = 135;
-                    break;
-                case PipeConstants.PipeBendAngles.Angle_90:
-                    zoffset = 90;
-                    break;
-                case PipeConstants.PipeBendAngles.Angle_135:
-                    zoffset = 45;
-                    break;
-                default:
-                    break;
-            }
-
-            var vec = rot.eulerAngles;
-            vec.z += zoffset;
-
-            rot = Quaternion.Euler(vec);
-
-            return rot;
+            // get parent position
+            return (pp, pr, newRot);
         }
 
         #endregion
