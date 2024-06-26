@@ -478,7 +478,8 @@ namespace VRC2.Hack
         private void LateUpdate()
         {
             // simple connector case
-            if (provider != null && provider.IsValid && IsSimpleConnector)
+            if (provider != null && provider.IsValid && IsSimpleConnector && _grabbable.GrabPoints != null &&
+                _grabbable.GrabPoints.Count > 0)
             {
                 UpdateConnectorOffset();
                 return;
@@ -507,7 +508,7 @@ namespace VRC2.Hack
 
         #region Connector controlling when being hold
 
-        bool IsSimpleConnector
+        public bool IsSimpleConnector
         {
             get
             {
@@ -528,7 +529,7 @@ namespace VRC2.Hack
             var pressed = OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger, OVRInput.Controller.RTouch);
             if (pressed && connectorManipulation != null)
             {
-                connectorManipulation.Rotate(180f);
+                connectorManipulation.Rotate();
             }
         }
 

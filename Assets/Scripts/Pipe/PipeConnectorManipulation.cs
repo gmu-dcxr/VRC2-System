@@ -29,6 +29,8 @@ namespace VRC2.Pipe
         public GameObject Segment2 => pipeManipulation.SegB;
         public GameObject SegmentM => pipeManipulation.SegM;
 
+        [HideInInspector] public bool Flipped = false;
+
         private Rigidbody _rigidbody
         {
             get => GetComponent<Rigidbody>();
@@ -73,14 +75,15 @@ namespace VRC2.Pipe
             return (p, Quaternion.LookRotation(f, u));
         }
 
-        public void Rotate(float angle)
+        public void Rotate()
         {
+            Flipped = !Flipped;
             // rotate around x of seg 2
             var (p1, f1, u1) = GetRelTransform(Segment2, Segment1);
             var (pm, fm, um) = GetRelTransform(Segment2, SegmentM);
 
             // rotate
-            Segment2.transform.Rotate(Vector3.right, angle, Space.Self);
+            Segment2.transform.Rotate(Vector3.right, 180f, Space.Self);
 
             // restore
             var (pos1, rot1) = GetAbsTransform(Segment2, p1, f1, u1);
@@ -95,23 +98,27 @@ namespace VRC2.Pipe
             // use rpc to sync
             var l1 = Segment1.transform.localPosition;
             var r1 = Segment1.transform.localRotation;
+            // use rpc to sync
+            var l2 = Segment2.transform.localPosition;
+            var r2 = Segment2.transform.localRotation;
             var lm = SegmentM.transform.localPosition;
             var rm = SegmentM.transform.localRotation;
 
-            SyncRotation(l1, r1, lm, rm);
+            SyncRotation(l1, r1, l2, r2, lm, rm);
         }
 
-        void SyncRotation(Vector3 l1, Quaternion r1, Vector3 lm, Quaternion rm)
+        void SyncRotation(Vector3 l1, Quaternion r1, Vector3 l2, Quaternion r2, Vector3 lm, Quaternion rm)
         {
             var no = GetComponent<NetworkObject>();
             if (no != null && no.Runner != null && no.Runner.IsRunning)
             {
-                RPC_SendMessage(no.Id, l1, r1, lm, rm);
+                RPC_SendMessage(no.Id, l1, r1, l2, r2, lm, rm);
             }
         }
 
         [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SendMessage(NetworkId nid, Vector3 l1, Quaternion r1, Vector3 lm, Quaternion rm,
+        public void RPC_SendMessage(NetworkId nid, Vector3 l1, Quaternion r1, Vector3 l2, Quaternion r2, Vector3 lm,
+            Quaternion rm,
             RpcInfo info = default)
         {
             // sync local rotation of other pipe (the last connected pipe/connector)
@@ -128,8 +135,14 @@ namespace VRC2.Pipe
                 pcm.Segment1.transform.localPosition = l1;
                 pcm.Segment1.transform.localRotation = r1;
 
+                pcm.Segment2.transform.localPosition = l2;
+                pcm.Segment2.transform.localRotation = r2;
+
                 pcm.SegmentM.transform.localPosition = lm;
                 pcm.SegmentM.transform.localRotation = rm;
+
+                var flipped = pcm.Flipped;
+                pcm.Flipped = !flipped;
             }
         }
     }
