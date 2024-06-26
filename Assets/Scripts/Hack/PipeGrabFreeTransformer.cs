@@ -306,7 +306,7 @@ namespace VRC2.Hack
             var rotation = rot.eulerAngles;
             rotation.z += zOffset;
             rot = Quaternion.Euler(rotation);
-            
+
             // enable compensating
             if (collidingWall && wallCollisionDetector.ShouldCompensate(pos))
             {
@@ -477,6 +477,13 @@ namespace VRC2.Hack
 
         private void LateUpdate()
         {
+            // simple connector case
+            if (provider != null && provider.IsValid && IsSimpleConnector)
+            {
+                UpdateConnectorOffset();
+                return;
+            }
+
             if (provider == null || !provider.IsValid || IsConnector) return;
 
             // reverse if glued
@@ -497,5 +504,53 @@ namespace VRC2.Hack
                 _moveOffset.x = 0;
             }
         }
+
+        #region Connector controlling when being hold
+
+        bool IsSimpleConnector
+        {
+            get
+            {
+                // it should be no parent
+                if (gameObject.transform.parent != null) return false;
+
+                // simple case
+                var name = gameObject.name;
+                if (name.ToLower().Contains("connector")) return true;
+
+                // default return false
+                return false;
+            }
+        }
+
+        void UpdateConnectorOffset()
+        {
+            var pressed = OVRInput.GetUp(OVRInput.RawButton.RIndexTrigger, OVRInput.Controller.RTouch);
+            if (pressed && connectorManipulation != null)
+            {
+                connectorManipulation.Rotate(180f);
+            }
+        }
+
+        private PipeConnectorManipulation _connectorManipulation;
+
+        public PipeConnectorManipulation connectorManipulation
+        {
+            get
+            {
+                if (IsSimpleConnector)
+                {
+                    _connectorManipulation = GetComponent<PipeConnectorManipulation>();
+                }
+                else
+                {
+                    _connectorManipulation = null;
+                }
+
+                return _connectorManipulation;
+            }
+        }
+
+        #endregion
     }
 }

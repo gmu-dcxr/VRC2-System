@@ -26,6 +26,10 @@ namespace VRC2
         [SerializeField] private GameObject segmentB;
         [SerializeField] private GameObject segmentMid;
 
+        public GameObject SegA => segmentA;
+        public GameObject SegB => segmentB;
+        public GameObject SegM => segmentMid;
+
         [Header("Pipe Settings")]
         // current color
         public PipeColor pipeColor = PipeColor.Green;
@@ -208,10 +212,14 @@ namespace VRC2
 
         #endregion
 
+        private bool IsConnector => gameObject.name.ToLower().Contains("connector");
 
         // Start is called before the first frame update
         void Start()
         {
+            // do nothing for a connector
+            if (IsConnector) return;
+
             // set length
             SetLength(segmentALength, segmentBLength);
 
