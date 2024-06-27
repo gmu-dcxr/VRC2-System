@@ -457,15 +457,16 @@ namespace VRC2.Events
 
 
             //// Fix the left part, and move the right part
-            var newPivot = GetRightPipeNewPivot(gameObject, otherpipe);
 
-            var (oipp, oipr, parentRot) = GetRightPipeRootTransform(gameObject, otherpipe, newPivot);
+            // var ppos = GetRightPipeNewPivot(gameObject, otherpipe);
+            // get new oip transform and parent rotation
+            var (oipp, oipr, ppos, prot) = GetRightPipeRootTransform(gameObject, otherpipe);
+
+            // get the relative position and rotation after connecting
+            var (clp, clr, olp, olr) = GetRelativeTransform(ppos, prot, cipRoot.gameObject, oip, oipp, oipr);
 
             // precess the label
             // PostprocessOIPLabel(cipRoot.gameObject, oip.gameObject);
-
-            oip.transform.position = oipp;
-            oip.transform.rotation = oipr;
 
             // disable all components
             DisableAllComponents(cipRoot.gameObject);
@@ -473,7 +474,7 @@ namespace VRC2.Events
             // if cip is on th wall and distance is small enough
             var cipOnWall = OnTheWall(cipRoot.gameObject) && wallCollisionDetector.ShouldCompensate(cipRoot.position);
 
-            InitializeParent(cipRoot.gameObject, oip, newPivot, parentRot, otherpipe, cipOnWall);
+            InitializeParent(cipRoot.gameObject, oip, ppos, prot, clp, clr, olp, olr, otherpipe, cipOnWall);
 
             // // initialize a parent object
             // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
@@ -595,27 +596,39 @@ namespace VRC2.Events
         /// <summary>
         /// Get the right hand whole pipe transform
         ///
-        /// current pipe and other pipe are both segments, new pivot is for the other pipe segment
+        /// current pipe and other pipe are both segments
         /// </summary>
         /// <param name="currentpipe"></param>
         /// <param name="otherpipe"></param>
-        /// <param name="newPivot"></param>
-        /// <returns>oip position, oip rotation, and parent rotation</returns>
-        (Vector3, Quaternion, Quaternion) GetRightPipeRootTransform(GameObject currentpipe, GameObject otherpipe,
-            Vector3 newpivot)
+        /// <returns>oip position, oip rotation, parent position and parent rotation</returns>
+        (Vector3, Quaternion, Vector3, Quaternion) GetRightPipeRootTransform(GameObject currentpipe,
+            GameObject otherpipe)
         {
+            // pipe length in the x direction
+            var ox = PipeHelper.GetExtendsX(otherpipe);
             var (cc, cr) = PipeHelper.GetRightMostCenter(currentpipe);
 
             // whole pipe 
             var oip = otherpipe.transform.parent;
 
-            // initialize a new object using the other pipe transform
-            var obj = new GameObject();
-            obj.transform.position = otherpipe.transform.position;
-            obj.transform.rotation = otherpipe.transform.rotation;
+            // initialize a new object
+            var obj1 = new GameObject();
+            var obj2 = new GameObject();
+            var pup = currentpipe.transform.up;
+            var pforward = Vector3.Cross(cr, pup);
+            obj1.transform.position = cc;
+            obj1.transform.rotation = Quaternion.LookRotation(pforward, pup);
+            obj1.transform.Translate(ox, 0, 0);
+
+            // this is the position of the parent
+            var newPos = obj1.transform.position;
+
+            // update with the other pipe transform
+            obj2.transform.position = otherpipe.transform.position;
+            obj2.transform.rotation = otherpipe.transform.rotation;
 
             // set to parent
-            oip.parent = obj.transform;
+            oip.parent = obj2.transform;
 
             var forward = currentpipe.transform.forward;
             // get up vector from forward and left (-cr) of the left-hand pipe
@@ -624,9 +637,9 @@ namespace VRC2.Events
             var newRot = Quaternion.LookRotation(forward, up);
 
             // set new position
-            obj.transform.position = newpivot;
+            obj2.transform.position = newPos;
             // set new rotation
-            obj.transform.rotation = newRot;
+            obj2.transform.rotation = newRot;
 
             // get parent position and rotation
             var pp = oip.position;
@@ -637,10 +650,52 @@ namespace VRC2.Events
             // (pp, pr) = PostProcessConnector(oip, obj, pp, pr);
 
             // destroy
-            GameObject.Destroy(obj);
+            GameObject.Destroy(obj1);
+            GameObject.Destroy(obj2);
 
             // get parent position
-            return (pp, pr, newRot);
+            return (pp, pr, newPos, newRot);
+        }
+
+        /// <summary>
+        /// Sometimes world transform doesn't work well for connecting, calculate the relative transform before connecting
+        /// </summary>
+        /// <param name="p">parent position</param>
+        /// <param name="r">parent rotation</param>
+        /// <param name="cipRoot">cip root</param>
+        /// <param name="oipRoot">oip root</param>
+        /// <param name="oipp">calculated oip world position</param>
+        /// <param name="oipr">calculated oip world rotation</param>
+        /// <returns></returns>
+        (Vector3, Quaternion, Vector3, Quaternion) GetRelativeTransform(Vector3 p, Quaternion r, GameObject cipRoot,
+            GameObject oipRoot, Vector3 oipp, Quaternion oipr)
+        {
+            // initialize a new object using the other pipe transform
+            var obj = new GameObject();
+            obj.transform.position = p;
+            obj.transform.rotation = r;
+
+            // update oip root position
+            oipRoot.transform.position = oipp;
+            oipRoot.transform.rotation = oipr;
+
+            cipRoot.transform.parent = obj.transform;
+            oipRoot.transform.parent = obj.transform;
+
+            var clp = cipRoot.transform.localPosition;
+            var clr = cipRoot.transform.localRotation;
+
+            var olp = oipRoot.transform.localPosition;
+            var olr = oipRoot.transform.localRotation;
+
+            // de parent
+            cipRoot.transform.parent = null;
+            oipRoot.transform.parent = null;
+
+            // destroy
+            GameObject.Destroy(obj);
+
+            return (clp, clr, olp, olr);
         }
 
         // Deprecated because of a simpler implementation, i.e., changing the zoffset
@@ -792,8 +847,22 @@ namespace VRC2.Events
             }
         }
 
-
-        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot, GameObject contact,
+        /// <summary>
+        /// Initialize parent and update transforms
+        /// </summary>
+        /// <param name="cip">current pipe root</param>
+        /// <param name="oip">other pipe root</param>
+        /// <param name="pos">parent position</param>
+        /// <param name="rot">parent rotation</param>
+        /// <param name="ciplp">cip local position</param>
+        /// <param name="ciplr">cip local rotation</param>
+        /// <param name="oiplp">oip local position</param>
+        /// <param name="oiplr">oip local rotation</param>
+        /// <param name="contact">contact part of oip</param>
+        /// <param name="ciponwall">if cip is on the wall</param>
+        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot,
+            Vector3 ciplp, Quaternion ciplr,
+            Vector3 oiplp, Quaternion oiplr, GameObject contact,
             bool ciponwall)
         {
             if (Runner != null && Runner.IsRunning)
@@ -808,6 +877,11 @@ namespace VRC2.Events
 
                     oip.transform.parent = parentObject.transform;
                     cip.transform.parent = parentObject.transform;
+
+                    oip.transform.localPosition = oiplp;
+                    oip.transform.localRotation = oiplr;
+                    cip.transform.localPosition = ciplp;
+                    cip.transform.localRotation = ciplr;
 
                     var pcm = parentObject.GetComponent<PipesContainerManager>();
                     if (ciponwall)
@@ -836,18 +910,7 @@ namespace VRC2.Events
                     var oid = oip.GetComponent<NetworkObject>().Id;
                     var cid = cip.GetComponent<NetworkObject>().Id;
 
-                    var cipt = cip.transform;
-                    var oipt = oip.transform;
-
-                    print(
-                        $"local cip: {cipt.localPosition.ToString("f5")} {cipt.localRotation.eulerAngles.ToString("f5")}");
-                    print(
-                        $"local oip: {oipt.localPosition.ToString("f5")} {oipt.localRotation.eulerAngles.ToString("f5")}");
-
-                    RPC_SendMessage(cid, oid, pid,
-                        cipt.localPosition, cipt.localRotation,
-                        oipt.localPosition, oipt.localRotation,
-                        contact.name);
+                    RPC_SendMessage(cid, oid, pid, ciplp, ciplr, oiplp, oiplr, contact.name);
                 }
             }
             else
@@ -858,6 +921,12 @@ namespace VRC2.Events
                 // update parent
                 oip.transform.parent = parentObject.transform;
                 cip.transform.parent = parentObject.transform;
+
+                oip.transform.localPosition = oiplp;
+                oip.transform.localRotation = oiplr;
+
+                cip.transform.localPosition = ciplp;
+                cip.transform.localRotation = ciplr;
 
                 // update diameter
                 var diameter = oip.GetComponent<PipeManipulation>().diameter;
