@@ -45,17 +45,24 @@ namespace VRC2.Pipe
             _wrapper.WhenRelease.AddListener(OnRelease);
         }
 
+        void SetKinematic(bool enable)
+        {
+            if (_rigidbody == null) return;
+
+            _rigidbody.isKinematic = enable;
+        }
+
         public void OnSelect()
         {
             // enable kinematic
-            _rigidbody.isKinematic = true;
+            SetKinematic(true);
             Selected = true;
         }
 
         public void OnRelease()
         {
             // disable kinematic
-            _rigidbody.isKinematic = false;
+            SetKinematic(false);
             Selected = false;
         }
 
@@ -82,7 +89,7 @@ namespace VRC2.Pipe
         public void Flip()
         {
             Flipped = !Flipped;
-            
+
             print("before");
             print(Segment2.transform.localRotation.eulerAngles);
             print(Segment1.transform.localRotation.eulerAngles);
@@ -102,7 +109,7 @@ namespace VRC2.Pipe
 
             SegmentM.transform.position = posm;
             SegmentM.transform.rotation = rotm;
-            
+
             // after
             print("after");
             print(Segment2.transform.localRotation.eulerAngles);

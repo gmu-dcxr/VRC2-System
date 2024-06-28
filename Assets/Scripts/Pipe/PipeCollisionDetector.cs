@@ -126,6 +126,17 @@ namespace VRC2.Events
 
         #endregion
 
+        #region Fix for server side when connecting
+
+        private bool requestFixingServer = false;
+        private bool requestFixingServerDone = false;
+
+        private GameObject _oipRoot;
+        private Vector3 _oipLocalPos;
+        private Quaternion _oipLocalRot;
+
+        #endregion
+
 
 
 
@@ -144,6 +155,11 @@ namespace VRC2.Events
             if (requiredUpdated && !requiredUpdatedDone)
             {
                 UpdateOnClient();
+            }
+
+            if (requestFixingServer && !requestFixingServerDone)
+            {
+                UpdateOnServer();
             }
         }
 
@@ -385,6 +401,80 @@ namespace VRC2.Events
             return false;
         }
 
+        /// <summary>
+        /// Sometimes world transform doesn't work well for connecting, calculate the relative transform before connecting
+        /// </summary>
+        /// <param name="p">parent position</param>
+        /// <param name="r">parent rotation</param>
+        /// <param name="cipRoot">cip root</param>
+        /// <param name="oipRoot">oip root</param>
+        /// <param name="oipp">calculated oip world position</param>
+        /// <param name="oipr">calculated oip world rotation</param>
+        /// <returns></returns>
+        (Vector3, Quaternion, Vector3, Quaternion) GetRelativeTransform(Vector3 p, Quaternion r, GameObject cipRoot,
+            GameObject oipRoot, Vector3 oipp, Quaternion oipr)
+        {
+            // initialize a new object using the other pipe transform
+            var obj = new GameObject();
+            obj.transform.position = p;
+            obj.transform.rotation = r;
+
+            // update oip root position
+            oipRoot.transform.position = oipp;
+            oipRoot.transform.rotation = oipr;
+
+            cipRoot.transform.parent = obj.transform;
+            oipRoot.transform.parent = obj.transform;
+
+            var clp = cipRoot.transform.localPosition;
+            var clr = cipRoot.transform.localRotation;
+
+            var olp = oipRoot.transform.localPosition;
+            var olr = oipRoot.transform.localRotation;
+
+            // de parent
+            cipRoot.transform.parent = null;
+            oipRoot.transform.parent = null;
+
+            // destroy
+            GameObject.Destroy(obj);
+
+            return (clp, clr, olp, olr);
+        }
+
+        bool CheckTransform(GameObject go, Vector3 pos, Quaternion rot, bool local)
+        {
+            var eps = 1e-4;
+            if (local)
+            {
+                go.transform.localPosition = pos;
+                go.transform.localRotation = rot;
+            }
+            else
+            {
+                go.transform.position = pos;
+                go.transform.rotation = rot;
+            }
+
+            var v1 = 0f;
+            var v2 = 0f;
+            if (local)
+            {
+                v1 = Vector3.Distance(go.transform.localPosition, pos);
+                v2 = Vector3.Distance(go.transform.localRotation.eulerAngles, rot.eulerAngles);
+            }
+            else
+            {
+                v1 = Vector3.Distance(go.transform.position, pos);
+                v2 = Vector3.Distance(go.transform.rotation.eulerAngles, rot.eulerAngles);
+            }
+
+            print($"checking {v1.ToString("f5")} - {v2.ToString("f5")}");
+
+            return (v1 < eps) && (v2 < eps);
+        }
+
+
         void HandlePipeCollision(GameObject otherpipe)
         {
             if (connected) return;
@@ -457,16 +547,21 @@ namespace VRC2.Events
 
 
             //// Fix the left part, and move the right part
+            // var newPivot = GetRightPipeNewPivot(gameObject, otherpipe);
 
-            // var ppos = GetRightPipeNewPivot(gameObject, otherpipe);
-            // get new oip transform and parent rotation
             var (oipp, oipr, ppos, prot) = GetRightPipeRootTransform(gameObject, otherpipe);
-
-            // get the relative position and rotation after connecting
-            var (clp, clr, olp, olr) = GetRelativeTransform(ppos, prot, cipRoot.gameObject, oip, oipp, oipr);
 
             // precess the label
             // PostprocessOIPLabel(cipRoot.gameObject, oip.gameObject);
+
+            // get the relative position and rotation after connecting
+            var clp = Vector3.zero;
+            var clr = Quaternion.identity;
+            (clp, clr, _oipLocalPos, _oipLocalRot) =
+                GetRelativeTransform(ppos, prot, cipRoot.gameObject, oip, oipp, oipr);
+
+            oip.transform.position = oipp;
+            oip.transform.rotation = oipr;
 
             // disable all components
             DisableAllComponents(cipRoot.gameObject);
@@ -474,7 +569,7 @@ namespace VRC2.Events
             // if cip is on th wall and distance is small enough
             var cipOnWall = OnTheWall(cipRoot.gameObject) && wallCollisionDetector.ShouldCompensate(cipRoot.position);
 
-            InitializeParent(cipRoot.gameObject, oip, ppos, prot, clp, clr, olp, olr, otherpipe, cipOnWall);
+            InitializeParent(cipRoot.gameObject, oip, ppos, prot, otherpipe, cipOnWall);
 
             // // initialize a parent object
             // var parentObject = Instantiate(pipeParent, pos, rot) as GameObject;
@@ -657,47 +752,6 @@ namespace VRC2.Events
             return (pp, pr, newPos, newRot);
         }
 
-        /// <summary>
-        /// Sometimes world transform doesn't work well for connecting, calculate the relative transform before connecting
-        /// </summary>
-        /// <param name="p">parent position</param>
-        /// <param name="r">parent rotation</param>
-        /// <param name="cipRoot">cip root</param>
-        /// <param name="oipRoot">oip root</param>
-        /// <param name="oipp">calculated oip world position</param>
-        /// <param name="oipr">calculated oip world rotation</param>
-        /// <returns></returns>
-        (Vector3, Quaternion, Vector3, Quaternion) GetRelativeTransform(Vector3 p, Quaternion r, GameObject cipRoot,
-            GameObject oipRoot, Vector3 oipp, Quaternion oipr)
-        {
-            // initialize a new object using the other pipe transform
-            var obj = new GameObject();
-            obj.transform.position = p;
-            obj.transform.rotation = r;
-
-            // update oip root position
-            oipRoot.transform.position = oipp;
-            oipRoot.transform.rotation = oipr;
-
-            cipRoot.transform.parent = obj.transform;
-            oipRoot.transform.parent = obj.transform;
-
-            var clp = cipRoot.transform.localPosition;
-            var clr = cipRoot.transform.localRotation;
-
-            var olp = oipRoot.transform.localPosition;
-            var olr = oipRoot.transform.localRotation;
-
-            // de parent
-            cipRoot.transform.parent = null;
-            oipRoot.transform.parent = null;
-
-            // destroy
-            GameObject.Destroy(obj);
-
-            return (clp, clr, olp, olr);
-        }
-
         // Deprecated because of a simpler implementation, i.e., changing the zoffset
         /// <summary>
         /// Flip the label because of the flipped connector
@@ -767,6 +821,15 @@ namespace VRC2.Events
             }
 
             return null;
+        }
+
+        void UpdateOnServer()
+        {
+            if (CheckTransform(_oipRoot, _oipLocalPos, _oipLocalRot, true))
+            {
+                requestFixingServer = false;
+                requestFixingServerDone = true;
+            }
         }
 
         void UpdateOnClient()
@@ -847,28 +910,21 @@ namespace VRC2.Events
             }
         }
 
-        /// <summary>
-        /// Initialize parent and update transforms
-        /// </summary>
-        /// <param name="cip">current pipe root</param>
-        /// <param name="oip">other pipe root</param>
-        /// <param name="pos">parent position</param>
-        /// <param name="rot">parent rotation</param>
-        /// <param name="ciplp">cip local position</param>
-        /// <param name="ciplr">cip local rotation</param>
-        /// <param name="oiplp">oip local position</param>
-        /// <param name="oiplr">oip local rotation</param>
-        /// <param name="contact">contact part of oip</param>
-        /// <param name="ciponwall">if cip is on the wall</param>
-        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot,
-            Vector3 ciplp, Quaternion ciplr,
-            Vector3 oiplp, Quaternion oiplr, GameObject contact,
+
+        void InitializeParent(GameObject cip, GameObject oip, Vector3 pos, Quaternion rot, GameObject contact,
             bool ciponwall)
         {
             if (Runner != null && Runner.IsRunning)
             {
                 if (Runner.IsServer)
                 {
+                    // because of the network, the connecting looks offset sometimes, so to add an additional fixing.
+                    requestFixingServer = true;
+                    requestFixingServerDone = false;
+
+                    // assign before fixing on server side
+                    _oipRoot = oip;
+
                     var player = GlobalConstants.localPlayer;
                     var prefab = PipeHelper.GetPipeContainerPrefab();
                     var spo = Runner.Spawn(prefab, pos, rot, player);
@@ -877,11 +933,6 @@ namespace VRC2.Events
 
                     oip.transform.parent = parentObject.transform;
                     cip.transform.parent = parentObject.transform;
-
-                    oip.transform.localPosition = oiplp;
-                    oip.transform.localRotation = oiplr;
-                    cip.transform.localPosition = ciplp;
-                    cip.transform.localRotation = ciplr;
 
                     var pcm = parentObject.GetComponent<PipesContainerManager>();
                     if (ciponwall)
@@ -910,7 +961,18 @@ namespace VRC2.Events
                     var oid = oip.GetComponent<NetworkObject>().Id;
                     var cid = cip.GetComponent<NetworkObject>().Id;
 
-                    RPC_SendMessage(cid, oid, pid, ciplp, ciplr, oiplp, oiplr, contact.name);
+                    var cipt = cip.transform;
+                    var oipt = oip.transform;
+
+                    print(
+                        $"local cip: {cipt.localPosition.ToString("f5")} {cipt.localRotation.eulerAngles.ToString("f5")}");
+                    print(
+                        $"local oip: {oipt.localPosition.ToString("f5")} {oipt.localRotation.eulerAngles.ToString("f5")}");
+
+                    RPC_SendMessage(cid, oid, pid,
+                        cipt.localPosition, cipt.localRotation,
+                        oipt.localPosition, oipt.localRotation,
+                        contact.name);
                 }
             }
             else
@@ -921,12 +983,6 @@ namespace VRC2.Events
                 // update parent
                 oip.transform.parent = parentObject.transform;
                 cip.transform.parent = parentObject.transform;
-
-                oip.transform.localPosition = oiplp;
-                oip.transform.localRotation = oiplr;
-
-                cip.transform.localPosition = ciplp;
-                cip.transform.localRotation = ciplr;
 
                 // update diameter
                 var diameter = oip.GetComponent<PipeManipulation>().diameter;
