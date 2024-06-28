@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using VRC2.Character;
 
 namespace VRC2.Events
 {
@@ -39,6 +40,21 @@ namespace VRC2.Events
         private Vector3 enterAnchor;
         private Vector3 enterPosition;
 
+        private Vector3 _enterFoot
+        {
+            get
+            {
+                if (_player != null)
+                {
+                    return _player.GetComponent<AvatarLocator>().leftFootBall.position;
+                }
+
+                return Vector3.zero;
+            }
+        }
+
+        private Vector3 enterFoot;
+
         private GameObject _cam => playerHelper.CameraRig;
         private GameObject _player => playerHelper.localPlayer;
 
@@ -51,6 +67,7 @@ namespace VRC2.Events
         {
             enterAnchor = anchor.position;
             enterPosition = _cam.transform.position;
+            enterFoot = _enterFoot;
             entered = true;
         }
 
@@ -61,7 +78,10 @@ namespace VRC2.Events
             var position = _cam.transform.position;
             position.y = enterPosition.y;
             _cam.transform.position = position;
-            _player.transform.position = position;
+            if (_player != null)
+            {
+                _player.transform.position = position;
+            }
         }
 
         private void LateUpdate()
@@ -108,14 +128,27 @@ namespace VRC2.Events
         private void Update()
         {
             if (!entered) return;
-            // calculate offset
-            var offset = anchor.position - enterAnchor;
-            var position = enterPosition + offset;
 
-            _cam.transform.position = position;
             if (_player != null)
             {
+                var yOffset = anchor.position.y - enterFoot.y;
+
+                var position = _cam.transform.position;
+                position.x = anchor.position.x;
+                position.z = anchor.position.z;
+
+                position.y = enterPosition.y + yOffset;
+
+                _cam.transform.position = position;
                 _player.transform.position = position;
+            }
+            else
+            {
+                // calculate offset
+                var offset = anchor.position - enterAnchor;
+                var position = enterPosition + offset;
+
+                _cam.transform.position = position;
             }
         }
     }
