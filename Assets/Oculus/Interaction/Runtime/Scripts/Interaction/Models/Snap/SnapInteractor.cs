@@ -18,6 +18,7 @@
  * limitations under the License.
  */
 
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -268,16 +269,24 @@ namespace Oculus.Interaction
 
         protected override void DoPreprocess()
         {
-            if (_pointableElement.Points.Count == 0)
+            // fix the error 
+            try
             {
-                if (_idleStarted < 0)
+                if (_pointableElement.Points.Count == 0)
                 {
-                    _idleStarted = Time.time;
+                    if (_idleStarted < 0)
+                    {
+                        _idleStarted = Time.time;
+                    }
+                }
+                else
+                {
+                    _idleStarted = -1;
                 }
             }
-            else
+            catch (Exception e)
             {
-                _idleStarted = -1;
+                ;
             }
         }
 
