@@ -8,17 +8,16 @@ namespace VRC2.Character
     {
         public Transform viewPoint;
         public Transform leftFootBall;
-        [ReadOnly] public Vector3 Offset;
-        [ReadOnly] public float Height;
+        [ReadOnly] public float initHeight;
 
         private void Start()
         {
-            Offset = viewPoint.position - leftFootBall.position;
-            
-            Offset.x = 0;
-            Offset.z = 0;
-            
-            Height = Vector3.Distance(viewPoint.position, leftFootBall.position);
+            initHeight = GetHeight();
+        }
+
+        public float GetHeight()
+        {
+            return viewPoint.position.y - leftFootBall.position.y;
         }
     }
 }

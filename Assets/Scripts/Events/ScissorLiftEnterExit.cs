@@ -26,6 +26,9 @@ namespace VRC2.Events
         [Space(30)] [Header("Settings")] public Transform anchor;
         public float distanceThreshold = 0.5f;
 
+        [Tooltip("Fine-tune the height to make feet stick to the base of lift")]
+        public float yOffset = 0.6f;
+
         [Space(30)] [Header("Text Hint")] public TextMesh textMesh;
 
         private string enterText = "Press X to Enter";
@@ -40,20 +43,31 @@ namespace VRC2.Events
         private Vector3 enterAnchor;
         private Vector3 enterPosition;
 
-        private Vector3 _enterFoot
+        private AvatarLocator _avatarLocator
         {
             get
             {
                 if (_player != null)
                 {
-                    return _player.GetComponent<AvatarLocator>().leftFootBall.position;
+                    return _player.GetComponent<AvatarLocator>();
                 }
 
-                return Vector3.zero;
+                return null;
             }
         }
 
-        private Vector3 enterFoot;
+        private Transform _foot
+        {
+            get
+            {
+                if (_avatarLocator != null)
+                {
+                    return _avatarLocator.leftFootBall;
+                }
+
+                return null;
+            }
+        }
 
         private GameObject _cam => playerHelper.CameraRig;
         private GameObject _player => playerHelper.localPlayer;
@@ -67,7 +81,6 @@ namespace VRC2.Events
         {
             enterAnchor = anchor.position;
             enterPosition = _cam.transform.position;
-            enterFoot = _enterFoot;
             entered = true;
         }
 
@@ -131,14 +144,15 @@ namespace VRC2.Events
 
             if (_player != null)
             {
-                var yOffset = anchor.position.y - enterFoot.y;
-
                 var position = _cam.transform.position;
                 position.x = anchor.position.x;
                 position.z = anchor.position.z;
 
-                position.y = enterPosition.y + yOffset;
+                // // height offset
+                // var offset = _avatarLocator.initHeight - _avatarLocator.GetHeight();
+                // print($"offset: {offset}");
 
+                position.y += anchor.position.y - _foot.transform.position.y + yOffset;
                 _cam.transform.position = position;
                 _player.transform.position = position;
             }
