@@ -16,13 +16,31 @@ namespace VRC2.Events
 
         private NetworkRunner _runner => _networkObject.Runner;
 
+        private bool resetting = false;
+
         private void Start()
         {
             animator = GetComponent<Animator>();
 
             _scissorLiftEnterExit = GetComponentInChildren<ScissorLiftEnterExit>();
 
+            _scissorLiftEnterExit.OnExitLift += OnExitLift;
+
             _networkObject = GetComponent<NetworkObject>();
+        }
+
+        private void OnExitLift()
+        {
+            // auto reset the lifter
+            resetting = true;
+            if (_runner != null && _runner.IsRunning)
+            {
+                RPC_Reset();
+            }
+            else
+            {
+                ProcessReset();
+            }
         }
 
         void PlayAnimator(float speed)
@@ -111,6 +129,11 @@ namespace VRC2.Events
             }
         }
 
+        void ProcessReset()
+        {
+            resetting = true;
+        }
+
 
         [Rpc(RpcSources.All, RpcTargets.All)]
         public void RPC_SendMessage(float horizontal, float vertical, RpcInfo info = default)
@@ -118,11 +141,34 @@ namespace VRC2.Events
             ProcessInput(horizontal, vertical);
         }
 
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_Reset(RpcInfo info = default)
+        {
+            ProcessReset();
+        }
+
         #endregion
 
         private void Update()
         {
-            // do nothing if not entered
+            // reset when resetting
+            if (resetting)
+            {
+                if (!ReachBottom())
+                {
+                    Down(upDown);
+                }
+                else
+                {
+                    resetting = false;
+                    StopAnimator();
+                    _scissorLiftEnterExit.onResetting = false;
+                }
+
+                return;
+            }
+
+            // return if not entered
             if (!_scissorLiftEnterExit.Entered) return;
 
             // ovr input
