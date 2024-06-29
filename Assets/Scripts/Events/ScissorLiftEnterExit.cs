@@ -38,6 +38,9 @@ namespace VRC2.Events
 
         public bool Entered => entered;
 
+        public System.Action OnExitLift;
+        [HideInInspector] public bool onResetting = false;
+
 
         // refactor
         private Vector3 enterAnchor;
@@ -82,6 +85,7 @@ namespace VRC2.Events
             enterAnchor = anchor.position;
             enterPosition = _cam.transform.position;
             entered = true;
+            onResetting = false;
         }
 
         void ExitLift()
@@ -95,10 +99,24 @@ namespace VRC2.Events
             {
                 _player.transform.position = position;
             }
+
+            if (OnExitLift != null)
+            {
+                OnExitLift();
+                onResetting = true;
+            }
         }
 
         private void LateUpdate()
         {
+            // do nothing on resetting
+            if (onResetting)
+            {
+                // clear text
+                textMesh.text = "";
+                return;
+            }
+
             var p1 = centerEyeAnchor.transform.position;
             var p2 = anchor.position;
 
