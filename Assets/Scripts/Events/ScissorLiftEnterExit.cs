@@ -75,6 +75,8 @@ namespace VRC2.Events
         private GameObject _cam => playerHelper.CameraRig;
         private GameObject _player => playerHelper.localPlayer;
 
+        public ScissorLiftController controller { get; set; }
+
         private void Start()
         {
             textMesh.text = "";
@@ -109,6 +111,9 @@ namespace VRC2.Events
 
         private void LateUpdate()
         {
+            // return on joiner side
+            if (controller.IsClient) return;
+
             // do nothing on resetting
             if (onResetting)
             {
