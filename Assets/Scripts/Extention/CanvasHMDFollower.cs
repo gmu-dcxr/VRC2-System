@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace VRC2.Extention
 {
-    public class CanvasHMDFollower: MonoBehaviour
+    public class CanvasHMDFollower : MonoBehaviour
     {
         private const float TOTAL_DURATION = 3.0f;
         private const float HMD_MOVEMENT_THRESHOLD = 0.3f;
@@ -15,9 +15,11 @@ namespace VRC2.Extention
         // [SerializeField] private bool _useOriginalY = true;
 
         public float yOffset = 0.5f;
-        
+        public float zOffset = 0.5f;
+
         private OVRCameraRig _cameraRig;
-        private Vector3 _panelInitialPosition = Vector3.zero;
+
+        // private Vector3 _panelInitialPosition = Vector3.zero;
         private Coroutine _coroutine = null;
         private Vector3 _prevPos = Vector3.zero;
         private Vector3 _lastMovedToPos = Vector3.zero;
@@ -25,7 +27,7 @@ namespace VRC2.Extention
         private void Awake()
         {
             _cameraRig = FindObjectOfType<OVRCameraRig>();
-            _panelInitialPosition = transform.position;
+            // _panelInitialPosition = transform.position;
         }
 
         private void Update()
@@ -57,8 +59,9 @@ namespace VRC2.Extention
 
         private Vector3 CalculateIdealAnchorPosition()
         {
-            var pos = _cameraRig.centerEyeAnchor.position + _panelInitialPosition;
+            var pos = _cameraRig.centerEyeAnchor.position; // + _panelInitialPosition;
             pos.y += yOffset;
+            pos.z += zOffset;
 
             return pos;
         }

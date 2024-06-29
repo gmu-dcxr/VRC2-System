@@ -63,14 +63,14 @@ namespace VRC2
         {
             SetEventSystem(false);
             webView.SetVisibility(true);
-            GlobalConstants.SetLaserPointer(true);
+            // GlobalConstants.SetLaserPointer(true);
         }
 
         public void Hide()
         {
             SetEventSystem(true);
             webView.SetVisibility(false);
-            GlobalConstants.SetLaserPointer(false);
+            // GlobalConstants.SetLaserPointer(false);
         }
 
         public void Show(string url)

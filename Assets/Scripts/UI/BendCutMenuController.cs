@@ -137,7 +137,7 @@ namespace VRC2
         public void Show()
         {
             rootCanvas.SetActive(true);
-            GlobalConstants.SetLaserPointer(true);
+            // GlobalConstants.SetLaserPointer(true);
             reticleLeft.SetActive(false);
             reticleRight.SetActive(false);
             // reset after shown
@@ -147,7 +147,7 @@ namespace VRC2
         public void Hide()
         {
             rootCanvas.SetActive(false);
-            GlobalConstants.SetLaserPointer(false);
+            // GlobalConstants.SetLaserPointer(false);
             reticleLeft.SetActive(true);
             reticleRight.SetActive(true);
         }
