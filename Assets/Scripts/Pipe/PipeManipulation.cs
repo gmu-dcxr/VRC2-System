@@ -307,7 +307,7 @@ namespace VRC2
 
         void UpdatePipeTypeLabel(PipeType t)
         {
-            if (pipeLabel != null && pipeLabel.text == "" && t != PipeType.Default)
+            if (pipeLabel != null)
             {
                 // update type
                 // format: type (length)
