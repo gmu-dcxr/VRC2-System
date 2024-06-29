@@ -17,12 +17,17 @@ namespace VRC2.Events
         private NetworkRunner _runner => _networkObject.Runner;
 
         private bool resetting = false;
+        
+        // P2
+        public bool IsClient => _runner != null && _runner.IsClient;
 
         private void Start()
         {
             animator = GetComponent<Animator>();
 
             _scissorLiftEnterExit = GetComponentInChildren<ScissorLiftEnterExit>();
+            // set controller
+            _scissorLiftEnterExit.controller = this;
 
             _scissorLiftEnterExit.OnExitLift += OnExitLift;
 
@@ -168,6 +173,9 @@ namespace VRC2.Events
                 return;
             }
 
+            // return if not host
+            if(IsClient) return;
+            
             // return if not entered
             if (!_scissorLiftEnterExit.Entered) return;
 
