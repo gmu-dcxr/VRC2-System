@@ -111,11 +111,8 @@ namespace VRC2.Events
 
         private void LateUpdate()
         {
-            // return on joiner side
-            if (controller.IsClient) return;
-
-            // do nothing on resetting
-            if (onResetting)
+            // return if controller.IsClient do nothing on resetting
+            if (controller.IsClient || onResetting)
             {
                 // clear text
                 textMesh.text = "";
@@ -163,7 +160,7 @@ namespace VRC2.Events
         // force player can not move in lift
         private void Update()
         {
-            if (!entered) return;
+            if (controller.IsClient || !entered) return;
 
             if (_player != null)
             {
