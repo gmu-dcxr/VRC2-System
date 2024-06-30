@@ -159,23 +159,36 @@ namespace VRC2
             UpdateInputPipe();
         }
 
+        void SetInputField(InputField f, bool enable)
+        {
+            var ifd = f.gameObject.GetComponent<InputFieldDetection>();
+            if (ifd != null)
+            {
+                ifd.enabled = enable;
+            }
+
+            var text = enable ? "Enter text..." : "Disabled";
+            // update placeholder
+            f.placeholder.GetComponent<Text>().text = text;
+            f.enabled = enable;
+        }
+
         void UpdateInputPipe()
         {
             pipeColorImage.sprite = sprite;
-            // var pipe = GlobalConstants.lastSpawnedPipe;
-            var pipe = spawnedPipe;
+            var pipe = GlobalConstants.lastSpawnedPipe;
             if (pipe == null)
             {
                 // reset
                 inputPipeInfo.text = "";
                 // disable length and amount
-                pipeLength.enabled = false;
-                pipeAmount.enabled = false;
+                SetInputField(pipeLength, false);
+                SetInputField(pipeAmount, false);
             }
             else
             {
-                pipeLength.enabled = true;
-                pipeAmount.enabled = true;
+                SetInputField(pipeLength, true);
+                SetInputField(pipeAmount, true);
 
                 var pm = pipe.GetComponent<PipeManipulation>();
                 var color = pm.pipeColor;
