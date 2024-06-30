@@ -463,6 +463,17 @@ namespace VRC2.Pipe
             }
         }
 
+        public static string FormatLength(float length)
+        {
+            var s = length.ToString("f4");
+            if (s.Contains("."))
+            {
+                s = s.TrimEnd('0').TrimEnd('.');
+            }
+
+            return s;
+        }
+
         #region Material
 
         public static string GetPipeMaterialPath(PipeParameters para)
