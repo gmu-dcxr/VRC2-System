@@ -25,7 +25,7 @@ public class OpenVirtualKeyboard : MonoBehaviour
 #if (UNITY_EDITOR)
             print("Get the {virtual keyboard} prefabs");
 #endif
-            keyboardBackground = virtualKeyboard.transform.Find("Background").gameObject.GetComponent<RectTransform>();
+            // keyboardBackground = virtualKeyboard.transform.Find("Background").gameObject.GetComponent<RectTransform>();
         }
     }
 

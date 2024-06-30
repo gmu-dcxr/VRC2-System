@@ -9,7 +9,7 @@ public class InputFieldDetection : MonoBehaviour, IPointerEnterHandler, IPointer
     private InputField myselfInputField;            // myself component - InputField
     private Text inputFieldText;                    // myself component in InputField - Text
     private InputField.LineType inputFieldLineType; // the lineType of InputField component
-    private OpenVirtualKeyboard keyboardController; // Virtual Keyboard Controller in the scene
+    public OpenVirtualKeyboard keyboardController; // Virtual Keyboard Controller in the scene
 
     private void Awake()
     {
@@ -21,8 +21,8 @@ public class InputFieldDetection : MonoBehaviour, IPointerEnterHandler, IPointer
         
         inputFieldLineType = myselfInputField.lineType;
         
-        if (keyboardController == null)
-            keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
+        // if (keyboardController == null)
+        //     keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
         
         // keyboardController.onExitInputField = true;
         
@@ -50,8 +50,8 @@ public class InputFieldDetection : MonoBehaviour, IPointerEnterHandler, IPointer
         
         inputFieldLineType = myselfInputField.lineType;
         
-        if (keyboardController == null)
-            keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
+        // if (keyboardController == null)
+        //     keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
         
         // keyboardController.onExitInputField = true;
     }
