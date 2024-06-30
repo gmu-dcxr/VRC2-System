@@ -312,9 +312,8 @@ namespace VRC2
                 // update type
                 // format: type (length)
                 var type = Utils.GetDisplayName<PipeType>(t);
-                var length = segmentALength * 2;
-                var len = length == (int)length ? length.ToString("f0") : length.ToString("f1");
-                pipeLabel.text = $"{type} ({len})";
+                var length = segmentALength + segmentBLength;
+                pipeLabel.text = $"{type} ({length.ToString("G")})";
             }
         }
 
