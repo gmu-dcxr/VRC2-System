@@ -8,21 +8,21 @@ public class KeyboardArea : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     // triggered by the control ray which is exited the keyboard area
     public int backWaitingTime = 3;
     
-    private OpenVirtualKeyboard keyboardController; // Virtual Keyboard Controller
+    public OpenVirtualKeyboard keyboardController; // Virtual Keyboard Controller
     private Coroutine closeKeyboardCoroutine;       // close keyboard coroutine
 
     private void Awake()
     {
-        if (keyboardController == null)
-            keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
+        // if (keyboardController == null)
+            // keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
 
         keyboardController.onExitKeyboardArea = true;
     }
 
     private void OnEnable()
     {
-        if (keyboardController == null)
-            keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
+        // if (keyboardController == null)
+            // keyboardController = GameObject.Find("Virtual Keyboard Controller").GetComponent<OpenVirtualKeyboard>();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
