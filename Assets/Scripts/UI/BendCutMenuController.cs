@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC2.Pipe;
@@ -40,6 +41,20 @@ namespace VRC2
 
         [Space(30)] [Header("Debug")] public bool enableDebug = false;
         public GameObject spawnedPipe;
+
+        #region Input pipe UI
+
+        public Sprite sprite;
+        public Sprite magenta;
+        public Sprite green;
+        public Sprite yellow;
+        public Sprite blue;
+
+        public TextMeshProUGUI inputPipeInfo;
+        public Image pipeColorImage;
+
+
+        #endregion
 
         public bool IsNewDesign
         {
@@ -134,12 +149,70 @@ namespace VRC2
 
         }
 
+        private void Awake()
+        {
+            UpdateInputPipe();
+        }
+
+        private void OnEnable()
+        {
+            UpdateInputPipe();
+        }
+
+        void UpdateInputPipe()
+        {
+            pipeColorImage.sprite = sprite;
+            // var pipe = GlobalConstants.lastSpawnedPipe;
+            var pipe = spawnedPipe;
+            if (pipe == null)
+            {
+                // reset
+                inputPipeInfo.text = "";
+                // disable length and amount
+                pipeLength.enabled = false;
+                pipeAmount.enabled = false;
+            }
+            else
+            {
+                pipeLength.enabled = true;
+                pipeAmount.enabled = true;
+
+                var pm = pipe.GetComponent<PipeManipulation>();
+                var color = pm.pipeColor;
+                var type = Enum.GetName(typeof(PipeType), pm.pipeType);
+                var diameter = (int)pm.diameter + 1;
+                var length = pm.segmentALength + pm.segmentBLength;
+                // update color
+                switch (color)
+                {
+                    case PipeConstants.PipeColor.Magenta:
+                        pipeColorImage.sprite = magenta;
+                        break;
+                    case PipeConstants.PipeColor.Green:
+                        pipeColorImage.sprite = green;
+                        break;
+                    case PipeConstants.PipeColor.Yellow:
+                        pipeColorImage.sprite = yellow;
+                        break;
+                    case PipeConstants.PipeColor.Blue:
+                        pipeColorImage.sprite = blue;
+                        break;
+                    default:
+                        break;
+                }
+
+                // update info: Type (diameter, length')
+                inputPipeInfo.text = $"{type} (ϕ{diameter}, {length.ToString("G")}')";
+            }
+        }
+
         public void Show()
         {
             rootCanvas.SetActive(true);
             // GlobalConstants.SetLaserPointer(true);
             reticleLeft.SetActive(false);
             reticleRight.SetActive(false);
+            UpdateInputPipe();
             // reset after shown
             OnReset();
         }
@@ -272,6 +345,7 @@ namespace VRC2
             catch (Exception e)
             {
             }
+
             // default is 0
             return 0;
         }
