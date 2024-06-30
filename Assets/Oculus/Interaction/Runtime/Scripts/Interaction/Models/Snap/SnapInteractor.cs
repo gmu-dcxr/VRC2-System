@@ -317,7 +317,7 @@ namespace Oculus.Interaction
                 return _timeOutInteractable;
             }
 
-            if (_pointableElement == null || _pointableElement.SelectingPointsCount == 0)
+            if (_pointableElement.SelectingPointsCount == 0)
             {
                 if (!_shouldSelect)
                 {

@@ -210,9 +210,6 @@ namespace VRC2.Animations
                 // pipes are required
                 if (processedPipes != null && processedPipes.Count > 0)
                 {
-                    // new design
-                    var pos = Vector3.zero; // for spawning connectors
-
                     foreach (var go in processedPipes)
                     {
                         var pipe = go;
@@ -222,12 +219,10 @@ namespace VRC2.Animations
                         PipeHelper.AfterMove(ref pipe);
                         // update box colliders
                         PipeHelper.UpdateBoxColliders(pipe, true);
-
-                        pos = pipe.transform.position;
                     }
 
-                    // spawn connectors
-                    SpawnConnectors(pos);
+                    // spawn connectors at the attacher point
+                    SpawnConnectors();
 
                     // clear for next call
                     processedPipes.Clear();
@@ -255,7 +250,7 @@ namespace VRC2.Animations
             {
                 // only connectors are requested
                 // spawn connectors
-                SpawnConnectors(deliveryPoint.position);
+                SpawnConnectors();
             }
 
         }
@@ -1158,11 +1153,12 @@ namespace VRC2.Animations
 
         #region New Design
 
-        void SpawnConnectors(Vector3 position)
+        void SpawnConnectors()
         {
             var camount = parameters.connectorAmount;
             if (camount <= 0) return;
             print("spawn connectors");
+            var pos = attachePoint.transform.position;
             var rot = Quaternion.identity;
             // spawn object
             var runner = GlobalConstants.networkRunner;
@@ -1172,7 +1168,7 @@ namespace VRC2.Animations
 
             for (int i = 0; i < camount; i++)
             {
-                spawnedPipe = runner.Spawn(prefab, position, rot, localPlayer);
+                spawnedPipe = runner.Spawn(prefab, pos, rot, localPlayer);
                 RPC_UpdateConnectorKinematic(spawnedPipe.Id);
             }
         }
