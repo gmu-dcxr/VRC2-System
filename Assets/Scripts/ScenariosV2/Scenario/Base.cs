@@ -35,6 +35,7 @@ namespace VRC2.ScenariosV2.Scenario
         [ReadOnly] public string task; // task config filename
 
         private List<YamlParser.Refer> _incidents;
+        private bool lastSurvey = true;
 
         #endregion
 
@@ -334,6 +335,8 @@ namespace VRC2.ScenariosV2.Scenario
             taskEnd = s.taskEnd;
             task = s.task;
             _incidents = s.incidents;
+            lastSurvey = s.lastSurvey;
+            print($"last survey: {lastSurvey}");
 
             // parse time
             var rawTime = $"{startTimeRaw}{Helper.timeSep}{endTimeRaw}";
@@ -611,8 +614,8 @@ namespace VRC2.ScenariosV2.Scenario
                     }
 
                     StartCoroutine(CoroutineStartIncident(idx));
-                    // last event
-                    if (idx == parsedIncidents.Count - 1)
+                    // last event is a survey
+                    if (idx == parsedIncidents.Count - 1 && lastSurvey)
                     {
                         // assume it's sagat
                         if (SAGATStart != null)

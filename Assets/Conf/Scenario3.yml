@@ -10,65 +10,48 @@ accident: "Accident events: truck(in bold type)"
 # start timestamp in raw time
 start: "0:00"
 # end timestamp in raw time
-end: "07:40"
+end: "30:00"
 # start task
 taskStart: 2
 # end task
 taskEnd: 2
 # task config filename under ./Task
 task: "Task2.yml"
+# last incidents is a survey
+lastSurvey: false
 #########################################################################################################
 # all incidents, including the normal events and accidents
 incidents:
-#  - id: 1 # the order of the incident
-#    time: "0:30" # start time of this incident
-#    refer: ["Truck", "accidents", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
-#  - id: 2
-#    time: "1:00"
-#    refer: ["Drone", "normals", "3"]
-#    changeOrder: true 
-#  - id: 3
-#    time: "1:20"
-#    refer: ["Drone", "normals", "4"]
-#  - id: 4
-#    time: "1:30"
-#    refer: ["Crane", "normals", "1"] 
-#  - id: 5
-#    time: "2:00"
-#    refer: ["Truck", "accidents", "2"]
-#  - id: 6
-#    time: "2:20"
-#    refer: ["Crane", "normals", "2"]
-#  - id: 7
-#    time: "2:30" 
-#    refer: ["Truck", "accidents", "3"]
-#  - id: 8
-#    time: "2:45"
-#    refer: ["CraneTruck", "normals", "1"]
-#  - id: 9
-#    time: "3:00"
-#    refer: ["CraneTruck", "normals", "2"] 
-#  - id: 10
-#    time: "3:55"
-#    refer: ["CraneTruck", "normals", "3"]
-#  - id: 11
-#    time: "4:00"
-#    refer: ["Truck", "accidents", "4"]
-#  - id: 12
-#    time: "4:30"
-#    refer: ["Truck", "accidents", "5"]
-#  - id: 13
-#    time: "5:10"
-#    refer: ["Drone", "normals", "1"]
-#  - id: 14
-#    time: "5:40"
-#    refer: ["Drone", "normals", "2"]
-#  - id: 15
-#    time: "6:00"
-#    refer: ["Truck", "accidents", "6"]
-#  - id: 16
-#    time: "6:30"
-#    refer: ["Truck", "accidents", "7"]
-#  - id: 17
-#    time: "7:20"
-#    refer: ["Truck", "accidents", "8"]
+  - id: 1 # the order of the incident
+    time: "0:30" # start time of this incident
+    refer: ["Crane", "normals", "1"] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+  - id: 2
+    time: "1:30"
+    refer: ["Crane", "normals", "2"]
+  - id: 3
+    time: "3:00"
+    refer: ["Forklift", "normals", "1"]
+  - id: 4
+    time: "3:30"
+    refer: ["Forklift", "normals", "2"] 
+  - id: 5
+    time: "4:00"
+    refer: ["Truck", "normals", "1"]
+  - id: 6
+    time: "5:00"
+    refer: ["Truck", "normals", "2"]
+  - id: 7
+    time: "5:40"
+    refer: ["Drone", "normals", "1"]
+  - id: 8
+    time: "7:00"
+    refer: ["CraneTruck", "normals", "1"] 
+  - id: 9
+    time: "9:30"
+    refer: ["Crane", "normals", "1"]
+  - id: 10
+    time: "10:00"
+    refer: ["Crane", "normals", "2"]
+  - id: 11
+    time: "10:00"
+    refer: ["Drone", "normals", "1"]

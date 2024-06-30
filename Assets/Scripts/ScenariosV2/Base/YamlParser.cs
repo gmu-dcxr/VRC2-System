@@ -61,6 +61,9 @@ namespace VRC2.ScenariosV2.Base
             public int taskEnd { get; set; }
             
             public string task { get; set; }
+            
+            // indicate last is survey incident, so it will end, default is true
+            [CanBeNull] [DefaultValue(false)] public bool lastSurvey { get; set; } = true;
             public List<Refer> incidents { get; set; }
         }
 
