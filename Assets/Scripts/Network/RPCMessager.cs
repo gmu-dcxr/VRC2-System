@@ -12,6 +12,12 @@ namespace VRC2.Network
             RPC_UpdateLastSpawnedPipe(nid);
         }
 
+        public void ResetLastSpawnedPipe()
+        {
+            RPC_ResetLastSpawnedPipe();
+        }
+
+
         public void SetPipeRigidBody(NetworkId nid, bool enable)
         {
             RPC_SetPipeRigidBody(nid, enable);
@@ -31,6 +37,22 @@ namespace VRC2.Network
                 print("remote");
                 var go = Runner.FindObject(nid).gameObject;
                 GlobalConstants.lastSpawnedPipe = go;
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_ResetLastSpawnedPipe(RpcInfo info = default)
+        {
+            print($"RPC_ResetLastSpawnedPipe");
+
+            if (info.IsInvokeLocal)
+            {
+                print("local");
+            }
+            else
+            {
+                print("remote");
+                GlobalConstants.lastSpawnedPipe = null;
             }
         }
 
