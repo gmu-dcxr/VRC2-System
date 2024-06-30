@@ -215,7 +215,7 @@ namespace VRC2
                 }
 
                 // update info: Type (diameter, length')
-                inputPipeInfo.text = $"{type} (ϕ{diameter}, {length.ToString("G")}')";
+                inputPipeInfo.text = $"{type} (ϕ{diameter}, {PipeHelper.FormatLength(length)}')";
             }
         }
 

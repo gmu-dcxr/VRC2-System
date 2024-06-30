@@ -313,7 +313,7 @@ namespace VRC2
                 // format: type (length)
                 var type = Utils.GetDisplayName<PipeType>(t);
                 var length = segmentALength + segmentBLength;
-                pipeLabel.text = $"{type} ({length.ToString("G")})";
+                pipeLabel.text = $"{type} ({PipeHelper.FormatLength(length)})";
             }
         }
 
