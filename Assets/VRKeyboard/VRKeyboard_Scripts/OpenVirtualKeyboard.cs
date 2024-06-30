@@ -4,7 +4,7 @@ public class OpenVirtualKeyboard : MonoBehaviour
 {
     // public GameObject mainCanvas;                // gameObject - main canvas in your scene
     // private RectTransform canvasRectTransform;   // the RectTransform component on the gameObject - main canvas
-    private GameObject virtualKeyboard;         // {virtual keyboard} prefabs in your scene
+    public GameObject virtualKeyboard;         // {virtual keyboard} prefabs in your scene
     private RectTransform keyboardBackground;   // the gameObject background in {virtual keyboard} prefabs in your scene
 
     [HideInInspector]
@@ -17,7 +17,7 @@ public class OpenVirtualKeyboard : MonoBehaviour
         //     canvasRectTransform = mainCanvas.GetComponent<RectTransform>();
         // }
 
-        virtualKeyboard = GameObject.Find("Virtual Keyboard").gameObject;
+        // virtualKeyboard = GameObject.Find("Virtual Keyboard").gameObject;
         if (virtualKeyboard == null)
             Debug.LogError("Pls drag the {Virtual Keyboard} prefabs in your scene");
         else
@@ -78,13 +78,13 @@ public class OpenVirtualKeyboard : MonoBehaviour
         // float keyboardWidth = interfaceSize.y * .6f;
         // float keyboardHeight = interfaceSize.y * .6f;
         
-        float keyboardWidth = 485;
-        float keyboardHeight = 485;
+        // float keyboardWidth = 485;
+        // float keyboardHeight = 485;
         
         // you can uncomment when testing
 // #if(UNITY_EDITOR)
 //          print($"interface size is {keyboardWidth} x {keyboardHeight}");
 // #endif
-        keyboardBackground.sizeDelta = new Vector2(keyboardWidth, keyboardHeight);
+        // keyboardBackground.sizeDelta = new Vector2(keyboardWidth, keyboardHeight);
     }
 }
