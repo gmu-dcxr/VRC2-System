@@ -40,6 +40,12 @@ namespace VRC2.Hack
             message.UpdateLastSpawnedPipe(no.Id);
         }
 
+        void ResetLastSpawnedPipe()
+        {
+            var message = FindObjectOfType<RPCMessager>();
+            message.ResetLastSpawnedPipe();
+        }
+
         public override bool NetworkedPointerEvent(PointerEvent evt)
         {
             simulateReleased = false;
@@ -80,9 +86,21 @@ namespace VRC2.Hack
                     nt.enabled = false;
 
                     // update last spawned pipe to enable it to be able to be picked up by the robot dog
-                    GlobalConstants.lastSpawnedPipe = gameObject;
-                    UpdateLastSpawnedPipe(gameObject);
-                    Debug.LogWarning("Last spawned pipe was updated.");
+                    var pm = gameObject.GetComponent<PipeManipulation>();
+
+                    // only update if it's straight and not being cut
+                    if (pm != null && pm.IsStraight && pm.NotBeingCut)
+                    {
+                        Debug.LogWarning("Last spawned pipe was updated.");
+                        GlobalConstants.lastSpawnedPipe = gameObject;
+                        UpdateLastSpawnedPipe(gameObject);
+                    }
+                    else
+                    {
+                        // clear it
+                        GlobalConstants.lastSpawnedPipe = null;
+                        ResetLastSpawnedPipe();
+                    }
 
                     EndTransform();
                     break;
