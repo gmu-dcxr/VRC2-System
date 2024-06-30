@@ -416,7 +416,14 @@ namespace Oculus.Interaction
             }
             else
             {
-                _candidate = ComputeCandidate();
+                try
+                {
+                    _candidate = ComputeCandidate();
+                }
+                catch (Exception e)
+                {
+                    
+                }
             }
         }
 
