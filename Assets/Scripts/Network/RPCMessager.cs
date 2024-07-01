@@ -31,6 +31,9 @@ namespace VRC2.Network
             if (info.IsInvokeLocal)
             {
                 print("local");
+                // update  UI
+                var bcmc = GameObject.FindObjectOfType<BendCutMenuController>();
+                bcmc?.Refresh();
             }
             else
             {
@@ -48,6 +51,9 @@ namespace VRC2.Network
             if (info.IsInvokeLocal)
             {
                 print("local");
+                // update  UI
+                var bcmc = GameObject.FindObjectOfType<BendCutMenuController>();
+                bcmc?.Refresh();
             }
             else
             {
