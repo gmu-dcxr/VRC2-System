@@ -39,7 +39,7 @@ namespace VRC2.Events
         [HideInInspector] public bool beingSelected => horizontalGameObject.activeSelf;
 
         #region Glue log
-        
+
         private LoggerBase _logger;
 
         private string folder = "../Glue";
@@ -54,7 +54,7 @@ namespace VRC2.Events
 
             _wrapper.WhenSelect.AddListener(OnSelect);
             _wrapper.WhenRelease.AddListener(OnRelease);
-            
+
             // init log
             _logger = gameObject.AddComponent<LoggerBase>();
             _logger.InitConfig(folder);
@@ -84,15 +84,17 @@ namespace VRC2.Events
             horizontalGameObject.SetActive(false);
             verticalGameObject.SetActive(true);
 
-            if (Runner != null && Runner.IsRunning)
-            {
-                RPC_SendMessage(false, true);
-            }
-
             // make it drop
             _rigidbody.isKinematic = false;
 
             UseGlue();
+
+            if (Runner != null && Runner.IsRunning)
+            {
+                RPC_SendMessage(false, true);
+                RPC_SyncCapacity(GlobalConstants.currentGlueCapacitiy);
+            }
+
         }
 
         void UseGlue()
@@ -125,6 +127,20 @@ namespace VRC2.Events
                 print($"Update glue lid: {horizontal} {vertical}");
                 horizontalGameObject.SetActive(horizontal);
                 verticalGameObject.SetActive(vertical);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SyncCapacity(float cap, RpcInfo info = default)
+        {
+
+            if (info.IsInvokeLocal)
+            {
+                // 
+            }
+            else
+            {
+                GlobalConstants.currentGlueCapacitiy = cap;
             }
         }
     }
