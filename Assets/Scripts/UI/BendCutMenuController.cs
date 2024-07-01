@@ -223,8 +223,8 @@ namespace VRC2
         {
             rootCanvas.SetActive(true);
             // GlobalConstants.SetLaserPointer(true);
-            reticleLeft.SetActive(false);
-            reticleRight.SetActive(false);
+            // reticleLeft.SetActive(false);
+            // reticleRight.SetActive(false);
             UpdateInputPipe();
             // reset after shown
             OnReset();
@@ -234,8 +234,8 @@ namespace VRC2
         {
             rootCanvas.SetActive(false);
             // GlobalConstants.SetLaserPointer(false);
-            reticleLeft.SetActive(true);
-            reticleRight.SetActive(true);
+            // reticleLeft.SetActive(true);
+            // reticleRight.SetActive(true);
         }
 
         public void Refresh()

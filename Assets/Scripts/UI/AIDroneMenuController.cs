@@ -120,8 +120,8 @@ namespace VRC2
 
             rootCanvas.SetActive(true);
             // GlobalConstants.SetLaserPointer(true);
-            reticleLeft.SetActive(false);
-            reticleRight.SetActive(false);
+            // reticleLeft.SetActive(false);
+            // reticleRight.SetActive(false);
         }
 
         public bool showing
@@ -133,8 +133,8 @@ namespace VRC2
         {
             rootCanvas.SetActive(false);
             // GlobalConstants.SetLaserPointer(false);
-            reticleLeft.SetActive(true);
-            reticleRight.SetActive(true);
+            // reticleLeft.SetActive(true);
+            // reticleRight.SetActive(true);
         }
 
         PipeType GetPipeType()
