@@ -66,6 +66,8 @@ namespace VRC2.ScenariosV2.Scenario
 
         [ReadOnly] public TaskBase taskBase;
 
+        [Space(30)] [Header("Prepared Pipes")] public List<GameObject> preparedPipes;
+
         #endregion
 
         #endregion
@@ -520,6 +522,31 @@ namespace VRC2.ScenariosV2.Scenario
             print($"Set Scenario {name} to start @ {startTimestamp}");
         }
 
+        private void UpdatePreparedPipes()
+        {
+            var ss = scenariosManager.scenarios;
+            foreach (var s in ss)
+            {
+                if (s.Equals(this))
+                {
+                    if (s.preparedPipes == null) continue;
+
+                    foreach (var pipe in s.preparedPipes)
+                    {
+                        pipe.SetActive(true);
+                    }
+                }
+                else
+                {
+                    if (s.preparedPipes == null) continue;
+                    foreach (var pipe in s.preparedPipes)
+                    {
+                        pipe.SetActive(false);
+                    }
+                }
+            }
+        }
+
         public void Execute(int timestamp)
         {
             StartScenario(timestamp);
@@ -749,6 +776,8 @@ namespace VRC2.ScenariosV2.Scenario
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
+                // sync it
+                scenariosManager.Sync_StartScenario(ClsName, t);
             }
 
             var count = parsedIncidents.Count;
@@ -798,6 +827,9 @@ namespace VRC2.ScenariosV2.Scenario
         public virtual void OnScenarioStart()
         {
             print($"Invoke {name} OnScenarioStart");
+
+            // update prepared pipes
+            UpdatePreparedPipes();
 
             // bypass SAGAT errors
             try

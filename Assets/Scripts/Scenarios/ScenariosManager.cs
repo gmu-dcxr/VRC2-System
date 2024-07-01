@@ -99,6 +99,36 @@ namespace VRC2.Scenarios
             Debug.LogWarning(message);
         }
 
+        public void Sync_StartScenario(string name, int ts)
+        {
+            if (Runner != null && Runner.IsRunning)
+            {
+                RPC_StartScenario(name, ts);
+            }
+        }
+        
+        
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_StartScenario(string name, int ts, RpcInfo info = default)
+        {
+            if (info.IsInvokeLocal)
+            {
+                
+            }
+            else
+            {
+                foreach (var s in scenarios)
+                {
+                    if (s.ClsName.Equals(name))
+                    {
+                        // start it
+                        s.StartScenario(ts);
+                    }
+                }
+            }
+        }
+        
+
 
 
         #endregion
