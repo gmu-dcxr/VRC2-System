@@ -238,6 +238,13 @@ namespace VRC2
             reticleRight.SetActive(true);
         }
 
+        public void Refresh()
+        {
+            // do nothing if not visible
+            if(!rootCanvas.activeSelf) return;
+            UpdateInputPipe();
+        }
+
         void OnConfirm()
         {
             // validate
