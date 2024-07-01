@@ -298,6 +298,7 @@ namespace VRC2.ScenariosV2.Scenario
         #endregion
 
         [Header("Debug UI")] public bool showDebugUI = true;
+        public bool scenarioButtonOnly = false;
         private bool showTime = true;
         public bool showTimeline = false;
         private string timelineText = "";
@@ -772,7 +773,7 @@ namespace VRC2.ScenariosV2.Scenario
         {
             GUILayout.BeginVertical(GUILayout.ExpandHeight(true));
             // scenario text 
-            if (GUILayout.Button($"Start {ClsName}", GUILayout.ExpandHeight(true)))
+            if (!started && GUILayout.Button($"Start {ClsName}", GUILayout.ExpandHeight(true)))
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
@@ -780,25 +781,28 @@ namespace VRC2.ScenariosV2.Scenario
                 scenariosManager.Sync_StartScenario(ClsName, t);
             }
 
-            var count = parsedIncidents.Count;
-            for (var i = 0; i < count; i++)
+            if (!scenarioButtonOnly)
             {
-                var text = $"Start {i + 1}";
-                // add change order mark
-                if (changeOrderIndices.Contains(i))
+                var count = parsedIncidents.Count;
+                for (var i = 0; i < count; i++)
                 {
-                    text += " (C)";
-                }
-
-                if (GUILayout.Button(text))
-                {
-                    // change order
+                    var text = $"Start {i + 1}";
+                    // add change order mark
                     if (changeOrderIndices.Contains(i))
                     {
-                        StartCoroutine(ChangeOrder());
+                        text += " (C)";
                     }
 
-                    StartIncident(i + 1);
+                    if (GUILayout.Button(text))
+                    {
+                        // change order
+                        if (changeOrderIndices.Contains(i))
+                        {
+                            StartCoroutine(ChangeOrder());
+                        }
+
+                        StartIncident(i + 1);
+                    }
                 }
             }
 

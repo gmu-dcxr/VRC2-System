@@ -14,15 +14,15 @@ namespace VRC2.Events
 
         [Header("Animation")] public string animationString = "Walking";
         private Animator animator;
-        
+
         private ExperimenterRoutine _routine = ExperimenterRoutine.Default;
 
-        
+
 
         void Start()
         {
             animator = experimenter.gameObject.GetComponent<Animator>();
-            
+
             experimenter.stoppingDistance = 0.5f;
             animator.SetBool(animationString, true);
         }
@@ -40,6 +40,25 @@ namespace VRC2.Events
             Debug.Log("RefillGlue");
 
             GlobalConstants.currentGlueCapacitiy = GlobalConstants.glueInitialCapacity;
+            // sync
+            if (Runner != null && Runner.IsRunning)
+            {
+                RPC_SyncCapacity(GlobalConstants.currentGlueCapacitiy);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        private void RPC_SyncCapacity(float cap, RpcInfo info = default)
+        {
+
+            if (info.IsInvokeLocal)
+            {
+                // 
+            }
+            else
+            {
+                GlobalConstants.currentGlueCapacitiy = cap;
+            }
         }
 
         public void BackToBase()
