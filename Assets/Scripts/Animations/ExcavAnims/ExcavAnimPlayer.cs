@@ -55,7 +55,7 @@ public class ExcavAnimPlayer : MonoBehaviour
     private Vector3 initScale = new Vector3(0.99f, 0.99f, 0.99f);
     //private Vector3 initScale = new Vector3(0.2f, 0.2f, 0.2f);
 
-    private GameObject[] clonesArray;
+    // private GameObject[] clonesArray;
     int curIndex = 0;
 
     internal enum part
@@ -65,6 +65,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         into2 = 2,
 
     }
+
     private part pt;
 
 
@@ -80,7 +81,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         matL = TreadsL.GetComponent<Renderer>().material;
         matR = TreadsR.GetComponent<Renderer>().material;
         done = false;
-        clonesArray = new GameObject[50];
+        // clonesArray = new GameObject[50];
         anim.Rebind();
 
         ready = true;
@@ -95,7 +96,8 @@ public class ExcavAnimPlayer : MonoBehaviour
             //play wakeup animation
             anim.SetBool("Wakeup", true);
 
-            if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f) && anim.GetCurrentAnimatorStateInfo(0).IsName("Wakeup"))
+            if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1.0f) &&
+                anim.GetCurrentAnimatorStateInfo(0).IsName("Wakeup"))
             {
                 //print("STOP");
                 //wakeup animation has played
@@ -104,6 +106,7 @@ public class ExcavAnimPlayer : MonoBehaviour
             }
 
         }
+
         if (ready && truckCheck.active)
         {
             anim.SetBool("Dig", false);
@@ -112,55 +115,58 @@ public class ExcavAnimPlayer : MonoBehaviour
         }
 
 
-            if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("FORWARD"))
+        {
+            //animate the treads
+            offsetR = Time.time * (0.75f) % 1;
+            offsetL = Time.time * (0.75f) % 1;
+            matL.mainTextureOffset = new Vector2(0, offsetL);
+            matR.mainTextureOffset = new Vector2(0, offsetR);
+            WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+            WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+        }
+
+        if (ReachDestination(destination.position))
+        {
+            if (!done && truckCheck.active)
             {
-                //animate the treads
-                offsetR = Time.time * (0.75f) % 1;
-                offsetL = Time.time * (0.75f) % 1;
-                matL.mainTextureOffset = new Vector2(0, offsetL);
-                matR.mainTextureOffset = new Vector2(0, offsetR);
-                WheelFrontRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
-                WheelBackRight.transform.Rotate(Vector3.forward * Time.deltaTime * rotSpeed * 10);
-                WheelFrontLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
-                WheelBackLeft.transform.Rotate(-Vector3.forward * Time.deltaTime * rotSpeed * 10);
+                anim.SetBool("Forward", false);
+                anim.SetBool("Dig", true);
+                done = true;
             }
 
-            if (ReachDestination(destination.position))
+            if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) &&
+                anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
             {
-                if (!done && truckCheck.active)
-                {
-                    anim.SetBool("Forward", false);
-                    anim.SetBool("Dig", true);
-                    done = true;
-                }
-
-                if ((anim.GetCurrentAnimatorStateInfo(0).normalizedTime > NumberOfDigs) && anim.GetCurrentAnimatorStateInfo(0).IsName("DIG"))
-                {
-                    anim.SetBool("Dig", false);
-                    anim.enabled = false;
-                    done = true;
-                    anim.enabled = true;
+                anim.SetBool("Dig", false);
+                anim.enabled = false;
+                done = true;
+                anim.enabled = true;
 
                 if (pt == part.nextTo)
-                    {
-                        FirstBackup.SetActive(false);
-                    }
-                    if (pt == part.into1)
-                    {
-                        
-                            SecondBackup.SetActive(false);
-                          
-                    }
-                    if (pt == part.into2)
-                    {
-                        
-                            ThirdBackup.SetActive(false);
-                       
-                    }
+                {
+                    FirstBackup.SetActive(false);
                 }
 
+                if (pt == part.into1)
+                {
+
+                    SecondBackup.SetActive(false);
+
+                }
+
+                if (pt == part.into2)
+                {
+
+                    ThirdBackup.SetActive(false);
+
+                }
             }
-            //}
+
+        }
+        //}
     }
 
     bool ReachDestination(Vector3 des)
@@ -175,6 +181,7 @@ public class ExcavAnimPlayer : MonoBehaviour
         {
             return true;
         }
+
         return false;
     }
 
@@ -183,12 +190,13 @@ public class ExcavAnimPlayer : MonoBehaviour
         //go forward til its at location 2
         //then dig
         //then dump
-        while (curIndex > 0)
-        {
-            Destroy(clonesArray[curIndex]);
-            curIndex--;
-        }
-        clonesArray = new GameObject[50];
+        // while (curIndex > 0)
+        // {
+        //     Destroy(clonesArray[curIndex]);
+        //     curIndex--;
+        // }
+        //
+        // clonesArray = new GameObject[50];
 
         dirt.SetActive(false);
         anim.Rebind();
@@ -210,12 +218,13 @@ public class ExcavAnimPlayer : MonoBehaviour
         pt = part.into1;
         destination = digPoint2;
 
-        while(curIndex > 0)
-        {
-            Destroy(clonesArray[curIndex]);
-            curIndex--;
-        }
-        clonesArray = new GameObject[50];
+        // while (curIndex > 0)
+        // {
+        //     Destroy(clonesArray[curIndex]);
+        //     curIndex--;
+        // }
+        //
+        // clonesArray = new GameObject[50];
     }
 
     public void start_4()
@@ -228,12 +237,13 @@ public class ExcavAnimPlayer : MonoBehaviour
         anim.enabled = true;
         pt = part.into2;
         destination = digPoint3;
-        while (curIndex > 0)
-        {
-            Destroy(clonesArray[curIndex]);
-            curIndex--;
-        }
-        clonesArray = new GameObject[50];
+        // while (curIndex > 0)
+        // {
+        //     Destroy(clonesArray[curIndex]);
+        //     curIndex--;
+        // }
+        //
+        // clonesArray = new GameObject[50];
     }
 
     public void makeDirt()
@@ -251,44 +261,47 @@ public class ExcavAnimPlayer : MonoBehaviour
 
     public void dirtDupe()
     {
-        GameObject dupe = Instantiate(dirt);
-     
-        dupe.transform.SetParent(endPiece);
-        if (pt == part.into2)
-        {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-1.7f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
-        }
-        if (pt == part.into1)
-        {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x - 1.71f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
-            dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
-        }
-        if(pt == part.nextTo)
-        {
-            dupe.transform.position = new Vector3(endPiece.transform.position.x-1.0f, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
-            dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
-        }        
+        var t = dirt.transform;
+        GameObject dupe = Instantiate(dirt, t.transform);
+        dupe.transform.localPosition = new Vector3(0, curIndex * 0.2f, -0.3f);
+
+        // dupe.transform.SetParent(endPiece);
+        // if (pt == part.into2)
+        // {
+        //     dupe.transform.position = new Vector3(endPiece.transform.position.x-1.7f, endPiece.transform.position.y-0.3f, endPiece.transform.position.z-0.75f);
+        // }
+        // if (pt == part.into1)
+        // {
+        //     dupe.transform.position = new Vector3(endPiece.transform.position.x - 1.71f, endPiece.transform.position.y, endPiece.transform.position.z - 0.75f );
+        //     dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
+        // }
+        // if(pt == part.nextTo)
+        // {
+        //     dupe.transform.position = new Vector3(endPiece.transform.position.x-1.0f, endPiece.transform.position.y, endPiece.transform.position.z-0.75f);
+        //     dupe.transform.rotation = Quaternion.Euler(spawn.transform.rotation.x + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.y + (Random.Range(0.0f, 40.0f)), spawn.transform.rotation.z + (Random.Range(0.0f, 40.0f)));
+        // }        
         dupe.GetComponent<Rigidbody>().isKinematic = false;
         dupe.transform.localScale = initScale;
         dupe.transform.SetParent(null);
         dupe.GetComponent<Rigidbody>().useGravity = true;
         curIndex++;
-        clonesArray[curIndex] = dupe;
+        // clonesArray[curIndex] = dupe;
         dirt.SetActive(false);
     }
 
     public void spillUpdate()
     {
-        spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y+0.030f, spill.transform.position.z);
+        spill.transform.position = new Vector3(spill.transform.position.x, spill.transform.position.y + 0.030f,
+            spill.transform.position.z);
     }
 
     public void deleteDirt()
     {
-        while (curIndex > 0)
-        {
-            Destroy(clonesArray[curIndex]);
-            curIndex--;
-        }
+        // while (curIndex > 0)
+        // {
+        //     Destroy(clonesArray[curIndex]);
+        //     curIndex--;
+        // }
     }
 
 }
