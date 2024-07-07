@@ -77,6 +77,8 @@ namespace VRC2.Events
 
         public ScissorLiftController controller { get; set; }
 
+        private Vector3 footCamRel;
+
         private void Start()
         {
             textMesh.text = "";
@@ -88,6 +90,7 @@ namespace VRC2.Events
             enterPosition = _cam.transform.position;
             entered = true;
             onResetting = false;
+            footCamRel = _foot.transform.InverseTransformPoint(_cam.transform.position);
         }
 
         void ExitLift()
@@ -164,15 +167,21 @@ namespace VRC2.Events
 
             if (_player != null)
             {
-                var position = _cam.transform.position;
-                position.x = anchor.position.x;
-                position.z = anchor.position.z;
+                // var position = _cam.transform.position;
+                // position.x = anchor.position.x;
+                // position.z = anchor.position.z;
+                
+                // use transform
+                // var t = _foot.transform.InverseTransformPoint(_cam.transform.position);
+
+                var position = anchor.transform.TransformPoint(footCamRel);
 
                 // // height offset
                 // var offset = _avatarLocator.initHeight - _avatarLocator.GetHeight();
                 // print($"offset: {offset}");
 
-                position.y += anchor.position.y - _foot.transform.position.y + yOffset;
+                // position.y += anchor.position.y - _foot.transform.position.y + yOffset;
+                position.y += yOffset;
                 _cam.transform.position = position;
                 _player.transform.position = position;
             }
