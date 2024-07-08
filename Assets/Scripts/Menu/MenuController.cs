@@ -88,12 +88,12 @@ namespace VRC2.Menu
         private List<MenuItem> P1MenuItems = new List<MenuItem>()
         {
             // MenuItem.VoiceControl, // disable
-            MenuItem.CheckStorage,
+            // MenuItem.CheckStorage,
             // MenuItem.PickupPipe, // disable pickup since the logic is changed
             // MenuItem.Deprecate, // disable 
             // check glue and clamp
-            MenuItem.CheckGlue,
-            MenuItem.CheckClamp,
+            // MenuItem.CheckGlue,
+            // MenuItem.CheckClamp,
             // supervisor and safety manager
             MenuItem.Supervisor,
             MenuItem.SafetyManager,
@@ -105,7 +105,10 @@ namespace VRC2.Menu
             // MenuItem.GiveInstruction, // disable
             // MenuItem.CheckPipeSizeColor, // disable
             // MenuItem.MeasureDistance, // disable
+            MenuItem.CheckStorage,
             MenuItem.CommandRobot,
+            MenuItem.CheckGlue,
+            MenuItem.CheckClamp,
             // MenuItem.CheckPipeLengthAngle, // disable
             // MenuItem.CheckLevel // disable
             // supervisor and safety manager
