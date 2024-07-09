@@ -46,6 +46,33 @@ namespace VRC2.Hack
             message.ResetLastSpawnedPipe();
         }
 
+
+        void SyncPipeTransform()
+        {
+            var no = gameObject.GetComponent<NetworkObject>();
+            if (no.Runner != null && no.Runner.IsRunning)
+            {
+                var t = gameObject.transform;
+                RPC_SyncPipeTransform(t.position, t.rotation);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SyncPipeTransform(Vector3 position, Quaternion rotation, RpcInfo info = default)
+        {
+            print($"RPC_SyncPipeTransform");
+            if (info.IsInvokeLocal)
+            {
+
+            }
+            else
+            {
+                gameObject.transform.position = position;
+                gameObject.transform.rotation = rotation;
+            }
+        }
+
+
         public override bool NetworkedPointerEvent(PointerEvent evt)
         {
             simulateReleased = false;
@@ -105,6 +132,9 @@ namespace VRC2.Hack
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
+                    // sync transform to P1
+                    SyncPipeTransform();
+
                     // restore the networkTransform
                     nt.enabled = true;
 
