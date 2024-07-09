@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using System.Collections;
+using Fusion;
 using Oculus.Interaction;
 using UnityEngine;
 
@@ -67,6 +68,23 @@ namespace VRC2.Hack
             messager.SyncPipeTransform(nid, t.position, t.rotation);
         }
 
+        IEnumerator EnableNetworkTransform()
+        {
+            print("EnableNetworkTransform begin");
+            var go = gameObject;
+            var rb = go.GetComponent<Rigidbody>();
+            yield return new WaitWhile(() => { return rb.velocity.magnitude > 1e-3f; });
+
+            // send to sync transform
+            SyncPipeTransform();
+            yield return new WaitForSeconds(0.5f);
+
+            // enable network transform
+            var nt = go.GetComponent<NetworkTransform>();
+            nt.enabled = true;
+            print("EnableNetworkTransform end");
+        }
+
 
         public override bool NetworkedPointerEvent(PointerEvent evt)
         {
@@ -127,8 +145,8 @@ namespace VRC2.Hack
                     EndTransform();
                     break;
                 case PointerEventType.Unselect:
-                    // sync transform to P1
-                    SyncPipeTransform();
+
+                    StartCoroutine(EnableNetworkTransform());
 
                     // restore the networkTransform
                     // nt.enabled = true;
