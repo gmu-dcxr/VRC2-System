@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Fusion;
+using UnityEngine;
+using VRC2.Animations;
 using VRC2.Pipe;
 
 namespace VRC2.Events
@@ -26,10 +28,38 @@ namespace VRC2.Events
                 return;
             }
 
-            var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
-            var add = go.GetComponent<AIDroneDeliver>();
-            add.InitParameters(parameter);
-            add.Execute();
+            if (Runner != null && Runner.isActiveAndEnabled && Runner.IsClient)
+            {
+                // change to P2 command AI drone
+                RPC_SendMessage(parameter);
+            }
+            else
+            {
+                var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
+                var add = go.GetComponent<AIDroneDeliver>();
+                add.InitParameters(parameter);
+                add.Execute();
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessage(PipeConstants.PipeParameters parameters, RpcInfo info = default)
+        {
+            var message = "";
+
+            if (info.IsInvokeLocal)
+            {
+
+            }
+            else
+            {
+                var go = GameObject.Find(GlobalConstants.AIDroneDeliver);
+                var add = go.GetComponent<AIDroneDeliver>();
+                add.InitParameters(parameters);
+                add.Execute();
+            }
+
+            Debug.LogWarning(message);
         }
 
         // Update is called once per frame
