@@ -17,6 +17,10 @@ namespace VRC2.Network
             RPC_ResetLastSpawnedPipe();
         }
 
+        public void SyncPipeTransform(NetworkId nid, Vector3 pos, Quaternion rot)
+        {
+            RPC_SyncPipeTransform(nid, pos, rot);
+        }
 
         public void SetPipeRigidBody(NetworkId nid, bool enable)
         {
@@ -75,6 +79,22 @@ namespace VRC2.Network
             else
             {
                 PipeHelper.BeforeMove(ref go);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SyncPipeTransform(NetworkId nid, Vector3 position, Quaternion rotation, RpcInfo info = default)
+        {
+            print($"RPC_SyncPipeTransform");
+            if (info.IsInvokeLocal)
+            {
+
+            }
+            else
+            {
+                var go = Runner.FindObject(nid).gameObject;
+                go.transform.position = position;
+                go.transform.rotation = rotation;
             }
         }
     }
