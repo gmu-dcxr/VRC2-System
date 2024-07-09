@@ -113,6 +113,9 @@ namespace VRC2.Network
                 var go = Runner.FindObject(nid).gameObject;
                 var nt = go.GetComponent<NetworkTransform>();
                 nt.enabled = true;
+                // disable kinematic to let it fall
+                var rb = gameObject.GetComponent<Rigidbody>();
+                rb.isKinematic = false;
             }
         }
     }
