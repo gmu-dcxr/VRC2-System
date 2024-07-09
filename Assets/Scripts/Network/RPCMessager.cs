@@ -95,6 +95,24 @@ namespace VRC2.Network
                 var go = Runner.FindObject(nid).gameObject;
                 go.transform.position = position;
                 go.transform.rotation = rotation;
+
+                RPC_EnableNetworkTransform(nid);
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_EnableNetworkTransform(NetworkId nid, RpcInfo info = default)
+        {
+            print($"RPC_EnableNetworkTransform");
+            if (info.IsInvokeLocal)
+            {
+
+            }
+            else
+            {
+                var go = Runner.FindObject(nid).gameObject;
+                var nt = go.GetComponent<NetworkTransform>();
+                nt.enabled = true;
             }
         }
     }
