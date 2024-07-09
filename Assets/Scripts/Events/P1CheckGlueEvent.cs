@@ -69,7 +69,35 @@ namespace VRC2.Events
 
         public override void Execute()
         {
-            MoveToGlueBox();
+            // MoveToGlueBox();
+            if (!GlobalConstants.IsNetworkReady())
+            {
+                Debug.LogError("Runner or localPlayer is none");
+                return;
+            }
+
+            if (Runner != null && Runner.isActiveAndEnabled && Runner.IsClient)
+            {
+                // change to P2 
+                RPC_SendMessage();
+            }
+            else
+            {
+                MoveToGlueBox();
+            }
+        }
+
+        [Rpc(RpcSources.All, RpcTargets.All)]
+        public void RPC_SendMessage(RpcInfo info = default)
+        {
+            if (info.IsInvokeLocal)
+            {
+
+            }
+            else
+            {
+                MoveToGlueBox();
+            }
         }
 
         private void Update()
