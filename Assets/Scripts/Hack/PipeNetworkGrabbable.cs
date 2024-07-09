@@ -62,6 +62,10 @@ namespace VRC2.Hack
 
         void SyncPipeTransform()
         {
+            // enable kinematic to let it not fall
+            var rb = gameObject.GetComponent<Rigidbody>();
+            rb.isKinematic = true;
+
             var nid = gameObject.GetComponent<NetworkObject>().Id;
             var t = gameObject.transform;
             messager.SyncPipeTransform(nid, t.position, t.rotation);
