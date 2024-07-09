@@ -72,6 +72,11 @@ namespace VRC2.Hack
         {
             var go = gameObject;
             var rb = go.GetComponent<Rigidbody>();
+            // make it fall
+            rb.isKinematic = false;
+            
+            yield return new WaitForSeconds(0.1f);
+            
             yield return new WaitWhile(() => { return rb.velocity.magnitude > 1e-3f; });
 
             // send to sync transform
