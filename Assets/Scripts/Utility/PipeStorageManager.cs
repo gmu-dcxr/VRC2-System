@@ -107,6 +107,10 @@ namespace VRC2.Utility
             foreach (var pipe in pipes)
             {
                 var p = pipe;
+
+                // return if the pipe is used.
+                if (p.transform.parent != null) continue;
+
                 // destroyed pipe
                 if (p == null) continue;
                 if (enable)
