@@ -70,19 +70,17 @@ namespace VRC2.Hack
 
         IEnumerator EnableNetworkTransform()
         {
-            print("EnableNetworkTransform begin");
             var go = gameObject;
             var rb = go.GetComponent<Rigidbody>();
             yield return new WaitWhile(() => { return rb.velocity.magnitude > 1e-3f; });
 
             // send to sync transform
             SyncPipeTransform();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1f);
 
             // enable network transform
             var nt = go.GetComponent<NetworkTransform>();
             nt.enabled = true;
-            print("EnableNetworkTransform end");
         }
 
 
