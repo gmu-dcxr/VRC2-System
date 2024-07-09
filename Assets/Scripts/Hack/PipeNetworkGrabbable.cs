@@ -15,6 +15,21 @@ namespace VRC2.Hack
 
         [HideInInspector] public bool simulateReleased = false;
 
+        private RPCMessager _messager;
+
+        public RPCMessager messager
+        {
+            get
+            {
+                if (_messager == null)
+                {
+                    _messager = FindObjectOfType<RPCMessager>();
+                }
+
+                return _messager;
+            }
+        }
+
         protected override void Start()
         {
             this.BeginStart(ref _started, () => base.Start());
@@ -35,41 +50,21 @@ namespace VRC2.Hack
         // sync last spawned pipe via rpc
         void UpdateLastSpawnedPipe(GameObject go)
         {
-            var message = FindObjectOfType<RPCMessager>();
             var no = go.GetComponent<NetworkObject>();
-            message.UpdateLastSpawnedPipe(no.Id);
+            messager.UpdateLastSpawnedPipe(no.Id);
         }
 
         void ResetLastSpawnedPipe()
         {
-            var message = FindObjectOfType<RPCMessager>();
-            message.ResetLastSpawnedPipe();
+            messager.ResetLastSpawnedPipe();
         }
 
 
         void SyncPipeTransform()
         {
-            var no = gameObject.GetComponent<NetworkObject>();
-            if (no.Runner != null && no.Runner.IsRunning)
-            {
-                var t = gameObject.transform;
-                RPC_SyncPipeTransform(t.position, t.rotation);
-            }
-        }
-
-        [Rpc(RpcSources.All, RpcTargets.All)]
-        public void RPC_SyncPipeTransform(Vector3 position, Quaternion rotation, RpcInfo info = default)
-        {
-            print($"RPC_SyncPipeTransform");
-            if (info.IsInvokeLocal)
-            {
-
-            }
-            else
-            {
-                gameObject.transform.position = position;
-                gameObject.transform.rotation = rotation;
-            }
+            var nid = gameObject.GetComponent<NetworkObject>().Id;
+            var t = gameObject.transform;
+            messager.SyncPipeTransform(nid, t.position, t.rotation);
         }
 
 
@@ -136,7 +131,7 @@ namespace VRC2.Hack
                     SyncPipeTransform();
 
                     // restore the networkTransform
-                    nt.enabled = true;
+                    // nt.enabled = true;
 
                     EndTransform();
                     break;
