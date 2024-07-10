@@ -534,6 +534,9 @@ namespace VRC2.ScenariosV2.Scenario
 
                     foreach (var pipe in s.preparedPipes)
                     {
+                        // only show those enabled
+                        if (!pipe.activeSelf) continue;
+
                         pipe.SetActive(true);
                     }
                 }
