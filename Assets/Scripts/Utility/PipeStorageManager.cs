@@ -108,11 +108,9 @@ namespace VRC2.Utility
             {
                 var p = pipe;
 
-                // return if the pipe is used.
-                if (p.transform.parent != null) continue;
+                // return if the pipe is null or used.
+                if (p == null || p.transform.parent != null) continue;
 
-                // destroyed pipe
-                if (p == null) continue;
                 if (enable)
                 {
                     PipeHelper.AfterMove(ref p);
