@@ -6,6 +6,7 @@ using UnityEngine;
 using VRC2.Events;
 using VRC2.Network;
 using VRC2.Pipe;
+using VRC2.Pipe.Clamp;
 
 namespace VRC2.Hack
 {
@@ -56,6 +57,14 @@ namespace VRC2.Hack
                 // p1 side, call the parent method
                 return false;
             }
+
+            // return true if clamp is on the wall to make p2 not able to unclamp
+            var cm = gameObject.GetComponent<ClampManipulation>();
+            if (cm.collidingWall)
+            {
+                return true;
+            }
+
 
             // p2 side
             // in order to make p2 can manipulate the pipe, it should disable networkTransform component
