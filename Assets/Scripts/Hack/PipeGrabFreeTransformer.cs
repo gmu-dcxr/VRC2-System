@@ -7,6 +7,7 @@ using Oculus.Interaction;
 using VRC2.Hack;
 using VRC2.Pipe;
 using VRC2.ScenariosV2.Tool;
+using VRC2.Utility;
 
 namespace VRC2.Hack
 {
@@ -27,6 +28,9 @@ namespace VRC2.Hack
         private float _offsetFactor = 0.8f;
 
         private Vector3 _moveOffset = Vector3.zero;
+
+        // make it horizontal or vertical
+        [ReadOnly] public float snapThreshold = 10f;
 
         private float _halfPipeLength
         {
@@ -309,6 +313,9 @@ namespace VRC2.Hack
         public void BeginTransform()
         {
             if (provider == null || !provider.IsValid) return;
+
+            // reset
+            lastVibrationAngle = -1f;
         }
 
         public void UpdateTransform()
@@ -391,6 +398,25 @@ namespace VRC2.Hack
             var rotation = rot.eulerAngles;
             rotation.x = 0;
             rotation.y = -90;
+
+            if (isSimplePipe)
+            {
+                // snap it
+                if (Math.Abs(rotation.z % 90) < snapThreshold)
+                {
+                    rotation.z = (int)(rotation.z / 90) * 90;
+
+                    // vibrate only when pipe is held
+                    if (pipeManipulation.heldByController)
+                    {
+                        if (lastVibrationAngle != rotation.z)
+                        {
+                            VibrateFeedback();
+                            lastVibrationAngle = rotation.z;
+                        }
+                    }
+                }
+            }
 
             if (compensated)
             {
@@ -573,6 +599,64 @@ namespace VRC2.Hack
 
                 return _connectorManipulation;
             }
+        }
+
+        #endregion
+
+        #region Haptics feedback when placing pipe on the wall
+
+        private VRHelper _vrHelper;
+
+        private VRHelper vrHelper
+        {
+            get
+            {
+                if (_vrHelper == null)
+                {
+                    _vrHelper = FindObjectOfType<VRHelper>();
+                    if (_vrHelper == null)
+                    {
+                        Debug.LogError("Failed to find VRHelper.");
+                    }
+                }
+
+                return _vrHelper;
+            }
+        }
+
+        OVRInput.Controller GetController()
+        {
+            var result = OVRInput.Controller.RTouch;
+
+            var left = Vector3.Distance(transform.position, vrHelper.leftVisual.transform.position);
+            var right = Vector3.Distance(transform.position, vrHelper.rightVisual.transform.position);
+
+            if (left < right)
+            {
+                result = OVRInput.Controller.LTouch;
+            }
+
+            return result;
+        }
+
+        private float lastVibrationAngle = -1f;
+
+        void VibrateFeedback()
+        {
+            StartCoroutine(Vibrate(0.5f));
+        }
+
+        IEnumerator Vibrate(float duration)
+        {
+            var ctl = GetController();
+            var amp = 1.0f;
+            while (duration > 0)
+            {
+                duration -= Time.deltaTime;
+                OVRInput.SetControllerLocalizedVibration(OVRInput.HapticsLocation.Index, 0f, amp, ctl);
+            }
+
+            yield return null;
         }
 
         #endregion
