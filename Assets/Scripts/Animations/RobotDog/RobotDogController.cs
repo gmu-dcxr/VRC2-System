@@ -244,7 +244,7 @@ namespace VRC2.Animations
                 }
 
                 // enable rigidbody of pipes on storage place
-                storageManager.SetRigidBody(true);
+                // storageManager.SetRigidBody(true);
             }
             else
             {
@@ -960,7 +960,7 @@ namespace VRC2.Animations
                 // normal process if pipes and connectors are required
 
                 // disable rigidbody of pipes on storage place
-                storageManager.SetRigidBody(false);
+                // storageManager.SetRigidBody(false);
                 PickUp();
             }
             else
