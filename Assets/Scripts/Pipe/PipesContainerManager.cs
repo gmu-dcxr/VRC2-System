@@ -355,8 +355,11 @@ namespace VRC2
             // this is necessary when unclamping
             if (!heldByController)
             {
-                // simulate release
-                freeTransformer.SimulateRelease();
+                if (freeTransformer != null)
+                {
+                    // simulate release
+                    freeTransformer.SimulateRelease();
+                }
 
                 SetInteraction(ShouldFall());
             }
