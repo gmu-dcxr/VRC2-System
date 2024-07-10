@@ -1,4 +1,5 @@
-﻿using Hack;
+﻿using Fusion;
+using Hack;
 using Oculus.Interaction;
 using UnityEngine;
 using VRC2.Pipe.Clamp;
@@ -40,6 +41,21 @@ namespace VRC2.Events
             }
         }
 
+        private NetworkObject _networkObject;
+
+        private NetworkObject networkObject
+        {
+            get
+            {
+                if (_networkObject == null)
+                {
+                    _networkObject = gameObject.GetComponent<NetworkObject>();
+                }
+
+                return _networkObject;
+            }
+        }
+
         private void Start()
         {
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
@@ -50,6 +66,13 @@ namespace VRC2.Events
 
         private void OnSelect()
         {
+            // return if colliding on the wall for p2
+
+            if (networkObject != null && networkObject.Runner != null && networkObject.Runner.IsClient)
+            {
+                if (clampManipulation.collidingWall) return;
+            }
+
             // reset 
             freeTransformer.Compensated = false;
             // make it not drop

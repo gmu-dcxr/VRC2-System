@@ -200,7 +200,7 @@ namespace VRC2
                 var pcm = root.GetComponent<PipesContainerManager>();
 
                 // return if collidingwall is true and it is inside the wall
-                if (pcm.collidingWall && distance < 0) return;
+                if (pcm == null || (pcm.collidingWall && distance < 0)) return;
 
                 if (!enter)
                 {
