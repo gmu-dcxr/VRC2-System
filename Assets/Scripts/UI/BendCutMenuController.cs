@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using VRC2.Network;
 using VRC2.Pipe;
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
 using PipeType = VRC2.Pipe.PipeConstants.PipeType;
@@ -221,6 +222,15 @@ namespace VRC2
 
         public void Show()
         {
+            // reset last spawned pipe
+
+            // reset pipe selection
+            GlobalConstants.lastSpawnedPipe = null;
+
+            var messager = FindObjectOfType<RPCMessager>();
+            // sync it
+            messager.ResetLastSpawnedPipe();
+
             rootCanvas.SetActive(true);
             // GlobalConstants.SetLaserPointer(true);
             // reticleLeft.SetActive(false);
@@ -241,7 +251,7 @@ namespace VRC2
         public void Refresh()
         {
             // do nothing if not visible
-            if(!rootCanvas.activeSelf) return;
+            if (!rootCanvas.activeSelf) return;
             UpdateInputPipe();
         }
 

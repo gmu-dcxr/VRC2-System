@@ -2,6 +2,7 @@
 using NodeCanvas.Tasks.Actions;
 using UnityEngine;
 using VRC2.Animations;
+using VRC2.Network;
 using VRC2.Pipe;
 
 using PipeBendAngles = VRC2.Pipe.PipeConstants.PipeBendAngles;
