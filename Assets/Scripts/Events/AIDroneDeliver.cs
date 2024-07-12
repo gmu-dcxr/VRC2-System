@@ -65,7 +65,7 @@ namespace VRC2.Events
             for (var i = 0; i < amount; i++)
             {
                 var pipe = runner.Spawn(prefab, pos, rot, localPlayer);
-                GlobalConstants.lastSpawnedPipe = pipe.gameObject;
+                // GlobalConstants.lastSpawnedPipe = pipe.gameObject;
                 UpdateLocalSpawnedPipe(pipe.gameObject);
                 RPC_SendMessage(pipe.Id, parameters);
 
