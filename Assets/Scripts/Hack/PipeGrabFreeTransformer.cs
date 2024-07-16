@@ -477,6 +477,13 @@ namespace VRC2.Hack
             }
         }
 
+        public void ResetSimulatedRelease()
+        {
+            print("ResetSimulatedRelease");
+            var png = GetComponent<PipeNetworkGrabbable>();
+            png.simulateReleased = false;
+        }
+
         public (Vector3, Quaternion) Compensate(Vector3 pos, Quaternion rot)
         {
             var wt = wall.transform;
