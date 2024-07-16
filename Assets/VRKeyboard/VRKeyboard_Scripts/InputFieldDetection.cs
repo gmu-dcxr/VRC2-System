@@ -101,12 +101,16 @@ public class InputFieldDetection : MonoBehaviour, IPointerEnterHandler, IPointer
         Vector2 localMousePos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(inputFieldText.rectTransform, eventData.pointerPressRaycast.screenPosition, eventData.pressEventCamera, out localMousePos);
         print($"localMousePos = ({localMousePos.x},{localMousePos.y})");
-        GetInputFieldTarget.Index = GetCharacterIndexFromPosition(localMousePos, inputFieldText, inputFieldLineType);
+        
+        // fix: auto input to the end
+        GetInputFieldTarget.Index = inputFieldText.text.Length; //GetCharacterIndexFromPosition(localMousePos, inputFieldText, inputFieldLineType);
         
         // you can uncomment when testing
 #if(UNITY_EDITOR)
          print("index = " + GetInputFieldTarget.Index);
 #endif
+        // move cursor to end
+        myselfInputField.MoveTextEnd(true);
 
         keyboardController.OnOpenVirtualKeyboard();
     }
