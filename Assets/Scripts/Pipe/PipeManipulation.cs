@@ -428,6 +428,8 @@ namespace VRC2
             heldByController = true;
             // enable kinematic
             SetKinematic(true);
+            // reset
+            freeTransformer.ResetSimulatedRelease();
             // force move pipe away
             StartCoroutine(freeTransformer.ForceMoveAway());
         }
