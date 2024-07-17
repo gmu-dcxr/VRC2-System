@@ -11,7 +11,7 @@ namespace VRC2.Pipe.Clamp
 
         private ClampScaleInitializer _clampScaleInitializer;
 
-        public int ClampSize
+        private ClampScaleInitializer clampScaleInitializer
         {
             get
             {
@@ -20,7 +20,22 @@ namespace VRC2.Pipe.Clamp
                     _clampScaleInitializer = GetComponentInChildren<ClampScaleInitializer>();
                 }
 
-                return _clampScaleInitializer.clampSize;
+                return _clampScaleInitializer;
+            }
+        }
+
+        public int ClampSize => clampScaleInitializer.clampSize;
+
+        private ClampStatusMonitor StatusMonitor
+        {
+            get
+            {
+                if (clampScaleInitializer != null)
+                {
+                    return clampScaleInitializer.gameObject.GetComponent<ClampStatusMonitor>();
+                }
+
+                return null;
             }
         }
 
@@ -42,6 +57,14 @@ namespace VRC2.Pipe.Clamp
         public void SetKinematic(bool value)
         {
             rigidbody.isKinematic = value;
+        }
+
+        public void UpdateStatus(bool inuse)
+        {
+            if (StatusMonitor != null)
+            {
+                StatusMonitor.InUse = inuse;
+            }
         }
     }
 }

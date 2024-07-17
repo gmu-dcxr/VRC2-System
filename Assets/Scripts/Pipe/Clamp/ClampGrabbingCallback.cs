@@ -79,6 +79,8 @@ namespace VRC2.Events
             clampManipulation.SetKinematic(true);
             // reset
             clampManipulation.collidingWall = false;
+            // reset status
+            clampManipulation.UpdateStatus(false);
         }
 
         private void OnRelease()

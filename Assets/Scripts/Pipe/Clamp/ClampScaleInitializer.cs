@@ -1,7 +1,10 @@
 ﻿using System;
 using UnityEngine;
+using VRC2.Pipe.Clamp;
+
 namespace VRC2.Events
 {
+    [RequireComponent(typeof(ClampStatusMonitor))]
     public class ClampScaleInitializer: MonoBehaviour
     {
         [Tooltip("Size of the clamp, 1,2,3, or 4 inches")]
