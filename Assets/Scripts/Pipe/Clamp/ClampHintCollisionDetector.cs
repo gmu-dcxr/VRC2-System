@@ -4,6 +4,7 @@ using Fusion;
 using UnityEngine;
 using VRC2.Events;
 using VRC2.Hack;
+using VRC2.Pipe.Clamp;
 
 namespace VRC2.Pipe
 {
@@ -93,10 +94,18 @@ namespace VRC2.Pipe
             var go = other.gameObject;
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && !hintManager.Clamped)
             {
+                var csm = go.GetComponent<ClampStatusMonitor>();
+                if (csm.InUse)
+                {
+                    // do nothing if clamp is used
+                    return;
+                } 
                 hintManager.SetClamped(true);
                 UpdateP2Clamp(go, true);
                 // disable pipe interaction, set to not held
                 UpdatePipeInteraction(false, false);
+                // update status
+                csm.InUse = true;
             }
             else if (go.CompareTag(GlobalConstants.wallTag))
             {
