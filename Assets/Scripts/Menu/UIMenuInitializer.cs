@@ -52,7 +52,18 @@ namespace VRC2.Menu
             var header = GetCurrentMenu();
             // sub menu
             var submenu = GetSubMenuByName(header, name);
-            menuStack.Add(submenu);
+            if (submenu != null)
+            {
+                menuStack.Add(submenu);
+            }
+        }
+
+        public void UnStackMenu()
+        {
+            if (menuStack != null && menuStack.Count > 0)
+            {
+                menuStack.RemoveAt(menuStack.Count - 1);
+            }
         }
 
         public String MenuStackToString(String sep)

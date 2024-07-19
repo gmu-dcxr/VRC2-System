@@ -295,29 +295,27 @@ namespace VRC2.Menu
 
         #region Safety Manager Menu
 
+        void SetButtonVisual(GameObject go, bool enable)
+        {
+            var rbp = go.GetComponentInChildren<RoundedBoxProperties>();
+            rbp.GetComponent<MeshRenderer>().enabled = enable;
+        }
+
         void InitializeMenuText(List<string> items, bool blank_remaining)
         {
-            var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
+            var allPokeVisuals = Utils.GetChildren<PokeInteractableVisual>(_menuRoot);
             var count = 0;
 
-            foreach (var go in allTextGameObject)
+            foreach (var go in allPokeVisuals)
             {
-                var tmp = go.GetComponent<TextMeshPro>();
+                var tmp = go.GetComponentInChildren<TextMeshPro>();
                 if (count >= items.Count)
                 {
                     if (blank_remaining)
                     {
                         tmp.text = "";
-                        // disable it
-                        try
-                        {
-                            // some TextMeshPros are not menu.
-                            go.transform.parent.parent.gameObject.SetActive(false);
-                        }
-                        catch (Exception e)
-                        {
-                            ;
-                        }
+                        // disable button visual
+                        SetButtonVisual(go, false);
                     }
                     else
                     {
@@ -327,7 +325,8 @@ namespace VRC2.Menu
                 else
                 {
                     var s = items[count];
-                    go.transform.parent.parent.gameObject.SetActive(true);
+                    // enable button visual
+                    SetButtonVisual(go, true);
                     tmp.text = s;
                 }
 
@@ -339,29 +338,23 @@ namespace VRC2.Menu
 
         #endregion
 
+
         void InitializeMenuText(List<MenuItem> items, bool blank_remaining)
         {
-            var allTextGameObject = Utils.GetChildren<TextMeshPro>(_menuRoot);
+            var allPokeVisuals = Utils.GetChildren<PokeInteractableVisual>(_menuRoot);
             var count = 0;
 
-            foreach (var go in allTextGameObject)
+            foreach (var go in allPokeVisuals)
             {
-                var tmp = go.GetComponent<TextMeshPro>();
+                var tmp = go.GetComponentInChildren<TextMeshPro>();
+
                 if (count >= items.Count)
                 {
                     if (blank_remaining)
                     {
                         tmp.text = "";
-                        // disable it
-                        try
-                        {
-                            // some TextMeshPros are not menu.
-                            go.transform.parent.parent.gameObject.SetActive(false);
-                        }
-                        catch (Exception e)
-                        {
-                            ;
-                        }
+                        // disable button visual
+                        SetButtonVisual(go, false);
                     }
                     else
                     {
@@ -371,7 +364,7 @@ namespace VRC2.Menu
                 else
                 {
                     var s = _menuInitializer.getStringByMenuItem(items[count]);
-                    go.transform.parent.parent.gameObject.SetActive(true);
+                    SetButtonVisual(go, true);
                     tmp.text = s;
                 }
 
@@ -560,6 +553,8 @@ namespace VRC2.Menu
             {
                 print($"Leaf menu: {cur.desc}");
                 WriteLog(menu, cur);
+                // unstack
+                menu.UnStackMenu();
             }
             else
             {

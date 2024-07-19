@@ -31,6 +31,8 @@ namespace VRC2.Hack
 
         // make it horizontal or vertical
         [ReadOnly] public float snapThreshold = 10f;
+        
+        public bool enableCompensation = false;
 
         private float _halfPipeLength
         {
@@ -390,6 +392,10 @@ namespace VRC2.Hack
 
         public (Vector3, Quaternion) Compensate(Transform target, Vector3 pos, Quaternion rot, bool compensated)
         {
+            if (!enableCompensation)
+            {
+                return (pos, rot);
+            }
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
