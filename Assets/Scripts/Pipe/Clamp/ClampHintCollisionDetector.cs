@@ -95,11 +95,13 @@ namespace VRC2.Pipe
             if (go.CompareTag(GlobalConstants.clampObjectTag) && CheckClampSizeMatch(go) && !hintManager.Clamped)
             {
                 var csm = go.GetComponent<ClampStatusMonitor>();
-                if (csm.InUse)
+                var cgc = go.transform.parent.GetComponent<ClampGrabbingCallback>();
+                if (!cgc.selected && csm.InUse)
                 {
                     // do nothing if clamp is used
                     return;
-                } 
+                }
+
                 hintManager.SetClamped(true);
                 UpdateP2Clamp(go, true);
                 // disable pipe interaction, set to not held
