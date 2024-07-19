@@ -14,6 +14,8 @@ namespace Hack
 
         private DistanceLimitedAutoMoveTowardsTargetProvider _provider;
 
+        public bool enableCompensation = false;
+
         [HideInInspector]
         public DistanceLimitedAutoMoveTowardsTargetProvider provider
         {
@@ -184,6 +186,10 @@ namespace Hack
 
         public (Vector3, Quaternion) Compensate(Vector3 pos, Quaternion rot)
         {
+            if (!enableCompensation)
+            {
+                return (pos, rot);
+            }
             // get the wall transform
             var wt = wall.transform;
             var wpos = wt.position;
