@@ -56,6 +56,8 @@ namespace VRC2.Events
             }
         }
 
+        [HideInInspector] public bool selected = false;
+
         private void Start()
         {
             _wrapper = gameObject.GetComponent<PointableUnityEventWrapper>();
@@ -73,6 +75,8 @@ namespace VRC2.Events
                 if (clampManipulation.collidingWall) return;
             }
 
+            selected = true;
+
             // reset 
             freeTransformer.Compensated = false;
             // make it not drop
@@ -85,6 +89,7 @@ namespace VRC2.Events
 
         private void OnRelease()
         {
+            selected = false;
             // compensated means colliding with the wall and being fixed --> not drop --> kinematic (true)
             clampManipulation.SetKinematic(freeTransformer.Compensated);
         }
