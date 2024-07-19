@@ -551,7 +551,7 @@ namespace VRC2.Hack
             {
                 _moveOffset.x = -_offsetFactor * _halfPipeLength * reverse;
             }
-            else if (OVRInput.GetUp(OVRInput.Button.One, OVRInput.Controller.RTouch))
+            else if (OVRInput.GetUp(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch))
             {
                 _moveOffset.x = 0;
             }
