@@ -96,7 +96,8 @@ namespace VRC2.Pipe
             {
                 var csm = go.GetComponent<ClampStatusMonitor>();
                 var cgc = go.transform.parent.GetComponent<ClampGrabbingCallback>();
-                if (!cgc.selected && csm.InUse)
+                var runner = cgc.gameObject.GetComponent<NetworkObject>().Runner;
+                if (runner != null && runner.IsServer && !cgc.selected && csm.InUse)
                 {
                     // do nothing if clamp is used
                     return;
