@@ -396,6 +396,8 @@ namespace VRC2.Hack
 
             // as the wall is fixed and its rotation is (0,0,0), use the hard-code rotation to save computation
             var rotation = rot.eulerAngles;
+            // round it to eliminate shaking
+            rotation.z = (float)Math.Round(rotation.z);
             rotation.x = 0;
             rotation.y = -90;
 
