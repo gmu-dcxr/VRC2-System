@@ -20,7 +20,24 @@ task: "Training.yml"
 #########################################################################################################
 # all incidents, including the normal events and accidents
 incidents:
-## The following is for debugging change order
+## For photo purposes
+  - id: 1 # the order of the incident
+    time: "0:20" # start time of this incident
+    refer: [ "Truck", "normals", "1" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
+  - id: 2
+    time: "0:40"
+    refer: [ "Forklift", "normals", "1" ]
+  - id: 3
+    time: "0:35"
+    refer: ["CraneTruck", "normals", "1"] # test sagat controller
+  - id: 4
+    time: "0:25"
+    refer: ["Crane", "normals", "1"] # test sagat controller      
+  - id: 5
+    time: "0:30"
+    refer: ["Drone", "normals", "1"]
+      
+      ## The following is for debugging change order
 #  - id: 1 # the order of the incident
 #    time: "0:05" # start time of this incident
 #    refer: [ "Irrelevant", "accidents", "1" ] # refer to which incident in the format of [vehicle, "normals/accidents", "index"]. It is defined in the Crane.yml file.
