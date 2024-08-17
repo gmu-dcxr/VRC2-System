@@ -321,6 +321,7 @@ namespace VRC2.Animations
                 actions.Walk();
                 dogSound.loop = true;
                 dogSound.Play();
+                SyncDogSound(true, true, true, false);
             }
 
             if (strafeDirection == StrafeDirection.Unknown)
@@ -401,6 +402,7 @@ namespace VRC2.Animations
                 actions.TurnLeft();
                 dogSound.loop = true;
                 dogSound.Play();
+                SyncDogSound(true, true, true, false);
             }
 
             var speed = moveRotateSpeed;
@@ -424,6 +426,7 @@ namespace VRC2.Animations
                 actions.TurnLeft();
                 dogSound.loop = true;
                 dogSound.Play();
+                SyncDogSound(true, true, true, false);
             }
 
             body.transform.Rotate(Vector3.up, rotateSpeed, Space.World);
@@ -453,6 +456,7 @@ namespace VRC2.Animations
                 actions.Walk();
                 dogSound.loop = true;
                 dogSound.Play();
+                SyncDogSound(true, true, true, false);
             }
 
             var pos1 = body.position;
@@ -472,6 +476,7 @@ namespace VRC2.Animations
             turn = false;
             actions.Idle1();
             dogSound.loop = false;
+            SyncDogSound(true, false, false, false);
         }
 
         //NEW for picking up from side
