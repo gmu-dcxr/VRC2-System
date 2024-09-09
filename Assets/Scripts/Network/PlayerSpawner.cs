@@ -163,7 +163,21 @@ namespace VRC2
             return -1;
         }
 
+        public GameObject GetFishNetObjectByID(int id)
+        {
+            var gos = GameObject.FindObjectsOfType<OVRCustomSkeleton>();
 
+            foreach (var go in gos)
+            {
+                var obj = go.gameObject.GetComponent<FishNetNetworkObject>();
+                if (obj.ObjectId.Equals(id))
+                {
+                    return go.gameObject;
+                }
+            }
+
+            return null;
+        }
 
         #endregion
 
@@ -211,6 +225,11 @@ namespace VRC2
                     // fishnet
                     GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
                     print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
+
+                    // update transform
+                    var fp = GetFishNetObjectByID(GlobalConstants.localFishNetPlayer);
+                    fp.transform.position = position;
+                    fp.transform.rotation = rotation;
                 }
                 else
                 {
@@ -230,17 +249,22 @@ namespace VRC2
                 GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
 
+                // fishnet
+                GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
+                print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
+
                 if (spawnTransforms != null && spawnTransforms.Count > 1)
                 {
                     var t = spawnTransforms[1];
                     // update camera rig
                     cameraRig.transform.position = t.position;
                     cameraRig.transform.rotation = t.rotation;
-                }
 
-                // fishnet
-                GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
-                print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
+                    // update transform
+                    var fp = GetFishNetObjectByID(GlobalConstants.localFishNetPlayer);
+                    fp.transform.position = t.position;
+                    fp.transform.rotation = t.rotation;
+                }
 
                 // print("Sync in client from client to host");
                 // // sync client to host of local player

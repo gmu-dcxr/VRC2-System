@@ -49,9 +49,6 @@ namespace FishNet.Component.Spawning
 
         #endregion
 
-        // where to spawn
-        [Header("Spawn Transform")] public List<Transform> spawnTransforms;
-
         #region Private.
 
         /// <summary>
@@ -99,6 +96,8 @@ namespace FishNet.Component.Spawning
         /// </summary>
         private void SceneManager_OnClientLoadedStartScenes(NetworkConnection conn, bool asServer)
         {
+            if (!asServer) return;
+
             if (_playerPrefab == null)
             {
                 Debug.LogWarning($"Player prefab is empty and cannot be spawned for connection {conn.ClientId}.");
@@ -108,15 +107,6 @@ namespace FishNet.Component.Spawning
             Vector3 position;
             Quaternion rotation;
             SetSpawn(_playerPrefab.transform, out position, out rotation);
-
-            // update transform
-            if (spawnTransforms != null && spawnTransforms.Count > Spawns.Length)
-            {
-                print($"[FishNet] Update spawn transform for {Spawns.Length}");
-                var t = spawnTransforms[Spawns.Length];
-                position = t.position;
-                rotation = t.rotation;
-            }
 
             NetworkObject nob = _networkManager.GetPooledInstantiated(_playerPrefab, position, rotation, true);
             _networkManager.ServerManager.Spawn(nob, conn);
