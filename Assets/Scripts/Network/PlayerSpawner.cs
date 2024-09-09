@@ -23,8 +23,10 @@ namespace VRC2
         public string prefabName;
 
         private NetworkRunner _runner;
-        
-        [Header("Spawn Transform")] public Transform spawnTransform;
+
+        // where to spawn
+        [Header("Spawn Transform")] public List<Transform> spawnTransforms;
+        public Transform cameraRig; // move camera rig along with spawn transform
 
         [Header("Setting")] public bool hideSelf = false;
 
@@ -175,8 +177,19 @@ namespace VRC2
                 // Create a unique position for the player
                 // Vector3 spawnPosition =
                 // new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
-                var position = spawnTransform.position;
-                var rotation = spawnTransform.rotation;
+
+                var position = Vector3.zero;
+                var rotation = Quaternion.identity;
+
+                if (spawnTransforms != null && spawnTransforms.Count > _spawnedCharacters.Count)
+                {
+                    print($"Update spawn transform for {_spawnedCharacters.Count}");
+
+                    var t = spawnTransforms[_spawnedCharacters.Count];
+                    position = t.position;
+                    rotation = t.rotation;
+                }
+
                 NetworkObject networkPlayerObject =
                     runner.Spawn(_playerPrefab, position, rotation, player);
                 // Keep track of the player avatars so we can remove it when they disconnect
@@ -190,6 +203,9 @@ namespace VRC2
 
                 if (GlobalConstants.localPlayer == PlayerRef.None)
                 {
+                    // update camera rig
+                    cameraRig.transform.position = position;
+                    cameraRig.transform.rotation = rotation;
                     // host
                     GlobalConstants.localPlayer = player;
                     // fishnet
@@ -214,6 +230,14 @@ namespace VRC2
                 GlobalConstants.remotePlayer = PlayerRef.None;
                 GlobalConstants.localPlayer = player;
 
+                if (spawnTransforms != null && spawnTransforms.Count > 1)
+                {
+                    var t = spawnTransforms[1];
+                    // update camera rig
+                    cameraRig.transform.position = t.position;
+                    cameraRig.transform.rotation = t.rotation;
+                }
+
                 // fishnet
                 GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
                 print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
@@ -231,7 +255,7 @@ namespace VRC2
             {
                 HideSelfNetworkObject();
             }
-            
+
             // reset player helper
             playerHelper.ResetLocalPlayer();
             // move up
