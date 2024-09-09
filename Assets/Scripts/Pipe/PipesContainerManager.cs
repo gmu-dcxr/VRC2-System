@@ -207,6 +207,21 @@ namespace VRC2
             }
         }
 
+        // check if oip is a straight pipe
+        public bool IsRightStraight
+        {
+            get
+            {
+                if (oip != null)
+                {
+                    var pm = oip.GetComponent<PipeManipulation>();
+                    return pm != null && pm.angle == PipeConstants.PipeBendAngles.Angle_0;
+                }
+
+                return false;
+            }
+        }
+
         #endregion
 
         #region Compensation for connected pipes collision with the wall
@@ -511,6 +526,9 @@ namespace VRC2
         {
             // it should be attached to controller first
             if (_controller == null) return;
+
+            // return if right pipe is not straight
+            if (!IsRightStraight) return;
 
             // reverse if glued
             var reverse = IsGlued ? -1 : 1;
