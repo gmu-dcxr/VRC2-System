@@ -17,7 +17,7 @@ namespace VRC2.Extention
         public float yOffset = 0.5f;
         public float zOffset = 0.5f;
 
-        private OVRCameraRig _cameraRig;
+        public OVRCameraRig _cameraRig;
 
         // private Vector3 _panelInitialPosition = Vector3.zero;
         private Coroutine _coroutine = null;
@@ -26,7 +26,7 @@ namespace VRC2.Extention
 
         private void Awake()
         {
-            _cameraRig = FindObjectOfType<OVRCameraRig>();
+            // _cameraRig = FindObjectOfType<OVRCameraRig>();
             // _panelInitialPosition = transform.position;
         }
 

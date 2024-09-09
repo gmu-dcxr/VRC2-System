@@ -103,6 +103,23 @@ namespace VRC2.Hack
             }
         }
 
+        private bool _isRightStraight
+        {
+            get
+            {
+                if (pipeManipulation != null)
+                {
+                    return pipeManipulation.angle == PipeConstants.PipeBendAngles.Angle_0;
+                }
+                else if (pipesContainerManager != null)
+                {
+                    return pipesContainerManager.IsRightStraight;
+                }
+
+                return false;
+            }
+        }
+
         // scale the extents z, 1.1 is the scale of the clamp hint
         public static float ScaleFactor = 1.1f;
 
@@ -539,6 +556,9 @@ namespace VRC2.Hack
             }
 
             if (provider == null || !provider.IsValid || IsConnector) return;
+
+            // return if right pipe is not straight
+            if (!_isRightStraight) return;
 
             // reverse if glued
             var reverse = _isGlued ? -1 : 1;
