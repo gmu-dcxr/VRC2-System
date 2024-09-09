@@ -99,8 +99,6 @@ namespace FishNet.Component.Spawning
         /// </summary>
         private void SceneManager_OnClientLoadedStartScenes(NetworkConnection conn, bool asServer)
         {
-            if (!asServer)
-                return;
             if (_playerPrefab == null)
             {
                 Debug.LogWarning($"Player prefab is empty and cannot be spawned for connection {conn.ClientId}.");
@@ -112,10 +110,10 @@ namespace FishNet.Component.Spawning
             SetSpawn(_playerPrefab.transform, out position, out rotation);
 
             // update transform
-            if (spawnTransforms != null && spawnTransforms.Count > _nextSpawn)
+            if (spawnTransforms != null && spawnTransforms.Count > Spawns.Length)
             {
-                print($"Update spawn transform for {_nextSpawn}");
-                var t = spawnTransforms[_nextSpawn];
+                print($"[FishNet] Update spawn transform for {Spawns.Length}");
+                var t = spawnTransforms[Spawns.Length];
                 position = t.position;
                 rotation = t.rotation;
             }
