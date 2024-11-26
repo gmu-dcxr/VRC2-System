@@ -4,24 +4,26 @@ This is the official implementation of the paper **Col-Con: A Reconfigurable Vir
 
 ![Teaser](docs/teaser.png)
 
-## Development Environment
+## Dev Environment
 
 - Windows 11
 - Unity 2020.3.48f1
 - Meta Quest Pro
 
-## Approach Overview
+## Overview
 
 ![Overview](docs/overview.png)
 
-## User Study Scene
+## Scene
 
 Assets/Scenes/System-User-Study.unity
 
 ## Citation
 
+If you find this work helpful for your research, please cite:
+
 ```
-@misc{yu2024colcon,
+@article{yu2024colcon,
       title={Col-Con: A Reconfigurable Virtual Reality Simulation Platform for Exploring Collaborative Behaviors in Construction}, 
       author={Liuchuan Yu and Ching-Yu Cheng and William F Ranc and Joshua Dow and Michael Szilagyi and Haikun Huang and Sungsoo Ray Hong and Behzad Esmaeili and Lap-Fai Yu},
       year={2024},
