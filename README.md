@@ -1,6 +1,6 @@
 ﻿# VRC2-System
 
-This is the official implementation of the paper **Col-Con: A Reconfigurable Virtual Reality Simulation Platform for Exploring Collaborative Behaviors in Construction**.
+This is the official implementation of the paper **Col-Con: A Configurable VR Platform for Exploring Collaborative Behaviors in Construction — Pipe Installation as a Case Study**.
 
 ![Teaser](docs/teaser.png)
 
