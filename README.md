@@ -1,6 +1,6 @@
 ﻿# VRC2-System
 
-This is the official implementation of the paper **Col-Con: A Configurable VR Platform for Exploring Collaborative Behaviors in Construction — Pipe Installation as a Case Study**.
+This is the official implementation of the paper **Col-Con: A Collaborative and Configurable VR Platform for Construction — A Pipe Installation Case Study**.
 
 ![Teaser](docs/teaser.png)
 
