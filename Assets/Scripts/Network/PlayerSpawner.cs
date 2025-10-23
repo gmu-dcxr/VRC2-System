@@ -181,10 +181,16 @@ namespace VRC2
 
         #endregion
 
-        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        IEnumerator OnPlayerJoinedImpl(NetworkRunner runner, PlayerRef player)
         {
             Debug.LogError("OnPlayerJoined");
             print($"{player.PlayerId} {runner.IsServer} {runner.IsClient} {runner.IsSharedModeMasterClient}");
+            // fix sometimes localPlayer is not null when start
+            if (_spawnedCharacters.Count == 0 && GlobalConstants.localPlayer != PlayerRef.None)
+            {
+                GlobalConstants.localPlayer = PlayerRef.None;
+                Debug.LogWarning("Fix global localPlayer is not None");
+            }
             if (runner.IsServer)
             {
                 isServer = true;
@@ -212,6 +218,8 @@ namespace VRC2
                 // set player object for updating character
                 runner.SetPlayerObject(player, networkPlayerObject);
 
+                yield return new WaitForSeconds(0.1f);
+
                 // The first will be host (P1), all spawning actions will be done host
                 // The second will be client (P2)
 
@@ -220,16 +228,27 @@ namespace VRC2
                     // update camera rig
                     cameraRig.transform.position = position;
                     cameraRig.transform.rotation = rotation;
+                    yield return new WaitForSeconds(0.1f);
                     // host
                     GlobalConstants.localPlayer = player;
                     // fishnet
                     GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
                     print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
+                    
+                    yield return new WaitForSeconds(0.1f);
 
-                    // update transform
-                    var fp = GetFishNetObjectByID(GlobalConstants.localFishNetPlayer);
-                    fp.transform.position = position;
-                    fp.transform.rotation = rotation;
+                    if (GlobalConstants.localFishNetPlayer != -1)
+                    {
+                        // update transform
+                        var fp = GetFishNetObjectByID(GlobalConstants.localFishNetPlayer);
+                        fp.transform.position = position;
+                        fp.transform.rotation = rotation;
+                        yield return new WaitForSeconds(0.1f);   
+                    }
+                    else
+                    {
+                        Debug.LogError("No localFishNetPlayer found");
+                    }
                 }
                 else
                 {
@@ -252,6 +271,8 @@ namespace VRC2
                 // fishnet
                 GlobalConstants.localFishNetPlayer = FindLocalFishNetObjectId();
                 print($"Set localFishNetPlayer = {GlobalConstants.localFishNetPlayer}");
+                
+                yield return new WaitForSeconds(0.1f);
 
                 if (spawnTransforms != null && spawnTransforms.Count > 1)
                 {
@@ -259,11 +280,14 @@ namespace VRC2
                     // update camera rig
                     cameraRig.transform.position = t.position;
                     cameraRig.transform.rotation = t.rotation;
+                    
+                    yield return new WaitForSeconds(0.1f);
 
                     // update transform
                     var fp = GetFishNetObjectByID(GlobalConstants.localFishNetPlayer);
                     fp.transform.position = t.position;
                     fp.transform.rotation = t.rotation;
+                    yield return new WaitForSeconds(0.1f);
                 }
 
                 // print("Sync in client from client to host");
@@ -284,6 +308,12 @@ namespace VRC2
             playerHelper.ResetLocalPlayer();
             // move up
             playerHelper.ArrangeLocalPlayer();
+            yield return null;
+        }
+
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        {
+            StartCoroutine(OnPlayerJoinedImpl(runner, player));
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)

@@ -361,10 +361,10 @@ namespace VRC2.Animations.CraneTruck
 
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(1000, 10, 100, 50), "Crane"))
-            {
-                status = CraneStatus.PrepareSeize;
-            }
+            // if (GUI.Button(new Rect(1000, 10, 100, 50), "Crane"))
+            // {
+            //     status = CraneStatus.PrepareSeize;
+            // }
         }
 
         #endregion

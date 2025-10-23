@@ -75,7 +75,7 @@ namespace VRC2.ScenariosV2.Scenario
         #region Incident Control
 
         // the offset
-        private int startTimestamp { get; set; }
+        private int startTimestamp = -1;
 
         // start / end in second
         [HideInInspector] public int startInSec;
@@ -757,6 +757,8 @@ namespace VRC2.ScenariosV2.Scenario
 
         void ShowIncidentTimeline(string richtext)
         {
+            if(!scenarioStarted) return;
+            
             if (backgroundStyle == null)
             {
                 backgroundStyle = new GUIStyle();
@@ -776,7 +778,7 @@ namespace VRC2.ScenariosV2.Scenario
         {
             GUILayout.BeginVertical(GUILayout.ExpandHeight(true));
             // scenario text 
-            if (!started && GUILayout.Button($"Start {ClsName}", GUILayout.ExpandHeight(true)))
+            if (!started && !scenariosManager.showBtn && GUILayout.Button($"Start {ClsName}", GUILayout.ExpandHeight(true)))
             {
                 var t = Helper.SecondNow();
                 StartScenario(t);
