@@ -24,7 +24,7 @@ If you find this work helpful for your research, please cite:
 
 ```
 @article{yu2024colcon,
-      title={Col-Con: A Configurable VR Platform for Exploring Collaborative Behaviors in Construction — Pipe Installation as a Case Study}, 
+      title={Col-Con: A Collaborative and Configurable VR Platform for Construction — A Pipe Installation Case Study}, 
       author={Liuchuan Yu and Ching-Yu Cheng and William F Ranc and Joshua Dow and Michael Szilagyi and Haikun Huang and Sungsoo Ray Hong and Behzad Esmaeili and Lap-Fai Yu},
       year={2024},
       eprint={2410.23627},
